@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include <string>
+#include <netinet/in.h>
 
 class Server
 {
@@ -9,7 +10,8 @@ class Server
         int m_kq;
         int m_listen_fd;
         int m_port;
-        char* m_password;
+        std::string m_password;
+        sockaddr_in m_sockaddr;
     
     private:
         Server(void);
@@ -24,8 +26,8 @@ class Server
         void create_socket(void);
         void bind_socket(void);
         void listen_socket(void);
-        void crate_kqueue(void);
-        void assign_event(void);
-        void get_event(void);
+        void create_kqueue(void);
+        void update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata);
 };
+
 #endif /* SERVER_HPP */
