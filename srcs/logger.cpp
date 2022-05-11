@@ -38,12 +38,6 @@
   }
 
   void 
-    Logger::_Impl::m_set_level_symbol(int level, std::string symbol)
-  {
-      _Impl::m_symbols[level] = symbol;
-  }
-
-  void 
     Logger::_Impl::m_set_loglevel(int level)
   {
       _Impl::m_level = level;
@@ -195,12 +189,6 @@
     Logger::set_loglevel(int level)
   {
       _Impl::m_set_loglevel(level);
-  }
-
-  void 
-    Logger::set_level_symbol(int level, std::string symbol)
-  {
-      _Impl::m_set_level_symbol(level, symbol);
   }
 
   void 

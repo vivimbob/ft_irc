@@ -45,9 +45,6 @@ class Logger
       set_loglevel(int level);
 
     static void 
-      set_level_symbol(int level, std::string symbol);
-
-    static void 
       set_timestamp_mode(int time, std::string separator = " ");
 
     std::ostringstream& 
@@ -121,9 +118,6 @@ class Logger::_Impl
 
     std::ostringstream& 
       m_fatal(void);
-
-    static void 
-      m_set_level_symbol(int level, std::string symbol);
 
     static void 
       m_set_loglevel(int level);
