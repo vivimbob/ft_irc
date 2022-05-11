@@ -27,11 +27,9 @@ class Logger
 
     enum Timestamp_mode
     {
-        TimeNone,
-        DateTime,
-        EpochSeconds,
-        EpochMilliseconds,
-        EpochMicroseconds
+        Time_none,
+        Date_time_ver1,
+        Date_time_ver2
     };
     
 /* enum end */

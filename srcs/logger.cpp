@@ -7,7 +7,7 @@
 
   int Logger::_Impl::m_level = Info;
 
-  int Logger::_Impl::m_timestamp_mode = DateTime;
+  int Logger::_Impl::m_timestamp_mode = Date_time_ver1;
 
   std::string Logger::_Impl::m_timestamp_separator = ": ";
 
@@ -63,16 +63,30 @@
 
       switch (_Impl::m_timestamp_mode)
       {
-      case TimeNone:
+      case Time_none:
           break;
-      case DateTime:
+      case Date_time_ver1:
       {
           time_t m_raw_time;
           char buffer[50];
           time(&m_raw_time);
 
           if(std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&m_raw_time)))
-          m_oss << buffer << " ";
+          m_oss << buffer << m_timestamp_separator;
+      }
+          break;
+      case Date_time_ver2:
+      {
+          time_t m_raw_time;
+          std::string m_time_str;
+          time(&m_raw_time);
+          m_time_str = ctime(&m_raw_time);
+          m_time_str.erase(m_time_str.length() - 1);
+
+          if (!m_time_str.empty())
+          {
+              m_oss << m_time_str << m_timestamp_separator;
+          }
       }
           break;
       }

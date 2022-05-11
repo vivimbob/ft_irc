@@ -3,8 +3,10 @@
 int main(int, char **)
 {
     const std::string message = "Hello, world!";
-    const std::string timestampSeparator = " ## ";
-    Logger::set_timestamp_mode(Logger::DateTime, timestampSeparator);
+    const std::string timestamp_separator = " ## ";
+    // const std::string timestamp_separator = " -> ";
+    Logger::set_timestamp_mode(Logger::Date_time_ver1, timestamp_separator);
+    // Logger::set_timestamp_mode(Logger::Date_time_ver2, timestamp_separator);
 
     Logger::set_loglevel(Logger::None);
     Logger().fatal() << message;
