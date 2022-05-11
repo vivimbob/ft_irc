@@ -148,12 +148,6 @@
       return m_get_stream(Fatal);
   }
 
-  void 
-    Logger::_Impl::m_set_stream(int level, std::ostream& stream)
-  {
-      Logger::_Impl::m_streams[level] = &stream;
-  }
-
   Logger::_Impl::_Symbol_Map 
     Logger::_Impl::m_initial_symbol_map()
   {
@@ -213,12 +207,6 @@
     Logger::set_timestamp_mode(int timestamp_mode, std::string separator)
   {
       _Impl::m_set_timestamp_mode(timestamp_mode, separator);
-  }
-
-  void 
-    Logger::set_stream(int level, std::ostream& stream)
-  {
-      _Impl::m_set_stream(level, stream);
   }
 
   std::ostringstream& 

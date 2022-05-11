@@ -50,9 +50,6 @@ class Logger
     static void 
       set_timestamp_mode(int time, std::string separator = " ");
 
-    static void 
-      set_stream(int level, std::ostream& stream);
-
     std::ostringstream& 
       trace(void);
 
@@ -133,9 +130,6 @@ class Logger::_Impl
 
     static void 
       m_set_timestamp_mode(int time, std::string separator);
-
-    static void 
-      m_set_stream(int level, std::ostream& stream);
 
     void 
       m_flush(void);
