@@ -39,12 +39,9 @@ class Logger
 /* Member functions begin */
 
   public:
-    Logger();
+    Logger(void);
 
-    ~Logger();
-
-    static void 
-      enable_echo_mode(bool enable);
+    ~Logger(void);
 
     static void 
       set_loglevel(int level);
@@ -59,22 +56,22 @@ class Logger
       set_stream(int level, std::ostream& stream);
 
     std::ostringstream& 
-      trace();
+      trace(void);
 
     std::ostringstream& 
-      debug();
+      debug(void);
 
     std::ostringstream& 
-      info();
+      info(void);
 
     std::ostringstream& 
-      warning();
+      warning(void);
 
     std::ostringstream& 
-      error();
+      error(void);
 
     std::ostringstream& 
-      fatal();
+      fatal(void);
 
   private:
     Logger(const Logger &log);
@@ -108,30 +105,27 @@ class Logger::_Impl
 
   public:
 
-    _Impl();
+    _Impl(void);
 
-    ~_Impl();
-
-    std::ostringstream& 
-      m_trace();
+    ~_Impl(void);
 
     std::ostringstream& 
-      m_debug();
+      m_trace(void);
 
     std::ostringstream& 
-      m_info();
+      m_debug(void);
 
     std::ostringstream& 
-      m_warning();
+      m_info(void);
 
     std::ostringstream& 
-      m_error();
+      m_warning(void);
 
     std::ostringstream& 
-      m_fatal();
+      m_error(void);
 
-    static void 
-      m_enable_echo_mode(bool enable);
+    std::ostringstream& 
+      m_fatal(void);
 
     static void 
       m_set_level_symbol(int level, std::string symbol);
@@ -146,17 +140,17 @@ class Logger::_Impl
       m_set_stream(int level, std::ostream& stream);
 
     void 
-      m_flush();
+      m_flush(void);
 
     std::ostringstream& 
       m_get_stream(int level);
 
     void 
-      m_prefix_timestamp();
+      m_prefix_timestamp(void);
 
-    static _Symbol_Map m_initial_symbol_map();
+    static _Symbol_Map m_initial_symbol_map(void);
 
-    static _Stream_Map m_initial_stream_map();
+    static _Stream_Map m_initial_stream_map(void);
 
 /* Member functions end */
 
@@ -167,8 +161,6 @@ class Logger::_Impl
     static _Symbol_Map m_symbols;
 
     static _Stream_Map m_streams;
-
-    static bool m_echo_mode;
 
     static int m_level;
 

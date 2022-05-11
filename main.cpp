@@ -2,8 +2,6 @@
 
 int main(int, char **)
 {
-    Logger::enable_echo_mode(true);
-
     const std::string message = "Hello, world!";
     const std::string timestampSeparator = " ## ";
     Logger::set_timestamp_mode(Logger::DateTime, timestampSeparator);
@@ -12,7 +10,7 @@ int main(int, char **)
     Logger().fatal() << message;
     Logger::set_loglevel(Logger::Fatal);
     Logger().fatal() << message;
-\
+
     Logger().error() << message;
     Logger::set_loglevel(Logger::Error);
     Logger().error() << message;

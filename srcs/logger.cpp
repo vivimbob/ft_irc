@@ -5,8 +5,6 @@
 
 /* Logger::_Impl static member variables begin */
 
-  bool Logger::_Impl::m_echo_mode = true;
-
   int Logger::_Impl::m_level = Info;
 
   int Logger::_Impl::m_timestamp_mode = DateTime;
@@ -28,12 +26,6 @@
   Logger::_Impl::~_Impl()
   {
       m_flush();
-  }
-
-  void 
-    Logger::_Impl::m_enable_echo_mode(bool enable)
-  {
-      _Impl::m_echo_mode = enable;
   }
 
   std::ostringstream& 
@@ -81,18 +73,9 @@
 
           if(std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&m_raw_time)))
           m_oss << buffer << " ";
-
-          // m_time_str = ctime(&m_raw_time);
-          // m_time_str.erase(m_time_str.length() - 1);
       }
           break;
       }
-      
-
-      // if (!m_time_str.empty())
-      // {
-      //     m_oss << m_time_str << m_timestamp_separator;
-      // }
   }
 
   void 
@@ -108,13 +91,10 @@
           return;
       }
 
-      if (_Impl::m_echo_mode)
-      {
-          std::ostream* stream = _Impl::m_streams[m_active_level];
-          if (stream) {
-              *stream << m_oss.str() << "\033[0m" << std::endl;
-              stream->flush();
-          }
+      std::ostream* stream = _Impl::m_streams[m_active_level];
+      if (stream) {
+          *stream << m_oss.str() << "\033[0m" << std::endl;
+          stream->flush();
       }
   }
 
@@ -201,12 +181,6 @@
   Logger::~Logger()
   {
     delete m_impl;
-  }
-
-  void 
-    Logger::enable_echo_mode(bool enable)
-  {
-      _Impl::m_enable_echo_mode(enable);
   }
 
   void 
