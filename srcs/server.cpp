@@ -105,6 +105,25 @@ void
 }
 
 void
+    Server::accept_client(void)
+{
+    sockaddr_in client_addr;
+    int client_addr_len = sizeof(client_addr);
+    int client_fd = -1;
+
+    client_fd = accept(m_listen_fd, (sockaddr*)(&client_addr), (socklen_t*)(&client_addr_len));
+    if (client_fd == -1)
+    {
+        Logger().fatal() << "Failed to accept client. errno: " << errno;
+        exit(EXIT_FAILURE);
+    }
+
+    update_event(client_fd, EVFILT_READ | EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+
+    Logger().trace() << "accept client " << client_fd;
+}
+
+void
     Server::update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata)
 {
     struct kevent kev;
@@ -115,23 +134,23 @@ void
 void
     Server::run(void)
 {
-    int nbr_of_events = 0;
-    struct kevent kev[nbr_of_events];
+    int event_count = 0;
 
-    while (1)
+    while (true)
     {
-        int m_kevent = kevent(m_kq, NULL, 0, kev, nbr_of_events, NULL);
-        if (m_kevent <= 0)
-          continue;
-        for (int i = 0; i < m_kevent; ++i)
+        event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
+        for (int i = 0; i < event_count; ++i)
         {
-          if (kev[i].ident == (unsigned int)m_listen_fd)
-            accept();
-          struct context *m_o = reinterpret_cast<context *>(kev[i].udata);
-          if (kev[i].filter == EVFILT_READ)
-            std::cout << "Read!" << std::endl;
-          else if(kev[i].filter == EVFILT_WRITE)
-            std::cout << "Write!" << std::endl;
+            struct kevent &event = m_event_list[i];
+            if (event.ident == (unsigned int)m_listen_fd)
+              accept_client();
+            else if (event.filter == EVFILT_READ)
+            {
+                if (event.filter == EVFILT_READ)
+                  std::cout << "Read!" << std::endl;
+                else if(event.filter == EVFILT_WRITE)
+                  std::cout << "Write!" << std::endl;
+            }
         }
     }
 }

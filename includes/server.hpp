@@ -3,6 +3,9 @@
 
 #include <string>
 #include <netinet/in.h>
+#include <sys/event.h>
+
+#define QUEUE_SIZE 1024
 
 class Server
 {
@@ -12,6 +15,7 @@ class Server
         int m_port;
         std::string m_password;
         sockaddr_in m_sockaddr;
+        struct kevent m_event_list[QUEUE_SIZE];
     
     private:
         Server(void);
@@ -27,6 +31,7 @@ class Server
         void bind_socket(void);
         void listen_socket(void);
         void create_kqueue(void);
+        void accept_client(void);
         void update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata);
 
     public:
