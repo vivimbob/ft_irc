@@ -118,6 +118,7 @@ void
         exit(EXIT_FAILURE);
     }
 
+    fcntl(client_fd, F_SETFL, O_NONBLOCK);
     update_event(client_fd, EVFILT_READ | EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 
     Logger().trace() << "accept client " << client_fd;
