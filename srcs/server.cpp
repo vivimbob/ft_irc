@@ -17,6 +17,16 @@ Server::Server(int argc, char **argv)
       m_port(-1),
       m_password(NULL)
 {
+    if (argc != 3)
+        Logger().fatal() << "Usage: " << argv[0] << " <port> <password>";
+    m_port = atoi(argv[1]);
+    if (m_port < 0 || m_port > 65535)
+        Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
+    m_password = argv[2];
+    create_socket();
+    bind_socket();
+    listen_socket();
+    create_socket();
 }
 
 Server::Server(int port, std::string password)
@@ -25,6 +35,12 @@ Server::Server(int port, std::string password)
       m_port(port),
       m_password(password)
 {
+    if (m_port < 0 || m_port > 65535)
+        Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
+    create_socket();
+    bind_socket();
+    listen_socket();
+    create_kqueue();
 }
 
 Server::~Server(void)
@@ -53,10 +69,10 @@ void
 
     if (bind(m_listen_fd, (struct sockaddr *)&m_sockaddr, sizeof(sockaddr_in)) == -1)
     {
-        Logger().fatal() << "Failed to bind to port " << m_port << ". errno: " << errno;
+        Logger().fatal() << "Failed to bind to port and address" << m_port << ". errno: " << errno;
         exit(EXIT_FAILURE);
     }
-    Logger().trace() << "Bind port: " << m_port << " IP: " <<  inet_ntoa(m_sockaddr.sin_addr);
+    Logger().trace() << "Bind Port: " << m_port << " IP: " <<  inet_ntoa(m_sockaddr.sin_addr);
 }
 
 void
@@ -92,4 +108,10 @@ void
     struct kevent kev;
 	EV_SET(&kev, ident, filter, flags, fflags, data, udata);
 	kevent(m_kq, &kev, 1, NULL, 0, NULL);
+}
+
+void
+    Server::run(void)
+{
+
 }

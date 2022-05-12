@@ -22,12 +22,15 @@ class Server
         Server(int port, std::string password);
         ~Server(void);
     
-    public:
+    private:
         void create_socket(void);
         void bind_socket(void);
         void listen_socket(void);
         void create_kqueue(void);
         void update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata);
+
+    public:
+        void run(void);
 };
 
 #endif /* SERVER_HPP */
