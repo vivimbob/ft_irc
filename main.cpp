@@ -1,6 +1,8 @@
-#include "includes/logger.hpp"
+#include "./includes/logger.hpp"
+#include "./includes/server.hpp"
 
-int main(int, char **)
+int
+    main(int argc, char **argv)
 {
     const std::string message = "Hello, world!";
     const std::string timestamp_separator = " ## ";
@@ -33,5 +35,6 @@ int main(int, char **)
     Logger::set_loglevel(Logger::Trace);
     Logger().trace() << message;
 
+    Server(argc, argv);
     return 0;
 }

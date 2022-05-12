@@ -4,7 +4,8 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 # CXXFLAGS  = -std=c++98
 
 SRCS    = main.cpp\
-        srcs/logger.cpp
+        srcs/logger.cpp\
+		srcs/server.cpp
 
 OBJS    = $(SRCS:%.cpp=%.o)
 
