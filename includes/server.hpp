@@ -32,6 +32,8 @@ class Server
         void listen_socket(void);
         void create_kqueue(void);
         void accept_client(void);
+        void receive_client_msg(unsigned int clientfd, int bytes);
+        void send_client_msg(unsigned int clientfd, int bytes);
         void update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata);
 
     public:

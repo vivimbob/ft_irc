@@ -107,6 +107,7 @@ void
 void
     Server::accept_client(void)
 {
+    // 추후 client_addr를 다른 곳에서도 쓸 수 있으니 구조체로 빼두는 게 좋을 수도
     sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
     int client_fd = -1;
@@ -125,11 +126,54 @@ void
 }
 
 void
+    Server::receive_client_msg(unsigned int clientfd, int bytes)
+{
+    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
+    char* buffer[bytes];
+
+    bzero(buffer, bytes);
+    ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
+    if (recv_data_len == 0)
+    {
+        Logger().trace() << "Close client " << clientfd;
+        return ;
+    }
+    else if (recv_data_len < 0)
+    {
+        Logger().fatal() << "Disconnect " << clientfd;
+        return ;
+    }
+    else 
+    {
+        Logger().trace() << "Handle Request ";
+    }
+}
+
+void
+    Server::send_client_msg(unsigned int clientfd, int bytes)
+{
+    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
+    char* buffer[1400];
+
+    ssize_t send_data_len = send(clientfd, buffer, sizeof(buffer), 0);
+    if (send_data_len >= 0)
+    {
+        Logger().trace() << "Send ok " << clientfd;
+        return ;
+    }
+    else 
+    {
+        Logger().fatal() << "Disconnect ";
+        return ;
+    }
+}
+
+void
     Server::update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata)
 {
     struct kevent kev;
-	EV_SET(&kev, ident, filter, flags, fflags, data, udata);
-	kevent(m_kq, &kev, 1, NULL, 0, NULL);
+	  EV_SET(&kev, ident, filter, flags, fflags, data, udata);
+	  kevent(m_kq, &kev, 1, NULL, 0, NULL);
 }
 
 void
@@ -148,9 +192,9 @@ void
             else if (event.filter == EVFILT_READ)
             {
                 if (event.filter == EVFILT_READ)
-                  std::cout << "Read!" << std::endl;
+                  receive_client_msg(event.ident);
                 else if(event.filter == EVFILT_WRITE)
-                  std::cout << "Write!" << std::endl;
+                  send_client_msg(event.ident, event.data);
             }
         }
     }
