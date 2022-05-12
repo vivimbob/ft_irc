@@ -1,6 +1,3 @@
-#ifndef LOGGER_CPP
-#define LOGGER_CPP
-
 #include "../includes/logger.hpp"
 
 /* Logger::_Impl static member variables begin */
@@ -234,5 +231,3 @@
   }
 
 /* Logger member functions end */
-
-#endif /* LOGGER_CPP */
