@@ -14,11 +14,13 @@
 Server::Server(int argc, char **argv)
     : m_kq(-1),
       m_listen_fd(-1),
-      m_port(-1),
-      m_password(NULL)
+      m_port(-1)
 {
     if (argc != 3)
+    {
         Logger().fatal() << "Usage: " << argv[0] << " <port> <password>";
+        exit(EXIT_FAILURE);
+    }
     m_port = atoi(argv[1]);
     if (m_port < 0 || m_port > 65535)
         Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
@@ -26,7 +28,7 @@ Server::Server(int argc, char **argv)
     create_socket();
     bind_socket();
     listen_socket();
-    create_socket();
+    create_kqueue();
 }
 
 Server::Server(int port, std::string password)
@@ -113,5 +115,23 @@ void
 void
     Server::run(void)
 {
+    int nbr_of_events = 0;
+    struct kevent kev[nbr_of_events];
 
+    while (1)
+    {
+        int m_kevent = kevent(m_kq, NULL, 0, kev, nbr_of_events, NULL);
+        if (m_kevent <= 0)
+          continue;
+        for (int i = 0; i < m_kevent; ++i)
+        {
+          if (kev[i].ident == (unsigned int)m_listen_fd)
+            accept();
+          struct context *m_o = reinterpret_cast<context *>(kev[i].udata);
+          if (kev[i].filter == EVFILT_READ)
+            std::cout << "Read!" << std::endl;
+          else if(kev[i].filter == EVFILT_WRITE)
+            std::cout << "Write!" << std::endl;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 #include "./includes/logger.hpp"
 #include "./includes/server.hpp"
+#include <cstdlib>
 
 int
     main(int argc, char **argv)
@@ -35,6 +36,8 @@ int
     Logger::set_loglevel(Logger::Trace);
     Logger().trace() << message;
 
-    Server(argc, argv);
+    // Server(argc, argv);
+    Server serv(atoi(argv[1]), argv[2]);
+    serv.run();
     return 0;
 }
