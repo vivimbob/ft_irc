@@ -6,6 +6,9 @@
 #include <vector>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/event.h>
+
+#define QUEUE_SIZE 1024
 
 class Server
 {
@@ -15,6 +18,7 @@ class Server
         int m_port;
         std::string m_password;
         sockaddr_in m_sockaddr;
+        struct kevent m_event_list[QUEUE_SIZE];
         struct m_client_info
         {
             sockaddr_in m_client_addr;
@@ -53,6 +57,9 @@ class Server
         void bind_socket(void);
         void listen_socket(void);
         void create_kqueue(void);
+        void accept_client(void);
+        void receive_client_msg(unsigned int clientfd, int bytes);
+        void send_client_msg(unsigned int clientfd, int bytes);
         void update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata);
 
     public:

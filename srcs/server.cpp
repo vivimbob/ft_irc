@@ -14,11 +14,13 @@
 Server::Server(int argc, char **argv)
     : m_kq(-1),
       m_listen_fd(-1),
-      m_port(-1),
-      m_password(NULL)
+      m_port(-1)
 {
     if (argc != 3)
+    {
         Logger().fatal() << "Usage: " << argv[0] << " <port> <password>";
+        exit(EXIT_FAILURE);
+    }
     m_port = atoi(argv[1]);
     if (m_port < 0 || m_port > 65535)
         Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
@@ -26,7 +28,7 @@ Server::Server(int argc, char **argv)
     create_socket();
     bind_socket();
     listen_socket();
-    create_socket();
+    create_kqueue();
 }
 
 Server::Server(int port, std::string password)
@@ -103,15 +105,95 @@ void
 }
 
 void
+    Server::accept_client(void)
+{
+    // 추후 client_addr를 다른 곳에서도 쓸 수 있으니 구조체로 빼두는 게 좋을 수도
+    sockaddr_in client_addr;
+    int client_addr_len = sizeof(client_addr);
+    int client_fd = -1;
+
+    client_fd = accept(m_listen_fd, (sockaddr*)(&client_addr), (socklen_t*)(&client_addr_len));
+    if (client_fd == -1)
+    {
+        Logger().fatal() << "Failed to accept client. errno: " << errno;
+        exit(EXIT_FAILURE);
+    }
+
+    fcntl(client_fd, F_SETFL, O_NONBLOCK);
+    update_event(client_fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+    update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+
+    Logger().trace() << "accept client " << client_fd;
+}
+
+void
+    Server::receive_client_msg(unsigned int clientfd, int bytes)
+{
+    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
+    char* buffer[bytes];
+
+    bzero(buffer, bytes);
+    ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
+    if (recv_data_len == 0)
+    {
+        Logger().trace() << "Close client " << clientfd;
+        return ;
+    }
+    else if (recv_data_len < 0)
+    {
+        Logger().fatal() << "Disconnect " << clientfd;
+        return ;
+    }
+    else 
+    {
+        Logger().trace() << "Handle Request ";
+    }
+}
+
+void
+    Server::send_client_msg(unsigned int clientfd, int bytes)
+{
+    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
+    char* buffer[1400];
+
+    ssize_t send_data_len = send(clientfd, buffer, sizeof(buffer), 0);
+    if (send_data_len >= 0)
+    {
+        Logger().trace() << "Send ok " << clientfd;
+        return ;
+    }
+    else 
+    {
+        Logger().fatal() << "Disconnect ";
+        return ;
+    }
+}
+
+void
     Server::update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata)
 {
     struct kevent kev;
-	EV_SET(&kev, ident, filter, flags, fflags, data, udata);
-	kevent(m_kq, &kev, 1, NULL, 0, NULL);
+	  EV_SET(&kev, ident, filter, flags, fflags, data, udata);
+	  kevent(m_kq, &kev, 1, NULL, 0, NULL);
 }
 
 void
     Server::run(void)
 {
+    int event_count = 0;
 
+    while (true)
+    {
+        event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
+        for (int i = 0; i < event_count; ++i)
+        {
+            struct kevent &event = m_event_list[i];
+            if (event.ident == (unsigned int)m_listen_fd)
+              accept_client();
+            else if (event.filter == EVFILT_READ)
+              receive_client_msg(event.ident, event.data);
+            else if(event.filter == EVFILT_WRITE)
+              send_client_msg(event.ident, event.data);
+        }
+    }
 }
