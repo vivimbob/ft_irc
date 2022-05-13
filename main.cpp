@@ -36,8 +36,8 @@ int
     Logger::set_loglevel(Logger::Trace);
     Logger().trace() << message;
 
-    // Server(argc, argv);
-    Server serv(atoi(argv[1]), argv[2]);
-    serv.run();
+    Server(argc, argv).run();
+    // Server serv(atoi(argv[1]), argv[2]);
+    // serv.run();
     return 0;
 }

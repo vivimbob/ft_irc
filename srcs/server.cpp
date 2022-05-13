@@ -190,10 +190,10 @@ void
             struct kevent &event = m_event_list[i];
             if (event.ident == (unsigned int)m_listen_fd)
               accept_client();
-            else if (event.filter == EVFILT_READ)
+            else
             {
                 if (event.filter == EVFILT_READ)
-                  receive_client_msg(event.ident);
+                  receive_client_msg(event.ident, event.data);
                 else if(event.filter == EVFILT_WRITE)
                   send_client_msg(event.ident, event.data);
             }
