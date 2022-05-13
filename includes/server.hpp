@@ -2,6 +2,9 @@
 #define SERVER_HPP
 
 #include <string>
+#include <vector>
+#include <vector>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 
 class Server
@@ -12,6 +15,29 @@ class Server
         int m_port;
         std::string m_password;
         sockaddr_in m_sockaddr;
+        struct m_client_info
+        {
+            sockaddr_in m_client_addr;
+            int m_client_fd;
+            std::vector<unsigned char> m_send_buffer;
+            std::vector<unsigned char> m_recv_buffer;
+
+            sockaddr_in m_get_client_addr()
+            {
+                return m_client_addr;
+            }
+
+            int m_get_socket()
+            {
+                return m_client_fd;
+            }
+
+            char* m_get_client_IP()
+            {
+                return inet_ntoa(m_client_addr.sin_addr);
+            }
+        };
+        std::map<int, m_client_info*> m_client_map;
     
     private:
         Server(void);
