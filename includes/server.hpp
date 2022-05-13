@@ -26,6 +26,11 @@ class Server
             std::vector<unsigned char> m_send_buffer;
             std::vector<unsigned char> m_recv_buffer;
 
+            m_client_info(sockaddr_in client_addr, int client_fd) 
+              : m_client_addr(client_addr), m_client_fd(client_fd)
+            {
+            } 
+
             sockaddr_in m_get_client_addr()
             {
                 return m_client_addr;
