@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <vector>
+#include <map>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/event.h>
@@ -65,7 +65,7 @@ class Server
         void accept_client(void);
         void receive_client_msg(unsigned int clientfd, int bytes);
         void send_client_msg(unsigned int clientfd, int bytes);
-        void update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata);
+        void update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
 
     public:
         void run(void);

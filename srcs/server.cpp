@@ -122,7 +122,7 @@ void
 
     m_client_info* client_info = new m_client_info(client_addr, client_fd);
 
-    update_event(client_fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+    update_event(client_fd, EVFILT_WRITE | EV_DISABLE, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
     Logger().trace() << "accept client " << client_fd;
@@ -138,13 +138,13 @@ void
 
     if (recv_data_len == 0)
     {
+        // 틀만 잡음. 추후 구현
         Logger().trace() << "Close client " << clientfd;
-        return ;
     }
     else if (recv_data_len < 0)
     {
+        // 틀만 잡음. 추후 구현
         Logger().fatal() << "Disconnect " << clientfd;
-        return ;
     }
     else 
     {
@@ -171,6 +171,7 @@ void
         {
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
+            update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
         }
     }
     else 
@@ -181,10 +182,10 @@ void
 }
 
 void
-    Server::update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata)
+    Server::update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata)
 {
     struct kevent kev;
-	  EV_SET(&kev, ident, filter, flags, fflags, data, udata);
+	  EV_SET(&kev, identity, filter, flags, fflags, data, udata);
 	  kevent(m_kq, &kev, 1, NULL, 0, NULL);
 }
 
@@ -200,11 +201,15 @@ void
         {
             struct kevent &event = m_event_list[i];
             if (event.ident == (unsigned int)m_listen_fd)
-              accept_client();
+                accept_client();
             else if (event.filter == EVFILT_READ)
-              receive_client_msg(event.ident, event.data);
+            {
+                receive_client_msg(event.ident, event.data);
+                update_event(event.ident, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
+                update_event(event.ident, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
+            }
             else if(event.filter == EVFILT_WRITE)
-              send_client_msg(event.ident, event.data);
+                send_client_msg(event.ident, event.data);
         }
     }
 }
