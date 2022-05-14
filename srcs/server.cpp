@@ -107,7 +107,6 @@ void
 void
     Server::accept_client(void)
 {
-    // 추후 client_addr를 다른 곳에서도 쓸 수 있으니 구조체로 빼두는 게 좋을 수도
     sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
     int client_fd = -1;
@@ -120,6 +119,9 @@ void
     }
 
     fcntl(client_fd, F_SETFL, O_NONBLOCK);
+
+    m_client_info* client_info = new m_client_info(client_addr, client_fd);
+
     update_event(client_fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
@@ -129,11 +131,11 @@ void
 void
     Server::receive_client_msg(unsigned int clientfd, int bytes)
 {
-    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
     char* buffer[bytes];
 
     bzero(buffer, bytes);
     ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
+    
     if (recv_data_len == 0)
     {
         Logger().trace() << "Close client " << clientfd;
@@ -146,6 +148,10 @@ void
     }
     else 
     {
+        size_t temp_buff_size = m_client_map[clientfd]->m_recv_buffer.size();
+        std::vector<unsigned char>::iterator ite = m_client_map[clientfd]->m_recv_buffer.end();
+        m_client_map[clientfd]->m_recv_buffer.reserve(temp_buff_size + bytes);
+        m_client_map[clientfd]->m_recv_buffer.insert(ite, &buffer[0], &buffer[bytes]);
         Logger().trace() << "Handle Request ";
     }
 }
@@ -153,14 +159,20 @@ void
 void
     Server::send_client_msg(unsigned int clientfd, int bytes)
 {
-    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
-    char* buffer[1400];
+    std::vector<unsigned char> send_buffer = m_client_map[clientfd]->m_send_buffer;
+    ssize_t send_data_len = send(clientfd, send_buffer.data(), send_buffer.size(), 0);
 
-    ssize_t send_data_len = send(clientfd, buffer, sizeof(buffer), 0);
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
-        return ;
+        std::vector<unsigned char>::iterator begin = send_buffer.begin();
+        send_buffer.erase(begin, begin + bytes);
+        Logger().trace() << "Send " << bytes << "bytes from [" << clientfd << "] client";
+        if (send_buffer.empty())
+        {
+            Logger().trace() << "Empty buffer from [" << clientfd << "] client";
+            update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
+        }
     }
     else 
     {
