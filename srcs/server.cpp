@@ -122,8 +122,8 @@ void
 
     m_client_info* client_info = new m_client_info(client_addr, client_fd);
 
-    update_event(client_fd, EVFILT_WRITE | EV_DISABLE, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, NULL);
 
     Logger().trace() << "accept client " << client_fd;
 }
@@ -131,7 +131,7 @@ void
 void
     Server::receive_client_msg(unsigned int clientfd, int bytes)
 {
-    unsigned char* buffer = new unsigned char[bytes];
+    unsigned char *buffer = new unsigned char[bytes];
 
     bzero(buffer, bytes);
     ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
@@ -148,9 +148,15 @@ void
     }
     else 
     {
-        std::vector<unsigned char>::iterator ite = m_client_map[clientfd]->m_recv_buffer.end();
-        m_client_map[clientfd]->m_recv_buffer.insert(ite, &buffer[0], &buffer[bytes]);
-        Logger().trace() << "Handle Request ";
+        m_client_map[clientfd]->m_recv_buffer += (char *)buffer;
+        Logger().trace() << "Recieve Message";
+        {
+            //다 받았을 시
+            Logger().trace() << "Handle Request ";
+            update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
+            update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
+            m_client_map[clientfd]->m_recv_buffer.clear();
+        }
     }
     delete[] buffer;
 }
@@ -158,20 +164,20 @@ void
 void
     Server::send_client_msg(unsigned int clientfd, int bytes)
 {
-    std::vector<unsigned char> send_buffer = m_client_map[clientfd]->m_send_buffer;
-    ssize_t send_data_len = send(clientfd, send_buffer.data(), send_buffer.size(), 0);
+    SendBuffer &send_buffer = m_client_map[clientfd]->m_send_buffer;
+    ssize_t send_data_len = send(clientfd, send_buffer.data() + send_buffer.get_offset(), bytes, 0);
 
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
-        std::vector<unsigned char>::iterator begin = send_buffer.begin();
-        send_buffer.erase(begin, begin + bytes);
+        send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
         Logger().trace() << "Send " << bytes << "bytes from [" << clientfd << "] client";
-        if (send_buffer.empty())
+        if (send_buffer.size() <= send_buffer.get_offset())
         {
+            send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
-            update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
+            update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
         }
     }
     else 
@@ -203,11 +209,7 @@ void
             if (event.ident == (unsigned int)m_listen_fd)
                 accept_client();
             else if (event.filter == EVFILT_READ)
-            {
                 receive_client_msg(event.ident, event.data);
-                update_event(event.ident, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
-                update_event(event.ident, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
-            }
             else if(event.filter == EVFILT_WRITE)
                 send_client_msg(event.ident, event.data);
         }
