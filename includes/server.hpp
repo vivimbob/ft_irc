@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/event.h>
+#include "./sendbuffer.hpp"
 
 #define QUEUE_SIZE 1024
 
@@ -23,8 +24,8 @@ class Server
         {
             sockaddr_in m_client_addr;
             int m_client_fd;
-            std::vector<unsigned char> m_send_buffer;
-            std::vector<unsigned char> m_recv_buffer;
+            SendBuffer m_send_buffer;
+            std::string m_recv_buffer;
 
             m_client_info(sockaddr_in client_addr, int client_fd) 
               : m_client_addr(client_addr), m_client_fd(client_fd)

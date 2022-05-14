@@ -3,17 +3,17 @@
 
 #include <string>
 
-class sendbuffer : public std::string
+class SendBuffer : public std::string
 {
 private:
     unsigned int m_offset;
 public:
-    sendbuffer(void)
+    SendBuffer(void)
     {
         m_offset = 0;
     }
 
-    ~sendbuffer(void);
+    ~SendBuffer(void);
     void    clear()
     {
         this->clear();
