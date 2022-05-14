@@ -107,7 +107,6 @@ void
 void
     Server::accept_client(void)
 {
-    // 추후 client_addr를 다른 곳에서도 쓸 수 있으니 구조체로 빼두는 게 좋을 수도
     sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
     int client_fd = -1;
@@ -120,7 +119,10 @@ void
     }
 
     fcntl(client_fd, F_SETFL, O_NONBLOCK);
-    update_event(client_fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+
+    m_client_info* client_info = new m_client_info(client_addr, client_fd);
+
+    update_event(client_fd, EVFILT_WRITE | EV_DISABLE, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
     Logger().trace() << "accept client " << client_fd;
@@ -129,38 +131,48 @@ void
 void
     Server::receive_client_msg(unsigned int clientfd, int bytes)
 {
-    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
-    char* buffer[bytes];
+    unsigned char* buffer = new unsigned char[bytes];
 
     bzero(buffer, bytes);
     ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
+
     if (recv_data_len == 0)
     {
+        // 틀만 잡음. 추후 구현
         Logger().trace() << "Close client " << clientfd;
-        return ;
     }
     else if (recv_data_len < 0)
     {
+        // 틀만 잡음. 추후 구현
         Logger().fatal() << "Disconnect " << clientfd;
-        return ;
     }
     else 
     {
+        std::vector<unsigned char>::iterator ite = m_client_map[clientfd]->m_recv_buffer.end();
+        m_client_map[clientfd]->m_recv_buffer.insert(ite, &buffer[0], &buffer[bytes]);
         Logger().trace() << "Handle Request ";
     }
+    delete[] buffer;
 }
 
 void
     Server::send_client_msg(unsigned int clientfd, int bytes)
 {
-    // 틀만 잡아 놓음 -> 추후 로직 추가해야.
-    char* buffer[1400];
+    std::vector<unsigned char> send_buffer = m_client_map[clientfd]->m_send_buffer;
+    ssize_t send_data_len = send(clientfd, send_buffer.data(), send_buffer.size(), 0);
 
-    ssize_t send_data_len = send(clientfd, buffer, sizeof(buffer), 0);
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
-        return ;
+        std::vector<unsigned char>::iterator begin = send_buffer.begin();
+        send_buffer.erase(begin, begin + bytes);
+        Logger().trace() << "Send " << bytes << "bytes from [" << clientfd << "] client";
+        if (send_buffer.empty())
+        {
+            Logger().trace() << "Empty buffer from [" << clientfd << "] client";
+            update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
+            update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
+        }
     }
     else 
     {
@@ -170,10 +182,10 @@ void
 }
 
 void
-    Server::update_event(int ident, short filter, u_short flags, u_int fflags, int data, void *udata)
+    Server::update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata)
 {
     struct kevent kev;
-	  EV_SET(&kev, ident, filter, flags, fflags, data, udata);
+	  EV_SET(&kev, identity, filter, flags, fflags, data, udata);
 	  kevent(m_kq, &kev, 1, NULL, 0, NULL);
 }
 
@@ -189,11 +201,15 @@ void
         {
             struct kevent &event = m_event_list[i];
             if (event.ident == (unsigned int)m_listen_fd)
-              accept_client();
+                accept_client();
             else if (event.filter == EVFILT_READ)
-              receive_client_msg(event.ident, event.data);
+            {
+                receive_client_msg(event.ident, event.data);
+                update_event(event.ident, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
+                update_event(event.ident, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
+            }
             else if(event.filter == EVFILT_WRITE)
-              send_client_msg(event.ident, event.data);
+                send_client_msg(event.ident, event.data);
         }
     }
 }
