@@ -131,11 +131,11 @@ void
 void
     Server::receive_client_msg(unsigned int clientfd, int bytes)
 {
-    char* buffer[bytes];
+    unsigned char* buffer = new unsigned char[bytes];
 
     bzero(buffer, bytes);
     ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
-    
+
     if (recv_data_len == 0)
     {
         Logger().trace() << "Close client " << clientfd;
@@ -148,12 +148,11 @@ void
     }
     else 
     {
-        size_t temp_buff_size = m_client_map[clientfd]->m_recv_buffer.size();
         std::vector<unsigned char>::iterator ite = m_client_map[clientfd]->m_recv_buffer.end();
-        m_client_map[clientfd]->m_recv_buffer.reserve(temp_buff_size + bytes);
         m_client_map[clientfd]->m_recv_buffer.insert(ite, &buffer[0], &buffer[bytes]);
         Logger().trace() << "Handle Request ";
     }
+    delete[] buffer;
 }
 
 void
