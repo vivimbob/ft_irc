@@ -159,6 +159,7 @@ void
             errno = 0;
         else
             disconnect_client(clientfd);
+
     }
 }
 
@@ -203,6 +204,7 @@ void
             errno = 0;
         else
             disconnect_client(clientfd);
+
     }
 }
 
