@@ -158,7 +158,7 @@ void
         Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
         if (errno == EINTR || errno == EAGAIN)
             errno = 0;
-        else
+        // else
             //disconnect client;
     }
 
@@ -204,7 +204,7 @@ void
         Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
         if (errno == EINTR || errno == EAGAIN)
             errno = 0;
-        else
+        // else
             //disconnect client;
     }
 }
