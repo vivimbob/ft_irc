@@ -126,6 +126,8 @@ void
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, NULL);
 
+    m_client_map.insert(std::pair<int, m_client_info*>(client_fd, client_info));
+
     Logger().trace() << "accept client " << client_fd;
 }
 
@@ -183,15 +185,14 @@ void
         attempt_data_len = available_bytes;
 
     ssize_t send_data_len = send(clientfd, send_buffer.data() + send_buffer.get_offset(), attempt_data_len, 0);
-
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
         send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
-        Logger().trace() << "Send " << send_data_len << "bytes from [" << clientfd << "] client";
+        Logger().trace() << "Send " << send_data_len << " bytes from [" << clientfd << "] client";
         if (send_buffer.size() <= send_buffer.get_offset())
         {
-            send_buffer.clear();
+            // send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
