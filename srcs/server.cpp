@@ -129,17 +129,18 @@ void
 }
 
 void
-    Server::receive_client_msg(unsigned int clientfd, int bytes)
+    Server::receive_client_msg(unsigned int clientfd, int data_len)
 {
-    unsigned char *buffer = new unsigned char[bytes];
+    char *buffer = read_buffer;
+    if (data_len <= IPV4_MTU_MIN)
+      data_len = IPV4_MTU_MAX;
 
-    bzero(buffer, bytes);
-    ssize_t recv_data_len = recv(clientfd, buffer, sizeof(buffer), 0);
+    ssize_t recv_data_len = recv(clientfd, buffer, data_len, 0);
 
     if (recv_data_len > 0) 
     {
-        m_client_map[clientfd]->m_recv_buffer += (char *)buffer;
-        Logger().trace() << "Recieve Message";
+        m_client_map[clientfd]->m_recv_buffer += buffer;
+        Logger().trace() << "Receive Message";
         {
             //다 받았을 시
             Logger().trace() << "Handle Request ";
@@ -165,16 +166,31 @@ void
 }
 
 void
-    Server::send_client_msg(unsigned int clientfd, int bytes)
+    Server::send_client_msg(unsigned int clientfd, int available_bytes)
 {
     SendBuffer &send_buffer = m_client_map[clientfd]->m_send_buffer;
-    ssize_t send_data_len = send(clientfd, send_buffer.data() + send_buffer.get_offset(), bytes, 0);
+    int remain_data_len = 0;
+    int attempt_data_len = 0;
+
+    if (available_bytes > IPV4_MTU_MAX)
+        available_bytes = IPV4_MTU_MAX;
+    else if (available_bytes == 0)
+        available_bytes = IPV4_MTU_MIN;
+
+    remain_data_len = send_buffer.size() - send_buffer.get_offset();
+
+    if (available_bytes >= remain_data_len)
+        attempt_data_len = remain_data_len;
+    else
+        attempt_data_len = available_bytes;
+
+    ssize_t send_data_len = send(clientfd, send_buffer.data() + send_buffer.get_offset(), attempt_data_len, 0);
 
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
         send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
-        Logger().trace() << "Send " << bytes << "bytes from [" << clientfd << "] client";
+        Logger().trace() << "Send " << send_data_len << "bytes from [" << clientfd << "] client";
         if (send_buffer.size() <= send_buffer.get_offset())
         {
             send_buffer.clear();

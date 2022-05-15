@@ -10,6 +10,8 @@
 #include "./sendbuffer.hpp"
 
 #define QUEUE_SIZE 1024
+#define IPV4_MTU_MAX 65535
+#define IPV4_MTU_MIN 68
 
 class Server
 {
@@ -19,6 +21,7 @@ class Server
         int m_port;
         std::string m_password;
         sockaddr_in m_sockaddr;
+        char read_buffer[IPV4_MTU_MAX];
         struct kevent m_event_list[QUEUE_SIZE];
         struct m_client_info
         {
