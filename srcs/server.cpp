@@ -137,17 +137,7 @@ void
 
     ssize_t recv_data_len = recv(clientfd, buffer, data_len, 0);
 
-    if (recv_data_len == 0)
-    {
-        // 틀만 잡음. 추후 구현
-        Logger().trace() << "Close client " << clientfd;
-    }
-    else if (recv_data_len < 0)
-    {
-        // 틀만 잡음. 추후 구현
-        Logger().fatal() << "Disconnect " << clientfd;
-    }
-    else 
+    if (recv_data_len > 0) 
     {
         m_client_map[clientfd]->m_recv_buffer += buffer;
         Logger().trace() << "Receive Message";
@@ -159,6 +149,20 @@ void
             m_client_map[clientfd]->m_recv_buffer.clear();
         }
     }
+    else if (recv_data_len == 0)
+    {
+        Logger().trace() << "Disconnect client " << clientfd;
+    }
+    else
+    {
+        Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
+        if (errno == EINTR || errno == EAGAIN)
+            errno = 0;
+        else
+            //disconnect client;
+    }
+
+    delete[] buffer;
 }
 
 void
@@ -195,10 +199,13 @@ void
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
         }
     }
-    else 
+    else
     {
-        Logger().fatal() << "Disconnect ";
-        return ;
+        Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
+        if (errno == EINTR || errno == EAGAIN)
+            errno = 0;
+        else
+            //disconnect client;
     }
 }
 
