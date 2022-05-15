@@ -70,6 +70,7 @@ class Server
         void receive_client_msg(unsigned int clientfd, int bytes);
         void send_client_msg(unsigned int clientfd, int bytes);
         void update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
+        void disconnect_client(unsigned int clientfd);
 
     public:
         void run(void);
