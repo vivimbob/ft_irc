@@ -10,6 +10,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 Server::Server(int argc, char **argv)
     : m_kq(-1),
@@ -150,19 +151,16 @@ void
         }
     }
     else if (recv_data_len == 0)
-    {
-        Logger().trace() << "Disconnect client " << clientfd;
-    }
+        disconnect_client(clientfd);
     else
     {
         Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
         if (errno == EINTR || errno == EAGAIN)
             errno = 0;
-        // else
-            //disconnect client;
-    }
+        else
+            disconnect_client(clientfd);
 
-    delete[] buffer;
+    }
 }
 
 void
@@ -204,8 +202,9 @@ void
         Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
         if (errno == EINTR || errno == EAGAIN)
             errno = 0;
-        // else
-            //disconnect client;
+        else
+            disconnect_client(clientfd);
+
     }
 }
 
@@ -236,4 +235,17 @@ void
                 send_client_msg(event.ident, event.data);
         }
     }
+}
+
+void
+    Server::disconnect_client(unsigned int clientfd)
+{
+    Logger().trace() << m_client_map[clientfd]->m_get_client_IP() << " Client disconnect";
+    update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+    update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    
+    m_client_info *client = m_client_map[clientfd];
+    m_client_map.erase(clientfd);
+    delete client;
+    close(clientfd);
 }
