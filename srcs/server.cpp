@@ -192,7 +192,8 @@ void
         Logger().trace() << "Send " << send_data_len << " bytes from [" << clientfd << "] client";
         if (send_buffer.size() <= send_buffer.get_offset())
         {
-            // send_buffer.clear();
+            if (send_buffer.size())
+                send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
@@ -213,8 +214,8 @@ void
     Server::update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata)
 {
     struct kevent kev;
-	  EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-	  kevent(m_kq, &kev, 1, NULL, 0, NULL);
+	EV_SET(&kev, identity, filter, flags, fflags, data, udata);
+	kevent(m_kq, &kev, 1, NULL, 0, NULL);
 }
 
 void
@@ -241,7 +242,8 @@ void
 void
     Server::disconnect_client(unsigned int clientfd)
 {
-    Logger().trace() << m_client_map[clientfd]->m_get_client_IP() << " Client disconnect";
+    Logger().trace() << "Client disconnect IP: " << m_client_map[clientfd]->m_get_client_IP()
+    << " FD: " << m_client_map[clientfd]->m_get_socket();
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
