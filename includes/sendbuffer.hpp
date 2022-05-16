@@ -8,10 +8,12 @@ class SendBuffer : public std::string
     private:
         unsigned int m_offset;
         
+        SendBuffer(const SendBuffer& copy);
+        SendBuffer &operator=(const SendBuffer& copy);
     public:
         SendBuffer(void)
+            : m_offset(0)
         {
-            m_offset = 0;
         }
 
         ~SendBuffer(void)
