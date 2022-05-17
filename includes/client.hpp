@@ -3,7 +3,9 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <vector>
 #include "sendbuffer.hpp"
+#include "IRCMessage.hpp"
 
 class Client
 {
@@ -15,6 +17,7 @@ class Client
     std::string m_password;
     std::string	m_nickname;
 		std::string	m_username;
+    std::vector<IRCMessage>m_commands;
 
     friend class Server;
 
