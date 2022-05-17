@@ -1,5 +1,6 @@
 #include "../includes/server.hpp"
 #include "../includes/logger.hpp"
+#include "../includes/client.hpp"
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -121,12 +122,12 @@ void
 
     fcntl(client_fd, F_SETFL, O_NONBLOCK);
 
-    m_client_info* client_info = new m_client_info(client_addr, client_fd);
+    Client* client_info = new Client(client_addr, client_fd);
 
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, NULL);
 
-    m_client_map.insert(std::pair<int, m_client_info*>(client_fd, client_info));
+    m_client_map.insert(std::pair<int, Client*>(client_fd, client_info));
 
     Logger().trace() << "accept client " << client_fd;
 }
@@ -134,7 +135,7 @@ void
 void
     Server::receive_client_msg(unsigned int clientfd, int data_len)
 {
-    char *buffer = read_buffer;
+    char *buffer = m_read_buffer;
     if (data_len <= IPV4_MTU_MIN)
       data_len = IPV4_MTU_MAX;
 
@@ -247,7 +248,7 @@ void
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
-    m_client_info *client = m_client_map[clientfd];
+    Client *client = m_client_map[clientfd];
     m_client_map.erase(clientfd);
     delete client;
     close(clientfd);
