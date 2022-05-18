@@ -11,35 +11,98 @@ Channel::~Channel()
 {
 }
 
-const
-  std::string &Channel::get_channel_name() const
+const std::string&
+  Channel::m_get_channel_name() const
 {
   return m_channel_name;
 }
 
-const
-  std::string &Channel::get_channel_topic() const
+const std::string&
+  Channel::m_get_channel_topic() const
 {
   return m_channel_topic;
 }
 
+const std::string&
+  Channel::m_get_channel_mode() const
+{
+  return m_channel_mode;
+}
+
+const std::string& 
+  Channel::m_get_user_mode(Client &client)
+{
+  return m_user_mode[client.m_get_socket()];
+}
+
 void
-  Channel::set_channel_name(const std::string &name)
+  Channel::m_set_channel_name(const std::string &name)
 {
   this->m_channel_name = name;
 }
 
 void
-  Channel::set_channel_topic(const std::string &topic)
+  Channel::m_set_channel_topic(const std::string &topic)
 {
   this->m_channel_topic = topic;
 }
 
 void
-  Channel::display_channel_info()
+  Channel::m_set_channel_mode(const std::string &chan_mode)
+{
+  this->m_channel_mode = chan_mode;
+}
+
+void
+  Channel::m_set_user_mode(Client &client, std::string &user_mode)
+{
+  m_user_mode[client.m_get_socket()] = user_mode;
+}
+
+void
+  Channel::m_display_channel_info()
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's name : " << this->m_channel_name;
   Logger().info() << "channel's init time : " << this->m_channel_init_time;
   Logger().info() << "channel's topic : " << this->m_channel_topic;
 }
+
+bool
+  Channel::m_is_empty() const
+{
+  return m_user_lists.empty();
+}
+
+void
+  Channel::m_add_operator(Client &client)
+{
+  if (m_user_mode[client.m_get_socket()] == "+o")
+    m_operator_lists.push_back(&client);
+}
+
+void
+  Channel::m_delete_operator(Client &client)
+{
+  if (m_user_mode[client.m_get_socket()] == "-o")
+  {
+    size_t i;
+    for (i = 0; i < m_operator_lists.size(); ++i)
+      if (m_operator_lists[i] == &client)
+        break;
+    m_operator_lists.erase(m_operator_lists.begin() + i);
+  }
+}
+
+void
+  Channel::m_add_user(Client &client)
+{
+  m_user_lists[client.m_get_socket()] = &client;
+}
+
+void
+  Channel::m_delete_user(Client &client)
+{
+  m_user_lists.erase(m_user_lists.find(client.m_get_socket()));
+}
+
