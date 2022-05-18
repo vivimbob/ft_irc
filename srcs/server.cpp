@@ -143,10 +143,21 @@ void
 
     if (recv_data_len > 0) 
     {
-        m_client_map[clientfd]->m_recv_buffer += buffer;
-        Logger().trace() << "Receive Message";
+        std::string &recv_buffer = m_client_map[clientfd]->m_recv_buffer;
+        recv_buffer += buffer;
+        
+        int position = recv_buffer.find_first_of("\r\n", 0);
+        while (position != std::string::npos)
         {
-            //다 받았을 시
+            m_client_map[clientfd]->m_commands.push(IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
+            recv_buffer.erase(0, position + 2);
+            position = recv_buffer.find_first_of("\r\n", 0);
+        }
+
+        Logger().trace() << "Receive Message";
+
+        if (m_client_map[clientfd]->m_commands.size())
+        {
             Logger().trace() << "Handle Request ";
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
@@ -155,15 +166,6 @@ void
     }
     else if (recv_data_len == 0)
         disconnect_client(clientfd);
-    else
-    {
-        Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
-        if (errno == EINTR || errno == EAGAIN)
-            errno = 0;
-        else
-            disconnect_client(clientfd);
-
-    }
 }
 
 void
@@ -199,15 +201,6 @@ void
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
         }
-    }
-    else
-    {
-        Logger().error() << "Send client occur error :" << errno << " :" << strerror(errno);
-        if (errno == EINTR || errno == EAGAIN)
-            errno = 0;
-        else
-            disconnect_client(clientfd);
-
     }
 }
 
