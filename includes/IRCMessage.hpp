@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#define MESSAGE_MEX_LEN 512
+
 class IRCMessage
 {
 private:

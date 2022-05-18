@@ -6,15 +6,20 @@ IRCMessage::IRCMessage(unsigned int clientfd, const std::string &message)
       m_position(0),
       m_valid_message(true)
 {
-    int crlf_pos = m_message.find("\r\n");
+}
 
-    if (crlf_pos == std::string::npos)
-    {
-        Logger().error() << "Client send message whitout CRLF";
-        m_valid_message = false;
-        return;
-    }
-    m_message.erase(m_message.begin() + crlf_pos, m_message.end());
+int
+    IRCMessage::next_position(void)
+{
+    m_position = m_message.find(' ', m_position);
+    if (m_position == std::string::npos)
+        m_position = m_message.size();
+    return m_position;
+}
+
+void
+    IRCMessage::parse_message(void)
+{
     if (m_message.size() > m_position && m_message[0] == ':')
     {
         m_prefix.assign(m_message.begin() + 1, m_message.begin() + next_position());
@@ -24,21 +29,13 @@ IRCMessage::IRCMessage(unsigned int clientfd, const std::string &message)
     {
         m_command.assign(m_message.begin() + m_position, m_message.begin() + next_position());
         m_position = m_message.find_first_not_of(' ', m_position);
+        std::string::iterator it = m_command.begin();
+        std::string::iterator ite = m_command.end();
+        for (; it != ite; ++it)
+            if (*it >= 'a' && *it <= 'z')
+                *it -= 32;
     }
     //command가 유효한지 체크
-}
-
-int
-    IRCMessage::next_position(void)
-{
-    m_position = m_message.find(' ', m_position);
-    if (m_position == std::string::npos)
-        m_position = m_message.size();
-}
-
-void
-    IRCMessage::parse_message(void)
-{
     while (m_message.size() > m_position)
     {
         if (m_message[m_position] == ':')
@@ -77,4 +74,8 @@ const std::vector<std::string>  &IRCMessage::get_params(void) const
 const bool    &IRCMessage::is_valid_message(void) const
 {
     return m_valid_message;
+}
+
+IRCMessage::~IRCMessage(void)
+{
 }
