@@ -133,6 +133,22 @@ void
 }
 
 void
+    Server::handle_messages(Client &client)
+{
+    while (client.m_commands.size())
+    {
+        IRCMessage *message = client.m_commands.front();
+        client.m_commands.pop();
+        message->parse_message();
+        if (m_command_map.count(message->get_command()))
+            (*m_command_map[message->get_command()])();
+        else
+            ;//ERR_UNKNOWNCOMMAND
+        delete message;
+    }
+}
+
+void
     Server::receive_client_msg(unsigned int clientfd, int data_len)
 {
     char *buffer = m_read_buffer;
@@ -158,7 +174,8 @@ void
 
         if (m_client_map[clientfd]->m_commands.size())
         {
-            Logger().trace() << "Handle Request ";
+            Logger().trace() << "Handle Messages ";
+            handle_messages(*m_client_map[clientfd]);
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
             m_client_map[clientfd]->m_recv_buffer.clear();

@@ -29,6 +29,11 @@ void
     {
         m_command.assign(m_message.begin() + m_position, m_message.begin() + next_position());
         m_position = m_message.find_first_not_of(' ', m_position);
+        std::string::iterator it = m_command.begin();
+        std::string::iterator ite = m_command.end();
+        for (; it != ite; ++it)
+            if (*it >= 'a' && *it <= 'z')
+                *it -= 32;
     }
     //command가 유효한지 체크
     while (m_message.size() > m_position)
