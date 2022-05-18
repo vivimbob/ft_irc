@@ -133,6 +133,20 @@ void
 }
 
 void
+    Server::handle_messages(Client &client)
+{
+    while (client.m_commands.size())
+    {
+        IRCMessage *message = client.m_commands.front();
+        client.m_commands.pop();
+        message->parse_message();
+        if (message->is_valid_message())
+            ;//명령어 map 여기서 호출하면 될 듯
+        delete message;
+    }
+}
+
+void
     Server::receive_client_msg(unsigned int clientfd, int data_len)
 {
     char *buffer = m_read_buffer;
@@ -158,7 +172,8 @@ void
 
         if (m_client_map[clientfd]->m_commands.size())
         {
-            Logger().trace() << "Handle Request ";
+            Logger().trace() << "Handle Messages ";
+            handle_messages(*m_client_map[clientfd]);
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
             m_client_map[clientfd]->m_recv_buffer.clear();
