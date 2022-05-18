@@ -20,8 +20,6 @@ int
 void
     IRCMessage::parse_message(void)
 {
-    if (m_message.size() > MESSAGE_MEX_LEN - 2)
-        ;
     if (m_message.size() > m_position && m_message[0] == ':')
     {
         m_prefix.assign(m_message.begin() + 1, m_message.begin() + next_position());
