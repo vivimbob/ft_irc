@@ -140,8 +140,10 @@ void
         IRCMessage *message = client.m_commands.front();
         client.m_commands.pop();
         message->parse_message();
-        if (message->is_valid_message())
-            ;//명령어 map 여기서 호출하면 될 듯
+        if (m_command_map.count(message->get_command()))
+            (*m_command_map[message->get_command()])();
+        else
+            ;//ERR_UNKNOWNCOMMAND
         delete message;
     }
 }
