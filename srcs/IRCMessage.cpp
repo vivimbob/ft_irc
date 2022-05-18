@@ -6,26 +6,6 @@ IRCMessage::IRCMessage(unsigned int clientfd, const std::string &message)
       m_position(0),
       m_valid_message(true)
 {
-    int crlf_pos = m_message.find("\r\n");
-
-    if (crlf_pos == std::string::npos)
-    {
-        Logger().error() << "Client send message whitout CRLF";
-        m_valid_message = false;
-        return;
-    }
-    m_message.erase(m_message.begin() + crlf_pos, m_message.end());
-    if (m_message.size() > m_position && m_message[0] == ':')
-    {
-        m_prefix.assign(m_message.begin() + 1, m_message.begin() + next_position());
-        m_position = m_message.find_first_not_of(' ', m_position);
-    }
-    if (m_message.size() > m_position)
-    {
-        m_command.assign(m_message.begin() + m_position, m_message.begin() + next_position());
-        m_position = m_message.find_first_not_of(' ', m_position);
-    }
-    //command가 유효한지 체크
 }
 
 int
@@ -40,6 +20,17 @@ int
 void
     IRCMessage::parse_message(void)
 {
+    if (m_message.size() > m_position && m_message[0] == ':')
+    {
+        m_prefix.assign(m_message.begin() + 1, m_message.begin() + next_position());
+        m_position = m_message.find_first_not_of(' ', m_position);
+    }
+    if (m_message.size() > m_position)
+    {
+        m_command.assign(m_message.begin() + m_position, m_message.begin() + next_position());
+        m_position = m_message.find_first_not_of(' ', m_position);
+    }
+    //command가 유효한지 체크
     while (m_message.size() > m_position)
     {
         if (m_message[m_position] == ':')
