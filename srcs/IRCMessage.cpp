@@ -34,6 +34,7 @@ int
     m_position = m_message.find(' ', m_position);
     if (m_position == std::string::npos)
         m_position = m_message.size();
+    return m_position;
 }
 
 void
@@ -77,4 +78,8 @@ const std::vector<std::string>  &IRCMessage::get_params(void) const
 const bool    &IRCMessage::is_valid_message(void) const
 {
     return m_valid_message;
+}
+
+IRCMessage::~IRCMessage(void)
+{
 }

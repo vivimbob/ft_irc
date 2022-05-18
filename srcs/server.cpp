@@ -149,7 +149,8 @@ void
         int position = recv_buffer.find_first_of("\r\n", 0);
         while (position != std::string::npos)
         {
-            m_client_map[clientfd]->m_commands.push(IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
+            m_client_map[clientfd]->m_commands.push(new IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
+            // IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position));
             recv_buffer.erase(0, position + 2);
             position = recv_buffer.find_first_of("\r\n", 0);
         }

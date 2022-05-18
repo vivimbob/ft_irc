@@ -17,7 +17,7 @@ class Client
     std::string m_password;
     std::string	m_nickname;
 		std::string	m_username;
-    std::queue<IRCMessage>m_commands;
+    std::queue<IRCMessage *>m_commands;
 
     friend class Server;
 

@@ -9,6 +9,11 @@ Client::Client(sockaddr_in client_addr, int client_fd)
 
 Client::~Client()
 {
+  while (m_commands.size())
+  {
+    delete m_commands.front();
+    m_commands.pop();
+  }
 }
 
 sockaddr_in
