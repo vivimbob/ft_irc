@@ -1,6 +1,7 @@
 #include "../includes/server.hpp"
 #include "../includes/logger.hpp"
 #include "../includes/client.hpp"
+#include "../includes/utils.hpp"
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -13,6 +14,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+Server::Command_Map Server::m_command_map = Server::initial_command_map();
+
 Server::Server(int argc, char **argv)
     : m_kq(-1),
       m_listen_fd(-1),
@@ -20,7 +23,7 @@ Server::Server(int argc, char **argv)
 {
     if (argc != 3)
     {
-        Logger().fatal() << "Usage: " << argv[0] << " <port> <password>";
+        Logger().fatal() << "Usage :" << argv[0] << " <port> <password>";
         exit(EXIT_FAILURE);
     }
     m_port = atoi(argv[1]);
@@ -76,7 +79,7 @@ void
         Logger().fatal() << "Failed to bind to port and address" << m_port << ". errno: " << errno;
         exit(EXIT_FAILURE);
     }
-    Logger().trace() << "Bind Port: " << m_port << " IP: " <<  inet_ntoa(m_sockaddr.sin_addr);
+    Logger().trace() << "Bind Port :" << m_port << " IP :" <<  inet_ntoa(m_sockaddr.sin_addr);
 }
 
 void
@@ -89,7 +92,7 @@ void
     }
     Logger().trace() << "Listen on socket";
     fcntl(m_listen_fd, F_SETFL, O_NONBLOCK);
-    Logger().trace() << "socket set nonblock";
+    Logger().trace() << "Socket set nonblock";
 }
 
 void
@@ -129,7 +132,7 @@ void
 
     m_client_map.insert(std::pair<int, Client*>(client_fd, client_info));
 
-    Logger().trace() << "accept client " << client_fd;
+    Logger().trace() << "Accept client " << client_fd;
 }
 
 void
@@ -141,9 +144,9 @@ void
         client.m_commands.pop();
         message->parse_message();
         if (m_command_map.count(message->get_command()))
-            (*m_command_map[message->get_command()])();
+            m_command_map[message->get_command()](&client, message);
         else
-            ;//ERR_UNKNOWNCOMMAND
+            Logger().error() << "ERR_UNKNOWNCOMMAND <" << message->get_command() << "> :Unknown command";//ERR_UNKNOWNCOMMAND
         delete message;
     }
 }
@@ -174,7 +177,7 @@ void
 
         if (m_client_map[clientfd]->m_commands.size())
         {
-            Logger().trace() << "Handle Messages ";
+            Logger().trace() << "Handle Messages";
             handle_messages(*m_client_map[clientfd]);
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
@@ -253,8 +256,8 @@ void
 void
     Server::disconnect_client(unsigned int clientfd)
 {
-    Logger().trace() << "Client disconnect IP: " << m_client_map[clientfd]->m_get_client_IP()
-    << " FD: " << m_client_map[clientfd]->m_get_socket();
+    Logger().trace() << "Client disconnect IP :" << m_client_map[clientfd]->m_get_client_IP()
+    << " FD :" << m_client_map[clientfd]->m_get_socket();
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
@@ -262,4 +265,76 @@ void
     m_client_map.erase(clientfd);
     delete client;
     close(clientfd);
+}
+
+Server::Command_Map
+    Server::initial_command_map()
+{
+    Server::Command_Map temp_map;
+
+    temp_map.insert(std::make_pair("PASS", &Server::process_pass_command));
+    temp_map.insert(std::make_pair("NICK", &Server::process_nick_command));
+    temp_map.insert(std::make_pair("USER", &Server::process_user_command));
+
+    return (temp_map);
+}
+
+void
+    Server::process_pass_command(Client &client, IRCMessage &msg)
+{
+    if (!msg.get_params().empty())
+        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+    if (client.m_is_nick_registered() && client.m_is_user_registered())
+        Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+    client.m_set_password(msg.get_params()[0]);
+    Logger().trace() << "Set password :" << client.m_get_password();
+}
+
+void
+    Server::process_nick_command(Client &client, IRCMessage &msg)
+{
+    if (!msg.get_params().empty())
+        Logger().error() << "ERR_NONICKNAMEGIVEN :No nickname given";
+    
+    const std::string &nickname = msg.get_params()[0];
+
+    if (!utils::is_nickname_vaild(nickname))
+        Logger().error() << "ERR_ERRONEUSNICKNAME <" << nickname << "> :Erroneus nickname";
+
+    std::map<int, Client*>::iterator it = m_client_map.begin();
+    for (; it != m_client_map.end(); ++it)
+    {
+        if (it->second->m_nickname == nickname)
+        {
+            Logger().error() << "ERR_NICKNAMEINUSE <" << nickname << "> :Nickname is already in use";
+            // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
+        }
+    }
+
+    if (client.m_is_nick_registered() && client.m_is_user_registered())
+    {
+        // msg 자기 자신 및 모든 클라이언트에게 전송
+    }
+    client.m_set_nickname(nickname);
+    Logger().trace() << "Set nickname :" << nickname;
+    client.m_set_nick_registered(true);
+    Logger().trace() << "Register nickname :" << nickname;
+    m_client_map.insert(std::pair<int, Client*>(client.m_get_socket(), &client));
+
+}
+
+void
+  process_user_command(Client &client, IRCMessage &msg)
+{
+    if (msg.get_params().size() != 4)
+        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Nickname is already in use";
+
+    if (client.m_is_nick_registered() && client.m_is_user_registered())
+        Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+
+    const std::string &username = msg.get_params()[0];
+    client.m_set_username(username);
+    Logger().trace() << "Set username :" << username;
+    client.m_set_user_registered(true);
+    Logger().trace() << "Register username :" << username;
 }

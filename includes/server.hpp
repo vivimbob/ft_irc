@@ -25,7 +25,8 @@ class Server
         char m_read_buffer[IPV4_MTU_MAX];
         struct kevent m_event_list[QUEUE_SIZE];
         std::map<int, Client*> m_client_map;
-        std::map<std::string, int (*)(void)> m_command_map;
+        typedef std::map<std::string, void (*)(Client*, IRCMessage*)> Command_Map;
+        static Command_Map m_command_map;
     
     private:
         Server(void);
@@ -47,6 +48,13 @@ class Server
         void update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
         void disconnect_client(unsigned int clientfd);
         void handle_messages(Client &client);
+
+        static Command_Map initial_command_map(void);
+
+        void process_pass_command(Client &client, IRCMessage &msg);
+        void process_nick_command(Client &client, IRCMessage &msg);
+        void process_user_command(Client &client, IRCMessage &msg);
+
     public:
         void run(void);
 };
