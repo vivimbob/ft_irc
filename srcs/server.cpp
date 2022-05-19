@@ -144,7 +144,7 @@ void
         client.m_commands.pop();
         message->parse_message();
         if (m_command_map.count(message->get_command()))
-            m_command_map[message->get_command()](&client, message);
+            m_command_map[message->get_command()](client, *message);
         else
             Logger().error() << "ERR_UNKNOWNCOMMAND <" << message->get_command() << "> :Unknown command";//ERR_UNKNOWNCOMMAND
         delete message;
