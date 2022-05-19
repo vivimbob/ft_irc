@@ -4,11 +4,12 @@ CC      = c++
 CXXFLAGS  = -std=c++98
 
 SRCS    = main.cpp\
-        srcs/logger.cpp\
-		srcs/server.cpp\
-		srcs/client.cpp\
 		srcs/channel.cpp\
-		srcs/IRCMessage.cpp
+		srcs/client.cpp\
+		srcs/IRCMessage.cpp\
+    srcs/logger.cpp\
+		srcs/server.cpp\
+		srcs/utils.cpp
 
 OBJS    = $(SRCS:%.cpp=%.o)
 
