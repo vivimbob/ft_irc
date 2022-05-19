@@ -282,10 +282,17 @@ Server::Command_Map
 void
     Server::process_pass_command(Client &client, IRCMessage &msg)
 {
-    if (!msg.get_params().empty())
+    if (!msg.get_params().size())
+    {
+        // reply
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+        return ;
+    }
     if (client.m_is_nick_registered() && client.m_is_user_registered())
+    {
+        //reply
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+    }
     client.m_set_password(msg.get_params()[0]);
     Logger().trace() << "Set password :" << client.m_get_password();
 }
@@ -293,12 +300,16 @@ void
 void
     Server::process_nick_command(Client &client, IRCMessage &msg)
 {
-    if (!msg.get_params().empty())
+    if (!msg.get_params().size())
+    {
+        //reply
         Logger().error() << "ERR_NONICKNAMEGIVEN :No nickname given";
+        return ;
+    }
     
     const std::string &nickname = msg.get_params()[0];
 
-    if (!utils::is_nickname_vaild(nickname))
+    if (!utils::is_nickname_valid(nickname))
         Logger().error() << "ERR_ERRONEUSNICKNAME <" << nickname << "> :Erroneus nickname";
 
     std::map<int, Client*>::iterator it = m_client_map.begin();
@@ -307,6 +318,7 @@ void
         if (it->second->m_nickname == nickname)
         {
             Logger().error() << "ERR_NICKNAMEINUSE <" << nickname << "> :Nickname is already in use";
+            return ;
             // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
         }
     }
@@ -323,10 +335,14 @@ void
 }
 
 void
-  process_user_command(Client &client, IRCMessage &msg)
+  Server::process_user_command(Client &client, IRCMessage &msg)
 {
     if (msg.get_params().size() != 4)
-        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Nickname is already in use";
+    {
+        //reply
+        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+        return ;
+    }
 
     if (client.m_is_nick_registered() && client.m_is_user_registered())
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";

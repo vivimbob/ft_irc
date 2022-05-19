@@ -6,7 +6,7 @@
 
 namespace utils
 {
-  bool is_nickname_vaild(std::string nick);
+  bool is_nickname_valid(std::string nick);
   bool is_letter(char c);
   bool is_digit(char c);
   bool is_special(char c);
