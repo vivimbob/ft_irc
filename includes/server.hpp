@@ -25,7 +25,7 @@ class Server
         char m_read_buffer[IPV4_MTU_MAX];
         struct kevent m_event_list[QUEUE_SIZE];
         std::map<int, Client*> m_client_map;
-        typedef std::map<std::string, void (*)(Client&, IRCMessage&)> Command_Map;
+        typedef std::map<std::string, void (Server::*)(Client&, IRCMessage&)> Command_Map;
         static Command_Map m_command_map;
     
     private:

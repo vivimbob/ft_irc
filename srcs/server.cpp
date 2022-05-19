@@ -144,7 +144,7 @@ void
         client.m_commands.pop();
         message->parse_message();
         if (m_command_map.count(message->get_command()))
-            m_command_map[message->get_command()](client, *message);
+            (this->*m_command_map[message->get_command()])(client, *message);
         else
             Logger().error() << "ERR_UNKNOWNCOMMAND <" << message->get_command() << "> :Unknown command";//ERR_UNKNOWNCOMMAND
         delete message;
@@ -320,7 +320,6 @@ void
     client.m_set_nick_registered(true);
     Logger().trace() << "Register nickname :" << nickname;
     m_client_map.insert(std::pair<int, Client*>(client.m_get_socket(), &client));
-
 }
 
 void
