@@ -2,6 +2,7 @@
 #include "../includes/logger.hpp"
 #include "../includes/client.hpp"
 #include "../includes/utils.hpp"
+#include "../includes/reply.hpp"
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -206,8 +207,8 @@ void
         attempt_data_len = remain_data_len;
     else
         attempt_data_len = available_bytes;
-
     ssize_t send_data_len = send(clientfd, send_buffer.data() + send_buffer.get_offset(), attempt_data_len, 0);
+
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
@@ -216,7 +217,11 @@ void
         if (send_buffer.size() <= send_buffer.get_offset())
         {
             if (send_buffer.size())
-                send_buffer.clear();
+            {
+            std::cout << "inside if\n";
+            send_buffer.clear();
+            std::cout << "inside if\n";
+            }
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
@@ -280,18 +285,29 @@ Server::Command_Map
 }
 
 void
+    Server::prepare_to_send(Client &client, const std::string &str_msg)
+{
+    SendBuffer &temp_buffer = m_client_map[client.m_get_socket()]->m_send_buffer;
+    temp_buffer.insert(temp_buffer.size(), str_msg);
+    update_event(client.m_get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
+    update_event(client.m_get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, NULL);
+    send_client_msg(client.m_get_socket(), temp_buffer.size());
+}
+
+void
     Server::process_pass_command(Client &client, IRCMessage &msg)
 {
     if (!msg.get_params().size())
     {
-        // reply
+        prepare_to_send(client, msg.err_need_more_params(client, msg.get_command()));
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
         return ;
     }
     if (client.m_is_nick_registered() && client.m_is_user_registered())
     {
-        //reply
+        prepare_to_send(client, msg.err_already_registred(client));
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+        return ;
     }
     client.m_set_password(msg.get_params()[0]);
     Logger().trace() << "Set password :" << client.m_get_password();
@@ -302,7 +318,7 @@ void
 {
     if (!msg.get_params().size())
     {
-        //reply
+        prepare_to_send(client, msg.err_no_nickname_given(client));
         Logger().error() << "ERR_NONICKNAMEGIVEN :No nickname given";
         return ;
     }
@@ -310,22 +326,31 @@ void
     const std::string &nickname = msg.get_params()[0];
 
     if (!utils::is_nickname_valid(nickname))
+    {
+        prepare_to_send(client, msg.err_erroneus_nickname(client, nickname));
         Logger().error() << "ERR_ERRONEUSNICKNAME <" << nickname << "> :Erroneus nickname";
+        return ; 
+    }
 
     std::map<int, Client*>::iterator it = m_client_map.begin();
     for (; it != m_client_map.end(); ++it)
     {
         if (it->second->m_nickname == nickname)
         {
+            prepare_to_send(client, msg.err_nickname_in_use(client, nickname));
             Logger().error() << "ERR_NICKNAMEINUSE <" << nickname << "> :Nickname is already in use";
             return ;
             // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
         }
     }
 
+    std::map<int, Client*>::iterator it = m_client_map.begin();
     if (client.m_is_nick_registered() && client.m_is_user_registered())
     {
-        // msg 자기 자신 및 모든 클라이언트에게 전송
+        for (; it != m_client_map.end(); ++it)
+        {
+            prepare_to_send(*it->second, nickname);
+        }
     }
     client.m_set_nickname(nickname);
     Logger().trace() << "Set nickname :" << nickname;
@@ -339,13 +364,17 @@ void
 {
     if (msg.get_params().size() != 4)
     {
-        //reply
+        prepare_to_send(client, msg.err_need_more_params(client, msg.get_command()));
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
         return ;
     }
 
     if (client.m_is_nick_registered() && client.m_is_user_registered())
+    {
+        prepare_to_send(client, msg.err_already_registred(client));
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+        return ;
+    }
 
     const std::string &username = msg.get_params()[0];
     client.m_set_username(username);

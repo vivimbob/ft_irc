@@ -49,6 +49,8 @@ class Server
         void disconnect_client(unsigned int clientfd);
         void handle_messages(Client &client);
 
+        void prepare_to_send(Client &client, const std::string &str_msg);
+
         static Command_Map initial_command_map(void);
 
         void process_pass_command(Client &client, IRCMessage &msg);
