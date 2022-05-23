@@ -300,13 +300,13 @@ void
 {
     if (!msg.get_params().size())
     {
-        prepare_to_send(client, msg.err_need_more_params(client, msg.get_command()));
+        client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
         return ;
     }
     if (client.m_is_registered())
     {
-        prepare_to_send(client, msg.err_already_registred(client));
+        client.m_send_buffer.append(msg.err_already_registred(client));
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
         return ;
     }
@@ -321,7 +321,7 @@ void
 {
     if (!msg.get_params().size())
     {
-        prepare_to_send(client, msg.err_no_nickname_given(client));
+        client.m_send_buffer.append(msg.err_no_nickname_given(client));
         Logger().error() << "ERR_NONICKNAMEGIVEN :No nickname given";
         return ;
     }
@@ -363,14 +363,14 @@ void
 {
     if (msg.get_params().size() != 4)
     {
-        prepare_to_send(client, msg.err_need_more_params(client, msg.get_command()));
+        client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
         return ;
     }
 
     if (client.m_is_registered())
     {
-        prepare_to_send(client, msg.err_already_registred(client));
+        client.m_send_buffer.append(msg.err_already_registred(client));
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
         return ;
     }
