@@ -22,7 +22,7 @@ class SendBuffer : public std::string
         
         void    clear()
         {
-            this->clear();
+            this->std::string::clear();
             m_offset = 0;
         }
 

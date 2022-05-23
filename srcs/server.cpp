@@ -217,11 +217,7 @@ void
         if (send_buffer.size() <= send_buffer.get_offset())
         {
             if (send_buffer.size())
-            {
-            std::cout << "inside if\n";
-            send_buffer.clear();
-            std::cout << "inside if\n";
-            }
+              send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
@@ -288,7 +284,7 @@ void
     Server::prepare_to_send(Client &client, const std::string &str_msg)
 {
     SendBuffer &temp_buffer = m_client_map[client.m_get_socket()]->m_send_buffer;
-    temp_buffer.insert(temp_buffer.size(), str_msg);
+    temp_buffer.append(str_msg);
     update_event(client.m_get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
     update_event(client.m_get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, NULL);
     send_client_msg(client.m_get_socket(), temp_buffer.size());
@@ -344,7 +340,7 @@ void
         }
     }
 
-    std::map<int, Client*>::iterator it = m_client_map.begin();
+    it = m_client_map.begin();
     if (client.m_is_nick_registered() && client.m_is_user_registered())
     {
         for (; it != m_client_map.end(); ++it)
