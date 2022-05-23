@@ -240,6 +240,12 @@ std::string
 }
 
 std::string
+	IRCMessage::err_bad_chan_mask(Client &client, const std::string &channel)
+{
+	return m_reply_prefix(client, "476") + " " + channel + " :Bad Channel Mask\r\n";
+}
+
+std::string
 	IRCMessage::err_no_privileges(Client &client)
 {
 	return m_reply_prefix(client, "481") + " :Permission Denied- You're not an IRC operator\r\n";
