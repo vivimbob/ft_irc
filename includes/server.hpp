@@ -62,7 +62,11 @@ class Server
         void process_pass_command(Client &client, IRCMessage &msg);
         void process_nick_command(Client &client, IRCMessage &msg);
         void process_user_command(Client &client, IRCMessage &msg);
+        void process_join_command(Client &client, IRCMessage &msg);
         void process_mode_command(Client &client, IRCMessage &msg);
+
+        void join_channel(Client &client, IRCMessage &msg, const std::string &channel_name);
+        void join_channel_by_key(Client &client, IRCMessage &msg, const std::string &key);
 
     public:
         void run(void);

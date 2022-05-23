@@ -281,6 +281,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("PASS", &Server::process_pass_command));
     temp_map.insert(std::make_pair("NICK", &Server::process_nick_command));
     temp_map.insert(std::make_pair("USER", &Server::process_user_command));
+    temp_map.insert(std::make_pair("JOIN", &Server::process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
 
     return (temp_map);
@@ -377,8 +378,53 @@ void
     const std::string &username = msg.get_params()[0];
     client.m_set_username(username);
     Logger().trace() << "Set username :" << username;
-	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
-		m_client_map[client.m_get_nickname()] = &client;
+	  if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
+		    m_client_map[client.m_get_nickname()] = &client;
+}
+
+void
+    Server::process_join_command(Client &client, IRCMessage &msg)
+{
+    if (msg.get_params().size() < 1)
+    {
+        client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));
+        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+        return ;
+    }
+    
+    std::vector<const std::string> splited_channel;
+    std::vector<const std::string>::iterator itc = splited_channel.begin();
+    utils::split_by_comma(splited_channel, msg.get_params()[0]);
+    // key가 있을때
+    if (msg.get_params().size() == 2)
+    {
+        std::vector<const std::string> splited_key;
+        std::vector<const std::string>::iterator itk = splited_key.begin();
+        utils::split_by_comma(splited_key, msg.get_params()[1]);
+        // key개수랑 channel개수랑 다를 때
+        if (splited_channel.size() != splited_key.size())
+        {
+            // 어떤 메시지?
+            Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+            return ;
+        }
+        for (; itc != splited_channel.end(); ++itc, ++itk)
+            // join_channel_by_key(client, *itc, *itk);
+    }
+
+    for (; itc != splited_channel.end(); ++itc)
+        join_channel(client, *itc);
+}
+
+void
+    Server::join_channel(Client &client, IRCMessage &msg, const std::string &channel_name)
+{
+    if (channel_name[0] != '#' && channel_name[0] != '&')
+    {
+        client.m_send_buffer.append(msg.err_bad_chan_mask(client, channel_name));
+        Logger().error() << "ERR_BADCHANMASK <" << msg.get_command() << "> :Not enough parameters";
+        return ;
+    }
 }
 
 void
@@ -386,9 +432,9 @@ void
 {
 	if (msg.get_params().size() < 2)
 	{
-		client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));
-        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
-		return ;
+		  client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));
+      Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+		  return ;
 	}
 	
 	std::string target = msg.get_params()[0];

@@ -36,4 +36,14 @@ namespace utils
 
     return std::memchr(special_lists, c, sizeof(special_lists));
   }
+
+  void
+    split_by_comma(std::vector<const std::string> &splited_params, const std::string &params)
+  {
+    std::istringstream iss(params);
+
+    std::string elem;
+    while (std::getline(iss, elem, ','))
+        splited_params.push_back(elem);
+  }
 }
