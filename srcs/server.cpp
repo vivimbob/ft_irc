@@ -127,8 +127,8 @@ void
 
     Client* client_info = new Client(client_addr, client_fd);
 
-    update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, NULL);
+    update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, client_info);
+    update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, client_info);
 
     m_registration_state_map.insert(std::pair<int, Client*>(client_fd, client_info));
 
