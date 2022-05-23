@@ -164,7 +164,7 @@ void
     if (recv_data_len > 0) 
     {
         std::string &recv_buffer = client.m_recv_buffer;
-        recv_buffer += buffer;
+        recv_buffer.append(buffer, recv_data_len);
         
         int position = recv_buffer.find_first_of("\r\n", 0);
         while (position != std::string::npos)
@@ -183,7 +183,6 @@ void
             handle_messages(client);
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
-            client.m_recv_buffer.clear();
         }
     }
     else if (recv_data_len == 0)
