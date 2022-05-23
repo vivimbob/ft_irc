@@ -19,9 +19,9 @@ class Client
 		std::string	m_username;
     std::queue<IRCMessage *>m_commands;
 
+	bool m_pass_registered:1;
     bool m_nick_registered:1;
     bool m_user_registered:1;
-	bool m_pass_registered:1;
 
     friend class Server;
 

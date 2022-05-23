@@ -18,7 +18,6 @@
 class Server
 {
 	public:
-		typedef std::map<int, Client*> Regstration_State_Map;
 		typedef std::map<std::string, Client*> Client_map;
 		typedef std::map<std::string, Channel*> Channel_map;
         typedef std::map<std::string, void (Server::*)(Client&, IRCMessage&)> Command_Map;
@@ -31,7 +30,6 @@ class Server
         sockaddr_in m_sockaddr;
         char m_read_buffer[IPV4_MTU_MAX];
         struct kevent m_event_list[QUEUE_SIZE];
-		Regstration_State_Map m_registration_state_map;
         Client_map m_client_map;
 		Channel_map m_channel_map;
         static Command_Map m_command_map;
@@ -51,10 +49,10 @@ class Server
         void listen_socket(void);
         void create_kqueue(void);
         void accept_client(void);
-        void receive_client_msg(unsigned int clientfd, int bytes);
-        void send_client_msg(unsigned int clientfd, int bytes);
+        void receive_client_msg(Client &client, int bytes);
+        void send_client_msg(Client &client, int bytes);
         void update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
-        void disconnect_client(unsigned int clientfd);
+        void disconnect_client(Client &client);
         void handle_messages(Client &client);
 
         static Command_Map initial_command_map(void);
