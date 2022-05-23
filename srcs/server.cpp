@@ -341,17 +341,17 @@ void
         // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
 	}
 
-    client.m_set_nickname(nickname);
-    Logger().trace() << "Set nickname :" << nickname;
 
     if (client.m_is_registered())
     {
 		ClientMap::iterator it = m_client_map.begin();
         for (; it != m_client_map.end(); ++it)
         {
-            prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname);
+            prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname + "\r\n");
         }
     }
+    client.m_set_nickname(nickname);
+    Logger().trace() << "Set nickname :" << nickname;
 
 	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
 		m_client_map[client.m_get_nickname()] = &client;
