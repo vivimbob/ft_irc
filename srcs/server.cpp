@@ -15,7 +15,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-Server::Command_Map Server::m_command_map = Server::initial_command_map();
+Server::CommandMap Server::m_command_map = Server::initial_command_map();
 
 Server::Server(int argc, char **argv)
     : m_kq(-1),
@@ -274,10 +274,10 @@ void
     close(clientfd);
 }
 
-Server::Command_Map
+Server::CommandMap
     Server::initial_command_map()
 {
-    Server::Command_Map temp_map;
+    Server::CommandMap temp_map;
 
     temp_map.insert(std::make_pair("PASS", &Server::process_pass_command));
     temp_map.insert(std::make_pair("NICK", &Server::process_nick_command));
@@ -290,11 +290,9 @@ Server::Command_Map
 void
     Server::prepare_to_send(Client &client, const std::string &str_msg)
 {
-    SendBuffer &temp_buffer = m_client_map[client.m_get_socket()]->m_send_buffer;
-    temp_buffer.append(str_msg);
-    update_event(client.m_get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
-    update_event(client.m_get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, NULL);
-    send_client_msg(client.m_get_socket(), temp_buffer.size());
+    client.m_send_buffer.append(str_msg);
+    update_event(client.m_get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+    update_event(client.m_get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
 }
 
 void
@@ -349,6 +347,7 @@ void
 
     if (client.m_is_registered())
     {
+		ClientMap::iterator it = m_client_map.begin();
         for (; it != m_client_map.end(); ++it)
         {
             prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname);
@@ -388,7 +387,7 @@ void
 {
 	if (msg.get_params().size() < 2)
 	{
-		client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));	
+		client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
 		return ;
 	}
