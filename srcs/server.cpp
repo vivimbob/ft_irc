@@ -345,7 +345,7 @@ void
     {
         for (; it != m_client_map.end(); ++it)
         {
-            prepare_to_send(*it->second, nickname);
+            prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname);
         }
     }
     client.m_set_nickname(nickname);
