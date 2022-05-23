@@ -18,9 +18,9 @@
 class Server
 {
 	public:
-		typedef std::map<std::string, Client*> Client_map;
-		typedef std::map<std::string, Channel*> Channel_map;
-        typedef std::map<std::string, void (Server::*)(Client&, IRCMessage&)> Command_Map;
+		typedef std::map<std::string, Client*> ClientMap;
+		typedef std::map<std::string, Channel*> ChannelMap;
+        typedef std::map<std::string, void (Server::*)(Client&, IRCMessage&)> CommandMap;
 
     private:
         int m_kq;
@@ -30,9 +30,9 @@ class Server
         sockaddr_in m_sockaddr;
         char m_read_buffer[IPV4_MTU_MAX];
         struct kevent m_event_list[QUEUE_SIZE];
-        Client_map m_client_map;
-		Channel_map m_channel_map;
-        static Command_Map m_command_map;
+        ClientMap m_client_map;
+		ChannelMap m_channel_map;
+        static CommandMap m_command_map;
     
     private:
         Server(void);
@@ -57,7 +57,7 @@ class Server
 
         void prepare_to_send(Client &client, const std::string &str_msg);
 
-        static Command_Map initial_command_map(void);
+        static CommandMap initial_command_map(void);
 
         void process_pass_command(Client &client, IRCMessage &msg);
         void process_nick_command(Client &client, IRCMessage &msg);
