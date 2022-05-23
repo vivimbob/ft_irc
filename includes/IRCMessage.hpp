@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <queue>
 
 #define MESSAGE_MEX_LEN 512
 
@@ -79,80 +80,19 @@ public:
     std::string err_u_mode_unknown_flag(Client &client);
     std::string err_users_dont_match(Client &client);
 
-    std::string rpl_none(Client &client);
-    std::string rpl_userhost(Client &client);
-    std::string rpl_ison(Client &client);
-    std::string rpl_away(Client &client);
-    std::string rpl_unaway(Client &client);
-    std::string rpl_nowaway(Client &client);
-    std::string rpl_whoisuser(Client &client);
-    std::string rpl_whoisserver(Client &client);
-    std::string rpl_whoisoperator(Client &client);
-    std::string rpl_whoisidle(Client &client);
-    std::string rpl_endofwhois(Client &client);
-    std::string rpl_whoischannels(Client &client);
-    std::string rpl_whowasuser(Client &client);
-    std::string rpl_endofwhowas(Client &client);
+    std::string rpl_away(Client &client, const std::string& nick, const std::string& away_message);
     std::string rpl_liststart(Client &client);
-    std::string rpl_list(Client &client);
+    std::string rpl_list(Client &client, const std::string channel, const std::string& visible, const std::string topic);
     std::string rpl_listend(Client &client);
-    std::string rpl_channelmodeis(Client &client);
-    std::string rpl_notopic(Client &client);
-    std::string rpl_topic(Client &client);
-    std::string rpl_inviting(Client &client);
-    std::string rpl_summoning(Client &client);
-    std::string rpl_version(Client &client);
-    std::string rpl_whoreply(Client &client);
-    std::string rpl_endofwho(Client &client);
-    std::string rpl_namreply(Client &client);
-    std::string rpl_endofnames(Client &client);
-    std::string rpl_links(Client &client);
-    std::string rpl_endoflinks(Client &client);
-    std::string rpl_banlist(Client &client);
-    std::string rpl_endofbanlist(Client &client);
-    std::string rpl_info(Client &client);
-    std::string rpl_endofinfo(Client &client);
-    std::string rpl_motdstart(Client &client);
-    std::string rpl_motd(Client &client);
-    std::string rpl_endofmotd(Client &client);
-    std::string rpl_youreoper(Client &client);
-    std::string rpl_rehashing(Client &client);
-    std::string rpl_time(Client &client);
-    std::string rpl_usersstart(Client &client);
-    std::string rpl_users(Client &client);
-    std::string rpl_endofusers(Client &client);
-    std::string rpl_nousers(Client &client);
-    std::string rpl_tracelink(Client &client);
-    std::string rpl_traceconnecting(Client &client);
-    std::string rpl_tracehandshake(Client &client);
-    std::string rpl_traceunknown(Client &client);
-    std::string rpl_traceoperator(Client &client);
-    std::string rpl_traceuser(Client &client);
-    std::string rpl_traceserver(Client &client);
-    std::string rpl_tracenewtype(Client &client);
-    std::string rpl_tracelog(Client &client);
-    std::string rpl_statslinkinfo(Client &client);
-    std::string rpl_statscommands(Client &client);
-    std::string rpl_statscline(Client &client);
-    std::string rpl_statsnline(Client &client);
-    std::string rpl_statsiline(Client &client);
-    std::string rpl_statskline(Client &client);
-    std::string rpl_statsyline(Client &client);
-    std::string rpl_endofstats(Client &client);
-    std::string rpl_umodeis(Client &client);
-    std::string rpl_statslline(Client &client);
-    std::string rpl_statsuptime(Client &client);
-    std::string rpl_statsoline(Client &client);
-    std::string rpl_statshline(Client &client);
-    std::string rpl_luserclient(Client &client);
-    std::string rpl_luserop(Client &client);
-    std::string rpl_luserunknown(Client &client);
-    std::string rpl_luserchannels(Client &client);
-    std::string rpl_luserme(Client &client);
-    std::string rpl_adminme(Client &client);
-    std::string rpl_adminloc1(Client &client);
-    std::string rpl_adminloc2(Client &client);
-    std::string rpl_adminemail(Client &client);
+    std::string rpl_channel_mode_is(Client &client, const std::string& channel, const std::string& mode, const std::string& mode_params);
+    std::string rpl_notopic(Client &client, const std::string& channel);
+    std::string rpl_topic(Client &client, const std::string& channel, const std::string& topic);
+    std::string rpl_inviting(Client &clientt, const std::string& channel, const std::string& nick);
+    std::string rpl_namreply(Client &client, const std::string& channel, std::queue<const std::string>& nick);
+    std::string rpl_endofnames(Client &client, const std::string& channel);
+    std::string rpl_banlist(Client &client, const std::string& channel, const std::string& banid);
+    std::string rpl_endofbanlist(Client &client, const std::string& channel);
+    std::string rpl_user_mode_is(Client &client, const std::string& user_mode_string);
 };
 
 #endif /* IRCMESSAGE_HPP */

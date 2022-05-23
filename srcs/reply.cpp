@@ -1,6 +1,7 @@
 #include "../includes/reply.hpp"
 #include "../includes/server.hpp"
 #include "../includes/client.hpp"
+#include <queue>
 
 std::string
     IRCMessage::m_reply_prefix(Client &client, std::string command)
@@ -275,446 +276,89 @@ std::string
 }
 
 std::string
-	IRCMessage::rpl_none(Client &client)
+	IRCMessage::rpl_away(Client &client, const std::string& nick, const std::string& away_message)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_userhost(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_ison(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_away(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_unaway(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_nowaway(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_whoisuser(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_whoisserver(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_whoisoperator(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_whoisidle(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofwhois(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_whoischannels(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_whowasuser(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofwhowas(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "301") + " " + nick + " :" + away_message + "\r\n";
 }
 
 std::string
 	IRCMessage::rpl_liststart(Client &client)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "321") + " Channel :Users name\r\n";
 }
 
 std::string
-	IRCMessage::rpl_list(Client &client)
+	IRCMessage::rpl_list(Client &client, const std::string channel, const std::string& visible, const std::string topic)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "322") + " " + channel + " " + visible + " :" + topic + "\r\n";
 }
 
 std::string
 	IRCMessage::rpl_listend(Client &client)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "323") + " :End of /LIST\r\n";
 }
 
 std::string
-	IRCMessage::rpl_channelmodeis(Client &client)
+	IRCMessage::rpl_channel_mode_is
+(Client &client, const std::string& channel, const std::string& mode, const std::string& mode_params)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "324") + " " + channel + " " + mode + " " + mode_params + "\r\n";
 }
 
 std::string
-	IRCMessage::rpl_notopic(Client &client)
+	IRCMessage::rpl_notopic(Client &client, const std::string& channel)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "331") + " " + channel + " :No topic is set\r\n";
 }
 
 std::string
-	IRCMessage::rpl_topic(Client &client)
+	IRCMessage::rpl_topic(Client &client, const std::string& channel, const std::string& topic)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "332") + " " + channel + " :" + topic + "\r\n";
 }
 
 std::string
-	IRCMessage::rpl_inviting(Client &client)
+	IRCMessage::rpl_inviting(Client &client, const std::string& channel, const std::string& nick)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "341") + " " + channel + " " + nick + "\r\n";
 }
 
 std::string
-	IRCMessage::rpl_summoning(Client &client)
+	IRCMessage::rpl_namreply(Client &client, const std::string& channel,std::queue<const std::string>& nick)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	std::string message = m_reply_prefix(client, "353") + " " + channel + " :";
+
+	while (!nick.empty())
+	{
+		message += nick.front();
+		nick.pop();
+		if (!nick.empty())
+			message += " ";
+	}	
+	return message + "\r\n";
 }
 
 std::string
-	IRCMessage::rpl_version(Client &client)
+	IRCMessage::rpl_endofnames(Client &client, const std::string& channel)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "353") + " " + channel + " :End of /NAMES list\r\n";
 }
 
 std::string
-	IRCMessage::rpl_whoreply(Client &client)
+	IRCMessage::rpl_banlist(Client &client, const std::string& channel, const std::string& banid)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "367") + " " + channel + " " + banid + "\r\n";
 }
 
 std::string
-	IRCMessage::rpl_endofwho(Client &client)
+	IRCMessage::rpl_endofbanlist(Client &client, const std::string& channel)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "368") + " " + channel + " :End of channel ban list\r\n";
 }
 
 std::string
-	IRCMessage::rpl_namreply(Client &client)
+	IRCMessage::rpl_user_mode_is(Client &client, const std::string& user_mode_string)
 {
-	return m_reply_prefix(client, "000") + "\r\n";
+	return m_reply_prefix(client, "221") + " " + user_mode_string + "\r\n";
 }
-
-std::string
-	IRCMessage::rpl_endofnames(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_links(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endoflinks(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_banlist(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofbanlist(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_info(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofinfo(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_motdstart(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_motd(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofmotd(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_youreoper(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_rehashing(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_time(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_usersstart(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_users(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofusers(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_nousers(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_tracelink(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_traceconnecting(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_tracehandshake(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_traceunknown(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_traceoperator(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_traceuser(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_traceserver(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_tracenewtype(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_tracelog(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statslinkinfo(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statscommands(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statscline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statsnline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statsiline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statskline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statsyline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_endofstats(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_umodeis(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statslline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statsuptime(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statsoline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_statshline(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_luserclient(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_luserop(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_luserunknown(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_luserchannels(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_luserme(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_adminme(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_adminloc1(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_adminloc2(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
-std::string
-	IRCMessage::rpl_adminemail(Client &client)
-{
-	return m_reply_prefix(client, "000") + "\r\n";
-}
-
