@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <ctime>
-#include "server.hpp"
 #include "IRCMessage.hpp"
 
 class Channel

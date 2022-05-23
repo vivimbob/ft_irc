@@ -130,7 +130,7 @@ void
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
     update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, NULL);
 
-    m_client_map.insert(std::pair<int, Client*>(client_fd, client_info));
+    m_registration_state_map.insert(std::pair<int, Client*>(client_fd, client_info));
 
     Logger().trace() << "Accept client " << client_fd;
 }
@@ -162,26 +162,26 @@ void
 
     if (recv_data_len > 0) 
     {
-        std::string &recv_buffer = m_client_map[clientfd]->m_recv_buffer;
+        std::string &recv_buffer = m_registration_state_map[clientfd]->m_recv_buffer;
         recv_buffer += buffer;
         
         int position = recv_buffer.find_first_of("\r\n", 0);
         while (position != std::string::npos)
         {
-            m_client_map[clientfd]->m_commands.push(new IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
+            m_registration_state_map[clientfd]->m_commands.push(new IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
             recv_buffer.erase(0, position + 2);
             position = recv_buffer.find_first_of("\r\n", 0);
         }
 
         Logger().trace() << "Receive Message";
 
-        if (m_client_map[clientfd]->m_commands.size())
+        if (m_registration_state_map[clientfd]->m_commands.size())
         {
             Logger().trace() << "Handle Messages";
-            handle_messages(*m_client_map[clientfd]);
+            handle_messages(*m_registration_state_map[clientfd]);
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
-            m_client_map[clientfd]->m_recv_buffer.clear();
+            m_registration_state_map[clientfd]->m_recv_buffer.clear();
         }
     }
     else if (recv_data_len == 0)
@@ -191,7 +191,7 @@ void
 void
     Server::send_client_msg(unsigned int clientfd, int available_bytes)
 {
-    SendBuffer &send_buffer = m_client_map[clientfd]->m_send_buffer;
+    SendBuffer &send_buffer = m_registration_state_map[clientfd]->m_send_buffer;
     int remain_data_len = 0;
     int attempt_data_len = 0;
 
@@ -256,13 +256,13 @@ void
 void
     Server::disconnect_client(unsigned int clientfd)
 {
-    Logger().trace() << "Client disconnect IP :" << m_client_map[clientfd]->m_get_client_IP()
-    << " FD :" << m_client_map[clientfd]->m_get_socket();
+    Logger().trace() << "Client disconnect IP :" << m_registration_state_map[clientfd]->m_get_client_IP()
+    << " FD :" << m_registration_state_map[clientfd]->m_get_socket();
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
-    Client *client = m_client_map[clientfd];
-    m_client_map.erase(clientfd);
+    Client *client = m_registration_state_map[clientfd];
+    m_registration_state_map.erase(clientfd);
     delete client;
     close(clientfd);
 }
@@ -275,6 +275,7 @@ Server::Command_Map
     temp_map.insert(std::make_pair("PASS", &Server::process_pass_command));
     temp_map.insert(std::make_pair("NICK", &Server::process_nick_command));
     temp_map.insert(std::make_pair("USER", &Server::process_user_command));
+    temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
 
     return (temp_map);
 }
@@ -312,8 +313,8 @@ void
     if (!utils::is_nickname_valid(nickname))
         Logger().error() << "ERR_ERRONEUSNICKNAME <" << nickname << "> :Erroneus nickname";
 
-    std::map<int, Client*>::iterator it = m_client_map.begin();
-    for (; it != m_client_map.end(); ++it)
+    std::map<int, Client*>::iterator it = m_registration_state_map.begin();
+    for (; it != m_registration_state_map.end(); ++it)
     {
         if (it->second->m_nickname == nickname)
         {
@@ -331,7 +332,7 @@ void
     Logger().trace() << "Set nickname :" << nickname;
     client.m_set_nick_registered(true);
     Logger().trace() << "Register nickname :" << nickname;
-    m_client_map.insert(std::pair<int, Client*>(client.m_get_socket(), &client));
+    m_registration_state_map.insert(std::pair<int, Client*>(client.m_get_socket(), &client));
 }
 
 void
@@ -352,4 +353,27 @@ void
     Logger().trace() << "Set username :" << username;
     client.m_set_user_registered(true);
     Logger().trace() << "Register username :" << username;
+}
+
+void
+	Server::process_mode_command(Client &client, IRCMessage &msg)
+{
+	if (msg.get_params().size() < 2)
+	{
+		client.m_send_buffer.append(msg.err_need_more_params(client, msg.get_command()));	
+        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+		return ;
+	}
+	
+	std::string target = msg.get_params()[0];
+	if (strchr("&#+!", target[0]) != NULL)
+	{
+		//Channel Mode
+		//서버 체널 관리 변수에서 실제로 있는지 체크
+		//	없으면 ERR_NOSUCHCHANNEL
+	}
+	else
+	{
+		//User Mode
+	}
 }
