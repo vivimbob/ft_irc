@@ -6,6 +6,7 @@
 #include <map>
 #include <ctime>
 #include "IRCMessage.hpp"
+#include "client.hpp"
 
 class Channel
 {

@@ -128,10 +128,8 @@ void
 
     Client* client_info = new Client(client_addr, client_fd);
 
-    update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, NULL);
-
-    m_registration_state_map.insert(std::pair<int, Client*>(client_fd, client_info));
+    update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, client_info);
+    update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, client_info);
 
     Logger().trace() << "Accept client " << client_fd;
 }
@@ -153,8 +151,10 @@ void
 }
 
 void
-    Server::receive_client_msg(unsigned int clientfd, int data_len)
+    Server::receive_client_msg(Client &client, int data_len)
 {
+	const unsigned int &clientfd = client.m_get_socket();
+
     char *buffer = m_read_buffer;
     if (data_len <= IPV4_MTU_MIN)
       data_len = IPV4_MTU_MAX;
@@ -163,38 +163,40 @@ void
 
     if (recv_data_len > 0) 
     {
-        std::string &recv_buffer = m_registration_state_map[clientfd]->m_recv_buffer;
+        std::string &recv_buffer = client.m_recv_buffer;
         recv_buffer += buffer;
         
         int position = recv_buffer.find_first_of("\r\n", 0);
         while (position != std::string::npos)
         {
-            m_registration_state_map[clientfd]->m_commands.push(new IRCMessage(clientfd, std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
+            client.m_commands.push(new IRCMessage(clientfd,
+						std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
             recv_buffer.erase(0, position + 2);
             position = recv_buffer.find_first_of("\r\n", 0);
         }
 
         Logger().trace() << "Receive Message";
 
-        if (m_registration_state_map[clientfd]->m_commands.size())
+        if (client.m_commands.size())
         {
             Logger().trace() << "Handle Messages";
-            handle_messages(*m_registration_state_map[clientfd]);
-            update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, NULL);
-            update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, NULL);
-            m_registration_state_map[clientfd]->m_recv_buffer.clear();
+            handle_messages(client);
+            update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);
+            update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+            client.m_recv_buffer.clear();
         }
     }
     else if (recv_data_len == 0)
-        disconnect_client(clientfd);
+        disconnect_client(client);
 }
 
 void
-    Server::send_client_msg(unsigned int clientfd, int available_bytes)
+    Server::send_client_msg(Client &client, int available_bytes)
 {
-    SendBuffer &send_buffer = m_registration_state_map[clientfd]->m_send_buffer;
+    SendBuffer &send_buffer = client.m_send_buffer;
     int remain_data_len = 0;
     int attempt_data_len = 0;
+	const unsigned int &clientfd = client.m_get_socket();
 
     if (available_bytes > IPV4_MTU_MAX)
         available_bytes = IPV4_MTU_MAX;
@@ -207,8 +209,10 @@ void
         attempt_data_len = remain_data_len;
     else
         attempt_data_len = available_bytes;
-    ssize_t send_data_len = send(clientfd, send_buffer.data() + send_buffer.get_offset(), attempt_data_len, 0);
 
+    ssize_t send_data_len = send(clientfd,
+			send_buffer.data() + send_buffer.get_offset(), attempt_data_len, 0);
+  
     if (send_data_len >= 0)
     {
         Logger().trace() << "Send ok " << clientfd;
@@ -219,8 +223,8 @@ void
             if (send_buffer.size())
               send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
-            update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
-            update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, NULL);
+            update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
+            update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
         }
     }
 }
@@ -247,24 +251,26 @@ void
             if (event.ident == (unsigned int)m_listen_fd)
                 accept_client();
             else if (event.filter == EVFILT_READ)
-                receive_client_msg(event.ident, event.data);
+                receive_client_msg(*(Client *)event.udata, event.data);
             else if(event.filter == EVFILT_WRITE)
-                send_client_msg(event.ident, event.data);
+                send_client_msg(*(Client *)event.udata, event.data);
         }
     }
 }
 
 void
-    Server::disconnect_client(unsigned int clientfd)
+    Server::disconnect_client(Client &client)
 {
-    Logger().trace() << "Client disconnect IP :" << m_registration_state_map[clientfd]->m_get_client_IP()
-    << " FD :" << m_registration_state_map[clientfd]->m_get_socket();
+	const unsigned int& clientfd = client.m_get_socket();
+
+    Logger().trace() << "Client disconnect IP :" << client.m_get_client_IP()
+    << " FD :" << clientfd;
+
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
-    Client *client = m_registration_state_map[clientfd];
-    m_registration_state_map.erase(clientfd);
-    delete client;
+	m_client_map.erase(client.m_get_nickname());
+    delete &client;
     close(clientfd);
 }
 
@@ -300,7 +306,7 @@ void
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
         return ;
     }
-    if (client.m_is_nick_registered() && client.m_is_user_registered())
+    if (client.m_is_registered())
     {
         prepare_to_send(client, msg.err_already_registred(client));
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
@@ -308,6 +314,8 @@ void
     }
     client.m_set_password(msg.get_params()[0]);
     Logger().trace() << "Set password :" << client.m_get_password();
+	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
+		m_client_map[client.m_get_nickname()] = &client;
 }
 
 void
@@ -329,31 +337,26 @@ void
         return ; 
     }
 
-    std::map<int, Client*>::iterator it = m_registration_state_map.begin();
-    for (; it != m_registration_state_map.end(); ++it)
-    {
-        if (it->second->m_nickname == nickname)
-        {
-            prepare_to_send(client, msg.err_nickname_in_use(client, nickname));
-            Logger().error() << "ERR_NICKNAMEINUSE <" << nickname << "> :Nickname is already in use";
-            return ;
-            // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
-        }
-    }
+	if (m_client_map.count(nickname))
+	{
+    	Logger().error() << "ERR_NICKNAMEINUSE <" << nickname << "> :Nickname is already in use";
+        return ;
+        // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
+	}
 
-    it = m_client_map.begin();
-    if (client.m_is_nick_registered() && client.m_is_user_registered())
+    client.m_set_nickname(nickname);
+    Logger().trace() << "Set nickname :" << nickname;
+
+    if (client.m_is_registered())
     {
         for (; it != m_client_map.end(); ++it)
         {
             prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname);
         }
     }
-    client.m_set_nickname(nickname);
-    Logger().trace() << "Set nickname :" << nickname;
-    client.m_set_nick_registered(true);
-    Logger().trace() << "Register nickname :" << nickname;
-    m_registration_state_map.insert(std::pair<int, Client*>(client.m_get_socket(), &client));
+
+	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
+		m_client_map[client.m_get_nickname()] = &client;
 }
 
 void
@@ -366,7 +369,7 @@ void
         return ;
     }
 
-    if (client.m_is_nick_registered() && client.m_is_user_registered())
+    if (client.m_is_registered())
     {
         prepare_to_send(client, msg.err_already_registred(client));
         Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
@@ -376,8 +379,8 @@ void
     const std::string &username = msg.get_params()[0];
     client.m_set_username(username);
     Logger().trace() << "Set username :" << username;
-    client.m_set_user_registered(true);
-    Logger().trace() << "Register username :" << username;
+	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
+		m_client_map[client.m_get_nickname()] = &client;
 }
 
 void
