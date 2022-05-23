@@ -9,7 +9,8 @@ SRCS    = main.cpp\
 		srcs/IRCMessage.cpp\
     srcs/logger.cpp\
 		srcs/server.cpp\
-		srcs/utils.cpp
+		srcs/utils.cpp\
+		srcs/reply.cpp
 
 OBJS    = $(SRCS:%.cpp=%.o)
 
