@@ -4,6 +4,7 @@
 Client::Client(sockaddr_in client_addr, int client_fd)
   : m_client_addr(client_addr),
     m_client_fd(client_fd),
+    m_pass_registered(false),
     m_nick_registered(false),
     m_user_registered(false)
 {
@@ -58,18 +59,33 @@ void
   Client::m_set_password(const std::string &pw)
 {
   m_password = pw;
+  m_pass_registered = true;
 }
 
 void
   Client::m_set_nickname(const std::string &nickname)
 {
   m_nickname = nickname;
+  m_nick_registered = true;
 }
 
 void
   Client::m_set_username(const std::string &username)
 {
   m_username = username;
+  m_user_registered = true;
+}
+
+const bool
+  Client::m_is_registered(void) const
+{
+  return m_pass_registered & m_nick_registered & m_user_registered;
+}
+
+const bool
+  Client::m_is_pass_registered(void) const
+{
+  return m_pass_registered;
 }
 
 const bool
@@ -82,16 +98,4 @@ const bool
   Client::m_is_user_registered(void) const
 {
   return m_user_registered;
-}
-
-void
-  Client::m_set_nick_registered(bool b)
-{
-  m_nick_registered = b;
-}
-
-void
-  Client::m_set_user_registered(bool b)
-{
-  m_user_registered = b;
 }

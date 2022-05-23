@@ -21,6 +21,7 @@ class Client
 
     bool m_nick_registered:1;
     bool m_user_registered:1;
+	bool m_pass_registered:1;
 
     friend class Server;
 
@@ -33,14 +34,13 @@ class Client
 		const std::string	&m_get_password(void) const;
     const std::string	&m_get_nickname(void) const;
 		const std::string	&m_get_username(void) const;
+		const bool m_is_registered(void) const;
+		const bool m_is_pass_registered(void) const;
 		const bool m_is_nick_registered(void) const;
 		const bool m_is_user_registered(void) const;
     void m_set_password(const std::string &pw);
 		void m_set_nickname(const std::string &nickname);
 		void m_set_username(const std::string &username);
-    void m_set_nick_registered(bool b);
-    void m_set_user_registered(bool b);
-
 };
 
 #endif /* CLIENT_HPP */
