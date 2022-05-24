@@ -5,6 +5,15 @@ Channel::Channel(const std::string &name, Client &client)
  : m_channel_name(name),
    m_channel_init_time(std::time(NULL))
 {
+	mode.p = false;
+	mode.s = false;
+	mode.i = false;
+	mode.t = false;
+	mode.n = false;
+	mode.m = false;
+	mode.l = false;
+	mode.b = false;
+	mode.k = false;
 }
 
 Channel::~Channel()

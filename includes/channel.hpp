@@ -11,6 +11,19 @@
 class Channel
 {
   private:
+    struct s_mode
+	{
+		bool p:1;
+		bool s:1;
+		bool i:1;
+		bool t:1;
+		bool n:1;
+		bool m:1;
+		bool l:1;
+		bool b:1;
+		bool k:1;
+	};
+
     std::string m_channel_name;
     time_t m_channel_init_time;
     std::map<int, Client*> m_user_lists;
@@ -21,19 +34,9 @@ class Channel
     std::string m_channel_mode;
     std::map<int, std::string> m_user_mode;
     std::string m_key;
-    
-    bool m_oper_privilage:1;
-    bool m_private:1;
-    bool m_secret:1;
-    bool m_invited:1;
-    bool m_moderated:1;
-    bool m_limit:1;
-    bool m_ban_mask:1;
-    bool m_channel_key:1;
-    bool m_oper_topic:1;
-    bool m_non_msg:1;
-    bool m_available_speaking:1;
 
+	s_mode mode;
+    
     Channel(void);
     Channel(const Channel& cp);
     Channel &operator=(const Channel& cp);
