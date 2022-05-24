@@ -1,5 +1,6 @@
 #include "../includes/channel.hpp"
 #include "../includes/logger.hpp"
+#include <utility>
 
 Channel::Channel(const std::string &name, Client &client)
  : m_channel_name(name),
@@ -33,21 +34,9 @@ const std::string&
 }
 
 const std::string&
-  Channel::m_get_channel_mode() const
-{
-  return m_channel_mode;
-}
-
-const std::string&
   Channel::m_get_key() const
 {
   return m_key;
-}
-
-const std::string& 
-  Channel::m_get_user_mode(Client &client)
-{
-  return m_user_mode[client.m_get_socket()];
 }
 
 void
@@ -63,41 +52,23 @@ void
 }
 
 void
-  Channel::m_set_channel_mode(const std::string &chan_mode)
-{
-  this->m_channel_mode = chan_mode;
-}
-
-void
   Channel::m_set_key(const std::string &key)
 {
   this->m_key = key;
 }
 
 void
-  Channel::m_set_user_mode(Client &client, std::string &user_mode)
-{
-  m_user_mode[client.m_get_socket()] = user_mode;
-}
-
-void
   Channel::m_join(Client &client)
 {
-  std::string temp_mode;
-  if (!m_is_empty())
-  {
-    temp_mode = "o";
-    m_operator_lists.push_back(&client);
-    m_set_user_mode(client, temp_mode);
-    m_oper_privilage = true;
-  }
-  m_user_lists[client.m_get_socket()] = &client;
+	m_add_user(client);
+  if (m_user_lists.size() == 1)
+	  m_add_operator(client);
   // server에서 channel topic, channel user list 전송
 }
 
 void Channel::m_invite(Client &client)
 {
-  m_invited = true;
+	mode.i = true;
 }
 
 void
@@ -132,32 +103,24 @@ bool
 void
   Channel::m_add_operator(Client &client)
 {
-  m_operator_lists.push_back(&client);
-  m_user_mode[client.m_get_socket()] = "o";
+	m_user_lists[&client].mode.o = true;
 }
 
 void
   Channel::m_delete_operator(Client &client)
 {
-  if (m_user_mode[client.m_get_socket()] == "-o")
-  {
-    size_t i;
-    for (i = 0; i < m_operator_lists.size(); ++i)
-      if (m_operator_lists[i] == &client)
-        break;
-    m_operator_lists.erase(m_operator_lists.begin() + i);
-  }
+	m_user_lists[&client].mode.o = false;
 }
 
 void
   Channel::m_add_user(Client &client)
 {
-  m_user_lists[client.m_get_socket()] = &client;
+  m_user_lists.insert(std::make_pair(&client, MemberShip(&client, this)));
 }
 
 void
   Channel::m_delete_user(Client &client)
 {
-  m_user_lists.erase(m_user_lists.find(client.m_get_socket()));
+  m_user_lists.erase(&client);
 }
 

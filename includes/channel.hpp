@@ -7,6 +7,7 @@
 #include <ctime>
 #include "IRCMessage.hpp"
 #include "client.hpp"
+#include "membership.hpp"
 
 class Channel
 {
@@ -23,16 +24,14 @@ class Channel
 		bool b:1;
 		bool k:1;
 	};
+	typedef std::map<Client *, MemberShip> MemberMap;
 
     std::string m_channel_name;
     time_t m_channel_init_time;
-    std::map<int, Client*> m_user_lists;
-    std::vector<Client*> m_operator_lists;
+    MemberMap m_user_lists;
     std::string m_channel_topic;
     // banned_list는 추후에 
-    std::vector<Client*> m_banned_lists;
-    std::string m_channel_mode;
-    std::map<int, std::string> m_user_mode;
+    std::vector<Client *> m_banned_lists;
     std::string m_key;
 
 	s_mode mode;
@@ -46,14 +45,14 @@ class Channel
     ~Channel(void);
     const std::string &m_get_channel_name(void) const;
     const std::string &m_get_channel_topic(void) const;
-    const std::string &m_get_channel_mode(void) const;
+//   const std::string &m_get_channel_mode(void) const;
     const std::string &m_get_key(void) const;
-    const std::string &m_get_user_mode(Client &);
+//    const std::string &m_get_user_mode(Client &);
     void m_set_channel_name(const std::string &name);
     void m_set_channel_topic(const std::string &topic);
-    void m_set_channel_mode(const std::string &chan_mode);
+//    void m_set_channel_mode(const std::string &chan_mode);
     void m_set_key(const std::string &key);
-    void m_set_user_mode(Client &client, std::string &user_mode);
+//   void m_set_user_mode(Client &client, std::string &user_mode);
     void m_join(Client &client);
     void m_invite(Client &client);
     void m_display_channel_info(void);
