@@ -2,9 +2,10 @@
 #include "../includes/logger.hpp"
 #include <utility>
 
-Channel::Channel(const std::string &name, Client &client)
+Channel::Channel(const std::string &name, const std::string &key, Client &client)
  : m_channel_name(name),
-   m_channel_init_time(std::time(NULL))
+  m_key(key), 
+  m_channel_init_time(std::time(NULL))
 {
 	mode.p = false;
 	mode.s = false;
@@ -15,28 +16,53 @@ Channel::Channel(const std::string &name, Client &client)
 	mode.l = false;
 	mode.b = false;
 	mode.k = false;
+  m_user_limits = 42;
 }
 
-Channel::~Channel()
+Channel::~Channel(void)
 {
 }
 
 const std::string&
-  Channel::m_get_channel_name() const
+  Channel::m_get_channel_name(void) const
 {
   return m_channel_name;
 }
 
 const std::string&
-  Channel::m_get_channel_topic() const
+  Channel::m_get_channel_topic(void) const
 {
   return m_channel_topic;
 }
 
 const std::string&
-  Channel::m_get_key() const
+  Channel::m_get_key(void) const
 {
   return m_key;
+}
+
+const size_t&
+  Channel::m_get_user_limits(void) const
+{
+  return m_user_limits;
+}
+
+const std::map<Client*, MemberShip>&
+  Channel::m_get_user_lists(void)
+{
+  return m_user_lists;
+}
+
+const bool
+  Channel::m_get_mode_limit(void)
+{
+  return mode.l;
+}
+
+const bool
+  Channel::m_get_mode_invite_only(void)
+{
+  return mode.i;
 }
 
 void

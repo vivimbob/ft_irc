@@ -31,7 +31,7 @@ class Server
         char m_read_buffer[IPV4_MTU_MAX];
         struct kevent m_event_list[QUEUE_SIZE];
         ClientMap m_client_map;
-		ChannelMap m_channel_map;
+		    ChannelMap m_channel_map;
         static CommandMap m_command_map;
     
     private:

@@ -24,7 +24,7 @@ class Channel
 		bool b:1;
 		bool k:1;
 	};
-	typedef std::map<Client *, MemberShip> MemberMap;
+	  typedef std::map<Client *, MemberShip> MemberMap;
 
     std::string m_channel_name;
     time_t m_channel_init_time;
@@ -33,6 +33,7 @@ class Channel
     // banned_list는 추후에 
     std::vector<Client *> m_banned_lists;
     std::string m_key;
+    size_t m_user_limits;
 
 	s_mode mode;
     
@@ -41,12 +42,16 @@ class Channel
     Channel &operator=(const Channel& cp);
 
   public:
-    Channel(const std::string &name, Client &client);
+    Channel(const std::string &name, const std::string &key, Client &client);
     ~Channel(void);
     const std::string &m_get_channel_name(void) const;
     const std::string &m_get_channel_topic(void) const;
 //   const std::string &m_get_channel_mode(void) const;
     const std::string &m_get_key(void) const;
+    const size_t &m_get_user_limits(void) const;
+    const MemberMap &m_get_user_lists(void);
+    const bool m_get_mode_limit(void);
+    const bool m_get_mode_invite_only(void);
 //    const std::string &m_get_user_mode(Client &);
     void m_set_channel_name(const std::string &name);
     void m_set_channel_topic(const std::string &topic);

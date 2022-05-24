@@ -12,6 +12,7 @@ Client::Client(sockaddr_in client_addr, int client_fd)
 	m_mode.s = false;
 	m_mode.w = false;
 	m_mode.o = false;
+  m_channel_limits = 10;
 }
 
 Client::~Client(void)
@@ -57,6 +58,12 @@ const std::string&
   Client::m_get_username(void) const
 {
   return m_username;
+}
+
+const std::map<const std::string, const std::string>&
+  Client::m_get_channel_lists(void) const
+{
+  return m_chan_key_lists;
 }
 
 void
