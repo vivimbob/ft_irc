@@ -20,7 +20,15 @@ public :
 		mode.o = false;
 		mode.v = false;
 	}	
-	
+
+	MemberShip(const MemberShip& copy)
+		: client(copy.client),
+		  channel(copy.channel)
+	{
+		this->mode.o = copy.mode.o;
+		this->mode.v = copy.mode.v;
+	}
+
 	Client *const client;
 	Channel *const channel;
 	s_mode	mode;
