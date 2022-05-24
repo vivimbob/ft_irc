@@ -73,6 +73,7 @@ public:
     std::string err_invite_only_chan(Client &client, const std::string &channel);
     std::string err_banned_from_chan(Client &client, const std::string &channel);
     std::string err_bad_channel_key(Client &client, const std::string &channel);
+    std::string err_bad_chan_mask(Client &client, const std::string &channel);
     std::string err_no_privileges(Client &client);
     std::string err_chanoprivs_needed(Client &client, const std::string &channel);
     std::string err_cant_kill_server(Client &client);
