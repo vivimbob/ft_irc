@@ -391,39 +391,56 @@ void
         Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
         return ;
     }
-    
+    std::map<const std::string, const std::string> channel_key_pair;
     std::vector<const std::string> splited_channel;
     std::vector<const std::string>::iterator itc = splited_channel.begin();
     utils::split_by_comma(splited_channel, msg.get_params()[0]);
+    
     // key가 있을때
     if (msg.get_params().size() == 2)
     {
         std::vector<const std::string> splited_key;
         std::vector<const std::string>::iterator itk = splited_key.begin();
         utils::split_by_comma(splited_key, msg.get_params()[1]);
-        // key개수랑 channel개수랑 다를 때
-        if (splited_channel.size() != splited_key.size())
+        // key개수가 채널 개수보다 많을 때
+        if ((splited_channel.size() < splited_key.size()))
         {
-            // 어떤 메시지?
-            Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+            client.m_send_buffer.append(msg.err_bad_channel_key(client, msg.get_command()));
+            Logger().error() << "ERR_BADCHANNELKEY <" << msg.get_command() << "> :Cannot join channel (+k)";
             return ;
         }
-        for (; itc != splited_channel.end(); ++itc, ++itk)
-            // join_channel_by_key(client, *itc, *itk);
+        for (; itc != splited_channel.end(); ++itc)
+        {
+            if (itk == splited_key.end())
+            {
+                channel_key_pair.insert(std::make_pair(*itc, NULL));
+                continue;
+            }
+            else
+            {
+                channel_key_pair.insert(std::make_pair(*itc, *itk));
+                ++itk;
+            }
+        }
     }
-
-    for (; itc != splited_channel.end(); ++itc)
-        join_channel(client, *itc);
+    join_channel(client, msg, channel_key_pair);
 }
 
 void
-    Server::join_channel(Client &client, IRCMessage &msg, const std::string &channel_name)
+    Server::join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair)
 {
-    if (channel_name[0] != '#' && channel_name[0] != '&')
+    typedef std::map<const std::string, const std::string> chanKeyPair;
+    chanKeyPair::iterator it = chan_key_pair.begin();
+
+    for (; it != chan_key_pair.end(); ++it)
     {
-        client.m_send_buffer.append(msg.err_bad_chan_mask(client, channel_name));
-        Logger().error() << "ERR_BADCHANMASK <" << msg.get_command() << "> :Not enough parameters";
-        return ;
+        if (!utils::is_channel_prefix(it->first) || !utils::is_channel_name_valid(it->first))
+        {
+            client.m_send_buffer.append(msg.err_bad_chan_mask(client, it->first));
+            Logger().error() << "ERR_BADCHANMASK <" << msg.get_command() << "> :Bad Channel Mask";
+            return ;
+        }
+
     }
 }
 

@@ -46,4 +46,20 @@ namespace utils
     while (std::getline(iss, elem, ','))
         splited_params.push_back(elem);
   }
+
+  bool is_channel_prefix(const std::string &chan)
+  {
+    return (chan[0] == '#' || chan[0] == '&');
+  }
+
+  bool is_channel_name_valid(const std::string &chan)
+  {
+    if (chan.length() > 50)
+      return false;
+    size_t index = 0;
+    for (; index < chan.length(); ++index)
+      if (chan[index] == ' ' || chan[index] == ',' || chan[index] == 0x7)
+        return false;
+    return true;
+  }
 }
