@@ -8,10 +8,10 @@ Client::Client(sockaddr_in client_addr, int client_fd)
     m_nick_registered(false),
     m_user_registered(false)
 {
-	mode.i = false;
-	mode.s = false;
-	mode.w = false;
-	mode.o = false;
+	m_mode.i = false;
+	m_mode.s = false;
+	m_mode.w = false;
+	m_mode.o = false;
 }
 
 Client::~Client(void)

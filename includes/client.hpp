@@ -31,7 +31,7 @@ class Client
     bool m_nick_registered:1;
     bool m_user_registered:1;
 
-	s_mode mode;
+	s_mode m_mode;
 
     friend class Server;
 
