@@ -12,6 +12,7 @@ Client::Client(sockaddr_in client_addr, int client_fd)
 	m_mode.s = false;
 	m_mode.w = false;
 	m_mode.o = false;
+  m_channel_limits = 10;
 }
 
 Client::~Client(void)
@@ -59,6 +60,12 @@ const std::string&
   return m_username;
 }
 
+const std::map<const std::string, const std::string>&
+  Client::m_get_channel_lists(void) const
+{
+  return m_chan_key_lists;
+}
+
 void
   Client::m_set_password(const std::string &pw)
 {
@@ -80,25 +87,25 @@ void
   m_user_registered = true;
 }
 
-const bool
+bool
   Client::m_is_registered(void) const
 {
   return m_pass_registered & m_nick_registered & m_user_registered;
 }
 
-const bool
+bool
   Client::m_is_pass_registered(void) const
 {
   return m_pass_registered;
 }
 
-const bool
+bool
   Client::m_is_nick_registered(void) const
 {
   return m_nick_registered;
 }
 
-const bool
+bool
   Client::m_is_user_registered(void) const
 {
   return m_user_registered;

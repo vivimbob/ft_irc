@@ -2,9 +2,10 @@
 #include "../includes/logger.hpp"
 #include <utility>
 
-Channel::Channel(const std::string &name, Client &client)
+Channel::Channel(const std::string &name, const std::string &key)
  : m_channel_name(name),
-   m_channel_init_time(std::time(NULL))
+  m_channel_init_time(std::time(NULL)),
+  m_key(key)
 {
 	mode.p = false;
 	mode.s = false;
@@ -15,28 +16,59 @@ Channel::Channel(const std::string &name, Client &client)
 	mode.l = false;
 	mode.b = false;
 	mode.k = false;
+  m_user_limits = 42;
 }
 
-Channel::~Channel()
+Channel::~Channel(void)
 {
 }
 
 const std::string&
-  Channel::m_get_channel_name() const
+  Channel::m_get_channel_name(void) const
 {
   return m_channel_name;
 }
 
 const std::string&
-  Channel::m_get_channel_topic() const
+  Channel::m_get_channel_topic(void) const
 {
   return m_channel_topic;
 }
 
 const std::string&
-  Channel::m_get_key() const
+  Channel::m_get_key(void) const
 {
   return m_key;
+}
+
+const size_t&
+  Channel::m_get_user_limits(void) const
+{
+  return m_user_limits;
+}
+
+const std::map<Client*, MemberShip>&
+  Channel::m_get_user_lists(void)
+{
+  return m_user_lists;
+}
+
+bool
+  Channel::m_get_mode_limit(void)
+{
+  return mode.l;
+}
+
+bool
+  Channel::m_get_mode_invite_only(void)
+{
+  return mode.i;
+}
+
+bool
+  Channel::m_get_mode_key(void)
+{
+  return mode.k;
 }
 
 void
@@ -58,6 +90,12 @@ void
 }
 
 void
+  Channel::m_set_mode_key(bool b)
+{
+  mode.k = b;
+}
+
+void
   Channel::m_join(Client &client)
 {
 	m_add_user(client);
@@ -66,7 +104,7 @@ void
   // server에서 channel topic, channel user list 전송
 }
 
-void Channel::m_invite(Client &client)
+void Channel::m_invite(void)
 {
 	mode.i = true;
 }
@@ -85,6 +123,7 @@ void
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's topic : " << this->m_channel_topic;
+  (void)client;
 }
 
 void
@@ -92,6 +131,7 @@ void
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's name : " << this->m_channel_name;
+  (void)client;
 }
 
 bool

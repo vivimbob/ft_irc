@@ -331,7 +331,7 @@ std::string
 }
 
 std::string
-	IRCMessage::rpl_namreply(Client &client, const std::string& channel,std::queue<const std::string>& nick)
+	IRCMessage::rpl_namreply(Client &client, const std::string& channel, std::queue<const std::string>& nick)
 {
 	std::string message = m_reply_prefix(client, "353") + " " + channel + " :";
 

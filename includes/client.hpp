@@ -4,12 +4,13 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <queue>
+#include <map>
 #include "sendbuffer.hpp"
 #include "IRCMessage.hpp"
 
 class Client
 {
-  private:
+private:
 	struct s_mode
 	{
 		bool i:1;
@@ -26,8 +27,10 @@ class Client
     std::string	m_nickname;
     std::string	m_username;
     std::queue<IRCMessage *>m_commands;
+    std::map<const std::string, const std::string> m_chan_key_lists;
+    size_t m_channel_limits;
 
-	bool m_pass_registered:1;
+	  bool m_pass_registered:1;
     bool m_nick_registered:1;
     bool m_user_registered:1;
 
@@ -44,10 +47,11 @@ class Client
     const std::string	&m_get_password(void) const;
     const std::string	&m_get_nickname(void) const;
     const std::string	&m_get_username(void) const;
-    const bool m_is_registered(void) const;
-    const bool m_is_pass_registered(void) const;
-    const bool m_is_nick_registered(void) const;
-    const bool m_is_user_registered(void) const;
+    const std::map<const std::string, const std::string> &m_get_channel_lists(void) const;
+    bool m_is_registered(void) const;
+    bool m_is_pass_registered(void) const;
+    bool m_is_nick_registered(void) const;
+    bool m_is_user_registered(void) const;
     void m_set_password(const std::string &pw);
     void m_set_nickname(const std::string &nickname);
     void m_set_username(const std::string &username);
