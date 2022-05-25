@@ -44,6 +44,7 @@ class Client
     const std::string	&m_get_password(void) const;
     const std::string	&m_get_nickname(void) const;
     const std::string	&m_get_username(void) const;
+	std::string	m_get_usermode(void);
     const bool m_is_registered(void) const;
     const bool m_is_pass_registered(void) const;
     const bool m_is_nick_registered(void) const;

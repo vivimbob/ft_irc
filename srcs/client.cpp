@@ -59,6 +59,23 @@ const std::string&
   return m_username;
 }
 
+std::string
+  Client::m_get_usermode(void)
+{
+	std::string message;
+
+	message.push_back('+');
+	if (m_mode.i)
+		message.push_back('i');
+	if (m_mode.o)
+		message.push_back('o');
+	if (m_mode.s)
+		message.push_back('s');
+	if (m_mode.w)
+		message.push_back('w');
+	return message;
+}
+
 void
   Client::m_set_password(const std::string &pw)
 {
