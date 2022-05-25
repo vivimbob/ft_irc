@@ -26,7 +26,7 @@ class SendBuffer : public std::string
             m_offset = 0;
         }
 
-        const unsigned int get_offset(void) const
+        unsigned int get_offset(void) const
         {
             return m_offset;
         }

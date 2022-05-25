@@ -17,13 +17,13 @@ private:
     std::string m_command;
     std::vector<std::string> m_parameters;
     bool m_valid_message; 
-    int m_position;
+    size_t m_position;
 
     IRCMessage(void);
     IRCMessage(const IRCMessage& copy);
     IRCMessage	&operator=(const IRCMessage& other);
 
-    int next_position(void);
+    size_t next_position(void);
     std::string m_reply_prefix(Client &client, std::string command);
 public:
     IRCMessage(unsigned int clientfd, const std::string &message);
@@ -73,6 +73,7 @@ public:
     std::string err_invite_only_chan(Client &client, const std::string &channel);
     std::string err_banned_from_chan(Client &client, const std::string &channel);
     std::string err_bad_channel_key(Client &client, const std::string &channel);
+    std::string err_bad_chan_mask(Client &client, const std::string &channel);
     std::string err_no_privileges(Client &client);
     std::string err_chanoprivs_needed(Client &client, const std::string &channel);
     std::string err_cant_kill_server(Client &client);

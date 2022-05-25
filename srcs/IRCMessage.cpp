@@ -3,16 +3,17 @@
 
 IRCMessage::IRCMessage(unsigned int clientfd, const std::string &message)
     : m_message(message),
-      m_position(0),
-      m_valid_message(true)
+      m_valid_message(true),
+      m_position(0)
 {
+  (void)clientfd;
 }
 
-int
+size_t
     IRCMessage::next_position(void)
 {
     m_position = m_message.find(' ', m_position);
-    if (m_position == std::string::npos)
+    if (m_position == static_cast<size_t>(std::string::npos))
         m_position = m_message.size();
     return m_position;
 }

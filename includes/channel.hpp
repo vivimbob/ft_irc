@@ -22,6 +22,7 @@ class Channel
 		bool m:1;
 		bool k:1;
 	};
+
 	typedef std::map<Client *, MemberShip> MemberMap;
 	typedef std::vector<std::string> BanMasks;
 
@@ -32,6 +33,7 @@ class Channel
     std::string m_channel_topic;
     std::string m_key;
 	size_t m_user_limits;
+
 	s_mode mode;
     
     Channel(void);
@@ -39,20 +41,26 @@ class Channel
     Channel &operator=(const Channel& cp);
 
   public:
-    Channel(const std::string &name, Client &client);
+    Channel(const std::string &name, const std::string &key);
     ~Channel(void);
     const std::string &m_get_channel_name(void) const;
     const std::string &m_get_channel_topic(void) const;
     std::string m_get_channel_mode(void);
     const std::string &m_get_key(void) const;
+    const size_t &m_get_user_limits(void) const;
+    const MemberMap &m_get_user_lists(void);
+    bool m_get_mode_limit(void);
+    bool m_get_mode_invite_only(void);
+    bool m_get_mode_key(void);
 //    const std::string &m_get_user_mode(Client &);
     void m_set_channel_name(const std::string &name);
     void m_set_channel_topic(const std::string &topic);
 //    void m_set_channel_mode(const std::string &chan_mode);
+    void m_set_mode_key(bool b);
     void m_set_key(const std::string &key);
 //   void m_set_user_mode(Client &client, std::string &user_mode);
     void m_join(Client &client);
-    void m_invite(Client &client);
+    void m_invite(void);
     void m_display_channel_info(void);
     void m_display_topic(Client &client);
     void m_display_names(Client &client);
