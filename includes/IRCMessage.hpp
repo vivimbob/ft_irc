@@ -69,7 +69,7 @@ public:
     std::string err_youre_banned_creep(Client &client);
     std::string err_key_set(Client &client, const std::string &channel);
     std::string err_channel_is_full(Client &client, const std::string &channel);
-    std::string err_unknown_mode(Client &client, const std::string &chr);
+    std::string err_unknown_mode(Client &client, const char &chr);
     std::string err_invite_only_chan(Client &client, const std::string &channel);
     std::string err_banned_from_chan(Client &client, const std::string &channel);
     std::string err_bad_channel_key(Client &client, const std::string &channel);
@@ -85,7 +85,8 @@ public:
     std::string rpl_liststart(Client &client);
     std::string rpl_list(Client &client, const std::string channel, const std::string& visible, const std::string topic);
     std::string rpl_listend(Client &client);
-    std::string rpl_channel_mode_is(Client &client, const std::string& channel, const std::string& mode, const std::string& mode_params);
+    std::string rpl_channel_mode_is(Client &client, const std::string& channel, bool toggle, char mode, const std::string& mode_params = std::string());
+    std::string rpl_channel_mode_is(Client &client, const std::string& channel, const std::string& mode);
     std::string rpl_notopic(Client &client, const std::string& channel);
     std::string rpl_topic(Client &client, const std::string& channel, const std::string& topic);
     std::string rpl_inviting(Client &clientt, const std::string& channel, const std::string& nick);

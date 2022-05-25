@@ -216,7 +216,7 @@ std::string
 }
 
 std::string
-	IRCMessage::err_unknown_mode(Client &client, const std::string &chr)
+	IRCMessage::err_unknown_mode(Client &client, const char &chr)
 {
 	return m_reply_prefix(client, "472") + " " + chr + " :is unknown mode char to me\r\n";
 } 
@@ -307,9 +307,17 @@ std::string
 
 std::string
 	IRCMessage::rpl_channel_mode_is
-(Client &client, const std::string& channel, const std::string& mode, const std::string& mode_params)
+(Client &client, const std::string& channel, bool toggle, char mode, const std::string& mode_params)
 {
-	return m_reply_prefix(client, "324") + " " + channel + " " + mode + " " + mode_params + "\r\n";
+	char mode_prefix = toggle == true ? '+' : '-';
+	return m_reply_prefix(client, "324") + " " + channel + " " + mode_prefix + mode + " " + mode_params + "\r\n";
+}
+
+std::string
+	IRCMessage::rpl_channel_mode_is
+(Client &client, const std::string& channel, const std::string& mode)
+{
+	return m_reply_prefix(client, "324") + " " + channel + " " + mode + "\r\n";
 }
 
 std::string
@@ -366,5 +374,5 @@ std::string
 std::string
 	IRCMessage::rpl_user_mode_is(Client &client, const std::string& user_mode_string)
 {
-	return m_reply_prefix(client, "221") + " " + user_mode_string + "\r\n";
+	return m_reply_prefix(client, "221") + " :Your user mode is [" + user_mode_string + "]\r\n";
 }
