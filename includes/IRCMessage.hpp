@@ -17,13 +17,13 @@ private:
     std::string m_command;
     std::vector<std::string> m_parameters;
     bool m_valid_message; 
-    int m_position;
+    size_t m_position;
 
     IRCMessage(void);
     IRCMessage(const IRCMessage& copy);
     IRCMessage	&operator=(const IRCMessage& other);
 
-    int next_position(void);
+    size_t next_position(void);
     std::string m_reply_prefix(Client &client, std::string command);
 public:
     IRCMessage(unsigned int clientfd, const std::string &message);

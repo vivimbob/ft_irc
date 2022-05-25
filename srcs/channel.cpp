@@ -4,8 +4,8 @@
 
 Channel::Channel(const std::string &name, const std::string &key, Client &client)
  : m_channel_name(name),
-  m_key(key), 
-  m_channel_init_time(std::time(NULL))
+  m_channel_init_time(std::time(NULL)),
+  m_key(key)
 {
 	mode.p = false;
 	mode.s = false;
@@ -17,6 +17,7 @@ Channel::Channel(const std::string &name, const std::string &key, Client &client
 	mode.b = false;
 	mode.k = false;
   m_user_limits = 42;
+  (void)client;
 }
 
 Channel::~Channel(void)
@@ -53,16 +54,22 @@ const std::map<Client*, MemberShip>&
   return m_user_lists;
 }
 
-const bool
+bool
   Channel::m_get_mode_limit(void)
 {
   return mode.l;
 }
 
-const bool
+bool
   Channel::m_get_mode_invite_only(void)
 {
   return mode.i;
+}
+
+bool
+  Channel::m_get_mode_key(void)
+{
+  return mode.k;
 }
 
 void
@@ -84,6 +91,12 @@ void
 }
 
 void
+  Channel::m_set_mode_key(bool b)
+{
+  mode.k = b;
+}
+
+void
   Channel::m_join(Client &client)
 {
 	m_add_user(client);
@@ -95,6 +108,7 @@ void
 void Channel::m_invite(Client &client)
 {
 	mode.i = true;
+  (void)client;
 }
 
 void
@@ -111,6 +125,7 @@ void
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's topic : " << this->m_channel_topic;
+  (void)client;
 }
 
 void
@@ -118,6 +133,7 @@ void
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's name : " << this->m_channel_name;
+  (void)client;
 }
 
 bool

@@ -87,25 +87,25 @@ void
   m_user_registered = true;
 }
 
-const bool
+bool
   Client::m_is_registered(void) const
 {
   return m_pass_registered & m_nick_registered & m_user_registered;
 }
 
-const bool
+bool
   Client::m_is_pass_registered(void) const
 {
   return m_pass_registered;
 }
 
-const bool
+bool
   Client::m_is_nick_registered(void) const
 {
   return m_nick_registered;
 }
 
-const bool
+bool
   Client::m_is_user_registered(void) const
 {
   return m_user_registered;

@@ -50,12 +50,14 @@ class Channel
     const std::string &m_get_key(void) const;
     const size_t &m_get_user_limits(void) const;
     const MemberMap &m_get_user_lists(void);
-    const bool m_get_mode_limit(void);
-    const bool m_get_mode_invite_only(void);
+    bool m_get_mode_limit(void);
+    bool m_get_mode_invite_only(void);
+    bool m_get_mode_key(void);
 //    const std::string &m_get_user_mode(Client &);
     void m_set_channel_name(const std::string &name);
     void m_set_channel_topic(const std::string &topic);
 //    void m_set_channel_mode(const std::string &chan_mode);
+    void m_set_mode_key(bool b);
     void m_set_key(const std::string &key);
 //   void m_set_user_mode(Client &client, std::string &user_mode);
     void m_join(Client &client);

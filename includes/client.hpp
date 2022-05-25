@@ -48,10 +48,10 @@ private:
     const std::string	&m_get_nickname(void) const;
     const std::string	&m_get_username(void) const;
     const std::map<const std::string, const std::string> &m_get_channel_lists(void) const;
-    const bool m_is_registered(void) const;
-    const bool m_is_pass_registered(void) const;
-    const bool m_is_nick_registered(void) const;
-    const bool m_is_user_registered(void) const;
+    bool m_is_registered(void) const;
+    bool m_is_pass_registered(void) const;
+    bool m_is_nick_registered(void) const;
+    bool m_is_user_registered(void) const;
     void m_set_password(const std::string &pw);
     void m_set_nickname(const std::string &nickname);
     void m_set_username(const std::string &username);

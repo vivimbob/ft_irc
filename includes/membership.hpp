@@ -13,7 +13,9 @@ public :
 		bool v:1;
 	};
 
-  MemberShip() : client(NULL), channel(NULL)
+  MemberShip()
+    : client(NULL),
+      channel(NULL)
   {
   }
 
