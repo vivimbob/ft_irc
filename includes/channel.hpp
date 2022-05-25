@@ -42,7 +42,7 @@ class Channel
     Channel &operator=(const Channel& cp);
 
   public:
-    Channel(const std::string &name, const std::string &key, Client &client);
+    Channel(const std::string &name, const std::string &key);
     ~Channel(void);
     const std::string &m_get_channel_name(void) const;
     const std::string &m_get_channel_topic(void) const;
@@ -61,7 +61,7 @@ class Channel
     void m_set_key(const std::string &key);
 //   void m_set_user_mode(Client &client, std::string &user_mode);
     void m_join(Client &client);
-    void m_invite(Client &client);
+    void m_invite(void);
     void m_display_channel_info(void);
     void m_display_topic(Client &client);
     void m_display_names(Client &client);

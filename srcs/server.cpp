@@ -458,7 +458,7 @@ void
                 Logger().error() << "ERR_TOOMANYCHANNELS <" << client.m_get_nickname() << "> <" << pair_it->first << "> :You have joined too many channels";
                 return ;
             }
-            m_channel_map.insert(std::make_pair(pair_it->first, new Channel(pair_it->first, pair_it->second, client)));
+            m_channel_map.insert(std::make_pair(pair_it->first, new Channel(pair_it->first, pair_it->second)));
             if (!pair_it->second.empty())// key값이 존재하면 key mosde 설정
                 m_channel_map[pair_it->first]->m_set_mode_key(true);
             m_channel_map[pair_it->first]->m_add_user(client);

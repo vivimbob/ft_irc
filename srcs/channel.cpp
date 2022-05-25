@@ -2,7 +2,7 @@
 #include "../includes/logger.hpp"
 #include <utility>
 
-Channel::Channel(const std::string &name, const std::string &key, Client &client)
+Channel::Channel(const std::string &name, const std::string &key)
  : m_channel_name(name),
   m_channel_init_time(std::time(NULL)),
   m_key(key)
@@ -17,7 +17,6 @@ Channel::Channel(const std::string &name, const std::string &key, Client &client
 	mode.b = false;
 	mode.k = false;
   m_user_limits = 42;
-  (void)client;
 }
 
 Channel::~Channel(void)
@@ -105,10 +104,9 @@ void
   // server에서 channel topic, channel user list 전송
 }
 
-void Channel::m_invite(Client &client)
+void Channel::m_invite(void)
 {
 	mode.i = true;
-  (void)client;
 }
 
 void
