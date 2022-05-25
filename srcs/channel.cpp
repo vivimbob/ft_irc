@@ -12,29 +12,50 @@ Channel::Channel(const std::string &name, Client &client)
 	mode.t = false;
 	mode.n = false;
 	mode.m = false;
-	mode.l = false;
-	mode.b = false;
 	mode.k = false;
 }
 
-Channel::~Channel()
+Channel::~Channel(void)
 {
 }
 
 const std::string&
-  Channel::m_get_channel_name() const
+  Channel::m_get_channel_name(void) const
 {
   return m_channel_name;
 }
 
 const std::string&
-  Channel::m_get_channel_topic() const
+  Channel::m_get_channel_topic(void) const
 {
   return m_channel_topic;
 }
 
+std::string
+  Channel::m_get_channel_mode(void)
+{
+	std::string message;
+
+	message.push_back('+');
+	if (mode.p)
+		message.push_back('p');
+	if (mode.s)
+		message.push_back('s');
+	if (mode.i)
+		message.push_back('i');
+	if (mode.t)
+		message.push_back('t');
+	if (mode.n)
+		message.push_back('n');
+	if (mode.m)
+		message.push_back('m');
+	if (mode.k)
+		message.push_back('k');
+	return message;
+}
+
 const std::string&
-  Channel::m_get_key() const
+  Channel::m_get_key(void) const
 {
   return m_key;
 }
@@ -100,6 +121,18 @@ bool
   return m_user_lists.empty();
 }
 
+bool
+  Channel::m_is_operator(Client &client)
+{
+	return m_user_lists[&client].mode.o;
+}
+
+bool
+  Channel::m_is_user_on_channel(Client *client)
+{
+	return m_user_lists.count(client);
+}
+
 void
   Channel::m_add_operator(Client &client)
 {
@@ -124,3 +157,62 @@ void
   m_user_lists.erase(&client);
 }
 
+void
+  Channel::m_set_private_flag(bool toggle)
+{
+	mode.p = toggle;
+	if (mode.p == true && mode.s == true)
+		mode.s = false;
+}
+
+void
+  Channel::m_set_secret_flag(bool toggle)
+{
+	mode.s = toggle;
+	if (mode.p == true && mode.s == true)
+		mode.p = false;
+}
+
+void
+  Channel::m_set_invite_flag(bool toggle)
+{
+	mode.i = toggle;
+}
+
+void
+  Channel::m_set_topic_flag(bool toggle)
+{
+	mode.t = toggle;
+}
+
+void
+  Channel::m_set_no_messages_flag(bool toggle)
+{
+	mode.n = toggle;
+}
+
+void
+  Channel::m_set_moderate_flag(bool toggle)
+{
+	mode.m = toggle;
+}
+
+void
+  Channel::m_set_key_flag(bool toggle, std::string key)
+{
+	mode.k = toggle;
+	if (toggle == true)
+		m_key = key;
+}
+
+void
+  Channel::m_set_limit(size_t limit)
+{
+	m_user_limits = limit;
+}
+
+void
+  Channel::m_set_void_flag(bool toggle, Client *client)
+{
+	m_user_lists[client].mode.v = toggle;
+}
