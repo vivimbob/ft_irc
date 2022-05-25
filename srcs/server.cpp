@@ -524,7 +524,7 @@ void
 							Logger().error() << "ERR_NOTONCHANNEL :" << msg.err_not_on_channel(client, target);
 							break;//no to channel
 						}
-						channel->m_add_operator(*user);
+						channel->m_set_operator_flag(toggle, user);
 						client.m_send_buffer.append(msg.rpl_channel_mode_is(client, target, toggle, *mode, *parameter));
 						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(client, target, toggle, *mode, *parameter);
 					}
@@ -552,7 +552,7 @@ void
 							Logger().error() << "ERR_NOTONCHANNEL :" << msg.err_not_on_channel(client, target);
 							break;//no to channel
 						}
-						channel->m_set_void_flag(toggle, user);
+						channel->m_set_voice_flag(toggle, user);
 						client.m_send_buffer.append(msg.rpl_channel_mode_is(client, target, toggle, *mode, *parameter));
 						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(client, target, toggle, *mode, *parameter);
 					}

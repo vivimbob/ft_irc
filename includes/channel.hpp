@@ -72,7 +72,8 @@ class Channel
 	void m_set_moderate_flag(bool toggle);
 	void m_set_key_flag(bool toggle, std::string key = std::string());
 	void m_set_limit(size_t limit);
-	void m_set_void_flag(bool toggle, Client *client);
+	void m_set_operator_flag(bool toggle, Client *client);
+	void m_set_voice_flag(bool toggle, Client *client);
 };
 
 #endif /* CHANNEL_HPP */

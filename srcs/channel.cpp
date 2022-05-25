@@ -124,7 +124,7 @@ bool
 bool
   Channel::m_is_operator(Client &client)
 {
-	return m_user_lists[&client].mode.o;
+	return m_user_lists.find(&client)->second.mode.o;
 }
 
 bool
@@ -136,13 +136,13 @@ bool
 void
   Channel::m_add_operator(Client &client)
 {
-	m_user_lists[&client].mode.o = true;
+	m_user_lists.find(&client)->second.mode.o = true;
 }
 
 void
   Channel::m_delete_operator(Client &client)
 {
-	m_user_lists[&client].mode.o = false;
+	m_user_lists.find(&client)->second.mode.o = true;
 }
 
 void
@@ -212,7 +212,13 @@ void
 }
 
 void
-  Channel::m_set_void_flag(bool toggle, Client *client)
+  Channel::m_set_operator_flag(bool toggle, Client *client)
 {
-	m_user_lists[client].mode.v = toggle;
+	m_user_lists.find(client)->second.mode.o = toggle;
+}
+
+void
+  Channel::m_set_voice_flag(bool toggle, Client *client)
+{
+	m_user_lists.find(client)->second.mode.v = toggle;
 }
