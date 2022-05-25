@@ -30,8 +30,6 @@ class Channel
     time_t m_channel_init_time;
     MemberMap m_user_lists;
     std::string m_channel_topic;
-    // banned_list는 추후에 
-    std::vector<Client *> m_banned_lists;
     std::string m_key;
     size_t m_user_limits;
 
