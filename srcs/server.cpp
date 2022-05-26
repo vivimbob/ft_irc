@@ -300,6 +300,13 @@ void
 }
 
 void
+	Server::register_client(Client &client, IRCMessage &msg)
+{
+	m_client_map[client.m_get_nickname()] = &client;
+	client.m_send_buffer.append(msg.rpl_welcome(client));
+}
+
+void
     Server::process_pass_command(Client &client, IRCMessage &msg)
 {
     if (!msg.get_params().size())
@@ -317,7 +324,7 @@ void
     client.m_set_password(msg.get_params()[0]);
     Logger().trace() << "Set password :" << client.m_get_password();
 	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
-		m_client_map[client.m_get_nickname()] = &client;
+		register_client(client, msg);
 }
 
 void
@@ -359,7 +366,7 @@ void
     Logger().trace() << "Set nickname :" << nickname;
 
 	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
-		m_client_map[client.m_get_nickname()] = &client;
+		register_client(client, msg);
 }
 
 void
@@ -385,8 +392,8 @@ void
     client.m_set_hostname(hostname);
     Logger().trace() << "Set username :" << username;
     Logger().trace() << "Set hostname :" << hostname;
-	  if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
-		    m_client_map[client.m_get_nickname()] = &client;
+	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
+		register_client(client, msg);
 }
 
 void
