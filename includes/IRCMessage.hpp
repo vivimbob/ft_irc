@@ -96,6 +96,7 @@ public:
     std::string rpl_banlist(Client &client, const std::string& channel, const std::string& banid);
     std::string rpl_endofbanlist(Client &client, const std::string& channel);
     std::string rpl_user_mode_is(Client &client, const std::string& user_mode_string);
+    std::string rpl_welcome(Client &client);
 };
 
 #endif /* IRCMESSAGE_HPP */

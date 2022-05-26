@@ -378,3 +378,10 @@ std::string
 {
 	return m_reply_prefix(client, "221") + " :Your user mode is [" + user_mode_string + "]\r\n";
 }
+
+std::string
+	IRCMessage::rpl_welcome(Client& client)
+{
+	return m_reply_prefix(client, "001") + " Welcome to Interet Relay Network\n"
+		+ client.m_get_nickname() + '!' + client.m_get_username() + '@' + client.m_get_hostname() + "\r\n";
+}
