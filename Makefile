@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 SRCS    = main.cpp\
 		srcs/channel.cpp\
 		srcs/client.cpp\
-		srcs/IRCMessage.cpp\
+		srcs/ircmessage.cpp\
     srcs/logger.cpp\
 		srcs/server.cpp\
 		srcs/utils.cpp\
