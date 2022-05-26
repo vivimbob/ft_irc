@@ -145,7 +145,10 @@ void
         if (m_command_map.count(message->get_command()))
             (this->*m_command_map[message->get_command()])(client, *message);
         else
-            Logger().error() << "ERR_UNKNOWNCOMMAND <" << message->get_command() << "> :Unknown command";//ERR_UNKNOWNCOMMAND
+		{
+			client.m_send_buffer.append(message->err_unknown_command(client, message->get_command()));
+            Logger().error() << "ERR_UNKNOWNCOMMAND <" << message->get_command() << "> :Unknown command";
+		}
         delete message;
     }
 }
@@ -622,7 +625,7 @@ void
         				Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
 						break;
 					}
-					channel->m_set_limit(atoi(parameter.base()->data()));
+					channel->m_set_limit(toggle, atoi(parameter.base()->data()));
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(client, target, toggle, *mode, *parameter));
 						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(client, target, toggle, *mode, *parameter);
 					break;

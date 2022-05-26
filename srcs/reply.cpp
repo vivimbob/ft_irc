@@ -8,6 +8,8 @@ std::string
 {
     std::string msg;
     msg = msg + ":" + client.m_get_client_IP() + " " + command + " " + client.m_get_nickname();
+	if (client.m_get_nickname().empty())
+		msg += "*";
     return msg;
 }
 

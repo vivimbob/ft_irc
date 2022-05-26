@@ -21,6 +21,7 @@ class Channel
 		bool n:1;
 		bool m:1;
 		bool k:1;
+		bool l:1;
 	};
 
 	typedef std::map<Client *, MemberShip> MemberMap;
@@ -79,7 +80,7 @@ class Channel
 	void m_set_no_messages_flag(bool toggle);
 	void m_set_moderate_flag(bool toggle);
 	void m_set_key_flag(bool toggle, std::string key = std::string());
-	void m_set_limit(size_t limit);
+	void m_set_limit(bool toggle, size_t limit);
 	void m_set_operator_flag(bool toggle, Client *client);
 	void m_set_voice_flag(bool toggle, Client *client);
 };

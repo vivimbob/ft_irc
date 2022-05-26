@@ -14,6 +14,7 @@ Channel::Channel(const std::string &name, const std::string &key)
 	mode.n = false;
 	mode.m = false;
 	mode.k = false;
+	mode.l = false;
   m_user_limits = 42;
 }
 
@@ -53,6 +54,8 @@ std::string
 		message.push_back('m');
 	if (mode.k)
 		message.push_back('k');
+	if (mode.l)
+		message.push_back('l');
 	return message;
 }
 
@@ -246,9 +249,10 @@ void
 }
 
 void
-  Channel::m_set_limit(size_t limit)
+  Channel::m_set_limit(bool toggle, size_t limit)
 {
 	m_user_limits = limit;
+	mode.l = toggle;
 }
 
 void
