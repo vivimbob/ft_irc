@@ -56,6 +56,9 @@ class Server
         void handle_messages(Client &client);
 
         void prepare_to_send(Client &client, const std::string &str_msg);
+        void send_to_channel(Client &client, ChannelMap &channel_map, IRCMessage &msg);
+        void send_to_users(Client &client, IRCMessage &msg);
+        std::string build_messages(Client &client, IRCMessage &msg);
 
         static CommandMap initial_command_map(void);
 
@@ -64,6 +67,7 @@ class Server
         void process_user_command(Client &client, IRCMessage &msg);
         void process_join_command(Client &client, IRCMessage &msg);
         void process_mode_command(Client &client, IRCMessage &msg);
+        void process_quit_command(Client &client, IRCMessage &msg);
 
         void join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
 

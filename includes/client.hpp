@@ -26,6 +26,7 @@ private:
     std::string m_password;
     std::string	m_nickname;
     std::string	m_username;
+    std::string m_hostname;
     std::queue<IRCMessage *>m_commands;
     std::map<const std::string, const std::string> m_chan_key_lists;
     size_t m_channel_limits;
@@ -47,7 +48,8 @@ private:
     const std::string	&m_get_password(void) const;
     const std::string	&m_get_nickname(void) const;
     const std::string	&m_get_username(void) const;
-	std::string	m_get_usermode(void);
+    const std::string	&m_get_hostname(void) const;
+	  std::string	m_get_usermode(void);
     const std::map<const std::string, const std::string> &m_get_channel_lists(void) const;
     bool m_is_registered(void) const;
     bool m_is_pass_registered(void) const;
@@ -56,6 +58,8 @@ private:
     void m_set_password(const std::string &pw);
     void m_set_nickname(const std::string &nickname);
     void m_set_username(const std::string &username);
+    void m_set_hostname(const std::string &hostname);
+
 };
 
 #endif /* CLIENT_HPP */

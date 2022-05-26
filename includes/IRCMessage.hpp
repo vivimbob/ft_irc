@@ -30,6 +30,7 @@ public:
     ~IRCMessage(void);
 
     void    parse_message(void);
+    const std::string   &get_message(void) const;
     const std::string   &get_prefix(void) const;
     const std::string   &get_command(void) const;
     const std::vector<std::string>  &get_params(void) const;
