@@ -62,9 +62,9 @@ std::string
 }
 
 std::string
-	IRCMessage::err_no_recipient(const std::string &command)
+	IRCMessage::err_no_recipient(void)
 {
-	return m_reply_prefix("411") + " :No recipient given (" + command + ")\r\n";
+	return m_reply_prefix("411") + " :No recipient given (" + m_command + ")\r\n";
 }
 
 std::string
@@ -86,9 +86,9 @@ std::string
 }
 
 std::string
-	IRCMessage::err_unknown_command(const std::string &command)
+	IRCMessage::err_unknown_command(void)
 {
-	return m_reply_prefix("421") + " " + command  + " :Unkown command\r\n";
+	return m_reply_prefix("421") + " " + m_command  + " :Unkown command\r\n";
 }
 
 std::string
@@ -176,9 +176,9 @@ std::string
 }
 
 std::string
-	IRCMessage::err_need_more_params(const std::string& command)
+	IRCMessage::err_need_more_params(void)
 {
-	return m_reply_prefix("461") + " " + command + " :Not enough parameters\r\n";
+	return m_reply_prefix("461") + " " + m_command + " :Not enough parameters\r\n";
 }
 
 std::string

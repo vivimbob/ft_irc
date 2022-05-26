@@ -45,11 +45,11 @@ public:
     std::string err_was_no_such_nick(const std::string &nickname);
     std::string err_too_many_targets(const std::string &target);
     std::string err_no_origin(void);
-    std::string err_no_recipient(const std::string &command);
+    std::string err_no_recipient(void);
     std::string err_no_text_to_send(void);
     std::string err_no_toplevel(const std::string &mask);
     std::string err_wild_toplevel(const std::string &mask);
-    std::string err_unknown_command(const std::string &command);
+    std::string err_unknown_command(void);
     std::string err_no_motd(void);
     std::string err_no_admin_info(const std::string &server);
     std::string err_file_error(const std::string &file_op, const std::string &file);
@@ -64,7 +64,7 @@ public:
     std::string err_summon_disabled(void);
     std::string err_users_disabled(void);
     std::string err_not_registered(void);
-    std::string err_need_more_params(const std::string& command);
+    std::string err_need_more_params(void);
     std::string err_already_registred(void);
     std::string err_no_perm_for_host(void);
     std::string err_passwd_mismatch(void);
