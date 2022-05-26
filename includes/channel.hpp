@@ -20,18 +20,20 @@ class Channel
 		bool t:1;
 		bool n:1;
 		bool m:1;
-		bool l:1;
-		bool b:1;
 		bool k:1;
+		bool l:1;
 	};
-	  typedef std::map<Client *, MemberShip> MemberMap;
+
+	typedef std::map<Client *, MemberShip> MemberMap;
+	typedef std::vector<std::string> BanMasks;
 
     std::string m_channel_name;
     time_t m_channel_init_time;
     MemberMap m_user_lists;
+	BanMasks m_ban_masks;
     std::string m_channel_topic;
     std::string m_key;
-    size_t m_user_limits;
+	size_t m_user_limits;
 
 	s_mode mode;
     
@@ -44,7 +46,7 @@ class Channel
     ~Channel(void);
     const std::string &m_get_channel_name(void) const;
     const std::string &m_get_channel_topic(void) const;
-//   const std::string &m_get_channel_mode(void) const;
+    std::string m_get_channel_mode(void);
     const std::string &m_get_key(void) const;
     const size_t &m_get_user_limits(void) const;
     const MemberMap &m_get_user_lists(void);
@@ -64,11 +66,23 @@ class Channel
     void m_display_topic(Client &client);
     void m_display_names(Client &client);
     bool m_is_empty(void) const;
+	bool m_is_operator(Client &client);
+	bool m_is_user_on_channel(Client *client);
     void m_add_operator(Client &client);
     void m_delete_operator(Client &client);
     void m_add_user(Client &client);
     void m_delete_user(Client &client);
 
+	void m_set_private_flag(bool toggle);
+	void m_set_secret_flag(bool toggle);
+	void m_set_invite_flag(bool toggle);
+	void m_set_topic_flag(bool toggle);
+	void m_set_no_messages_flag(bool toggle);
+	void m_set_moderate_flag(bool toggle);
+	void m_set_key_flag(bool toggle, std::string key = std::string());
+	void m_set_limit(bool toggle, size_t limit);
+	void m_set_operator_flag(bool toggle, Client *client);
+	void m_set_voice_flag(bool toggle, Client *client);
 };
 
 #endif /* CHANNEL_HPP */

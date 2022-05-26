@@ -49,6 +49,7 @@ private:
     const std::string	&m_get_nickname(void) const;
     const std::string	&m_get_username(void) const;
     const std::string	&m_get_hostname(void) const;
+	  std::string	m_get_usermode(void);
     const std::map<const std::string, const std::string> &m_get_channel_lists(void) const;
     bool m_is_registered(void) const;
     bool m_is_pass_registered(void) const;
