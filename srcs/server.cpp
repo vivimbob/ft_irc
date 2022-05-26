@@ -31,6 +31,7 @@ Server::Server(int argc, char **argv)
     if (m_port < 0 || m_port > 65535)
         Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
     m_password = argv[2];
+	Logger().info() << "Server start";
     create_socket();
     bind_socket();
     listen_socket();
@@ -45,6 +46,7 @@ Server::Server(int port, std::string password)
 {
     if (m_port < 0 || m_port > 65535)
         Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
+	Logger().info() << "Server start";
     create_socket();
     bind_socket();
     listen_socket();
@@ -64,7 +66,7 @@ void
         Logger().fatal() << "Failed to create socket. errno " << errno;
         exit(EXIT_FAILURE);
     }
-    Logger().trace() << "Create socket " << m_listen_fd;
+    Logger().info() << "Create socket " << m_listen_fd;
 }
 
 void
@@ -80,7 +82,7 @@ void
         Logger().fatal() << "Failed to bind to port and address" << m_port << ". errno: " << errno;
         exit(EXIT_FAILURE);
     }
-    Logger().trace() << "Bind Port :" << m_port << " IP :" <<  inet_ntoa(m_sockaddr.sin_addr);
+    Logger().info() << "Bind Port :" << m_port << " IP :" <<  inet_ntoa(m_sockaddr.sin_addr);
 }
 
 void
@@ -91,9 +93,9 @@ void
         Logger().fatal() << "Failed to listen on socket. errno: " << errno;
         exit(EXIT_FAILURE);
     }
-    Logger().trace() << "Listen on socket";
+    Logger().info() << "Listen on socket";
     fcntl(m_listen_fd, F_SETFL, O_NONBLOCK);
-    Logger().trace() << "Socket set nonblock";
+    Logger().info() << "Socket set nonblock";
 }
 
 void
@@ -105,9 +107,9 @@ void
         Logger().fatal() << "Failed to allocate kqueue. errno: " << errno;
         exit(EXIT_FAILURE);
     }
-    Logger().trace() << "Allocate kqueue " << m_kq;
+    Logger().info() << "Allocate kqueue " << m_kq;
     update_event(m_listen_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    Logger().trace() << "Socket " << m_listen_fd << " update to kqueue";
+    Logger().info() << "Listen socket(" << m_listen_fd << ") assign read event to kqueue";
 }
 
 void
@@ -131,7 +133,9 @@ void
     update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, client_info);
     update_event(client_fd, EVFILT_WRITE , EV_ADD | EV_DISABLE, 0, 0, client_info);
 
-    Logger().trace() << "Accept client " << client_fd;
+    Logger().info() << "Accept client [address:"
+		<< inet_ntoa(client_addr.sin_addr) << ":" << client_addr.sin_port <<
+		"fd:" << client_fd << ']';
 }
 
 void
@@ -140,14 +144,15 @@ void
     while (client.m_commands.size())
     {
         IRCMessage *message = client.m_commands.front();
+		Logger().debug() << client.m_get_nickname() << " send [" << message->get_message() << ']';
         client.m_commands.pop();
         message->parse_message();
         if (m_command_map.count(message->get_command()))
             (this->*m_command_map[message->get_command()])(client, *message);
         else
 		{
-			client.m_send_buffer.append(message->err_unknown_command(message->get_command()));
-            Logger().error() << "ERR_UNKNOWNCOMMAND <" << message->get_command() << "> :Unknown command";
+			client.m_send_buffer.append(message->err_unknown_command());
+            Logger().trace() << message->err_unknown_command();
 		}
         delete message;
     }
@@ -178,14 +183,17 @@ void
             position = recv_buffer.find_first_of("\r\n", 0);
         }
 
-        Logger().trace() << "Receive Message";
+        Logger().info()
+			<< "Receive Message(" << client.m_commands.size() <<
+			") from " << client.m_get_nickname();
 
         if (client.m_commands.size())
         {
-            Logger().trace() << "Handle Messages";
             handle_messages(client);
             update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);
             update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+			Logger().trace() << client.m_get_nickname() << " disable read event";
+			Logger().trace() << client.m_get_nickname() << " enable write event";
         }
     }
     else if (recv_data_len == 0)
@@ -217,7 +225,7 @@ void
   
     if (send_data_len >= 0)
     {
-        Logger().trace() << "Send ok " << clientfd;
+        Logger().info() << "Server send to " << client.m_get_nickname();
         send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
         Logger().trace() << "Send " << send_data_len << " bytes from [" << clientfd << "] client";
         if (send_buffer.size() <= send_buffer.get_offset())
@@ -227,6 +235,8 @@ void
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
             update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
+			Logger().trace() << client.m_get_nickname() << " enable read event";
+			Logger().trace() << client.m_get_nickname() << " disable write event";
         }
     }
 }
@@ -244,9 +254,11 @@ void
 {
     int event_count = 0;
 
+	Logger().info() << "[Sever runnig]";
     while (true)
     {
         event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
+		Logger().trace() << event_count << " new kevent";
         for (int i = 0; i < event_count; ++i)
         {
             struct kevent &event = m_event_list[i];
@@ -265,8 +277,9 @@ void
 {
 	const unsigned int& clientfd = client.m_get_socket();
 
-    Logger().trace() << "Client disconnect IP :" << client.m_get_client_IP()
-    << " FD :" << clientfd;
+    Logger().info() << "Client disconnect [address :"
+		<< client.m_get_client_IP() << ':' << client.m_get_client_addr().sin_port 
+    	<< " FD :" << clientfd << ']';
 
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
@@ -295,8 +308,11 @@ void
     Server::prepare_to_send(Client &client, const std::string &str_msg)
 {
     client.m_send_buffer.append(str_msg);
-    update_event(client.m_get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+	Logger().trace() << client.m_get_nickname() << " [" << str_msg << ']';
     update_event(client.m_get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
+    update_event(client.m_get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+	Logger().trace() << client.m_get_nickname() << " disable read event";
+	Logger().trace() << client.m_get_nickname() << " enable write event";
 }
 
 void
@@ -304,6 +320,8 @@ void
 {
 	m_client_map[client.m_get_nickname()] = &client;
 	client.m_send_buffer.append(msg.rpl_welcome());
+	Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_welcome() << ']';
+	Logger().info() << client.m_get_nickname() << " is registed to server"; 
 }
 
 void
@@ -311,18 +329,17 @@ void
 {
     if (!msg.get_params().size())
     {
-        client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+        client.m_send_buffer.append(msg.err_need_more_params());
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
         return ;
     }
     if (client.m_is_registered())
     {
         client.m_send_buffer.append(msg.err_already_registred());
-        Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_already_registred() << ']';
         return ;
     }
     client.m_set_password(msg.get_params()[0]);
-    Logger().trace() << "Set password :" << client.m_get_password();
 	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
 		register_client(client, msg);
 }
@@ -333,7 +350,7 @@ void
     if (!msg.get_params().size())
     {
         client.m_send_buffer.append(msg.err_no_nickname_given());
-        Logger().error() << "ERR_NONICKNAMEGIVEN :No nickname given";
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_nickname_given() << ']';
         return ;
     }
     
@@ -342,13 +359,13 @@ void
     if (!utils::is_nickname_valid(nickname))
     {
         prepare_to_send(client, msg.err_erroneus_nickname(nickname));
-        Logger().error() << "ERR_ERRONEUSNICKNAME <" << nickname << "> :Erroneus nickname";
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_erroneus_nickname(nickname) << ']';
         return ; 
     }
 
 	if (m_client_map.count(nickname))
 	{
-    	Logger().error() << "ERR_NICKNAMEINUSE <" << nickname << "> :Nickname is already in use";
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_nickname_in_use(nickname) << ']';
         return ;
         // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
 	}
@@ -356,14 +373,14 @@ void
 
     if (client.m_is_registered())
     {
-		    ClientMap::iterator it = m_client_map.begin();
+		ClientMap::iterator it = m_client_map.begin();
         for (; it != m_client_map.end(); ++it)
         {
             prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname + "\r\n");
         }
     }
+    Logger().debug() << client.m_get_client_IP()  << " change nick to " << nickname;
     client.m_set_nickname(nickname);
-    Logger().trace() << "Set nickname :" << nickname;
 
 	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
 		register_client(client, msg);
@@ -374,15 +391,15 @@ void
 {
     if (msg.get_params().size() != 4)
     {
-        client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+        client.m_send_buffer.append(msg.err_need_more_params());
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
         return ;
     }
 
     if (client.m_is_registered())
     {
         client.m_send_buffer.append(msg.err_already_registred());
-        Logger().error() << "ERR_ALREADYREGISTRED :You may not reregister";
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_already_registred() << ']';
         return ;
     }
 
@@ -390,8 +407,8 @@ void
     const std::string &hostname = msg.get_params()[1];
     client.m_set_username(username);
     client.m_set_hostname(hostname);
-    Logger().trace() << "Set username :" << username;
-    Logger().trace() << "Set hostname :" << hostname;
+    Logger().debug() << client.m_get_client_IP()  << " set username to " << username;
+    Logger().debug() << client.m_get_client_IP()  << " set hostname to " << hostname;
 	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
 		register_client(client, msg);
 }
@@ -401,13 +418,16 @@ void
 {
     if (msg.get_params().size() < 1)
     {
-        client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-        Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+        client.m_send_buffer.append(msg.err_need_more_params());
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
         return ;
     }
+
     std::map<const std::string, const std::string> channel_key_pair;
     std::vector<const std::string> splited_channel;
+
     utils::split_by_comma(splited_channel, msg.get_params()[0]);
+
     if (msg.get_params().size() == 2) // key가 있을 때
     {
         std::vector<const std::string> splited_key;
@@ -415,7 +435,7 @@ void
         if ((splited_channel.size() < splited_key.size())) // key개수가 채널 개수보다 많을 때
         {
             client.m_send_buffer.append(msg.err_bad_channel_key(msg.get_command()));
-            Logger().error() << "ERR_BADCHANNELKEY <" << msg.get_command() << "> :Cannot join channel (+k)";
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_bad_channel_key(msg.get_command()) << ']';
             return ;
         }
         std::vector<const std::string>::iterator itc = splited_channel.begin();
@@ -453,7 +473,7 @@ void
         if (!utils::is_channel_prefix(pair_it->first) || !utils::is_channel_name_valid(pair_it->first)) // 채널이름 앞에 #, & 있는지, 이름이 유효한지
         {
             client.m_send_buffer.append(msg.err_bad_chan_mask(pair_it->first));
-            Logger().error() << "ERR_BADCHANMASK <" << msg.get_command() << "> :Bad Channel Mask";
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_bad_chan_mask(pair_it->first) << ']';
             return ;
         }
 
@@ -461,7 +481,7 @@ void
         if ((map_it != m_channel_map.end()) && ((m_channel_map[pair_it->first]->m_get_mode_key()) && (pair_it->second != map_it->second->m_get_key()))) // join할 채널 이름은 있는데 키가 안 맞는 경우
         {
             client.m_send_buffer.append(msg.err_bad_channel_key(pair_it->first));
-            Logger().error() << "ERR_BADCHANNELKEY <" << client.m_get_nickname() << "> <" << pair_it->first << "> :Cannot join channel (+k)";
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_bad_channel_key(msg.get_command()) << ']';
             return ;
         }
         else if (map_it == m_channel_map.end()) // join할 채널이 없는 경우(새로 만듦)
@@ -469,7 +489,7 @@ void
             if (client.m_chan_key_lists.size() >= client.m_channel_limits) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
             {
                 client.m_send_buffer.append(msg.err_too_many_channels(pair_it->first));
-                Logger().error() << "ERR_TOOMANYCHANNELS <" << client.m_get_nickname() << "> <" << pair_it->first << "> :You have joined too many channels";
+				Logger().trace() << client.m_get_nickname() << " [" << msg.err_too_many_channels(pair_it->first) << ']';
                 return ;
             }
             m_channel_map.insert(std::make_pair(pair_it->first, new Channel(pair_it->first, pair_it->second)));
@@ -478,7 +498,7 @@ void
             m_channel_map[pair_it->first]->m_add_user(client);
             m_channel_map[pair_it->first]->m_add_operator(client);
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
-            Logger().trace() << "Create new channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
+            Logger().info() << "Create new channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
         }
         else // join할 채널이 존재하는 경우
         {
@@ -486,13 +506,13 @@ void
             if (m_channel_map[pair_it->first]->m_get_mode_limit() && (temp_channel_users >= m_channel_map[pair_it->first]->m_get_user_limits())) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
             {
                 client.m_send_buffer.append(msg.err_channel_is_full(pair_it->first));
-                Logger().error() << "ERR_CHANNELISFULL <" << client.m_get_nickname() << "> <" << pair_it->first << "> :Cannot join channel (+l)";
+				Logger().trace() << client.m_get_nickname() << " [" << msg.err_channel_is_full(pair_it->first) << ']';
                 return ;
             }
             if (m_channel_map[pair_it->first]->m_get_mode_invite_only()) // invite-only인 경우
             {
                 client.m_send_buffer.append(msg.err_invite_only_chan(pair_it->first));
-                Logger().error() << "ERR_INVITEONLYCHAN <" << client.m_get_nickname() << "> <" << pair_it->first << "> :Cannot join channel (+i)";
+				Logger().trace() << client.m_get_nickname() << " [" << msg.err_invite_only_chan(pair_it->first) << ']';
                 return ;
             }
             if (client.m_chan_key_lists.count(pair_it->first)) // 이미 join된 경우
@@ -504,19 +524,19 @@ void
             if ((m_channel_map[pair_it->first]->m_get_mode_key()) && (pair_it->second != map_it->second->m_get_key())) // key mode인데 key가 안 맞을 때
             {
                 client.m_send_buffer.append(msg.err_bad_channel_key(pair_it->first));
-                Logger().error() << "ERR_BADCHANNELKEY <" << client.m_get_nickname() << "> <" << pair_it->first << "> :Cannot join channel (+k)";
+				Logger().trace() << client.m_get_nickname() << " [" << msg.err_bad_channel_key(pair_it->first) << ']';
                 return ;
             }
             m_channel_map[pair_it->first]->m_add_user(client);
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
-            Logger().trace() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
+            Logger().info() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
         }
         ClientMap::iterator it = m_client_map.begin();
         std::queue<const std::string> temp_nick_queue;
         for (; it != m_client_map.end(); ++it)
             temp_nick_queue.push(it->first);
         prepare_to_send(client, msg.rpl_namreply(pair_it->first, temp_nick_queue));
-        Logger().info() << "RPL_NAMREPLY";
+		Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
     }
 }
 
@@ -525,8 +545,8 @@ void
 {
 	if (msg.get_params().size() < 1)
 	{
-		  client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-      Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+		  client.m_send_buffer.append(msg.err_need_more_params());
+		  Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
 		  return ;
 	}
 	
@@ -538,20 +558,20 @@ void
 		if (!m_channel_map.count(channel_name))
 		{
 			client.m_send_buffer.append(msg.err_no_such_channel(target));
-			Logger().error() << "ERR_NOSUCHCHANNEL :" << msg.err_no_such_channel(target);
+		  Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(target) << ']';
 			return ;
 		}
 		Channel *channel = m_channel_map.at(channel_name);
 		if (msg.get_params().size() < 2)
 		{
 			client.m_send_buffer.append(msg.rpl_channel_mode_is(target, channel->m_get_channel_mode()));
-			Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, channel->m_get_channel_mode());
+			Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, channel->m_get_channel_mode()) << ']';
 			return ;
 		}
 		if (!channel->m_is_operator(client))
 		{
 			client.m_send_buffer.append(msg.err_chanoprivs_needed(target));
-			Logger().trace() << "ERR_CHANOPRIVSNEEDED: " << msg.err_chanoprivs_needed(target);
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_chanoprivs_needed(target) << ']';
 			return ;
 		}
 
@@ -572,33 +592,33 @@ void
 				case 'p':
 					channel->m_set_private_flag(toggle);
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-					Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					break;
 				case 's':
 					channel->m_set_secret_flag(toggle);
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-					Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					break;
 					break;
 				case 'i':
 					channel->m_set_invite_flag(toggle);
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-					Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					break;
 				case 't':
 					channel->m_set_topic_flag(toggle);
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-					Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					break;
 				case 'n':
 					channel->m_set_no_messages_flag(toggle);
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-					Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					break;
 				case 'm':
 					channel->m_set_moderate_flag(toggle);
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-					Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					break;
 				case 'k':
 					if (toggle == true)
@@ -606,19 +626,19 @@ void
 						++parameter_need_mode_count;
 						if (++parameter == parameter_end)
 						{
-							client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-							Logger().error() << "ERR_NEEDMOREPARAMS :" << msg.err_need_more_params(msg.get_command());
+							client.m_send_buffer.append(msg.err_need_more_params());
+							Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
 							break;
 						}
 						channel->m_set_key_flag(true, *parameter);
 						client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode, *parameter));
-						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter);
+						Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter) << ']';
 					}
 					else
 					{
 						channel->m_set_key_flag(false);
 						client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode));
-						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode);
+						Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode) << ']';
 					}
 					break;
 //				case 'b':
@@ -632,20 +652,20 @@ void
 					++parameter_need_mode_count;
 					if (++parameter == parameter_end)
 					{
-						client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-        				Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+						client.m_send_buffer.append(msg.err_need_more_params());
+						Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
 						break;
 					}
 					channel->m_set_limit(toggle, atoi(parameter.base()->data()));
 					client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode, *parameter));
-						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter);
+					Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter) << ']';
 					break;
 				case 'o':
 					++parameter_need_mode_count;
 					if (++parameter == parameter_end)
 					{
-						client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-        				Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+						client.m_send_buffer.append(msg.err_need_more_params());
+						Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
 						break;
 					}
 					{
@@ -653,27 +673,27 @@ void
 						if (iterator_user == m_client_map.end())
 						{
 							client.m_send_buffer.append(msg.err_no_such_nick(iterator_user->first));
-        					Logger().error() << "ERR_NOSUCHNICK :" << msg.err_no_such_nick(iterator_user->first);
+							Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_nick(iterator_user->first) << ']';
 							break;//no such nick;
 						}
 						Client * user = iterator_user->second;
 						if (!channel->m_is_user_on_channel(user))
 						{
 							client.m_send_buffer.append(msg.err_not_on_channel(target));
-							Logger().error() << "ERR_NOTONCHANNEL :" << msg.err_not_on_channel(target);
+							Logger().trace() << client.m_get_nickname() << " [" << msg.err_not_on_channel(target) << ']';
 							break;//no to channel
 						}
 						channel->m_set_operator_flag(toggle, user);
 						client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode, *parameter));
-						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter);
+						Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter) << ']';
 					}
 					break;
 				case 'v':
 					++parameter_need_mode_count;
 					if (++parameter == parameter_end)
 					{
-						client.m_send_buffer.append(msg.err_need_more_params(msg.get_command()));
-        				Logger().error() << "ERR_NEEDMOREPARAMS <" << msg.get_command() << "> :Not enough parameters";
+						client.m_send_buffer.append(msg.err_need_more_params());
+						Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
 						break;
 					}
 					{
@@ -681,24 +701,24 @@ void
 						if (iterator_user == m_client_map.end())
 						{
 							client.m_send_buffer.append(msg.err_no_such_nick(iterator_user->first));
-        					Logger().error() << "ERR_NOSUCHNICK :" << msg.err_no_such_nick(iterator_user->first);
+							Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_nick(iterator_user->first) << ']';
 							break;//no such nick;
 						}
 						Client * user = iterator_user->second;
 						if (!channel->m_is_user_on_channel(user))
 						{
 							client.m_send_buffer.append(msg.err_not_on_channel(target));
-							Logger().error() << "ERR_NOTONCHANNEL :" << msg.err_not_on_channel(target);
+							Logger().trace() << client.m_get_nickname() << " [" << msg.err_not_on_channel(target) << ']';
 							break;//no to channel
 						}
 						channel->m_set_voice_flag(toggle, user);
 						client.m_send_buffer.append(msg.rpl_channel_mode_is(target, toggle, *mode, *parameter));
-						Logger().trace() << "RPL_CHANNELMODEIS :" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter);
+						Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_channel_mode_is(target, toggle, *mode, *parameter) << ']';
 					}
 					break;
 				default:
 					client.m_send_buffer.append(msg.err_unknown_mode(*mode));
-					Logger().error() << "ERR_UNKNOWNMODE <" << msg.get_command() << "> :Unknown MODE flag :" << *mode;
+					Logger().trace() << client.m_get_nickname() << " [" << msg.err_unknown_mode(*mode) << ']';
 			}
 			toggle = *mode == '-' ? false : true;
 			++mode;
@@ -709,14 +729,14 @@ void
 		if (target != client.m_get_nickname())
 		{
 			client.m_send_buffer.append(msg.err_users_dont_match());
-			Logger().error() << "ERR_USERDONTMATCH <" << msg.get_command() << "> :Cant change mode for other users";
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_users_dont_match() << ']';
 			return ;
 		}
 
 		if (msg.get_params().size() == 1)
 		{
 			client.m_send_buffer.append(msg.rpl_user_mode_is(client.m_get_usermode()));
-			Logger().trace() << msg.rpl_user_mode_is(client.m_get_usermode());
+			Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_user_mode_is(client.m_get_usermode()) << ']';
 			return;
 		}
 
@@ -750,13 +770,13 @@ void
 					break;
 				default:
 					client.m_send_buffer.append(msg.err_u_mode_unknown_flag());
-					Logger().error() << "ERR_UMODEUNKNOWNFLAG <" << msg.get_command() << "> :Unknown MODE flag :" << *it;
+					Logger().trace() << client.m_get_nickname() << " [" << msg.err_u_mode_unknown_flag() << ']';
 			}
 			toggle = *it == '-' ? false : true;
 			++it;
 		}
 		client.m_send_buffer.append(msg.rpl_user_mode_is(client.m_get_usermode()));
-		Logger().trace() << client.m_get_nickname() << " user mode change " << client.m_get_usermode();
+		Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_user_mode_is(client.m_get_usermode()) << ']';
 	}
 }
 
