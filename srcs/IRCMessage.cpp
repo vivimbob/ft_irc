@@ -45,6 +45,7 @@ void
             while (m_message.size() > m_position)
             {
                 s.append(" ");
+                m_position = m_message.find_first_not_of(' ', m_position);
                 s.append(m_message.begin() + m_position, m_message.begin() + next_position());
             }
             m_parameters.push_back(s);
@@ -55,6 +56,11 @@ void
             m_position = m_message.find_first_not_of(' ', m_position);
         }
     }
+}
+
+const std::string   &IRCMessage::get_message(void) const
+{
+    return m_message;
 }
 
 const std::string   &IRCMessage::get_prefix(void) const

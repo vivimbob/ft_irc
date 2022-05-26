@@ -60,6 +60,12 @@ const std::string&
   return m_username;
 }
 
+const std::string&
+  Client::m_get_hostname(void) const
+{
+  return m_hostname;
+}
+
 const std::map<const std::string, const std::string>&
   Client::m_get_channel_lists(void) const
 {
@@ -85,6 +91,12 @@ void
 {
   m_username = username;
   m_user_registered = true;
+}
+
+void
+  Client::m_set_hostname(const std::string &hostname)
+{
+  m_hostname = hostname;
 }
 
 bool

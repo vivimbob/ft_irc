@@ -268,7 +268,7 @@ void
     update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
-	m_client_map.erase(client.m_get_nickname());
+	  m_client_map.erase(client.m_get_nickname());
     delete &client;
     close(clientfd);
 }
@@ -283,6 +283,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("USER", &Server::process_user_command));
     temp_map.insert(std::make_pair("JOIN", &Server::process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
+    temp_map.insert(std::make_pair("QUIT", &Server::process_quit_command));
 
     return (temp_map);
 }
@@ -376,8 +377,11 @@ void
     }
 
     const std::string &username = msg.get_params()[0];
+    const std::string &hostname = msg.get_params()[1];
     client.m_set_username(username);
+    client.m_set_hostname(hostname);
     Logger().trace() << "Set username :" << username;
+    Logger().trace() << "Set hostname :" << hostname;
 	  if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
 		    m_client_map[client.m_get_nickname()] = &client;
 }
@@ -527,4 +531,43 @@ void
 	{
 		//User Mode
 	}
+}
+
+void
+    Server::process_quit_command(Client &client, IRCMessage &msg)
+{
+    send_to_channel(client, m_channel_map, msg);
+    disconnect_client(client);
+}
+
+void
+  Server::send_to_channel(Client &client, ChannelMap &chan_map, IRCMessage &msg)
+{
+    std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
+    for (; it != client.m_chan_key_lists.end(); ++it)
+    {
+        std::map<Client *, MemberShip> temp_map = chan_map[it->first]->m_get_user_lists();
+        std::map<Client *, MemberShip>::iterator itt = temp_map.begin();
+        for (; itt != temp_map.end(); ++itt)
+        {
+            prepare_to_send(*itt->first, build_messages(client, msg));
+        }
+    }
+}
+
+std::string
+  Server::build_messages(Client &client, IRCMessage &msg)
+{
+    std::string temp_param = "";
+    if (!msg.get_params().empty())
+        temp_param = msg.get_params()[0];
+    std::string temp_com = msg.get_command();
+    std::string temp_msg;
+
+    if (temp_com == "QUIT")
+    {
+        temp_msg = client.m_get_nickname() + '!' + client.m_get_username() + '@' + client.m_get_hostname();
+        temp_msg += " QUIT :" + temp_param + "\r\n";
+    }
+    return temp_msg;
 }
