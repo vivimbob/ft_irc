@@ -1,12 +1,12 @@
-#include "../includes/IRCMessage.hpp"
+#include "../includes/ircmessage.hpp"
 #include "../includes/logger.hpp"
 
-IRCMessage::IRCMessage(unsigned int clientfd, const std::string &message)
+IRCMessage::IRCMessage(Client *client, const std::string &message)
     : m_message(message),
       m_valid_message(true),
-      m_position(0)
+      m_position(0),
+	  m_client(client)
 {
-  (void)clientfd;
 }
 
 size_t

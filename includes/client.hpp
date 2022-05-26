@@ -6,7 +6,7 @@
 #include <queue>
 #include <map>
 #include "sendbuffer.hpp"
-#include "IRCMessage.hpp"
+#include "ircmessage.hpp"
 
 class Client
 {

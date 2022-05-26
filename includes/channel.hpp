@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 #include <ctime>
-#include "IRCMessage.hpp"
+#include "ircmessage.hpp"
 #include "client.hpp"
 #include "membership.hpp"
 
