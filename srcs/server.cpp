@@ -791,8 +791,23 @@ void
 void
     Server::process_topic_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, m_channel_map, msg);
-    disconnect_client(client);
+	if (msg.get_params().empty())
+	{
+		client.m_send_buffer.append(msg.err_need_more_params());
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+	}
+
+	const std::string& channel = msg.get_params()[0];
+	
+	if (!m_channel_map.count(channel))
+	{
+		client.m_send_buffer.append(msg.err_no_such_channel(channel));
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(channel) << ']';
+	}
+
+	if (msg.get_params().size() == 2)
+	{
+	}
 }
 
 void
