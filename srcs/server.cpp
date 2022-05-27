@@ -300,6 +300,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("JOIN", &Server::process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::process_quit_command));
+    temp_map.insert(std::make_pair("TOPIC", &Server::process_topic_command));
 
     return (temp_map);
 }
@@ -782,6 +783,13 @@ void
 
 void
     Server::process_quit_command(Client &client, IRCMessage &msg)
+{
+    send_to_channel(client, m_channel_map, msg);
+    disconnect_client(client);
+}
+
+void
+    Server::process_topic_command(Client &client, IRCMessage &msg)
 {
     send_to_channel(client, m_channel_map, msg);
     disconnect_client(client);
