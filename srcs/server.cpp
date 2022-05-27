@@ -797,16 +797,19 @@ void
 		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
 	}
 
-	const std::string& channel = msg.get_params()[0];
+	const std::string& channel_name = msg.get_params()[0];
 	
-	if (!m_channel_map.count(channel))
+	if (!m_channel_map.count(channel_name))
 	{
-		client.m_send_buffer.append(msg.err_no_such_channel(channel));
-		Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(channel) << ']';
+		client.m_send_buffer.append(msg.err_no_such_channel(channel_name));
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(channel_name) << ']';
 	}
+
+	Channel* channel = m_channel_map[channel_name];
 
 	if (msg.get_params().size() == 2)
 	{
+		channel->m_set_channel_topic(msg.get_params()[1]);
 	}
 }
 
