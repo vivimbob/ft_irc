@@ -820,12 +820,12 @@ void
 }
 
 void
-  Server::send_to_channel(Client &client, ChannelMap &chan_map, IRCMessage &msg)
+  Server::send_to_channel(Client &client, IRCMessage &msg)
 {
     std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
     for (; it != client.m_chan_key_lists.end(); ++it)
     {
-        std::map<Client *, MemberShip> temp_map = chan_map[it->first]->m_get_user_lists();
+        std::map<Client *, MemberShip> temp_map = m_channel_map[it->first]->m_get_user_lists();
         std::map<Client *, MemberShip>::iterator itt = temp_map.begin();
         for (; itt != temp_map.end(); ++itt)
         {

@@ -57,7 +57,7 @@ class Server
 
         void register_client(Client &client, IRCMessage &msg);
         void prepare_to_send(Client &client, const std::string &str_msg);
-        void send_to_channel(Client &client, ChannelMap &channel_map, IRCMessage &msg);
+        void send_to_channel(Client &client, IRCMessage &msg);
         void send_to_users(Client &client, IRCMessage &msg);
         std::string build_messages(Client &client, IRCMessage &msg);
 
