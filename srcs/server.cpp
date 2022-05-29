@@ -784,7 +784,7 @@ void
 void
     Server::process_quit_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, m_channel_map, msg);
+    send_to_channel(client, build_messages(client, msg));
     disconnect_client(client);
 }
 
@@ -820,18 +820,22 @@ void
 }
 
 void
-  Server::send_to_channel(Client &client, ChannelMap &chan_map, IRCMessage &msg)
+  Server::send_to_channel(Channel *channel, const std::string &msg)
+{
+	const Channel::MemberMap &user_list = channel->m_get_user_lists();
+	Channel::MemberMap::const_iterator user = user_list.begin();
+	
+	Logger().trace() << "send message to channel :" << channel->m_get_channel_name();
+	for (; user != user_list.end(); ++user)
+		prepare_to_send(*user->first, msg);
+}
+
+void
+  Server::send_to_channel(Client &client, const std::string &msg)
 {
     std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
     for (; it != client.m_chan_key_lists.end(); ++it)
-    {
-        std::map<Client *, MemberShip> temp_map = chan_map[it->first]->m_get_user_lists();
-        std::map<Client *, MemberShip>::iterator itt = temp_map.begin();
-        for (; itt != temp_map.end(); ++itt)
-        {
-            prepare_to_send(*itt->first, build_messages(client, msg));
-        }
-    }
+		send_to_channel(m_channel_map[it->first], msg);	
 }
 
 std::string
