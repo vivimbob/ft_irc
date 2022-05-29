@@ -69,6 +69,7 @@ class Server
         void process_join_command(Client &client, IRCMessage &msg);
         void process_mode_command(Client &client, IRCMessage &msg);
         void process_quit_command(Client &client, IRCMessage &msg);
+        void process_topic_command(Client &client, IRCMessage &msg);
 
         void join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
 

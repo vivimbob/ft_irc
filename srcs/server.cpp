@@ -300,6 +300,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("JOIN", &Server::process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::process_quit_command));
+    temp_map.insert(std::make_pair("TOPIC", &Server::process_topic_command));
 
     return (temp_map);
 }
@@ -785,6 +786,31 @@ void
 {
     send_to_channel(client, m_channel_map, msg);
     disconnect_client(client);
+}
+
+void
+    Server::process_topic_command(Client &client, IRCMessage &msg)
+{
+	if (msg.get_params().empty())
+	{
+		client.m_send_buffer.append(msg.err_need_more_params());
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+	}
+
+	const std::string& channel_name = msg.get_params()[0];
+	
+	if (!m_channel_map.count(channel_name))
+	{
+		client.m_send_buffer.append(msg.err_no_such_channel(channel_name));
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(channel_name) << ']';
+	}
+
+	Channel* channel = m_channel_map[channel_name];
+
+	if (msg.get_params().size() == 2)
+	{
+		channel->m_set_channel_topic(msg.get_params()[1]);
+	}
 }
 
 void
