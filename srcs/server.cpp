@@ -807,6 +807,12 @@ void
 
 	Channel* channel = m_channel_map[channel_name];
 
+	if (msg.get_params().size() == 1)
+	{
+		client.m_send_buffer.append(msg.rpl_topic(channel_name, channel->m_get_channel_topic()));
+		return ;
+	}
+
 	if (msg.get_params().size() == 2)
 	{
 		channel->m_set_channel_topic(msg.get_params()[1]);
