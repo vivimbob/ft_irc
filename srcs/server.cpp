@@ -784,7 +784,7 @@ void
 void
     Server::process_quit_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, m_channel_map, msg);
+    send_to_channel(client, build_messages(client, msg));
     disconnect_client(client);
 }
 
