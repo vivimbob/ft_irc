@@ -820,18 +820,17 @@ void
 }
 
 void
-  Server::send_to_channel(Channel *channel, IRCMessage &msg)
+  Server::send_to_channel(Channel *channel, const std::string &msg)
 {
-	Channel::MemberMap user_list = channel->m_get_user_lists();
-	Channel::MemberMap::iterator user = user_list.begin();
+	const Channel::MemberMap &user_list = channel->m_get_user_lists();
+	Channel::MemberMap::const_iterator user = user_list.begin();
+
 	for (; user != user_list.end(); ++user)
-	{
-		prepare_to_send(*user->first, build_messages(client, msg));
-	}
+		prepare_to_send(*user->first, msg);
 }
 
 void
-  Server::send_to_channel(Client &client, IRCMessage &msg)
+  Server::send_to_channel(Client &client, const std::string &msg)
 {
     std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
     for (; it != client.m_chan_key_lists.end(); ++it)
