@@ -824,7 +824,8 @@ void
 {
 	const Channel::MemberMap &user_list = channel->m_get_user_lists();
 	Channel::MemberMap::const_iterator user = user_list.begin();
-
+	
+	Logger().trace() << "send message to channel :" << channel->m_get_channel_name();
 	for (; user != user_list.end(); ++user)
 		prepare_to_send(*user->first, msg);
 }
