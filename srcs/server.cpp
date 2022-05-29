@@ -532,12 +532,13 @@ void
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
             Logger().info() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
         }
-        ClientMap::iterator it = m_client_map.begin();
+        const Channel::MemberMap &user_list = m_channel_map[pair_it->first]->m_get_user_lists();
+        Channel::MemberMap::const_iterator user = user_list.begin();
         std::queue<const std::string> temp_nick_queue;
-        for (; it != m_client_map.end(); ++it)
-            temp_nick_queue.push(it->first);
+        for (; user != user_list.end(); ++user)
+            temp_nick_queue.push(user->first->m_get_nickname());
         prepare_to_send(client, msg.rpl_namreply(pair_it->first, temp_nick_queue));
-		Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
+    Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
     }
 }
 
