@@ -24,9 +24,11 @@ class Channel
 		bool l:1;
 	};
 
+  public:
 	typedef std::map<Client *, MemberShip> MemberMap;
 	typedef std::vector<std::string> BanMasks;
 
+  private:
     std::string m_channel_name;
     time_t m_channel_init_time;
     MemberMap m_user_lists;
