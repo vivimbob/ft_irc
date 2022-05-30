@@ -540,19 +540,8 @@ void
         for (; user != user_list.end(); ++user)
             temp_nick_queue.push(user->first->m_get_nickname());
         prepare_to_send(client, msg.rpl_namreply(pair_it->first, temp_nick_queue));
-        Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
-
-	    std::string reply_msg;
-	    const std::string& channel_topic = m_channel_map[pair_it->first]->m_get_channel_topic();
-
-    	if (channel_topic.empty())
-    		reply_msg = msg.rpl_notopic(pair_it->first);
-    	else
-    		reply_msg = msg.rpl_topic(pair_it->first, channel_topic); 
-    
-        client.m_send_buffer.append(reply_msg);
-    	Logger().trace() << client.m_get_nickname() << " [" << reply_msg << ']';
-	}
+    Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
+    }
 }
 
 void
