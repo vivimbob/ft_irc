@@ -849,7 +849,7 @@ void
     std::vector<const std::string>::iterator it = splited_channel.begin();
     for (; it != splited_channel.end(); ++it)
     {
-        if (!utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
+        if (!m_channel_map.count(*it) || !utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
         {
             client.m_send_buffer.append(msg.err_no_such_channel(*it));
             Logger().info() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
