@@ -301,6 +301,8 @@ Server::CommandMap
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::process_quit_command));
     temp_map.insert(std::make_pair("TOPIC", &Server::process_topic_command));
+    temp_map.insert(std::make_pair("PART", &Server::process_part_command));
+
 
     return (temp_map);
 }
@@ -826,6 +828,13 @@ void
 	{
 		channel->m_set_channel_topic(msg.get_params()[1]);
 	}
+}
+
+void
+    Server::process_part_command(Client &client, IRCMessage &msg)
+{
+		(void)client;
+    (void)msg;
 }
 
 void
