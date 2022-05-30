@@ -808,24 +808,34 @@ void
 
 	Channel* channel = m_channel_map[channel_name];
 
-	if (msg.get_params().size() == 1)
-	{
-		client.m_send_buffer.append(msg.rpl_topic(channel_name, channel->m_get_channel_topic()));
-		Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_topic(channel_name, channel->m_get_channel_topic()) << ']';
-		return ;
-	}
-
-	if (channel->m_is_protected_topic() && !channel->m_is_operator(client))	
-	{
-		client.m_send_buffer.append(msg.err_chanoprivs_needed(channel_name));
-		Logger().trace() << client.m_get_nickname() << " [" << msg.err_chanoprivs_needed(channel_name) << ']';
-		return ;
-	}
-
 	if (msg.get_params().size() == 2)
 	{
+		if (channel->m_is_protected_topic() && !channel->m_is_operator(client))	
+		{
+			client.m_send_buffer.append(msg.err_chanoprivs_needed(channel_name));
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_chanoprivs_needed(channel_name) << ']';
+			return ;
+		}
 		channel->m_set_channel_topic(msg.get_params()[1]);
+
+		Logger().trace() << channel_name << " channel topic change to " << channel->m_get_channel_topic();
 	}
+
+	std::string reply_msg;
+
+	if (channel->m_get_channel_topic().empty())
+		reply_msg = msg.rpl_notopic(channel_name);
+	else
+		reply_msg = msg.rpl_topic(channel_name, channel->m_get_channel_topic());
+
+	if (msg.get_params().size() == 1)
+	{
+		client.m_send_buffer.append(reply_msg);
+		Logger().trace() << client.m_get_nickname() << " [" << reply_msg << ']';
+		return ;
+	}
+
+	send_to_channel(channel, reply_msg);
 }
 
 void
