@@ -176,6 +176,12 @@ bool
 	return m_user_lists.count(client);
 }
 
+bool
+  Channel::m_is_protected_topic(void)
+{
+	return mode.t;
+}
+
 void
   Channel::m_add_operator(Client &client)
 {

@@ -301,6 +301,8 @@ Server::CommandMap
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::process_quit_command));
     temp_map.insert(std::make_pair("TOPIC", &Server::process_topic_command));
+    temp_map.insert(std::make_pair("PART", &Server::process_part_command));
+
 
     return (temp_map);
 }
@@ -532,12 +534,13 @@ void
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
             Logger().info() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
         }
-        ClientMap::iterator it = m_client_map.begin();
+        const Channel::MemberMap &user_list = m_channel_map[pair_it->first]->m_get_user_lists();
+        Channel::MemberMap::const_iterator user = user_list.begin();
         std::queue<const std::string> temp_nick_queue;
-        for (; it != m_client_map.end(); ++it)
-            temp_nick_queue.push(it->first);
+        for (; user != user_list.end(); ++user)
+            temp_nick_queue.push(user->first->m_get_nickname());
         prepare_to_send(client, msg.rpl_namreply(pair_it->first, temp_nick_queue));
-		Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
+    Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
     }
 }
 
@@ -784,7 +787,7 @@ void
 void
     Server::process_quit_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, m_channel_map, msg);
+    send_to_channel(client, build_messages(client, msg));
     disconnect_client(client);
 }
 
@@ -809,23 +812,86 @@ void
 
 	if (msg.get_params().size() == 2)
 	{
+		if (channel->m_is_protected_topic() && !channel->m_is_operator(client))	
+		{
+			client.m_send_buffer.append(msg.err_chanoprivs_needed(channel_name));
+			Logger().trace() << client.m_get_nickname() << " [" << msg.err_chanoprivs_needed(channel_name) << ']';
+			return ;
+		}
 		channel->m_set_channel_topic(msg.get_params()[1]);
+
+		Logger().trace() << channel_name << " channel topic change to " << channel->m_get_channel_topic();
 	}
+
+	std::string reply_msg;
+
+	if (channel->m_get_channel_topic().empty())
+		reply_msg = msg.rpl_notopic(channel_name);
+	else
+		reply_msg = msg.rpl_topic(channel_name, channel->m_get_channel_topic());
+
+	if (msg.get_params().size() == 1)
+	{
+		client.m_send_buffer.append(reply_msg);
+		Logger().trace() << client.m_get_nickname() << " [" << reply_msg << ']';
+		return ;
+	}
+
+	send_to_channel(channel, reply_msg);
 }
 
 void
-  Server::send_to_channel(Client &client, ChannelMap &chan_map, IRCMessage &msg)
+    Server::process_part_command(Client &client, IRCMessage &msg)
+{
+		if (msg.get_params().size() < 1 || msg.get_params().size() > 2)
+    {
+        client.m_send_buffer.append(msg.err_need_more_params());
+        Logger().info() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+        return ;
+    }
+    
+    std::vector<const std::string> splited_channel;
+    std::string reason;
+    utils::split_by_comma(splited_channel, msg.get_params()[0]);
+    if (msg.get_params().size() == 2)
+        reason = msg.get_params()[1];
+    
+    std::vector<const std::string>::iterator it = splited_channel.begin();
+    for (; it != splited_channel.end(); ++it)
+    {
+        if (!m_channel_map.count(*it) || !utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
+        {
+            client.m_send_buffer.append(msg.err_no_such_channel(*it));
+            Logger().info() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
+            return ;
+        }
+        if (m_channel_map.count(*it) && !m_channel_map[*it]->m_get_user_lists().count(&client))
+        {
+            client.m_send_buffer.append(msg.err_not_on_channel(*it));
+            Logger().info() << client.m_get_nickname() << " [" << msg.err_not_on_channel(*it) << ']';
+            return ;
+        }
+    }
+
+}
+
+void
+  Server::send_to_channel(Channel *channel, const std::string &msg)
+{
+	const Channel::MemberMap &user_list = channel->m_get_user_lists();
+	Channel::MemberMap::const_iterator user = user_list.begin();
+	
+	Logger().trace() << "send message to channel :" << channel->m_get_channel_name();
+	for (; user != user_list.end(); ++user)
+		prepare_to_send(*user->first, msg);
+}
+
+void
+  Server::send_to_channel(Client &client, const std::string &msg)
 {
     std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
     for (; it != client.m_chan_key_lists.end(); ++it)
-    {
-        std::map<Client *, MemberShip> temp_map = chan_map[it->first]->m_get_user_lists();
-        std::map<Client *, MemberShip>::iterator itt = temp_map.begin();
-        for (; itt != temp_map.end(); ++itt)
-        {
-            prepare_to_send(*itt->first, build_messages(client, msg));
-        }
-    }
+		send_to_channel(m_channel_map[it->first], msg);	
 }
 
 std::string
