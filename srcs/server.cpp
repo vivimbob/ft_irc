@@ -825,6 +825,16 @@ void
 	if (msg.get_params().size() == 2)
 	{
 		channel->m_set_channel_topic(msg.get_params()[1]);
+
+		Logger().trace() << channel_name << " channel topic change to " << channe->m_get_channel_topic();
+
+		std::string reply_msg;
+
+		if (channel->m_get_channel_topic.empty())
+			reply_msg = msg.rpl_notopic(channel_name);
+		else
+			reply_msg = msg.rpl_topic(channel_name, channel->m_get_channel_topic());
+		client.m_send_buffer.append(reply_msg);
 	}
 }
 
