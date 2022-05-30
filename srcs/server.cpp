@@ -855,6 +855,12 @@ void
             Logger().info() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
             return ;
         }
+        if (m_channel_map.count(*it) && !m_channel_map[*it]->m_get_user_lists().count(&client))
+        {
+            client.m_send_buffer.append(msg.err_not_on_channel(*it));
+            Logger().info() << client.m_get_nickname() << " [" << msg.err_not_on_channel(*it) << ']';
+            return ;
+        }
     }
 
 }
