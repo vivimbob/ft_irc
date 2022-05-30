@@ -301,6 +301,8 @@ Server::CommandMap
     temp_map.insert(std::make_pair("MODE", &Server::process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::process_quit_command));
     temp_map.insert(std::make_pair("TOPIC", &Server::process_topic_command));
+    temp_map.insert(std::make_pair("PART", &Server::process_part_command));
+
 
     return (temp_map);
 }
@@ -836,6 +838,41 @@ void
 	}
 
 	send_to_channel(channel, reply_msg);
+}
+
+void
+    Server::process_part_command(Client &client, IRCMessage &msg)
+{
+		if (msg.get_params().size() < 1 || msg.get_params().size() > 2)
+    {
+        client.m_send_buffer.append(msg.err_need_more_params());
+        Logger().info() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+        return ;
+    }
+    
+    std::vector<const std::string> splited_channel;
+    std::string reason;
+    utils::split_by_comma(splited_channel, msg.get_params()[0]);
+    if (msg.get_params().size() == 2)
+        reason = msg.get_params()[1];
+    
+    std::vector<const std::string>::iterator it = splited_channel.begin();
+    for (; it != splited_channel.end(); ++it)
+    {
+        if (!m_channel_map.count(*it) || !utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
+        {
+            client.m_send_buffer.append(msg.err_no_such_channel(*it));
+            Logger().info() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
+            return ;
+        }
+        if (m_channel_map.count(*it) && !m_channel_map[*it]->m_get_user_lists().count(&client))
+        {
+            client.m_send_buffer.append(msg.err_not_on_channel(*it));
+            Logger().info() << client.m_get_nickname() << " [" << msg.err_not_on_channel(*it) << ']';
+            return ;
+        }
+    }
+
 }
 
 void
