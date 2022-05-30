@@ -839,6 +839,24 @@ void
         Logger().info() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
         return ;
     }
+    
+    std::vector<const std::string> splited_channel;
+    std::string reason;
+    utils::split_by_comma(splited_channel, msg.get_params()[0]);
+    if (msg.get_params().size() == 2)
+        reason = msg.get_params()[1];
+    
+    std::vector<const std::string>::iterator it = splited_channel.begin();
+    for (; it != splited_channel.end(); ++it)
+    {
+        if (!utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
+        {
+            client.m_send_buffer.append(msg.err_no_such_channel(*it));
+            Logger().info() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
+            return ;
+        }
+    }
+
 }
 
 void
