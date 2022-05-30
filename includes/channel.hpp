@@ -70,6 +70,7 @@ class Channel
     bool m_is_empty(void) const;
 	bool m_is_operator(Client &client);
 	bool m_is_user_on_channel(Client *client);
+	bool m_is_protected_topic(void);
     void m_add_operator(Client &client);
     void m_delete_operator(Client &client);
     void m_add_user(Client &client);
