@@ -833,8 +833,12 @@ void
 void
     Server::process_part_command(Client &client, IRCMessage &msg)
 {
-		(void)client;
-    (void)msg;
+		if (msg.get_params().size() < 1 || msg.get_params().size() > 2)
+    {
+        client.m_send_buffer.append(msg.err_need_more_params());
+        Logger().info() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+        return ;
+    }
 }
 
 void
