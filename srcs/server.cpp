@@ -834,7 +834,7 @@ void
 			reply_msg = msg.rpl_notopic(channel_name);
 		else
 			reply_msg = msg.rpl_topic(channel_name, channel->m_get_channel_topic());
-		client.m_send_buffer.append(reply_msg);
+		send_to_channel(channel, reply_msg);
 	}
 }
 
