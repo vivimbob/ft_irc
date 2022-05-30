@@ -811,6 +811,14 @@ void
 	if (msg.get_params().size() == 1)
 	{
 		client.m_send_buffer.append(msg.rpl_topic(channel_name, channel->m_get_channel_topic()));
+		Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_topic(channel_name, channel->m_get_channel_topic()) << ']';
+		return ;
+	}
+
+	if (channel->m_is_protected_topic() && !channel->m_is_operator(client))	
+	{
+		client.m_send_buffer.append(msg.err_chanoprivs_needed(channel_name));
+		Logger().trace() << client.m_get_nickname() << " [" << msg.err_chanoprivs_needed(channel_name) << ']';
 		return ;
 	}
 
