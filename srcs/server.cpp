@@ -857,7 +857,7 @@ void
 		if (msg.get_params().size() < 1 || msg.get_params().size() > 2)
     {
         client.m_send_buffer.append(msg.err_need_more_params());
-        Logger().info() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+        Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
         return ;
     }
     
@@ -870,13 +870,13 @@ void
         if (!m_channel_map.count(*it) || !utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
         {
             client.m_send_buffer.append(msg.err_no_such_channel(*it));
-            Logger().info() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
+            Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(*it) << ']';
             return ;
         }
         if (m_channel_map.count(*it) && !m_channel_map[*it]->m_get_user_lists().count(&client))
         {
             client.m_send_buffer.append(msg.err_not_on_channel(*it));
-            Logger().info() << client.m_get_nickname() << " [" << msg.err_not_on_channel(*it) << ']';
+            Logger().trace() << client.m_get_nickname() << " [" << msg.err_not_on_channel(*it) << ']';
             return ;
         }
     }
@@ -885,6 +885,7 @@ void
     {
         m_channel_map[*it]->m_delete_user(client);
         client.m_chan_key_lists.erase(*it);
+        Logger().trace() << "Remove [" << client.m_get_nickname() << "] client from [" << m_channel_map[*it]->m_get_channel_name() << "] channel";
         send_to_channel(m_channel_map[*it], build_messages(client, msg));
     }
 
