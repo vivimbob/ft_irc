@@ -141,6 +141,12 @@ bool
 }
 
 void
+  Client::append(const std::string &message)
+{
+	m_send_buffer.append(message);
+}
+
+void
   Client::append(const std::string &message, int level)
 {
 	m_send_buffer.append(message);
