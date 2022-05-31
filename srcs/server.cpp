@@ -887,6 +887,7 @@ void
     for (; it != splited_channel.end(); ++it)
     {
         m_channel_map[*it]->m_delete_user(client);
+        client.m_chan_key_lists.erase(*it);
     }
 
 }
