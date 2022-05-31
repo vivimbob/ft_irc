@@ -144,4 +144,6 @@ void
   Client::append(const std::string &message, int level)
 {
 	m_send_buffer.append(message);
+	Logger().log(level)
+		<< "Server Send to " << m_nickname << " [" << message << ']';
 }
