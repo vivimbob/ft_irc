@@ -47,7 +47,6 @@ void
                 s.append(" ");
                 m_position = m_message.find_first_not_of(' ', m_position);
                 s.append(m_message.begin() + m_position, m_message.begin() + next_position());
-                m_position = m_message.find_first_of(' ', m_position);
             }
             m_parameters.push_back(s);
         }
