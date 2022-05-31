@@ -798,7 +798,7 @@ void
 void
     Server::process_quit_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, build_messages(client, msg));
+    send_to_channel(client, msg.build_message());
     disconnect_client(client);
 }
 
@@ -886,7 +886,7 @@ void
         m_channel_map[*it]->m_delete_user(client);
         client.m_chan_key_lists.erase(*it);
         Logger().trace() << "Remove [" << client.m_get_nickname() << "] client from [" << m_channel_map[*it]->m_get_channel_name() << "] channel";
-        send_to_channel(m_channel_map[*it], build_messages(client, msg));
+        send_to_channel(m_channel_map[*it], msg.build_message());
     }
 
 }
@@ -908,30 +908,4 @@ void
     std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
     for (; it != client.m_chan_key_lists.end(); ++it)
 		send_to_channel(m_channel_map[it->first], msg);	
-}
-
-std::string
-  Server::build_messages(Client &client, IRCMessage &msg)
-{
-    std::string temp_param = "";
-    std::string temp_com = msg.get_command();
-    std::string temp_msg;
-
-    if (temp_com == "QUIT")
-    {
-        if (!msg.get_params().empty())
-            temp_param = msg.get_params()[0];
-        temp_msg = client.m_get_nickname() + '!' + client.m_get_username() + '@' + client.m_get_hostname();
-        temp_msg += " QUIT :" + temp_param + "\r\n";
-    }
-    else if (temp_com == "PART")
-    {
-        if (msg.get_params().size() == 2)
-            temp_param = msg.get_params()[1];
-        else
-            temp_param = client.m_get_nickname();
-        temp_msg = ':' + client.m_get_nickname() + '!' + client.m_get_username() + '@' + client.m_get_hostname();
-        temp_msg += " PART " + msg.get_params()[0] + " :" + temp_param + "\r\n"; 
-    }
-    return temp_msg;
 }

@@ -60,7 +60,6 @@ class Server
         void send_to_channel(Channel *channel, const std::string &msg);
         void send_to_channel(Client &client, const std::string &msg);
         void send_to_users(Client &client, IRCMessage &msg);
-        std::string build_messages(Client &client, IRCMessage &msg);
 
         static CommandMap initial_command_map(void);
 

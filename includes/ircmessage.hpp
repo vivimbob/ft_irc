@@ -98,6 +98,8 @@ public:
     std::string rpl_endofbanlist(const std::string& channel);
     std::string rpl_user_mode_is(const std::string& user_mode_string);
     std::string rpl_welcome(void);
+
+    std::string build_message(void);
 };
 
 #endif /* IRCMESSAGE_HPP */

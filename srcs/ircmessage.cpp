@@ -1,5 +1,6 @@
 #include "../includes/ircmessage.hpp"
 #include "../includes/logger.hpp"
+#include "../includes/client.hpp"
 
 IRCMessage::IRCMessage(Client *client, const std::string &message)
     : m_message(message),
@@ -85,4 +86,29 @@ const bool    &IRCMessage::is_valid_message(void) const
 
 IRCMessage::~IRCMessage(void)
 {
+}
+
+std::string
+  IRCMessage::build_message(void)
+{
+    std::string temp_param = "";
+    std::string temp_msg;
+
+    if (m_command == "QUIT")
+    {
+        if (!m_parameters.empty())
+            temp_param = m_parameters[0];
+        temp_msg = m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
+        temp_msg += " QUIT :" + temp_param + "\r\n";
+    }
+    else if (m_command == "PART")
+    {
+        if (m_parameters.size() == 2)
+            temp_param = m_parameters[1];
+        else
+            temp_param = m_client->m_get_nickname();
+        temp_msg = ':' + m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
+        temp_msg += " PART " + m_parameters[0] + " :" + temp_param + "\r\n"; 
+    }
+    return temp_msg;
 }
