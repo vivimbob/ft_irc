@@ -809,6 +809,7 @@ void
 	{
 		client.m_send_buffer.append(msg.err_need_more_params());
 		Logger().trace() << client.m_get_nickname() << " [" << msg.err_need_more_params() << ']';
+		return;
 	}
 
 	const std::string& channel_name = msg.get_params()[0];
@@ -817,6 +818,7 @@ void
 	{
 		client.m_send_buffer.append(msg.err_no_such_channel(channel_name));
 		Logger().trace() << client.m_get_nickname() << " [" << msg.err_no_such_channel(channel_name) << ']';
+		return ;
 	}
 
 	Channel* channel = m_channel_map[channel_name];
