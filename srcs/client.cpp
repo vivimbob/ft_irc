@@ -139,3 +139,17 @@ bool
 {
   return m_user_registered;
 }
+
+void
+  Client::push_message(const std::string &message)
+{
+	m_send_buffer.append(message);
+}
+
+void
+  Client::push_message(const std::string &message, int level)
+{
+	m_send_buffer.append(message);
+	Logger().log(level)
+		<< "Server Send to " << m_nickname << " [" << message << ']';
+}

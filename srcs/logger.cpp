@@ -230,4 +230,9 @@
       return m_impl->m_fatal();
   }
 
+  std::ostringstream& 
+    Logger::log(int level)
+  {
+      return m_impl->m_get_stream(level);
+  }
 /* Logger member functions end */

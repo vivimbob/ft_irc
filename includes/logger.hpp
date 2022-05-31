@@ -64,6 +64,9 @@ class Logger
     std::ostringstream& 
       fatal(void);
 
+    std::ostringstream& 
+      log(int level);
+
   private:
     Logger(const Logger &log);
     Logger& 
