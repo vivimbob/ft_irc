@@ -141,7 +141,7 @@ bool
 }
 
 void
-  Client::append(const std::string &message, Logger::Level level)
+  Client::append(const std::string &message, int level)
 {
 	m_send_buffer.append(message);
 }
