@@ -883,6 +883,11 @@ void
             return ;
         }
     }
+    it = splited_channel.begin();
+    for (; it != splited_channel.end(); ++it)
+    {
+        m_channel_map[*it]->m_delete_user(client);
+    }
 
 }
 
