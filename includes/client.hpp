@@ -59,8 +59,8 @@ private:
     void m_set_nickname(const std::string &nickname);
     void m_set_username(const std::string &username);
     void m_set_hostname(const std::string &hostname);
-	void append(const std::string &message);
-	void append(const std::string &message, int level);
+	void push_message(const std::string &message);
+	void push_message(const std::string &message, int level);
 
 };
 

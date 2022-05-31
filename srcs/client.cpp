@@ -141,13 +141,13 @@ bool
 }
 
 void
-  Client::append(const std::string &message)
+  Client::push_message(const std::string &message)
 {
 	m_send_buffer.append(message);
 }
 
 void
-  Client::append(const std::string &message, int level)
+  Client::push_message(const std::string &message, int level)
 {
 	m_send_buffer.append(message);
 	Logger().log(level)
