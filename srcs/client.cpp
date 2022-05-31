@@ -139,3 +139,9 @@ bool
 {
   return m_user_registered;
 }
+
+void
+  Client::append(const std::string &message, Logger::Level level)
+{
+	m_send_buffer.append(message);
+}

@@ -7,6 +7,7 @@
 #include <map>
 #include "sendbuffer.hpp"
 #include "ircmessage.hpp"
+#include "logger.hpp"
 
 class Client
 {
@@ -59,6 +60,7 @@ private:
     void m_set_nickname(const std::string &nickname);
     void m_set_username(const std::string &username);
     void m_set_hostname(const std::string &hostname);
+	void append(const std::string &message, Logger::Level level);
 
 };
 
