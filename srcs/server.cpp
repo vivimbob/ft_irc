@@ -767,7 +767,7 @@ void
 	if (!m_channel_map.count(channel_name))
 	{
 		client.append(msg.err_no_such_channel(channel_name), Logger::Debug);
-		return;
+		return ;
 	}
 
 	Channel* channel = m_channel_map[channel_name];
