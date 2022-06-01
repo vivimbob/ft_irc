@@ -14,6 +14,14 @@ std::string
 }
 
 std::string
+    IRCMessage::reply_nickmask_prefix(std::string command)
+{
+    std::string msg;
+    msg = msg + ":" + m_client->make_nickmask() + " " + command;
+    return msg;
+}
+
+std::string
     IRCMessage::err_no_such_nick(const std::string &nickname)
 {
     return reply_servername_prefix("401") + " " + nickname + " :No such nick/channel\r\n";

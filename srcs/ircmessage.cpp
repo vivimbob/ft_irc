@@ -98,8 +98,7 @@ std::string
     {
         if (!m_parameters.empty())
             param = m_parameters[0];
-        msg = m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
-        msg += " QUIT :" + param + "\r\n";
+        msg += reply_nickmask_prefix(m_command) + " :" + param + "\r\n";
     }
     else if (m_command == "PART")
     {
@@ -107,8 +106,7 @@ std::string
             param = m_parameters[1];
         else
             param = m_client->m_get_nickname();
-        msg = ':' + m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
-        msg += " PART " + m_parameters[0] + " :" + param + "\r\n"; 
+        msg += reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" + param + "\r\n"; 
     }
     return msg;
 }
