@@ -15,29 +15,21 @@
 
 Server::CommandMap Server::m_command_map = Server::m_initial_command_map();
 
-Server::Server(int argc, char **argv)
-    : m_kq(-1),
-      m_listen_fd(-1),
-      m_port(-1)
+Server::CommandMap
+    Server::m_initial_command_map()
 {
-    if (argc != 3)
-    {
-        Logger().error() << "Usage :" << argv[0] << " <port> <password>";
-        exit(EXIT_FAILURE);
-    }
-    m_port = atoi(argv[1]);
-    if (m_port < 0 || m_port > 65535)
-        Logger().error() << m_port << "is out of Port range (0 ~ 65535)";
-    m_password = argv[2];
-	Logger().info() << "Server start";
-    m_create_socket();
-    m_bind_socket();
-    m_listen_socket();
-    m_create_kqueue();
-}
+    Server::CommandMap temp_map;
 
-Server::~Server(void)
-{
+    temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
+    temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
+    temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
+    temp_map.insert(std::make_pair("JOIN", &Server::m_process_join_command));
+    temp_map.insert(std::make_pair("MODE", &Server::m_process_mode_command));
+    temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
+    temp_map.insert(std::make_pair("TOPIC", &Server::m_process_topic_command));
+    temp_map.insert(std::make_pair("PART", &Server::m_process_part_command));
+
+    return (temp_map);
 }
 
 void
@@ -79,6 +71,14 @@ void
     Logger().info() << "Listen on socket";
     fcntl(m_listen_fd, F_SETFL, O_NONBLOCK);
     Logger().info() << "Socket set nonblock";
+}
+
+void
+    Server::m_update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata)
+{
+    struct kevent kev;
+	  EV_SET(&kev, identity, filter, flags, fflags, data, udata);
+	  kevent(m_kq, &kev, 1, NULL, 0, NULL);
 }
 
 void
@@ -127,15 +127,40 @@ void
     while (client.m_commands.size())
     {
         IRCMessage *message = client.m_commands.front();
-		Logger().debug() << client.get_nickname() << " send [" << message->get_message() << ']';
+		    Logger().debug() << client.get_nickname() << " send [" << message->get_message() << ']';
         client.m_commands.pop();
         message->parse_message();
         if (m_command_map.count(message->get_command()))
             (this->*m_command_map[message->get_command()])(client, *message);
         else
-			client.push_message(message->err_unknown_command(), Logger::Debug);
+			      client.push_message(message->err_unknown_command(), Logger::Debug);
         delete message;
     }
+}
+
+void
+    Server::m_disconnect_client(Client &client)
+{
+	const unsigned int& clientfd = client.get_socket();
+
+    Logger().info() << "Client disconnect [address :"
+		<< client.get_client_IP() << ':' << client.get_client_addr().sin_port 
+    	<< " FD :" << clientfd << ']';
+
+    m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+    m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    
+	  m_client_map.erase(client.get_nickname());
+    delete &client;
+    close(clientfd);
+}
+
+void
+	  Server::m_register_client(Client &client, IRCMessage &msg)
+{
+	  m_client_map[client.get_nickname()] = &client;
+	  client.push_message(msg.rpl_welcome(), Logger::Debug);
+	  Logger().info() << client.get_nickname() << " is registered to server"; 
 }
 
 void
@@ -172,8 +197,8 @@ void
             m_handle_messages(client);
             m_update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);
             m_update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
-			Logger().trace() << client.get_nickname() << " disable read event";
-			Logger().trace() << client.get_nickname() << " enable write event";
+			      Logger().trace() << client.get_nickname() << " disable read event";
+			      Logger().trace() << client.get_nickname() << " enable write event";
         }
     }
     else if (recv_data_len == 0)
@@ -186,7 +211,7 @@ void
     SendBuffer &send_buffer = client.m_send_buffer;
     int remain_data_len = 0;
     int attempt_data_len = 0;
-	const unsigned int &clientfd = client.get_socket();
+	  const unsigned int &clientfd = client.get_socket();
 
     if (available_bytes > IPV4_MTU_MAX)
         available_bytes = IPV4_MTU_MAX;
@@ -211,99 +236,25 @@ void
         if (send_buffer.size() <= send_buffer.get_offset())
         {
             if (send_buffer.size())
-              send_buffer.clear();
+                send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             m_update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
             m_update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
-			Logger().trace() << client.get_nickname() << " enable read event";
-			Logger().trace() << client.get_nickname() << " disable write event";
+			      Logger().trace() << client.get_nickname() << " enable read event";
+			      Logger().trace() << client.get_nickname() << " disable write event";
         }
     }
-}
-
-void
-    Server::m_update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata)
-{
-    struct kevent kev;
-	EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-	kevent(m_kq, &kev, 1, NULL, 0, NULL);
-}
-
-void
-    Server::run(void)
-{
-    int event_count = 0;
-
-	Logger().info() << "[Sever runnig]";
-    while (true)
-    {
-        event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
-		Logger().trace() << event_count << " new kevent";
-        for (int i = 0; i < event_count; ++i)
-        {
-            struct kevent &event = m_event_list[i];
-            if (event.ident == (unsigned int)m_listen_fd)
-                m_accept_client();
-            else if (event.filter == EVFILT_READ)
-                m_receive_client_msg(*(Client *)event.udata, event.data);
-            else if(event.filter == EVFILT_WRITE)
-                m_send_client_msg(*(Client *)event.udata, event.data);
-        }
-    }
-}
-
-void
-    Server::m_disconnect_client(Client &client)
-{
-	const unsigned int& clientfd = client.get_socket();
-
-    Logger().info() << "Client disconnect [address :"
-		<< client.get_client_IP() << ':' << client.get_client_addr().sin_port 
-    	<< " FD :" << clientfd << ']';
-
-    m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-    m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-    
-	  m_client_map.erase(client.get_nickname());
-    delete &client;
-    close(clientfd);
-}
-
-Server::CommandMap
-    Server::m_initial_command_map()
-{
-    Server::CommandMap temp_map;
-
-    temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
-    temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
-    temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
-    temp_map.insert(std::make_pair("JOIN", &Server::m_process_join_command));
-    temp_map.insert(std::make_pair("MODE", &Server::m_process_mode_command));
-    temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
-    temp_map.insert(std::make_pair("TOPIC", &Server::m_process_topic_command));
-    temp_map.insert(std::make_pair("PART", &Server::m_process_part_command));
-
-
-    return (temp_map);
 }
 
 void
     Server::m_prepare_to_send(Client &client, const std::string &str_msg)
 {
     client.push_message(str_msg);
-	Logger().trace() << client.get_nickname() << " [" << str_msg << ']';
+	  Logger().trace() << client.get_nickname() << " [" << str_msg << ']';
     m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
     m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
-	Logger().trace() << client.get_nickname() << " disable read event";
-	Logger().trace() << client.get_nickname() << " enable write event";
-}
-
-void
-	Server::m_register_client(Client &client, IRCMessage &msg)
-{
-	m_client_map[client.get_nickname()] = &client;
-	client.push_message(msg.rpl_welcome(), Logger::Debug);
-	Logger().info() << client.get_nickname() << " is registed to server"; 
+	  Logger().trace() << client.get_nickname() << " disable read event";
+	  Logger().trace() << client.get_nickname() << " enable write event";
 }
 
 void
@@ -323,4 +274,59 @@ void
     std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
     for (; it != client.m_chan_key_lists.end(); ++it)
 		m_send_to_channel(m_channel_map[it->first], msg);	
+}
+
+void
+    Server::m_initialize_server(void)
+{
+    m_create_socket();
+    m_bind_socket();
+    m_listen_socket();
+    m_create_kqueue();
+}
+
+
+Server::~Server(void)
+{
+}
+
+Server::Server(int argc, char **argv)
+    : m_kq(-1),
+      m_listen_fd(-1),
+      m_port(-1)
+{
+    if (argc != 3)
+    {
+        Logger().error() << "Usage :" << argv[0] << " <port> <password>";
+        exit(EXIT_FAILURE);
+    }
+    m_port = atoi(argv[1]);
+    if (m_port < 0 || m_port > 65535)
+        Logger().error() << m_port << "is out of Port range (0 ~ 65535)";
+    m_password = argv[2];
+    Logger().info() << "Server start";
+    m_initialize_server();
+}
+
+void
+    Server::run(void)
+{
+    int event_count = 0;
+
+	  Logger().info() << "[Server running]";
+    while (true)
+    {
+        event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
+		Logger().trace() << event_count << " new kevent";
+        for (int i = 0; i < event_count; ++i)
+        {
+            struct kevent &event = m_event_list[i];
+            if (event.ident == (unsigned int)m_listen_fd)
+                m_accept_client();
+            else if (event.filter == EVFILT_READ)
+                m_receive_client_msg(*(Client *)event.udata, event.data);
+            else if(event.filter == EVFILT_WRITE)
+                m_send_client_msg(*(Client *)event.udata, event.data);
+        }
+    }
 }

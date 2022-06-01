@@ -18,9 +18,9 @@
 
 class Server
 {
-	public:
-		typedef std::map<std::string, Client*> ClientMap;
-		typedef std::map<std::string, Channel*> ChannelMap;
+	  public:
+		    typedef std::map<std::string, Client*> ClientMap;
+		    typedef std::map<std::string, Channel*> ChannelMap;
         typedef std::map<std::string, void (Server::*)(Client&, IRCMessage&)> CommandMap;
 
     private:
@@ -37,29 +37,8 @@ class Server
     
     private:
         Server(void);
-        Server(const Server& cp);
-        Server& operator=(const Server& cp);
-    public:
-        Server(int argc, char **argv);
-        ~Server(void);
-    
-    private:
-        void m_create_socket(void);
-        void m_bind_socket(void);
-        void m_listen_socket(void);
-        void m_create_kqueue(void);
-        void m_accept_client(void);
-        void m_receive_client_msg(Client &client, int bytes);
-        void m_send_client_msg(Client &client, int bytes);
-        void m_update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
-        void m_disconnect_client(Client &client);
-        void m_handle_messages(Client &client);
-
-        void m_register_client(Client &client, IRCMessage &msg);
-        void m_prepare_to_send(Client &client, const std::string &str_msg);
-        void m_send_to_channel(Channel *channel, const std::string &msg);
-        void m_send_to_channel(Client &client, const std::string &msg);
-        void m_send_to_users(Client &client, IRCMessage &msg);
+        Server(const Server& server);
+        Server& operator=(const Server& server);
 
         static CommandMap m_initial_command_map(void);
 
@@ -72,9 +51,30 @@ class Server
         void m_process_topic_command(Client &client, IRCMessage &msg);
         void m_process_part_command(Client &Client, IRCMessage &msg);
 
-        void m_join_channel(Client &client, IRCMessage &msg, ChannelKeyPairMap &chan_key_pair);
+        void m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
+        
+        void m_create_socket(void);
+        void m_bind_socket(void);
+        void m_listen_socket(void);
+        void m_update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
+        void m_create_kqueue(void);
+        void m_accept_client(void);
 
+        void m_handle_messages(Client &client);
+        
+        void m_disconnect_client(Client &client);
+        void m_register_client(Client &client, IRCMessage &msg);
+
+        void m_receive_client_msg(Client &client, int bytes);
+        void m_send_client_msg(Client &client, int bytes);
+        void m_prepare_to_send(Client &client, const std::string &str_msg);
+        void m_send_to_channel(Channel *channel, const std::string &msg);
+        void m_send_to_channel(Client &client, const std::string &msg);
+
+        void m_initialize_server(void);
     public:
+        ~Server(void);
+        Server(int argc, char **argv);
         void run(void);
 };
 
