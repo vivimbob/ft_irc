@@ -6,5 +6,4 @@ int
     main(int argc, char **argv)
 {
     Server(argc, argv).run();
-    return 0;
 }
