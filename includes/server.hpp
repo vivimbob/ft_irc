@@ -40,7 +40,6 @@ class Server
         Server& operator=(const Server& cp);
     public:
         Server(int argc, char **argv);
-        Server(int port, std::string password);
         ~Server(void);
     
     private:
