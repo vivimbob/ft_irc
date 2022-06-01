@@ -20,7 +20,7 @@ namespace utils
       return false;
     ++index;
     for (; index < nick.length(); ++index)
-      if (!std::isalpha(nick[index]) && !std:isdigit(nick[index]) && !is_special(nick[index]))
+      if (!std::isalpha(nick[index]) && !std::isdigit(nick[index]) && !is_special(nick[index]))
         return false;
     return true;
   }
