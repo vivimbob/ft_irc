@@ -91,24 +91,24 @@ IRCMessage::~IRCMessage(void)
 std::string
   IRCMessage::build_message(void)
 {
-    std::string temp_param = "";
-    std::string temp_msg;
+    std::string param = "";
+    std::string msg;
 
     if (m_command == "QUIT")
     {
         if (!m_parameters.empty())
-            temp_param = m_parameters[0];
-        temp_msg = m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
-        temp_msg += " QUIT :" + temp_param + "\r\n";
+            param = m_parameters[0];
+        msg = m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
+        msg += " QUIT :" + param + "\r\n";
     }
     else if (m_command == "PART")
     {
         if (m_parameters.size() == 2)
-            temp_param = m_parameters[1];
+            param = m_parameters[1];
         else
-            temp_param = m_client->m_get_nickname();
-        temp_msg = ':' + m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
-        temp_msg += " PART " + m_parameters[0] + " :" + temp_param + "\r\n"; 
+            param = m_client->m_get_nickname();
+        msg = ':' + m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
+        msg += " PART " + m_parameters[0] + " :" + param + "\r\n"; 
     }
-    return temp_msg;
+    return msg;
 }
