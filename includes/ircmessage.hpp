@@ -103,6 +103,8 @@ public:
 
     std::string build_message(void);
     std::string build_quit_reply(void);
+    std::string build_part_reply(void);
+
 };
 
 #endif /* IRCMESSAGE_HPP */

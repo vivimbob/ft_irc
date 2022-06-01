@@ -403,3 +403,15 @@ std::string
     param = m_parameters[0];
   return reply_nickmask_prefix(m_command) + " :" + param + "\r\n";
 }
+
+std::string
+  IRCMessage::build_part_reply(void)
+{
+  std::string param;
+
+  if (m_parameters.size() == 2)
+    param = m_parameters[1];
+  else
+    param = m_client->m_get_nickname();
+  return reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" + param + "\r\n";
+}
