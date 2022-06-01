@@ -16,7 +16,7 @@ namespace utils
     if (nick.length() > 9)
       return false;
     size_t index = 0;
-    if (!is_letter(nick[index]))
+    if (!std::isalpha(nick[index]))
       return false;
     ++index;
     for (; index < nick.length(); ++index)
