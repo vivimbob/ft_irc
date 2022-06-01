@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::process_part_command(Client &client, IRCMessage &msg)
+    Server::m_process_part_command(Client &client, IRCMessage &msg)
 {
 		if (msg.get_params().size() < 1 || msg.get_params().size() > 2)
     {
@@ -22,7 +22,7 @@ void
             client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
             return ;
         }
-        if (m_channel_map.count(*it) && !m_channel_map[*it]->m_get_user_lists().count(&client))
+        if (m_channel_map.count(*it) && !m_channel_map[*it]->get_user_lists().count(&client))
         {
             client.push_message(msg.err_not_on_channel(*it), Logger::Debug);
             return ;
@@ -31,9 +31,9 @@ void
     it = splited_channel.begin();
     for (; it != splited_channel.end(); ++it)
     {
-        m_channel_map[*it]->m_delete_user(client);
+        m_channel_map[*it]->delete_user(client);
         client.m_chan_key_lists.erase(*it);
-        Logger().trace() << "Remove [" << client.m_get_nickname() << "] client from [" << m_channel_map[*it]->m_get_channel_name() << "] channel";
-        send_to_channel(m_channel_map[*it], msg.build_message());
+        Logger().trace() << "Remove [" << client.get_nickname() << "] client from [" << m_channel_map[*it]->get_channel_name() << "] channel";
+        m_send_to_channel(m_channel_map[*it], msg.build_message());
     }
 }

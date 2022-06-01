@@ -25,49 +25,49 @@ Client::~Client(void)
 }
 
 sockaddr_in
-  Client::m_get_client_addr(void)
+  Client::get_client_addr(void)
 {
   return m_client_addr;
 }
 
 int
-  Client::m_get_socket(void)
+  Client::get_socket(void)
 {
   return m_client_fd;
 }
 
 char*
-  Client::m_get_client_IP(void)
+  Client::get_client_IP(void)
 {
   return inet_ntoa(m_client_addr.sin_addr);
 }
 
 const std::string&
-  Client::m_get_password(void) const
+  Client::get_password(void) const
 {
   return m_password;
 }
 
 const std::string&
-  Client::m_get_nickname(void) const
+  Client::get_nickname(void) const
 {
   return m_nickname;
 }
 
 const std::string&
-  Client::m_get_username(void) const
+  Client::get_username(void) const
 {
   return m_username;
 }
 
 const std::string&
-  Client::m_get_hostname(void) const
+  Client::get_hostname(void) const
 {
   return m_hostname;
 }
 
 std::string
-  Client::m_get_usermode(void)
+  Client::get_usermode(void)
 {
 	std::string message;
 
@@ -84,58 +84,58 @@ std::string
 }
 
 const std::map<const std::string, const std::string>&
-  Client::m_get_channel_lists(void) const
+  Client::get_channel_lists(void) const
 {
   return m_chan_key_lists;
 }
 
 void
-  Client::m_set_password(const std::string &pw)
+  Client::set_password(const std::string &pw)
 {
   m_password = pw;
   m_pass_registered = true;
 }
 
 void
-  Client::m_set_nickname(const std::string &nickname)
+  Client::set_nickname(const std::string &nickname)
 {
   m_nickname = nickname;
   m_nick_registered = true;
 }
 
 void
-  Client::m_set_username(const std::string &username)
+  Client::set_username(const std::string &username)
 {
   m_username = username;
   m_user_registered = true;
 }
 
 void
-  Client::m_set_hostname(const std::string &hostname)
+  Client::set_hostname(const std::string &hostname)
 {
   m_hostname = hostname;
 }
 
 bool
-  Client::m_is_registered(void) const
+  Client::is_registered(void) const
 {
   return m_pass_registered & m_nick_registered & m_user_registered;
 }
 
 bool
-  Client::m_is_pass_registered(void) const
+  Client::is_pass_registered(void) const
 {
   return m_pass_registered;
 }
 
 bool
-  Client::m_is_nick_registered(void) const
+  Client::is_nick_registered(void) const
 {
   return m_nick_registered;
 }
 
 bool
-  Client::m_is_user_registered(void) const
+  Client::is_user_registered(void) const
 {
   return m_user_registered;
 }

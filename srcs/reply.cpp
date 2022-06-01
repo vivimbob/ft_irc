@@ -7,8 +7,8 @@ std::string
     IRCMessage::m_reply_prefix(std::string command)
 {
     std::string msg;
-    msg = msg + ":" + m_client->m_get_client_IP() + " " + command + " " + m_client->m_get_nickname();
-	if (m_client->m_get_nickname().empty())
+    msg = msg + ":" + m_client->get_client_IP() + " " + command + " " + m_client->get_nickname();
+	if (m_client->get_nickname().empty())
 		msg += "*";
     return msg;
 }
@@ -383,5 +383,5 @@ std::string
 	IRCMessage::rpl_welcome(void)
 {
 	return m_reply_prefix("001") + " Welcome to Interet Relay Network\n"
-		+ m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname() + "\r\n";
+		+ m_client->get_nickname() + '!' + m_client->get_username() + '@' + m_client->get_hostname() + "\r\n";
 }
