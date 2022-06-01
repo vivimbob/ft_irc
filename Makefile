@@ -3,7 +3,14 @@ CC      	= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 # CXXFLAGS  = -std=c++98
 
-commands	=
+commands	= join.cpp\
+			  mode.cpp\
+			  nick.cpp\
+			  part.cpp\
+			  pass.cpp\
+			  quit.cpp\
+			  topic.cpp\
+			  user.cpp
 
 srcs		= channel.cpp\
 			  client.cpp\
