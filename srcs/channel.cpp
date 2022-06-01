@@ -7,14 +7,14 @@ Channel::Channel(const std::string &name, const std::string &key)
   m_channel_init_time(std::time(NULL)),
   m_key(key)
 {
-	mode.p = false;
-	mode.s = false;
-	mode.i = false;
-	mode.t = false;
-	mode.n = false;
-	mode.m = false;
-	mode.k = false;
-	mode.l = false;
+	m_mode.p = false;
+	m_mode.s = false;
+	m_mode.i = false;
+	m_mode.t = false;
+	m_mode.n = false;
+	m_mode.m = false;
+	m_mode.k = false;
+	m_mode.l = false;
   m_user_limits = 42;
 }
 
@@ -23,118 +23,118 @@ Channel::~Channel(void)
 }
 
 const std::string&
-  Channel::m_get_channel_name(void) const
+  Channel::get_channel_name(void) const
 {
   return m_channel_name;
 }
 
 const std::string&
-  Channel::m_get_channel_topic(void) const
+  Channel::get_channel_topic(void) const
 {
   return m_channel_topic;
 }
 
 std::string
-  Channel::m_get_channel_mode(void)
+  Channel::get_channel_mode(void)
 {
 	std::string message;
 
 	message.push_back('+');
-	if (mode.p)
+	if (m_mode.p)
 		message.push_back('p');
-	if (mode.s)
+	if (m_mode.s)
 		message.push_back('s');
-	if (mode.i)
+	if (m_mode.i)
 		message.push_back('i');
-	if (mode.t)
+	if (m_mode.t)
 		message.push_back('t');
-	if (mode.n)
+	if (m_mode.n)
 		message.push_back('n');
-	if (mode.m)
+	if (m_mode.m)
 		message.push_back('m');
-	if (mode.k)
+	if (m_mode.k)
 		message.push_back('k');
-	if (mode.l)
+	if (m_mode.l)
 		message.push_back('l');
 	return message;
 }
 
 const std::string&
-  Channel::m_get_key(void) const
+  Channel::get_key(void) const
 {
   return m_key;
 }
 
 const size_t&
-  Channel::m_get_user_limits(void) const
+  Channel::get_user_limits(void) const
 {
   return m_user_limits;
 }
 
 const std::map<Client*, MemberShip>&
-  Channel::m_get_user_lists(void)
+  Channel::get_user_lists(void)
 {
   return m_user_lists;
 }
 
 bool
-  Channel::m_get_mode_limit(void)
+  Channel::get_mode_limit(void)
 {
-  return mode.l;
+  return m_mode.l;
 }
 
 bool
-  Channel::m_get_mode_invite_only(void)
+  Channel::get_mode_invite_only(void)
 {
-  return mode.i;
+  return m_mode.i;
 }
 
 bool
-  Channel::m_get_mode_key(void)
+  Channel::get_mode_key(void)
 {
-  return mode.k;
+  return m_mode.k;
 }
 
 void
-  Channel::m_set_channel_name(const std::string &name)
+  Channel::set_channel_name(const std::string &name)
 {
   this->m_channel_name = name;
 }
 
 void
-  Channel::m_set_channel_topic(const std::string &topic)
+  Channel::set_channel_topic(const std::string &topic)
 {
   this->m_channel_topic = topic;
 }
 
 void
-  Channel::m_set_key(const std::string &key)
+  Channel::set_key(const std::string &key)
 {
   this->m_key = key;
 }
 
 void
-  Channel::m_set_mode_key(bool b)
+  Channel::set_mode_key(bool b)
 {
-  mode.k = b;
+  m_mode.k = b;
 }
 
 void
-  Channel::m_join(Client &client)
+  Channel::join(Client &client)
 {
-	m_add_user(client);
+	add_user(client);
   if (m_user_lists.size() == 1)
-	  m_add_operator(client);
+	  add_operator(client);
   // server에서 channel topic, channel user list 전송
 }
 
-void Channel::m_invite(void)
+void Channel::invite(void)
 {
-	mode.i = true;
+	m_mode.i = true;
 }
 
 void
-  Channel::m_display_channel_info(void)
+  Channel::display_channel_info(void)
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's name : " << this->m_channel_name;
@@ -143,7 +143,7 @@ void
 }
 
 void
-  Channel::m_display_topic(Client &client)
+  Channel::display_topic(Client &client)
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's topic : " << this->m_channel_topic;
@@ -151,7 +151,7 @@ void
 }
 
 void
-  Channel::m_display_names(Client &client)
+  Channel::display_names(Client &client)
 {
   // 일단 확인용으로 로거 출력해놓음.
   Logger().info() << "channel's name : " << this->m_channel_name;
@@ -159,116 +159,116 @@ void
 }
 
 bool
-  Channel::m_is_empty() const
+  Channel::is_empty() const
 {
   return m_user_lists.empty();
 }
 
 bool
-  Channel::m_is_operator(Client &client)
+  Channel::is_operator(Client &client)
 {
 	return m_user_lists.find(&client)->second.mode.o;
 }
 
 bool
-  Channel::m_is_user_on_channel(Client *client)
+  Channel::is_user_on_channel(Client *client)
 {
 	return m_user_lists.count(client);
 }
 
 bool
-  Channel::m_is_protected_topic(void)
+  Channel::is_protected_topic(void)
 {
-	return mode.t;
+	return m_mode.t;
 }
 
 void
-  Channel::m_add_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}
-
-void
-  Channel::m_delete_operator(Client &client)
+  Channel::add_operator(Client &client)
 {
 	m_user_lists.find(&client)->second.mode.o = true;
 }
 
 void
-  Channel::m_add_user(Client &client)
+  Channel::delete_operator(Client &client)
+{
+	m_user_lists.find(&client)->second.mode.o = true;
+}
+
+void
+  Channel::add_user(Client &client)
 {
   m_user_lists.insert(std::make_pair(&client, MemberShip(&client, this)));
 }
 
 void
-  Channel::m_delete_user(Client &client)
+  Channel::delete_user(Client &client)
 {
   m_user_lists.erase(&client);
 }
 
 void
-  Channel::m_set_private_flag(bool toggle)
+  Channel::set_private_flag(bool toggle)
 {
-	mode.p = toggle;
-	if (mode.p == true && mode.s == true)
-		mode.s = false;
+	m_mode.p = toggle;
+	if (m_mode.p == true && m_mode.s == true)
+		m_mode.s = false;
 }
 
 void
-  Channel::m_set_secret_flag(bool toggle)
+  Channel::set_secret_flag(bool toggle)
 {
-	mode.s = toggle;
-	if (mode.p == true && mode.s == true)
-		mode.p = false;
+	m_mode.s = toggle;
+	if (m_mode.p == true && m_mode.s == true)
+		m_mode.p = false;
 }
 
 void
-  Channel::m_set_invite_flag(bool toggle)
+  Channel::set_invite_flag(bool toggle)
 {
-	mode.i = toggle;
+	m_mode.i = toggle;
 }
 
 void
-  Channel::m_set_topic_flag(bool toggle)
+  Channel::set_topic_flag(bool toggle)
 {
-	mode.t = toggle;
+	m_mode.t = toggle;
 }
 
 void
-  Channel::m_set_no_messages_flag(bool toggle)
+  Channel::set_no_messages_flag(bool toggle)
 {
-	mode.n = toggle;
+	m_mode.n = toggle;
 }
 
 void
-  Channel::m_set_moderate_flag(bool toggle)
+  Channel::set_moderate_flag(bool toggle)
 {
-	mode.m = toggle;
+	m_mode.m = toggle;
 }
 
 void
-  Channel::m_set_key_flag(bool toggle, std::string key)
+  Channel::set_key_flag(bool toggle, std::string key)
 {
-	mode.k = toggle;
+	m_mode.k = toggle;
 	if (toggle == true)
 		m_key = key;
 }
 
 void
-  Channel::m_set_limit(bool toggle, size_t limit)
+  Channel::set_limit(bool toggle, size_t limit)
 {
 	m_user_limits = limit;
-	mode.l = toggle;
+	m_mode.l = toggle;
 }
 
 void
-  Channel::m_set_operator_flag(bool toggle, Client *client)
+  Channel::set_operator_flag(bool toggle, Client *client)
 {
 	m_user_lists.find(client)->second.mode.o = toggle;
 }
 
 void
-  Channel::m_set_voice_flag(bool toggle, Client *client)
+  Channel::set_voice_flag(bool toggle, Client *client)
 {
 	m_user_lists.find(client)->second.mode.v = toggle;
 }

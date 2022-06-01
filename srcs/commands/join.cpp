@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair)
+    Server::m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair)
 {
     typedef std::map<const std::string, const std::string> chanKeyPair;
     chanKeyPair::iterator pair_it = chan_key_pair.begin();
@@ -16,7 +16,7 @@ void
         }
 
         ChannelMap::iterator map_it = m_channel_map.find(pair_it->first);
-        if ((map_it != m_channel_map.end()) && ((m_channel_map[pair_it->first]->m_get_mode_key()) && (pair_it->second != map_it->second->m_get_key()))) // join할 채널 이름은 있는데 키가 안 맞는 경우
+        if ((map_it != m_channel_map.end()) && ((m_channel_map[pair_it->first]->get_mode_key()) && (pair_it->second != map_it->second->get_key()))) // join할 채널 이름은 있는데 키가 안 맞는 경우
         {
             client.push_message(msg.err_bad_channel_key(pair_it->first), Logger::Debug);
             return ;
@@ -30,21 +30,21 @@ void
             }
             m_channel_map.insert(std::make_pair(pair_it->first, new Channel(pair_it->first, pair_it->second)));
             if (!pair_it->second.empty())// key값이 존재하면 key mosde 설정
-                m_channel_map[pair_it->first]->m_set_mode_key(true);
-            m_channel_map[pair_it->first]->m_add_user(client);
-            m_channel_map[pair_it->first]->m_add_operator(client);
+                m_channel_map[pair_it->first]->set_mode_key(true);
+            m_channel_map[pair_it->first]->add_user(client);
+            m_channel_map[pair_it->first]->add_operator(client);
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
-            Logger().info() << "Create new channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
+            Logger().info() << "Create new channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.get_nickname();
         }
         else // join할 채널이 존재하는 경우
         {
-            size_t temp_channel_users = m_channel_map[pair_it->first]->m_get_user_lists().size();
-            if (m_channel_map[pair_it->first]->m_get_mode_limit() && (temp_channel_users >= m_channel_map[pair_it->first]->m_get_user_limits())) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
+            size_t temp_channel_users = m_channel_map[pair_it->first]->get_user_lists().size();
+            if (m_channel_map[pair_it->first]->get_mode_limit() && (temp_channel_users >= m_channel_map[pair_it->first]->get_user_limits())) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
             {
                 client.push_message(msg.err_channel_is_full(pair_it->first), Logger::Debug);
                 return ;
             }
-            if (m_channel_map[pair_it->first]->m_get_mode_invite_only()) // invite-only인 경우
+            if (m_channel_map[pair_it->first]->get_mode_invite_only()) // invite-only인 경우
             {
                 client.push_message(msg.err_invite_only_chan(pair_it->first), Logger::Debug);
                 return ;
@@ -54,25 +54,25 @@ void
                 client.push_message(":You have already joined in <" + pair_it->first + "> channel\r\n", Logger::Debug);
                 return ;
             }
-            if ((m_channel_map[pair_it->first]->m_get_mode_key()) && (pair_it->second != map_it->second->m_get_key())) // key mode인데 key가 안 맞을 때
+            if ((m_channel_map[pair_it->first]->get_mode_key()) && (pair_it->second != map_it->second->get_key())) // key mode인데 key가 안 맞을 때
             {
                 client.push_message(msg.err_bad_channel_key(pair_it->first), Logger::Debug);
                 return ;
             }
-            m_channel_map[pair_it->first]->m_add_user(client);
+            m_channel_map[pair_it->first]->add_user(client);
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
-            Logger().info() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.m_get_nickname();
+            Logger().info() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.get_nickname();
         }
-        const Channel::MemberMap &user_list = m_channel_map[pair_it->first]->m_get_user_lists();
+        const Channel::MemberMap &user_list = m_channel_map[pair_it->first]->get_user_lists();
         Channel::MemberMap::const_iterator user = user_list.begin();
         std::queue<const std::string> temp_nick_queue;
         for (; user != user_list.end(); ++user)
-            temp_nick_queue.push(user->first->m_get_nickname());
-        prepare_to_send(client, msg.rpl_namreply(pair_it->first, temp_nick_queue));
-        Logger().trace() << client.m_get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
+            temp_nick_queue.push(user->first->get_nickname());
+        m_prepare_to_send(client, msg.rpl_namreply(pair_it->first, temp_nick_queue));
+        Logger().trace() << client.get_nickname() << " [" << msg.rpl_namreply(pair_it->first, temp_nick_queue) << ']';
 
 	    std::string reply_msg;
-	    const std::string& channel_topic = m_channel_map[pair_it->first]->m_get_channel_topic();
+	    const std::string& channel_topic = m_channel_map[pair_it->first]->get_channel_topic();
 
     	if (channel_topic.empty())
     		reply_msg = msg.rpl_notopic(pair_it->first);
@@ -84,7 +84,7 @@ void
 }
 
 void
-    Server::process_join_command(Client &client, IRCMessage &msg)
+    Server::m_process_join_command(Client &client, IRCMessage &msg)
 {
     if (msg.get_params().size() < 1)
     {
@@ -128,5 +128,5 @@ void
         for (; itc != splited_channel.end(); ++itc)
           channel_key_pair.insert(std::make_pair<const std::string, const std::string>(*itc, ""));
     }
-    join_channel(client, msg, channel_key_pair);
+    m_join_channel(client, msg, channel_key_pair);
 }
