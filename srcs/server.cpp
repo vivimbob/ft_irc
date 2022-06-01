@@ -749,7 +749,7 @@ void
 void
     Server::process_quit_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, msg.build_message());
+    send_to_channel(client, msg.build_quit_reply());
     disconnect_client(client);
 }
 

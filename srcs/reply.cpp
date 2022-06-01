@@ -393,3 +393,13 @@ std::string
 	return reply_servername_prefix("001") + " Welcome to Interet Relay Network\n"
 		+ m_client->make_nickmask() + "\r\n";
 }
+
+std::string
+  IRCMessage::build_quit_reply(void)
+{
+  std::string param = "";
+
+  if (!m_parameters.empty())
+    param = m_parameters[0];
+  return reply_nickmask_prefix(m_command) + " :" + param + "\r\n";
+}

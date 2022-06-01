@@ -102,6 +102,7 @@ public:
     std::string rpl_welcome(void);
 
     std::string build_message(void);
+    std::string build_quit_reply(void);
 };
 
 #endif /* IRCMESSAGE_HPP */
