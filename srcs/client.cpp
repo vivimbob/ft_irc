@@ -153,3 +153,9 @@ void
 	Logger().log(level)
 		<< "Server Send to " << m_nickname << " [" << message << ']';
 }
+
+std::string
+  Client::make_nickmask(void)
+{
+  return m_nickname + '!' + m_username + '@' + m_hostname; 
+}

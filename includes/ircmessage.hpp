@@ -25,7 +25,9 @@ private:
     IRCMessage	&operator=(const IRCMessage& other);
 
     size_t next_position(void);
-    std::string m_reply_prefix(std::string command);
+    std::string reply_servername_prefix(std::string command);
+    std::string reply_nickmask_prefix(std::string command);
+
 public:
     IRCMessage(Client *client, const std::string &message);
     ~IRCMessage(void);
@@ -99,7 +101,10 @@ public:
     std::string rpl_user_mode_is(const std::string& user_mode_string);
     std::string rpl_welcome(void);
 
+    std::string build_quit_reply(void);
+    std::string build_part_reply(void);
     std::string build_message(void);
+
 };
 
 #endif /* IRCMESSAGE_HPP */
