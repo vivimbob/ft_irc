@@ -7,6 +7,7 @@
 #include <map>
 #include "sendbuffer.hpp"
 #include "ircmessage.hpp"
+#include "utils.hpp"
 
 class Client
 {
@@ -28,7 +29,7 @@ private:
     std::string	m_username;
     std::string m_hostname;
     std::queue<IRCMessage *>m_commands;
-    std::map<const std::string, const std::string> m_chan_key_lists;
+    ChannelKeyPairMap m_chan_key_lists;
     size_t m_channel_limits;
 
 	  bool m_pass_registered:1;
@@ -61,7 +62,6 @@ private:
     void set_hostname(const std::string &hostname);
 	void push_message(const std::string &message);
 	void push_message(const std::string &message, int level);
-
 };
 
 #endif /* CLIENT_HPP */

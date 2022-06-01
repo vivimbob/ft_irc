@@ -6,7 +6,8 @@
 #include <vector>
 #include <sstream>
 #include <map>
-#include "client.hpp"
+
+typedef std::map<const std::string, const std::string> ChannelKeyPairMap;
 
 namespace utils
 {
