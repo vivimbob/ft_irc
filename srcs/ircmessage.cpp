@@ -87,3 +87,28 @@ const bool    &IRCMessage::is_valid_message(void) const
 IRCMessage::~IRCMessage(void)
 {
 }
+
+std::string
+  IRCMessage::build_message(void)
+{
+    std::string param = "";
+    std::string msg;
+
+    if (m_command == "QUIT")
+    {
+        if (!m_parameters.empty())
+            param = m_parameters[0];
+        msg = m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
+        msg += " QUIT :" + param + "\r\n";
+    }
+    else if (m_command == "PART")
+    {
+        if (m_parameters.size() == 2)
+            param = m_parameters[1];
+        else
+            param = m_client->m_get_nickname();
+        msg = ':' + m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname();
+        msg += " PART " + m_parameters[0] + " :" + param + "\r\n"; 
+    }
+    return msg;
+} 
