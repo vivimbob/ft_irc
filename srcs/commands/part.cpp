@@ -34,6 +34,6 @@ void
         m_channel_map[*it]->delete_user(client);
         client.m_chan_key_lists.erase(*it);
         Logger().trace() << "Remove [" << client.get_nickname() << "] client from [" << m_channel_map[*it]->get_channel_name() << "] channel";
-        m_send_to_channel(m_channel_map[*it], msg.build_message());
+        m_send_to_channel(m_channel_map[*it], msg.build_part_reply());
     }
 }
