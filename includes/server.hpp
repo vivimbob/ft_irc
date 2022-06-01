@@ -44,35 +44,35 @@ class Server
         ~Server(void);
     
     private:
-        void create_socket(void);
-        void bind_socket(void);
-        void listen_socket(void);
-        void create_kqueue(void);
-        void accept_client(void);
-        void receive_client_msg(Client &client, int bytes);
-        void send_client_msg(Client &client, int bytes);
-        void update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
-        void disconnect_client(Client &client);
-        void handle_messages(Client &client);
+        void m_create_socket(void);
+        void m_bind_socket(void);
+        void m_listen_socket(void);
+        void m_create_kqueue(void);
+        void m_accept_client(void);
+        void m_receive_client_msg(Client &client, int bytes);
+        void m_send_client_msg(Client &client, int bytes);
+        void m_update_event(int identity, short filter, u_short flags, u_int fflags, int data, void *udata);
+        void m_disconnect_client(Client &client);
+        void m_handle_messages(Client &client);
 
-        void register_client(Client &client, IRCMessage &msg);
-        void prepare_to_send(Client &client, const std::string &str_msg);
-        void send_to_channel(Channel *channel, const std::string &msg);
-        void send_to_channel(Client &client, const std::string &msg);
-        void send_to_users(Client &client, IRCMessage &msg);
+        void m_register_client(Client &client, IRCMessage &msg);
+        void m_prepare_to_send(Client &client, const std::string &str_msg);
+        void m_send_to_channel(Channel *channel, const std::string &msg);
+        void m_send_to_channel(Client &client, const std::string &msg);
+        void m_send_to_users(Client &client, IRCMessage &msg);
 
-        static CommandMap initial_command_map(void);
+        static CommandMap m_initial_command_map(void);
 
-        void process_pass_command(Client &client, IRCMessage &msg);
-        void process_nick_command(Client &client, IRCMessage &msg);
-        void process_user_command(Client &client, IRCMessage &msg);
-        void process_join_command(Client &client, IRCMessage &msg);
-        void process_mode_command(Client &client, IRCMessage &msg);
-        void process_quit_command(Client &client, IRCMessage &msg);
-        void process_topic_command(Client &client, IRCMessage &msg);
-        void process_part_command(Client &Client, IRCMessage &msg);
+        void m_process_pass_command(Client &client, IRCMessage &msg);
+        void m_process_nick_command(Client &client, IRCMessage &msg);
+        void m_process_user_command(Client &client, IRCMessage &msg);
+        void m_process_join_command(Client &client, IRCMessage &msg);
+        void m_process_mode_command(Client &client, IRCMessage &msg);
+        void m_process_quit_command(Client &client, IRCMessage &msg);
+        void m_process_topic_command(Client &client, IRCMessage &msg);
+        void m_process_part_command(Client &Client, IRCMessage &msg);
 
-        void join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
+        void m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
 
     public:
         void run(void);
