@@ -22,12 +22,12 @@ Server::Server(int argc, char **argv)
 {
     if (argc != 3)
     {
-        Logger().fatal() << "Usage :" << argv[0] << " <port> <password>";
+        Logger().error() << "Usage :" << argv[0] << " <port> <password>";
         exit(EXIT_FAILURE);
     }
     m_port = atoi(argv[1]);
     if (m_port < 0 || m_port > 65535)
-        Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
+        Logger().error() << m_port << "is out of Port range (0 ~ 65535)";
     m_password = argv[2];
 	Logger().info() << "Server start";
     m_create_socket();
@@ -46,7 +46,7 @@ void
     m_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_listen_fd == -1)
     {
-        Logger().fatal() << "Failed to create socket. errno " << errno;
+        Logger().error() << "Failed to create socket. errno " << errno;
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Create socket " << m_listen_fd;
@@ -62,7 +62,7 @@ void
 
     if (bind(m_listen_fd, (struct sockaddr *)&m_sockaddr, sizeof(sockaddr_in)) == -1)
     {
-        Logger().fatal() << "Failed to bind to port and address" << m_port << ". errno: " << errno;
+        Logger().error() << "Failed to bind to port and address" << m_port << ". errno: " << errno;
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Bind Port :" << m_port << " IP :" <<  inet_ntoa(m_sockaddr.sin_addr);
@@ -73,7 +73,7 @@ void
 {
     if (listen(m_listen_fd, SOMAXCONN) == -1)
     {
-        Logger().fatal() << "Failed to listen on socket. errno: " << errno;
+        Logger().error() << "Failed to listen on socket. errno: " << errno;
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Listen on socket";
@@ -87,7 +87,7 @@ void
     m_kq = kqueue();
     if (m_kq == -1)
     {
-        Logger().fatal() << "Failed to allocate kqueue. errno: " << errno;
+        Logger().error() << "Failed to allocate kqueue. errno: " << errno;
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Allocate kqueue " << m_kq;
@@ -105,7 +105,7 @@ void
     client_fd = accept(m_listen_fd, (sockaddr*)(&client_addr), (socklen_t*)(&client_addr_len));
     if (client_fd == -1)
     {
-        Logger().fatal() << "Failed to accept client. errno: " << errno;
+        Logger().error() << "Failed to accept client. errno: " << errno;
         exit(EXIT_FAILURE);
     }
 

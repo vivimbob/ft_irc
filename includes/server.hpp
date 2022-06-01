@@ -10,6 +10,7 @@
 #include "./client.hpp"
 #include "./sendbuffer.hpp"
 #include "./channel.hpp"
+#include "utils.hpp"
 
 #define QUEUE_SIZE 1024
 #define IPV4_MTU_MAX 65535
@@ -71,7 +72,7 @@ class Server
         void m_process_topic_command(Client &client, IRCMessage &msg);
         void m_process_part_command(Client &Client, IRCMessage &msg);
 
-        void m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
+        void m_join_channel(Client &client, IRCMessage &msg, ChannelKeyPairMap &chan_key_pair);
 
     public:
         void run(void);

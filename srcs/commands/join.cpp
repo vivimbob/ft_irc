@@ -1,12 +1,12 @@
 #include "../../includes/server.hpp"
 #include "../../includes/logger.hpp"
 #include "../../includes/utils.hpp"
+#include <utility>
 
 void
-    Server::m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair)
+    Server::m_join_channel(Client &client, IRCMessage &msg, ChannelKeyPairMap &chan_key_pair)
 {
-    typedef std::map<const std::string, const std::string> chanKeyPair;
-    chanKeyPair::iterator pair_it = chan_key_pair.begin();
+    ChannelKeyPairMap::iterator pair_it = chan_key_pair.begin();
     for (; pair_it != chan_key_pair.end(); ++pair_it) // 채널과 키쌍을 순회하면서 확인
     {
         if (!utils::is_channel_prefix(pair_it->first) || !utils::is_channel_name_valid(pair_it->first)) // 채널이름 앞에 #, & 있는지, 이름이 유효한지
@@ -92,7 +92,7 @@ void
         return ;
     }
 
-    std::map<const std::string, const std::string> channel_key_pair;
+    ChannelKeyPairMap channel_key_pair;
     std::vector<const std::string> splited_channel;
 
     utils::split_by_comma(splited_channel, msg.get_params()[0]);
