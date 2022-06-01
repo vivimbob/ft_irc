@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::process_nick_command(Client &client, IRCMessage &msg)
+    Server::m_process_nick_command(Client &client, IRCMessage &msg)
 {
     if (!msg.get_params().size())
     {
@@ -26,17 +26,17 @@ void
         // kill command 중복된 닉네임 가진 모든 클라이언트 연결 해제
 	}
 
-    if (client.m_is_registered())
+    if (client.is_registered())
     {
 		ClientMap::iterator it = m_client_map.begin();
         for (; it != m_client_map.end(); ++it)
         {
-            prepare_to_send(*it->second, ":" + client.m_get_nickname() + " NICK " + nickname + "\r\n");
+            m_prepare_to_send(*it->second, ":" + client.get_nickname() + " NICK " + nickname + "\r\n");
         }
     }
-    Logger().debug() << client.m_get_client_IP()  << " change nick to " << nickname;
-    client.m_set_nickname(nickname);
+    Logger().debug() << client.get_client_IP()  << " change nick to " << nickname;
+    client.set_nickname(nickname);
 
-	if (client.m_is_registered() && !m_client_map.count(client.m_get_nickname()))
-		register_client(client, msg);
+	if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+		m_register_client(client, msg);
 }
