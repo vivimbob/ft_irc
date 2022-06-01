@@ -2,7 +2,7 @@
 
 /* Logger::_Impl static member variables begin */
 
-  int Logger::_Impl::m_level = Info;
+  int Logger::_Impl::m_level = Trace;
 
   int Logger::_Impl::m_timestamp_mode = Date_time_ver1;
 
