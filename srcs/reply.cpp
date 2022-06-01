@@ -383,5 +383,5 @@ std::string
 	IRCMessage::rpl_welcome(void)
 {
 	return m_reply_prefix("001") + " Welcome to Interet Relay Network\n"
-		+ m_client->m_get_nickname() + '!' + m_client->m_get_username() + '@' + m_client->m_get_hostname() + "\r\n";
+		+ m_client->make_nickmask() + "\r\n";
 }
