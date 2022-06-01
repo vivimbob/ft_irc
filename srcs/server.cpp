@@ -36,21 +36,6 @@ Server::Server(int argc, char **argv)
     create_kqueue();
 }
 
-Server::Server(int port, std::string password)
-    : m_kq(-1),
-      m_listen_fd(-1),
-      m_port(port),
-      m_password(password)
-{
-    if (m_port < 0 || m_port > 65535)
-        Logger().fatal() << m_port << "is out of Port range (0 ~ 65535)";
-	Logger().info() << "Server start";
-    create_socket();
-    bind_socket();
-    listen_socket();
-    create_kqueue();
-}
-
 Server::~Server(void)
 {
 }
