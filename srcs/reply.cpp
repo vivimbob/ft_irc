@@ -7,8 +7,8 @@ std::string
     IRCMessage::reply_servername_prefix(std::string command)
 {
     std::string msg;
-    msg = msg + ":" + m_client->m_get_client_IP() + " " + command + " " + m_client->m_get_nickname();
-	if (m_client->m_get_nickname().empty())
+    msg = msg + ":" + m_client->m_get_client_IP() + " " + command + " " + m_client->get_nickname();
+	if (m_client->get_nickname().empty())
 		msg += "*";
     return msg;
 }
@@ -412,6 +412,6 @@ std::string
   if (m_parameters.size() == 2)
     param = m_parameters[1];
   else
-    param = m_client->m_get_nickname();
+    param = m_client->get_nickname();
   return reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" + param + "\r\n";
 }
