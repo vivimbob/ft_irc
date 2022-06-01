@@ -1,8 +1,8 @@
 #include "../../includes/server.hpp"
 
 void
-    Server::process_quit_command(Client &client, IRCMessage &msg)
+    Server::m_process_quit_command(Client &client, IRCMessage &msg)
 {
-    send_to_channel(client, msg.build_message());
-    disconnect_client(client);
+    m_send_to_channel(client, msg.build_message());
+    m_disconnect_client(client);
 }

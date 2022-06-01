@@ -7,6 +7,7 @@
 #include <map>
 #include "sendbuffer.hpp"
 #include "ircmessage.hpp"
+#include "utils.hpp"
 
 class Client
 {
@@ -28,7 +29,7 @@ private:
     std::string	m_username;
     std::string m_hostname;
     std::queue<IRCMessage *>m_commands;
-    std::map<const std::string, const std::string> m_chan_key_lists;
+    ChannelKeyPairMap m_chan_key_lists;
     size_t m_channel_limits;
 
 	  bool m_pass_registered:1;
@@ -42,27 +43,26 @@ private:
   public:
     Client(sockaddr_in client_addr, int client_fd);
     ~Client(void);
-    sockaddr_in m_get_client_addr(void);
-    int m_get_socket(void);
-    char* m_get_client_IP(void);
-    const std::string	&m_get_password(void) const;
-    const std::string	&m_get_nickname(void) const;
-    const std::string	&m_get_username(void) const;
-    const std::string	&m_get_hostname(void) const;
-	  std::string	m_get_usermode(void);
-    const std::map<const std::string, const std::string> &m_get_channel_lists(void) const;
-    bool m_is_registered(void) const;
-    bool m_is_pass_registered(void) const;
-    bool m_is_nick_registered(void) const;
-    bool m_is_user_registered(void) const;
-    void m_set_password(const std::string &pw);
-    void m_set_nickname(const std::string &nickname);
-    void m_set_username(const std::string &username);
-    void m_set_hostname(const std::string &hostname);
+    sockaddr_in get_client_addr(void);
+    int get_socket(void);
+    char* get_client_IP(void);
+    const std::string	&get_password(void) const;
+    const std::string	&get_nickname(void) const;
+    const std::string	&get_username(void) const;
+    const std::string	&get_hostname(void) const;
+	  std::string	get_usermode(void);
+    const std::map<const std::string, const std::string> &get_channel_lists(void) const;
+    bool is_registered(void) const;
+    bool is_pass_registered(void) const;
+    bool is_nick_registered(void) const;
+    bool is_user_registered(void) const;
+    void set_password(const std::string &pw);
+    void set_nickname(const std::string &nickname);
+    void set_username(const std::string &username);
+    void set_hostname(const std::string &hostname);
 	void push_message(const std::string &message);
 	void push_message(const std::string &message, int level);
   std::string make_nickmask(void);
-
 };
 
 #endif /* CLIENT_HPP */

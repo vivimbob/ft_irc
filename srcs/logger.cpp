@@ -8,9 +8,19 @@
 
   std::string Logger::_Impl::m_timestamp_separator = ": ";
 
-  Logger::_Impl::_Symbol_Map Logger::_Impl::m_symbols = Logger::_Impl::m_initial_symbol_map();
+  Logger::_Impl::_Symbol Logger::_Impl::m_symbols[] = {
+	std::make_pair(Trace, "\033[34mT:"),
+    std::make_pair(Debug, "\033[36mD:"),
+	std::make_pair(Info, "\033[37mI:"),
+	std::make_pair(Error, "\033[35mE:")
+  };
 
-  Logger::_Impl::_Stream_Map Logger::_Impl::m_streams = Logger::_Impl::m_initial_stream_map();
+  Logger::_Impl::_Stream Logger::_Impl::m_streams[] = {
+	std::make_pair(Trace, &std::cout),
+	std::make_pair(Debug, &std::cout),
+	std::make_pair(Info, &std::cout),
+	std::make_pair(Error, &std::cerr)
+  };
 
 /* Logger::_Impl static member variables end */
 
@@ -30,7 +40,7 @@
   {
       m_active_level = level;
       _Impl::m_prefix_timestamp();
-      m_oss << _Impl::m_symbols[level] << " ";
+      m_oss << _Impl::m_symbols[level].second << " ";
       return m_oss;
   }
 
@@ -75,9 +85,7 @@
           m_time_str.erase(m_time_str.length() - 1);
 
           if (!m_time_str.empty())
-          {
               m_oss << m_time_str << m_timestamp_separator;
-          }
       }
           break;
       }
@@ -87,17 +95,14 @@
     Logger::_Impl::m_flush()
   {
       if (m_active_level < m_level)
-      {
           return;
-      }
 
       if (!m_oss.str().size())
-      {
           return;
-      }
 
-      std::ostream* stream = _Impl::m_streams[m_active_level];
-      if (stream) {
+      std::ostream* stream = _Impl::m_streams[m_active_level].second;
+      if (stream)
+	  {
           *stream << m_oss.str() << "\033[0m" << std::endl;
           stream->flush();
       }
@@ -122,51 +127,9 @@
   }
 
   std::ostringstream& 
-    Logger::_Impl::m_warning()
-  {
-      return m_get_stream(Warning);
-  }
-
-  std::ostringstream& 
     Logger::_Impl::m_error()
   {
       return m_get_stream(Error);
-  }
-
-  std::ostringstream& 
-    Logger::_Impl::m_fatal()
-  {
-      return m_get_stream(Fatal);
-  }
-
-  Logger::_Impl::_Symbol_Map 
-    Logger::_Impl::m_initial_symbol_map()
-  {
-    Logger::_Impl::_Symbol_Map temp_map;
-
-    temp_map.insert(std::make_pair(Trace, "\033[34mT:"));
-    temp_map.insert(std::make_pair(Debug, "\033[36mD:"));
-    temp_map.insert(std::make_pair(Info, "\033[37mI:"));
-    temp_map.insert(std::make_pair(Warning, "\033[33mW:"));
-    temp_map.insert(std::make_pair(Error, "\033[35mE:"));
-    temp_map.insert(std::make_pair(Fatal, "\033[31mF:"));
-
-    return (temp_map);
-  }
-
-  Logger::_Impl::_Stream_Map 
-    Logger::_Impl::m_initial_stream_map()
-  {
-    Logger::_Impl::_Stream_Map temp_map;
-
-    temp_map.insert(std::make_pair(Trace, &std::cout));
-    temp_map.insert(std::make_pair(Debug, &std::cout));
-    temp_map.insert(std::make_pair(Info, &std::cout));
-    temp_map.insert(std::make_pair(Warning, &std::cerr));
-    temp_map.insert(std::make_pair(Error, &std::cerr));
-    temp_map.insert(std::make_pair(Fatal, &std::cerr));
-
-    return (temp_map);
   }
 
 /* Logger::_Impl member functions end */
@@ -213,21 +176,9 @@
   }
 
   std::ostringstream& 
-    Logger::warning()
-  {
-      return m_impl->m_warning();
-  }
-
-  std::ostringstream& 
     Logger::error()
   {
       return m_impl->m_error();
-  }
-
-  std::ostringstream& 
-    Logger::fatal()
-  {
-      return m_impl->m_fatal();
   }
 
   std::ostringstream& 

@@ -34,8 +34,8 @@ void
         std::string::iterator it = m_command.begin();
         std::string::iterator ite = m_command.end();
         for (; it != ite; ++it)
-            if (*it >= 'a' && *it <= 'z')
-                *it -= 32;
+          if ((unsigned)*it - 'a' < 26)
+            *it ^= 0b100000;
     }
     //command가 유효한지 체크
     while (m_message.size() > m_position)
@@ -111,4 +111,4 @@ std::string
         msg += " PART " + m_parameters[0] + " :" + param + "\r\n"; 
     }
     return msg;
-} 
+}

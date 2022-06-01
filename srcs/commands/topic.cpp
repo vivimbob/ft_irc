@@ -2,7 +2,7 @@
 #include "../../includes/logger.hpp"
 
 void
-    Server::process_topic_command(Client &client, IRCMessage &msg)
+    Server::m_process_topic_command(Client &client, IRCMessage &msg)
 {
 	if (msg.get_params().empty())
 	{
@@ -22,22 +22,22 @@ void
 
 	if (msg.get_params().size() == 2)
 	{
-		if (channel->m_is_protected_topic() && !channel->m_is_operator(client))	
+		if (channel->is_protected_topic() && !channel->is_operator(client))	
 		{
 			client.push_message(msg.err_chanoprivs_needed(channel_name), Logger::Debug);
 			return ;
 		}
-		channel->m_set_channel_topic(msg.get_params()[1]);
+		channel->set_channel_topic(msg.get_params()[1]);
 
-		Logger().trace() << channel_name << " channel topic change to " << channel->m_get_channel_topic();
+		Logger().trace() << channel_name << " channel topic change to " << channel->get_channel_topic();
 	}
 
 	std::string reply_msg;
 
-	if (channel->m_get_channel_topic().empty())
+	if (channel->get_channel_topic().empty())
 		reply_msg = msg.rpl_notopic(channel_name);
 	else
-		reply_msg = msg.rpl_topic(channel_name, channel->m_get_channel_topic());
+		reply_msg = msg.rpl_topic(channel_name, channel->get_channel_topic());
 
 	if (msg.get_params().size() == 1)
 	{
@@ -45,5 +45,5 @@ void
 		return ;
 	}
 
-	send_to_channel(channel, reply_msg);
+	m_send_to_channel(channel, reply_msg);
 }

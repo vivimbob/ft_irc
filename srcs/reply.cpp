@@ -7,7 +7,7 @@ std::string
     IRCMessage::reply_servername_prefix(std::string command)
 {
     std::string msg;
-    msg = msg + ":" + m_client->m_get_client_IP() + " " + command + " " + m_client->get_nickname();
+    msg = msg + ":" + m_client->get_client_IP() + " " + command + " " + m_client->get_nickname();
 	if (m_client->get_nickname().empty())
 		msg += "*";
     return msg;
