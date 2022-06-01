@@ -25,7 +25,7 @@ private:
     IRCMessage	&operator=(const IRCMessage& other);
 
     size_t next_position(void);
-    std::string m_reply_prefix(std::string command);
+    std::string reply_servername_prefix(std::string command);
 public:
     IRCMessage(Client *client, const std::string &message);
     ~IRCMessage(void);
