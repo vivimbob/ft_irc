@@ -64,9 +64,6 @@ class Channel
 //   void set_user_mode(Client &client, std::string &user_mode);
     void join(Client &client);
     void invite(void);
-    void display_channel_info(void);
-    void display_topic(Client &client);
-    void display_names(Client &client);
     bool is_empty(void) const;
 	bool is_operator(Client &client);
 	bool is_user_on_channel(Client *client);

@@ -133,31 +133,6 @@ void Channel::invite(void)
 	m_mode.i = true;
 }
 
-void
-  Channel::display_channel_info(void)
-{
-  // 일단 확인용으로 로거 출력해놓음.
-  Logger().info() << "channel's name : " << this->m_channel_name;
-  Logger().info() << "channel's init time : " << this->m_channel_init_time;
-  Logger().info() << "channel's topic : " << this->m_channel_topic;
-}
-
-void
-  Channel::display_topic(Client &client)
-{
-  // 일단 확인용으로 로거 출력해놓음.
-  Logger().info() << "channel's topic : " << this->m_channel_topic;
-  (void)client;
-}
-
-void
-  Channel::display_names(Client &client)
-{
-  // 일단 확인용으로 로거 출력해놓음.
-  Logger().info() << "channel's name : " << this->m_channel_name;
-  (void)client;
-}
-
 bool
   Channel::is_empty() const
 {
