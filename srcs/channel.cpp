@@ -157,20 +157,6 @@ void
 }
 
 void
-  Channel::join(Client &client)
-{
-	add_user(client);
-  if (m_user_lists.size() == 1)
-	  add_operator(client);
-  // server에서 channel topic, channel user list 전송
-}
-
-void Channel::invite(void)
-{
-	m_mode.i = true;
-}
-
-void
   Channel::display_channel_info(void)
 {
   // 일단 확인용으로 로거 출력해놓음.
@@ -238,18 +224,6 @@ bool
 }
 
 void
-  Channel::add_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}
-
-void
-  Channel::delete_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}
-
-void
   Channel::add_user(Client &client)
 {
   m_user_lists.insert(std::make_pair(&client, MemberShip(&client, this)));
@@ -259,4 +233,16 @@ void
   Channel::delete_user(Client &client)
 {
   m_user_lists.erase(&client);
+}
+
+void
+  Channel::add_operator(Client &client)
+{
+	m_user_lists.find(&client)->second.mode.o = true;
+}
+
+void
+  Channel::delete_operator(Client &client)
+{
+	m_user_lists.find(&client)->second.mode.o = true;
 }

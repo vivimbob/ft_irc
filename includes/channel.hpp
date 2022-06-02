@@ -67,9 +67,6 @@ class Channel
 	void set_operator_flag(bool toggle, Client *client);
 	void set_voice_flag(bool toggle, Client *client);
 
-    void join(Client &client);
-    void invite(void);
-
     void display_channel_info(void);
     void display_topic(Client &client);
     void display_names(Client &client);
