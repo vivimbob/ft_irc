@@ -102,7 +102,7 @@ void
 
     utils::split_by_comma(channel_list, msg.get_params()[0]);
 
-    if (msg.get_params().size() == 2) // key가 있을 때
+    if (msg.get_params().size() >= 2) // key가 있을 때
     {
         std::vector<const std::string> key_list;
         utils::split_by_comma(key_list, msg.get_params()[1]);
