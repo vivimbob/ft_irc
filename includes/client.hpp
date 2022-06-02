@@ -70,6 +70,7 @@ private:
   void set_invisible_flag(bool toggle);
   void set_operator_flag(bool toggle);
   void set_server_notice_flag(bool toggle);
+  void set_wallops_flag(bool toggle);
   
   std::string make_nickmask(void);
 };

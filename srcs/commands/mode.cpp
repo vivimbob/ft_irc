@@ -199,7 +199,7 @@ void
 					toggle = true;
 					break;
 				case 'w':
-					client.m_mode.w = toggle;
+					client.set_wallops_flag(toggle);
 					toggle = true;
 					break;
 				default:

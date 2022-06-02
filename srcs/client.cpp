@@ -196,6 +196,12 @@ void
   m_mode.s = toggle;
 }
 
+void
+  Client::set_wallops_flag(bool toggle)
+{
+  m_mode.w = toggle;
+}
+
 std::string
   Client::make_nickmask(void)
 {
