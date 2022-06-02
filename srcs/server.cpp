@@ -260,7 +260,7 @@ void
 void
   Server::m_send_to_channel(Channel *channel, const std::string &msg)
 {
-	const Channel::MemberMap &user_list = channel->get_user_lists();
+	const Channel::MemberMap &user_list = channel->get_user_list();
 	Channel::MemberMap::const_iterator user = user_list.begin();
 	
 	Logger().trace() << "send message to channel :" << channel->get_channel_name();
@@ -271,9 +271,9 @@ void
 void
   Server::m_send_to_channel(Client &client, const std::string &msg)
 {
-    std::map<const std::string, const std::string>::iterator it = client.m_chan_key_lists.begin();
-    for (; it != client.m_chan_key_lists.end(); ++it)
-		m_send_to_channel(m_channel_map[it->first], msg);	
+    std::set<const std::string>::iterator it = client.m_channel_list.begin();
+    for (; it != client.m_channel_list.end(); ++it)
+		m_send_to_channel(m_channel_map[*it], msg);
 }
 
 void

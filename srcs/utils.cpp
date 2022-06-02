@@ -5,9 +5,7 @@ namespace utils
   static inline bool
     is_special(char c)
   {
-    const char* const special_lists = "[]\\`-^{|}";
-
-    return std::memchr(special_lists, c, sizeof(special_lists));
+    return std::memchr("[]\\`-^{|}", c, 8); 
   }
   
    bool
@@ -15,11 +13,9 @@ namespace utils
   {
     if (nick.length() > 9)
       return false;
-    size_t index = 0;
-    if (!std::isalpha(nick[index]))
+    if (!std::isalpha(nick[0]))
       return false;
-    ++index;
-    for (; index < nick.length(); ++index)
+    for (size_t index = 1; index < nick.length(); ++index)
       if (!std::isalpha(nick[index]) && !std::isdigit(nick[index]) && !is_special(nick[index]))
         return false;
     return true;
@@ -36,8 +32,7 @@ namespace utils
   {
     if (chan.length() > 50)
       return false;
-    size_t index = 0;
-    for (; index < chan.length(); ++index)
+    for (size_t index = 0; index < chan.length(); ++index)
       if (chan[index] == ' ' || chan[index] == ',' || chan[index] == 0x7)
         return false;
     return true;
