@@ -4,7 +4,7 @@
 void
   Server::m_process_user_command(Client &client, IRCMessage &msg)
 {
-    if (msg.get_params().size() != 4)
+    if (msg.get_params().size() < 4)
     {
         client.push_message(msg.err_need_more_params(), Logger::Debug);
         return ;
