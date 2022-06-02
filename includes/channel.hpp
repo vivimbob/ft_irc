@@ -55,17 +55,14 @@ class Channel
     bool get_mode_limit(void);
     bool get_mode_invite_only(void);
     bool get_mode_key(void);
-//    const std::string &get_user_mode(Client &);
     void set_channel_name(const std::string &name);
     void set_channel_topic(const std::string &topic);
-//    void set_channel_mode(const std::string &chan_mode);
     void set_mode_key(bool b);
     void set_key(const std::string &key);
-//   void set_user_mode(Client &client, std::string &user_mode);
     void join(Client &client);
     void invite(void);
     bool is_empty(void) const;
-	bool is_operator(Client &client);
+	  bool is_operator(Client &client);
 	bool is_user_on_channel(Client *client);
 	bool is_protected_topic(void);
     void add_operator(Client &client);
