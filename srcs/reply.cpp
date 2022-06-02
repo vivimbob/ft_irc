@@ -397,11 +397,11 @@ std::string
 std::string
   IRCMessage::build_quit_reply(void)
 {
-  std::string param = "";
+  std::string reason = "";
 
   if (!m_parameters.empty())
-    param = m_parameters[0];
-  return reply_nickmask_prefix(m_command) + " :" + param + "\r\n";
+    reason = m_parameters[0];
+  return reply_nickmask_prefix(m_command) + " :" + reason + "\r\n";
 }
 
 std::string

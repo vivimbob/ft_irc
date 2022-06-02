@@ -13,9 +13,9 @@ Channel::Channel(const std::string &name, const std::string &key)
 	m_mode.t = false;
 	m_mode.n = false;
 	m_mode.m = false;
-	m_mode.k = false;
 	m_mode.l = false;
-  m_user_limits = 42;
+	m_mode.k = key.empty() ? false : true;
+  m_user_limit = 42;
 }
 
 Channel::~Channel(void)
@@ -66,33 +66,15 @@ const std::string&
 }
 
 const size_t&
-  Channel::get_user_limits(void) const
+  Channel::get_user_limit(void) const
 {
-  return m_user_limits;
+  return m_user_limit;
 }
 
 const std::map<Client*, MemberShip>&
-  Channel::get_user_lists(void)
+  Channel::get_user_list(void)
 {
-  return m_user_lists;
-}
-
-bool
-  Channel::get_mode_limit(void)
-{
-  return m_mode.l;
-}
-
-bool
-  Channel::get_mode_invite_only(void)
-{
-  return m_mode.i;
-}
-
-bool
-  Channel::get_mode_key(void)
-{
-  return m_mode.k;
+  return m_user_list;
 }
 
 void
@@ -105,80 +87,6 @@ void
   Channel::set_channel_topic(const std::string &topic)
 {
   this->m_channel_topic = topic;
-}
-
-void
-  Channel::set_key(const std::string &key)
-{
-  this->m_key = key;
-}
-
-void
-  Channel::set_mode_key(bool b)
-{
-  m_mode.k = b;
-}
-
-void
-  Channel::join(Client &client)
-{
-	add_user(client);
-  if (m_user_lists.size() == 1)
-	  add_operator(client);
-  // server에서 channel topic, channel user list 전송
-}
-
-void Channel::invite(void)
-{
-	m_mode.i = true;
-}
-
-bool
-  Channel::is_empty() const
-{
-  return m_user_lists.empty();
-}
-
-bool
-  Channel::is_operator(Client &client)
-{
-	return m_user_lists.find(&client)->second.mode.o;
-}
-
-bool
-  Channel::is_user_on_channel(Client *client)
-{
-	return m_user_lists.count(client);
-}
-
-bool
-  Channel::is_protected_topic(void)
-{
-	return m_mode.t;
-}
-
-void
-  Channel::add_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}
-
-void
-  Channel::delete_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}
-
-void
-  Channel::add_user(Client &client)
-{
-  m_user_lists.insert(std::make_pair(&client, MemberShip(&client, this)));
-}
-
-void
-  Channel::delete_user(Client &client)
-{
-  m_user_lists.erase(&client);
 }
 
 void
@@ -232,18 +140,103 @@ void
 void
   Channel::set_limit(bool toggle, size_t limit)
 {
-	m_user_limits = limit;
+	m_user_limit = limit;
 	m_mode.l = toggle;
 }
 
 void
   Channel::set_operator_flag(bool toggle, Client *client)
 {
-	m_user_lists.find(client)->second.mode.o = toggle;
+	m_user_list.find(client)->second.mode.o = toggle;
 }
 
 void
   Channel::set_voice_flag(bool toggle, Client *client)
 {
-	m_user_lists.find(client)->second.mode.v = toggle;
+	m_user_list.find(client)->second.mode.v = toggle;
+}
+
+void
+  Channel::display_channel_info(void)
+{
+  // 일단 확인용으로 로거 출력해놓음.
+  Logger().info() << "channel's name : " << this->m_channel_name;
+  Logger().info() << "channel's init time : " << this->m_channel_init_time;
+  Logger().info() << "channel's topic : " << this->m_channel_topic;
+}
+
+void
+  Channel::display_topic(Client &client)
+{
+  // 일단 확인용으로 로거 출력해놓음.
+  Logger().info() << "channel's topic : " << this->m_channel_topic;
+  (void)client;
+}
+
+void
+  Channel::display_names(Client &client)
+{
+  // 일단 확인용으로 로거 출력해놓음.
+  Logger().info() << "channel's name : " << this->m_channel_name;
+  (void)client;
+}
+
+bool
+  Channel::is_empty()
+{
+  return m_user_list.empty();
+}
+
+bool
+  Channel::is_full()
+{
+  return m_user_list.size() >= m_user_limit;
+}
+
+bool
+  Channel::is_operator(Client &client)
+{
+	return m_user_list.find(&client)->second.mode.o;
+}
+
+bool
+  Channel::is_user_on_channel(Client *client)
+{
+	return m_user_list.count(client);
+}
+
+bool
+  Channel::is_protected_topic_mode(void)
+{
+	return m_mode.t;
+}
+
+bool
+  Channel::is_limit_mode(void)
+{
+  return m_mode.l;
+}
+
+bool
+  Channel::is_invite_only_mode(void)
+{
+  return m_mode.i;
+}
+
+bool
+  Channel::is_key_mode(void)
+{
+  return m_mode.k;
+}
+
+void
+  Channel::add_user(Client &client)
+{
+  m_user_list.insert(std::make_pair(&client, MemberShip(&client, this)));
+}
+
+void
+  Channel::delete_user(Client &client)
+{
+  m_user_list.erase(&client);
 }

@@ -112,10 +112,10 @@ std::string
 	return message;
 }
 
-const std::map<const std::string, const std::string>&
-  Client::get_channel_lists(void) const
+const std::set<const std::string>&
+  Client::get_channel_list(void) const
 {
-  return m_chan_key_lists;
+  return m_channel_list;
 }
 
 void
