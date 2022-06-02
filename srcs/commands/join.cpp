@@ -30,18 +30,16 @@ void
         }
         else if (!channel) // join할 채널이 없는 경우(새로 만듦)
         {
-// FIX!!!!!!!!!!!!!!!!!!!!
-//             if (client.m_channel_list.size() >= client.m_channel_limits) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
-//             {
-//                 client.push_message(msg.err_too_many_channels(channel_name), Logger::Debug);
-//                 return ;
-//             }
+             if (!client.is_join_available()) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
+             {
+                 client.push_message(msg.err_too_many_channels(channel_name), Logger::Debug);
+                 return ;
+             }
 			      channel = new Channel(channel_name, key);
             m_channel_map.insert(std::make_pair(channel_name, channel));
             channel->add_user(client);
             channel->set_operator_flag(true, &client);
-          // FIX!!!!!!!!!!!!!!!!!
-//             client.m_channel_list.insert(channel_name);
+            client.insert_channel(channel_name);
             Logger().info() << "Create new channel :" << channel_name << " with " << key << " key by " << client.get_nickname();
         }
         else // join할 채널이 존재하는 경우
@@ -56,20 +54,18 @@ void
                 client.push_message(msg.err_invite_only_chan(channel_name), Logger::Debug);
                 return ;
             }
-          // FIX!!!!!!!!!!!!!!!!!!!!!
-//             if (client.m_channel_list.count(channel_name)) // 이미 join된 경우
-//             {
-//                 client.push_message(":You have already joined in <" + channel_name + "> channel\r\n", Logger::Debug);
-//                 return ;
-//             }
+             if (client.is_already_joined(channel_name)) // 이미 join된 경우
+             {
+                 client.push_message(":You have already joined in <" + channel_name + "> channel\r\n", Logger::Debug);
+                 return ;
+             }
             if ((channel->is_key_mode()) && (key != channel->get_key())) // key mode인데 key가 안 맞을 때
             {
                 client.push_message(msg.err_bad_channel_key(channel_name), Logger::Debug);
                 return ;
             }
             channel->add_user(client);
-          // FIX!!!!!!!!!!!!!!!!!!!!!!
-//             client.m_channel_list.insert(channel_name);
+            client.insert_channel(channel_name);
             Logger().info() << "Join channel :" << channel_name << " with " << key << " key by " << client.get_nickname();
         }
 

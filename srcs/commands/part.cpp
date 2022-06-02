@@ -32,8 +32,7 @@ void
     for (; it != splited_channel.end(); ++it)
     {
         m_channel_map[*it]->delete_user(client);
-      // FIX!!!!!!!!!!!!!!
-//         client.m_channel_list.erase(*it);
+		client.erase_channel(*it);
         Logger().trace() << "Remove [" << client.get_nickname() << "] client from [" << m_channel_map[*it]->get_channel_name() << "] channel";
         m_send_to_channel(m_channel_map[*it], msg.build_part_reply());
     }

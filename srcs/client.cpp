@@ -84,12 +84,6 @@ SendBuffer&
   return m_send_buffer;
 }
 
-ChannelKeyPairMap&
-  Client::get_chan_key_lists(void)
-{
-  return m_chan_key_lists;
-}
-
 size_t& Client::get_channel_limits(void)
 {
   return m_channel_limits;
@@ -117,6 +111,7 @@ const std::set<const std::string>&
 {
   return m_channel_list;
 }
+
 
 void
   Client::set_password(const std::string &pw)
@@ -169,6 +164,18 @@ bool
   return m_user_registered;
 }
 
+bool
+  Client::is_join_available(void) const
+{
+	return m_channel_list.size() < m_channel_limits;
+}
+
+bool
+  Client::is_already_joined(const std::string &channel_name)
+{
+	return m_channel_list.count(channel_name);
+}
+
 void
   Client::push_message(const std::string &message)
 {
@@ -211,4 +218,16 @@ std::string
   Client::make_nickmask(void)
 {
   return m_nickname + '!' + m_username + '@' + m_hostname; 
+}
+
+void
+  Client::insert_channel(const std::string &channel_name)
+{
+	m_channel_list.insert(channel_name);
+}
+
+void
+  Client::erase_channel(const std::string &channel_name)
+{
+	m_channel_list.erase(channel_name);
 }

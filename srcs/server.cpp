@@ -271,10 +271,9 @@ void
 void
   Server::m_send_to_channel(Client &client, const std::string &msg)
 {
-  // FIX!!!!!!!!!!!!!!!!!!!!!!!!
-//     std::set<const std::string>::iterator it = client.m_channel_list.begin();
-//     for (; it != client.m_channel_list.end(); ++it)
-// 		m_send_to_channel(m_channel_map[*it], msg);
+     std::set<const std::string>::iterator it = client.get_channel_list().begin();
+     for (; it != client.get_channel_list().end(); ++it)
+ 		m_send_to_channel(m_channel_map[*it], msg);
 }
 
 void
