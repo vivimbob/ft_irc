@@ -38,8 +38,6 @@ private:
 
 	s_mode m_mode;
 
-    friend class Server;
-
   public:
     Client(sockaddr_in client_addr, int client_fd);
     ~Client(void);
@@ -54,6 +52,7 @@ private:
     std::string &get_recv_buffer(void);
     SendBuffer &get_send_buffer(void);
     ChannelKeyPairMap &get_chan_key_lists(void);
+    size_t &get_channel_limits(void);
 	  std::string	get_usermode(void);
     const std::map<const std::string, const std::string> &get_channel_lists(void) const;
     bool is_registered(void) const;

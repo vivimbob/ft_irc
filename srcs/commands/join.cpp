@@ -23,7 +23,7 @@ void
         }
         else if (map_it == m_channel_map.end()) // join할 채널이 없는 경우(새로 만듦)
         {
-            if (client.get_chan_key_lists().size() >= client.m_channel_limits) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
+            if (client.get_chan_key_lists().size() >= client.get_channel_limits()) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
             {
                 client.push_message(msg.err_too_many_channels(pair_it->first), Logger::Debug);
                 return ;

@@ -90,6 +90,11 @@ ChannelKeyPairMap&
   return m_chan_key_lists;
 }
 
+size_t& Client::get_channel_limits(void)
+{
+  return m_channel_limits;
+}
+
 std::string
   Client::get_usermode(void)
 {
