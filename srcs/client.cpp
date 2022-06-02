@@ -178,6 +178,12 @@ void
 		<< "Server Send to " << m_nickname << " [" << message << ']';
 }
 
+void
+  Client::set_invisible_flag(bool toggle)
+{
+  m_mode.i = toggle;
+}
+
 std::string
   Client::make_nickmask(void)
 {

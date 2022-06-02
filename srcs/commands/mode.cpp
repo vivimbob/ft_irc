@@ -186,7 +186,7 @@ void
 				case '-':
 					break;
 				case 'i':
-					client.m_mode.i = toggle;
+					client.set_invisible_flag(toggle);
 					toggle = true;
 					break;
 				case 'o':
