@@ -36,6 +36,8 @@ class Channel
 	size_t m_user_limit;
 
 	s_mode m_mode;
+	std::string m_mode_string;
+	bool m_mode_string_need_update;
     
     Channel(void);
     Channel(const Channel& cp);
@@ -47,7 +49,7 @@ class Channel
 
     const std::string &get_channel_name(void) const;
     const std::string &get_channel_topic(void) const;
-    std::string get_channel_mode(void);
+    std::string get_channel_mode(Client *client);
     const std::string &get_key(void) const;
     const size_t &get_user_limit(void) const;
     const MemberMap &get_user_list(void);

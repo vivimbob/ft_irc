@@ -15,7 +15,8 @@ Channel::Channel(const std::string &name, const std::string &key)
 	m_mode.m = false;
 	m_mode.l = false;
 	m_mode.k = key.empty() ? false : true;
-  m_user_limit = 42;
+	m_user_limit = 42;
+	m_mode_string_need_update = true;
 }
 
 Channel::~Channel(void)
@@ -35,28 +36,37 @@ const std::string&
 }
 
 std::string
-  Channel::get_channel_mode(void)
+  Channel::get_channel_mode(Client *client)
 {
-	std::string message;
-
-	message.push_back('+');
-	if (m_mode.p)
-		message.push_back('p');
-	if (m_mode.s)
-		message.push_back('s');
-	if (m_mode.i)
-		message.push_back('i');
-	if (m_mode.t)
-		message.push_back('t');
-	if (m_mode.n)
-		message.push_back('n');
-	if (m_mode.m)
-		message.push_back('m');
-	if (m_mode.k)
-		message.push_back('k');
-	if (m_mode.l)
-		message.push_back('l');
-	return message;
+	if (m_mode_string_need_update)
+	{
+		m_mode_string.clear();
+		m_mode_string.push_back('+');
+		if (m_mode.p)
+			m_mode_string.push_back('p');
+		if (m_mode.s)
+			m_mode_string.push_back('s');
+		if (m_mode.i)
+			m_mode_string.push_back('i');
+		if (m_mode.t)
+			m_mode_string.push_back('t');
+		if (m_mode.n)
+			m_mode_string.push_back('n');
+		if (m_mode.m)
+			m_mode_string.push_back('m');
+		if (m_mode.k)
+			m_mode_string.push_back('k');
+		if (m_mode.l)
+			m_mode_string.push_back('l');
+		m_mode_string_need_update = false;
+	}
+	MemberShip &member = m_user_list.find(client)->second;
+	std::string member_mode_string;
+	if (member.mode.o)
+		member_mode_string.push_back('o');
+	if (member.mode.v)
+		member_mode_string.push_back('v');
+	return m_mode_string + member_mode_string;
 }
 
 const std::string&
@@ -92,7 +102,10 @@ void
 void
   Channel::set_private_flag(bool toggle)
 {
+	if (m_mode.p == toggle)
+		return;
 	m_mode.p = toggle;
+	m_mode_string_need_update = true;
 	if (m_mode.p == true && m_mode.s == true)
 		m_mode.s = false;
 }
@@ -100,7 +113,10 @@ void
 void
   Channel::set_secret_flag(bool toggle)
 {
+	if (m_mode.s == toggle)
+		return;
 	m_mode.s = toggle;
+	m_mode_string_need_update = true;
 	if (m_mode.p == true && m_mode.s == true)
 		m_mode.p = false;
 }
@@ -108,40 +124,58 @@ void
 void
   Channel::set_invite_flag(bool toggle)
 {
+	if (m_mode.i == toggle)
+		return;
 	m_mode.i = toggle;
+	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_topic_flag(bool toggle)
 {
+	if (m_mode.t == toggle)
+		return;
 	m_mode.t = toggle;
+	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_no_messages_flag(bool toggle)
 {
+	if (m_mode.n == toggle)
+		return;
 	m_mode.n = toggle;
+	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_moderate_flag(bool toggle)
 {
+	if (m_mode.m == toggle)
+		return;
 	m_mode.m = toggle;
+	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_key_flag(bool toggle, std::string key)
 {
-	m_mode.k = toggle;
 	if (toggle == true)
 		m_key = key;
+	if (m_mode.k == toggle)
+		return;
+	m_mode.k = toggle;
+	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_limit(bool toggle, size_t limit)
 {
 	m_user_limit = limit;
+	if (m_mode.l == toggle)
+		return;
 	m_mode.l = toggle;
+	m_mode_string_need_update = true;
 }
 
 void
