@@ -133,7 +133,7 @@ void
         if (m_command_map.count(message->get_command()))
             (this->*m_command_map[message->get_command()])(client, *message);
         else
-			      client.push_message(message->err_unknown_command(), Logger::Debug);
+			client.push_message(message->err_unknown_command(), Logger::Debug);
         delete message;
     }
 }
@@ -150,7 +150,7 @@ void
     m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     
-	  m_client_map.erase(client.get_nickname());
+	m_client_map.erase(client.get_nickname());
     delete &client;
     close(clientfd);
 }
