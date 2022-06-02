@@ -176,7 +176,7 @@ void
 
     if (recv_data_len > 0) 
     {
-        std::string &recv_buffer = client.m_recv_buffer;
+        std::string &recv_buffer = client.get_recv_buffer();
         recv_buffer.append(buffer, recv_data_len);
         
         size_t position = recv_buffer.find_first_of("\r\n", 0);

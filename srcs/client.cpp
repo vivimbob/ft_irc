@@ -72,6 +72,12 @@ const std::queue<IRCMessage *>&
   return m_commands;
 }
 
+std::string&
+  Client::get_recv_buffer(void)
+{
+  return m_recv_buffer;
+}
+
 std::string
   Client::get_usermode(void)
 {
