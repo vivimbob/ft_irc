@@ -208,7 +208,7 @@ void
 void
     Server::m_send_client_msg(Client &client, int available_bytes)
 {
-    SendBuffer &send_buffer = client.m_send_buffer;
+    SendBuffer &send_buffer = client.get_send_buffer();
     int remain_data_len = 0;
     int attempt_data_len = 0;
 	  const unsigned int &clientfd = client.get_socket();

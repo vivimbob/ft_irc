@@ -78,6 +78,12 @@ std::string&
   return m_recv_buffer;
 }
 
+SendBuffer&
+  Client::get_send_buffer(void)
+{
+  return m_send_buffer;
+}
+
 std::string
   Client::get_usermode(void)
 {
