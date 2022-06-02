@@ -65,10 +65,6 @@ class Channel
 	void set_operator_flag(bool toggle, Client *client);
 	void set_voice_flag(bool toggle, Client *client);
 
-    void display_channel_info(void);
-    void display_topic(Client &client);
-    void display_names(Client &client);
-
     bool is_empty(void);
     bool is_full(void);
 	bool is_operator(Client &client);
