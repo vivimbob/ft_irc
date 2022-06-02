@@ -16,7 +16,7 @@ void
         }
 
         ChannelMap::iterator map_it = m_channel_map.find(pair_it->first);
-        if ((map_it != m_channel_map.end()) && ((m_channel_map[pair_it->first]->get_mode_key()) && (pair_it->second != map_it->second->get_key()))) // join할 채널 이름은 있는데 키가 안 맞는 경우
+        if ((map_it != m_channel_map.end()) && ((m_channel_map[pair_it->first]->is_key_mode()) && (pair_it->second != map_it->second->get_key()))) // join할 채널 이름은 있는데 키가 안 맞는 경우
         {
             client.push_message(msg.err_bad_channel_key(pair_it->first), Logger::Debug);
             return ;
@@ -29,8 +29,6 @@ void
                 return ;
             }
             m_channel_map.insert(std::make_pair(pair_it->first, new Channel(pair_it->first, pair_it->second)));
-            if (!pair_it->second.empty())// key값이 존재하면 key mosde 설정
-                m_channel_map[pair_it->first]->set_mode_key(true);
             m_channel_map[pair_it->first]->add_user(client);
             m_channel_map[pair_it->first]->add_operator(client);
             client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
@@ -39,12 +37,12 @@ void
         else // join할 채널이 존재하는 경우
         {
             size_t temp_channel_users = m_channel_map[pair_it->first]->get_user_lists().size();
-            if (m_channel_map[pair_it->first]->get_mode_limit() && (temp_channel_users >= m_channel_map[pair_it->first]->get_user_limits())) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
+            if (m_channel_map[pair_it->first]->is_limit_mode() && (temp_channel_users >= m_channel_map[pair_it->first]->get_user_limits())) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
             {
                 client.push_message(msg.err_channel_is_full(pair_it->first), Logger::Debug);
                 return ;
             }
-            if (m_channel_map[pair_it->first]->get_mode_invite_only()) // invite-only인 경우
+            if (m_channel_map[pair_it->first]->is_invite_only_mode()) // invite-only인 경우
             {
                 client.push_message(msg.err_invite_only_chan(pair_it->first), Logger::Debug);
                 return ;
@@ -54,7 +52,7 @@ void
                 client.push_message(":You have already joined in <" + pair_it->first + "> channel\r\n", Logger::Debug);
                 return ;
             }
-            if ((m_channel_map[pair_it->first]->get_mode_key()) && (pair_it->second != map_it->second->get_key())) // key mode인데 key가 안 맞을 때
+            if ((m_channel_map[pair_it->first]->is_key_mode()) && (pair_it->second != map_it->second->get_key())) // key mode인데 key가 안 맞을 때
             {
                 client.push_message(msg.err_bad_channel_key(pair_it->first), Logger::Debug);
                 return ;
