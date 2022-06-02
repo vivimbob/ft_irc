@@ -4,7 +4,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <queue>
-#include <map>
 #include <set>
 #include "sendbuffer.hpp"
 #include "ircmessage.hpp"
