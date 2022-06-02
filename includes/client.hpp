@@ -28,11 +28,11 @@ private:
     std::string	m_nickname;
     std::string	m_username;
     std::string m_hostname;
-    std::queue<IRCMessage *>m_commands;
+    std::queue<IRCMessage *> m_commands;
     ChannelKeyPairMap m_chan_key_lists;
     size_t m_channel_limits;
 
-	  bool m_pass_registered:1;
+	bool m_pass_registered:1;
     bool m_nick_registered:1;
     bool m_user_registered:1;
 
