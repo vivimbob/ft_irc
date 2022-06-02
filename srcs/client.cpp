@@ -84,6 +84,12 @@ SendBuffer&
   return m_send_buffer;
 }
 
+ChannelKeyPairMap&
+  Client::get_chan_key_lists(void)
+{
+  return m_chan_key_lists;
+}
+
 std::string
   Client::get_usermode(void)
 {

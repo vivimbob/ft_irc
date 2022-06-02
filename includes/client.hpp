@@ -53,6 +53,7 @@ private:
     std::queue<IRCMessage *> &get_commands(void);
     std::string &get_recv_buffer(void);
     SendBuffer &get_send_buffer(void);
+    ChannelKeyPairMap &get_chan_key_lists(void);
 	  std::string	get_usermode(void);
     const std::map<const std::string, const std::string> &get_channel_lists(void) const;
     bool is_registered(void) const;
