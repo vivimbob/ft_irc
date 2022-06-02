@@ -71,11 +71,10 @@ void
 
         const Channel::MemberMap &user_list = channel->get_user_list();
         Channel::MemberMap::const_iterator user = user_list.begin();
-        std::queue<const std::string> temp_nick_queue;
+        std::queue<const std::string> nick_queue;
         for (; user != user_list.end(); ++user)
-            temp_nick_queue.push(user->first->get_nickname());
-        m_prepare_to_send(client, msg.rpl_namreply(channel_name, temp_nick_queue));
-        Logger().trace() << client.get_nickname() << " [" << msg.rpl_namreply(channel_name, temp_nick_queue) << ']';
+            nick_queue.push(user->first->get_nickname());
+		client.push_message(msg.rpl_namreply(channel_name, nick_queue));
 
 	    std::string reply_msg;
 	    const std::string& channel_topic = channel->get_channel_topic();
@@ -92,47 +91,43 @@ void
 void
     Server::m_process_join_command(Client &client, IRCMessage &msg)
 {
-    if (msg.get_params().size() < 1)
+    if (msg.get_params().empty())
     {
         client.push_message(msg.err_need_more_params(), Logger::Debug);
         return ;
     }
 
     ChannelKeyPairMap channel_key_pair;
-    std::vector<const std::string> splited_channel;
+    std::vector<const std::string> channel_list;
 
-    utils::split_by_comma(splited_channel, msg.get_params()[0]);
+    utils::split_by_comma(channel_list, msg.get_params()[0]);
 
     if (msg.get_params().size() == 2) // key가 있을 때
     {
-        std::vector<const std::string> splited_key;
-        utils::split_by_comma(splited_key, msg.get_params()[1]);
-        if ((splited_channel.size() < splited_key.size())) // key개수가 채널 개수보다 많을 때
+        std::vector<const std::string> key_list;
+        utils::split_by_comma(key_list, msg.get_params()[1]);
+
+        if ((channel_list.size() < key_list.size())) // key개수가 채널 개수보다 많을 때
         {
             client.push_message(msg.err_bad_channel_key(msg.get_command()), Logger::Debug);
             return ;
         }
-        std::vector<const std::string>::iterator itc = splited_channel.begin();
-        std::vector<const std::string>::iterator itk = splited_key.begin();
-        for (; itc != splited_channel.end(); ++itc)
+
+        std::vector<const std::string>::iterator channel_it = channel_list.begin();
+        std::vector<const std::string>::iterator key_it = key_list.begin();
+        for (; channel_it != channel_list.end(); ++channel_it)
         {
-            if (itk == splited_key.end())
-            {
-                channel_key_pair.insert(std::make_pair(*itc, ""));
-                continue;
-            }
+            if (key_it == key_list.end())
+                channel_key_pair.insert(std::make_pair(*channel_it, ""));
             else
-            {
-                channel_key_pair.insert(std::make_pair(*itc, *itk));
-                ++itk;
-            }
+                channel_key_pair.insert(std::make_pair(*channel_it, *key_it++));
         }
     }
     else // key가 없을 때
     {
-        std::vector<const std::string>::iterator itc = splited_channel.begin();
-        for (; itc != splited_channel.end(); ++itc)
-          channel_key_pair.insert(std::make_pair(*itc, ""));
+        std::vector<const std::string>::iterator channel_it = channel_list.begin();
+        for (; channel_it != channel_list.end(); ++channel_it)
+          channel_key_pair.insert(std::make_pair(*channel_it, ""));
     }
     m_join_channel(client, msg, channel_key_pair);
 }
