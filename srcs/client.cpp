@@ -190,6 +190,12 @@ void
   m_mode.o = toggle;
 }
 
+void
+  Client::set_server_notice_flag(bool toggle)
+{
+  m_mode.s = toggle;
+}
+
 std::string
   Client::make_nickmask(void)
 {

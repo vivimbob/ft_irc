@@ -195,7 +195,7 @@ void
 					toggle = true;
 					break;
 				case 's':
-					client.m_mode.s = toggle;
+					client.set_server_notice_flag(toggle);
 					toggle = true;
 					break;
 				case 'w':
