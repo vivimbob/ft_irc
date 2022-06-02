@@ -50,6 +50,7 @@ private:
     const std::string	&get_nickname(void) const;
     const std::string	&get_username(void) const;
     const std::string	&get_hostname(void) const;
+    const std::queue<IRCMessage *> &get_commands(void) const;
 	  std::string	get_usermode(void);
     const std::map<const std::string, const std::string> &get_channel_lists(void) const;
     bool is_registered(void) const;

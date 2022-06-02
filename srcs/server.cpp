@@ -124,11 +124,11 @@ void
 void
     Server::m_handle_messages(Client &client)
 {
-    while (client.m_commands.size())
+    while (client.get_commands().size())
     {
-        IRCMessage *message = client.m_commands.front();
+        IRCMessage *message = client.get_commands().front();
 		    Logger().debug() << client.get_nickname() << " send [" << message->get_message() << ']';
-        client.m_commands.pop();
+        client.get_commands().pop();
         message->parse_message();
         if (m_command_map.count(message->get_command()))
             (this->*m_command_map[message->get_command()])(client, *message);
@@ -182,17 +182,17 @@ void
         size_t position = recv_buffer.find_first_of("\r\n", 0);
         while (position != static_cast<size_t>(std::string::npos))
         {
-            client.m_commands.push(new IRCMessage(&client,
+            client.get_commands().push(new IRCMessage(&client,
 						std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
             recv_buffer.erase(0, position + 2);
             position = recv_buffer.find_first_of("\r\n", 0);
         }
 
         Logger().info()
-			<< "Receive Message(" << client.m_commands.size() <<
+			<< "Receive Message(" << client.get_commands().size() <<
 			") from " << client.get_nickname();
 
-        if (client.m_commands.size())
+        if (client.get_commands().size())
         {
             m_handle_messages(client);
             m_update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);

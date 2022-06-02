@@ -66,6 +66,12 @@ const std::string&
   return m_hostname;
 }
 
+const std::queue<IRCMessage *>&
+  Client::get_commands(void) const
+{
+  return m_commands;
+}
+
 std::string
   Client::get_usermode(void)
 {
