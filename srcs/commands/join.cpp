@@ -23,7 +23,7 @@ void
         }
         else if (map_it == m_channel_map.end()) // join할 채널이 없는 경우(새로 만듦)
         {
-            if (client.m_chan_key_lists.size() >= client.m_channel_limits) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
+            if (client.get_chan_key_lists().size() >= client.m_channel_limits) //join할 클라이언트가 이미 참여할 수 있는 채널 갯수에 도달했을때
             {
                 client.push_message(msg.err_too_many_channels(pair_it->first), Logger::Debug);
                 return ;
@@ -33,7 +33,7 @@ void
                 m_channel_map[pair_it->first]->set_mode_key(true);
             m_channel_map[pair_it->first]->add_user(client);
             m_channel_map[pair_it->first]->add_operator(client);
-            client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
+            client.get_chan_key_lists().insert(std::make_pair(pair_it->first, pair_it->second));
             Logger().info() << "Create new channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.get_nickname();
         }
         else // join할 채널이 존재하는 경우
@@ -49,7 +49,7 @@ void
                 client.push_message(msg.err_invite_only_chan(pair_it->first), Logger::Debug);
                 return ;
             }
-            if (client.m_chan_key_lists.count(pair_it->first)) // 이미 join된 경우
+            if (client.get_chan_key_lists().count(pair_it->first)) // 이미 join된 경우
             {
                 client.push_message(":You have already joined in <" + pair_it->first + "> channel\r\n", Logger::Debug);
                 return ;
@@ -60,7 +60,7 @@ void
                 return ;
             }
             m_channel_map[pair_it->first]->add_user(client);
-            client.m_chan_key_lists.insert(std::make_pair(pair_it->first, pair_it->second));
+            client.get_chan_key_lists().insert(std::make_pair(pair_it->first, pair_it->second));
             Logger().info() << "Join channel :" << pair_it->first << " with " << pair_it->second << " key by " << client.get_nickname();
         }
         const Channel::MemberMap &user_list = m_channel_map[pair_it->first]->get_user_lists();
