@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <queue>
 #include <map>
+#include <set>
 #include "sendbuffer.hpp"
 #include "ircmessage.hpp"
 #include "utils.hpp"
@@ -29,7 +30,7 @@ private:
     std::string	m_username;
     std::string m_hostname;
     std::queue<IRCMessage *> m_commands;
-    ChannelKeyPairMap m_chan_key_lists;
+	std::set<const std::string> m_channel_list;
     size_t m_channel_limits;
 
 	bool m_pass_registered:1;
@@ -51,7 +52,7 @@ private:
     const std::string	&get_username(void) const;
     const std::string	&get_hostname(void) const;
 	  std::string	get_usermode(void);
-    const std::map<const std::string, const std::string> &get_channel_lists(void) const;
+    const std::set<const std::string> &get_channel_list(void) const;
     bool is_registered(void) const;
     bool is_pass_registered(void) const;
     bool is_nick_registered(void) const;

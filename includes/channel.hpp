@@ -26,16 +26,14 @@ class Channel
 
   public:
 	typedef std::map<Client *, MemberShip> MemberMap;
-	typedef std::vector<std::string> BanMasks;
 
   private:
     std::string m_channel_name;
     time_t m_channel_init_time;
-    MemberMap m_user_lists;
-	BanMasks m_ban_masks;
+    MemberMap m_user_list;
     std::string m_channel_topic;
     std::string m_key;
-	size_t m_user_limits;
+	size_t m_user_limit;
 
 	s_mode m_mode;
     
@@ -51,8 +49,8 @@ class Channel
     const std::string &get_channel_topic(void) const;
     std::string get_channel_mode(void);
     const std::string &get_key(void) const;
-    const size_t &get_user_limits(void) const;
-    const MemberMap &get_user_lists(void);
+    const size_t &get_user_limit(void) const;
+    const MemberMap &get_user_list(void);
 
     void set_channel_name(const std::string &name);
     void set_channel_topic(const std::string &topic);
@@ -71,7 +69,8 @@ class Channel
     void display_topic(Client &client);
     void display_names(Client &client);
 
-    bool is_empty(void) const;
+    bool is_empty(void);
+    bool is_full(void);
 	bool is_operator(Client &client);
 	bool is_user_on_channel(Client *client);
 	bool is_protected_topic_mode(void);

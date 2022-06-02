@@ -22,7 +22,7 @@ void
             client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
             return ;
         }
-        if (m_channel_map.count(*it) && !m_channel_map[*it]->get_user_lists().count(&client))
+        if (m_channel_map.count(*it) && !m_channel_map[*it]->get_user_list().count(&client))
         {
             client.push_message(msg.err_not_on_channel(*it), Logger::Debug);
             return ;
@@ -32,7 +32,7 @@ void
     for (; it != splited_channel.end(); ++it)
     {
         m_channel_map[*it]->delete_user(client);
-        client.m_chan_key_lists.erase(*it);
+        client.m_channel_list.erase(*it);
         Logger().trace() << "Remove [" << client.get_nickname() << "] client from [" << m_channel_map[*it]->get_channel_name() << "] channel";
         m_send_to_channel(m_channel_map[*it], msg.build_part_reply());
     }

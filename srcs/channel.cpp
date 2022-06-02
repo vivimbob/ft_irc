@@ -15,7 +15,7 @@ Channel::Channel(const std::string &name, const std::string &key)
 	m_mode.m = false;
 	m_mode.l = false;
 	m_mode.k = key.empty() ? false : true;
-  m_user_limits = 42;
+  m_user_limit = 42;
 }
 
 Channel::~Channel(void)
@@ -66,15 +66,15 @@ const std::string&
 }
 
 const size_t&
-  Channel::get_user_limits(void) const
+  Channel::get_user_limit(void) const
 {
-  return m_user_limits;
+  return m_user_limit;
 }
 
 const std::map<Client*, MemberShip>&
-  Channel::get_user_lists(void)
+  Channel::get_user_list(void)
 {
-  return m_user_lists;
+  return m_user_list;
 }
 
 void
@@ -140,20 +140,20 @@ void
 void
   Channel::set_limit(bool toggle, size_t limit)
 {
-	m_user_limits = limit;
+	m_user_limit = limit;
 	m_mode.l = toggle;
 }
 
 void
   Channel::set_operator_flag(bool toggle, Client *client)
 {
-	m_user_lists.find(client)->second.mode.o = toggle;
+	m_user_list.find(client)->second.mode.o = toggle;
 }
 
 void
   Channel::set_voice_flag(bool toggle, Client *client)
 {
-	m_user_lists.find(client)->second.mode.v = toggle;
+	m_user_list.find(client)->second.mode.v = toggle;
 }
 
 void
@@ -182,21 +182,27 @@ void
 }
 
 bool
-  Channel::is_empty() const
+  Channel::is_empty()
 {
-  return m_user_lists.empty();
+  return m_user_list.empty();
+}
+
+bool
+  Channel::is_full()
+{
+  return m_user_list.size() >= m_user_limit;
 }
 
 bool
   Channel::is_operator(Client &client)
 {
-	return m_user_lists.find(&client)->second.mode.o;
+	return m_user_list.find(&client)->second.mode.o;
 }
 
 bool
   Channel::is_user_on_channel(Client *client)
 {
-	return m_user_lists.count(client);
+	return m_user_list.count(client);
 }
 
 bool
@@ -226,11 +232,11 @@ bool
 void
   Channel::add_user(Client &client)
 {
-  m_user_lists.insert(std::make_pair(&client, MemberShip(&client, this)));
+  m_user_list.insert(std::make_pair(&client, MemberShip(&client, this)));
 }
 
 void
   Channel::delete_user(Client &client)
 {
-  m_user_lists.erase(&client);
+  m_user_list.erase(&client);
 }
