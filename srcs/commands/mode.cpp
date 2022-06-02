@@ -186,20 +186,20 @@ void
 				case '-':
 					break;
 				case 'i':
-					client.m_mode.i = toggle;
+					client.set_invisible_flag(toggle);
 					toggle = true;
 					break;
 				case 'o':
 					if (toggle == false)
-						client.m_mode.o = toggle;
+						client.set_operator_flag(toggle);
 					toggle = true;
 					break;
 				case 's':
-					client.m_mode.s = toggle;
+					client.set_server_notice_flag(toggle);
 					toggle = true;
 					break;
 				case 'w':
-					client.m_mode.w = toggle;
+					client.set_wallops_flag(toggle);
 					toggle = true;
 					break;
 				default:

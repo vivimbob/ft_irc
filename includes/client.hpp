@@ -38,8 +38,6 @@ private:
 
 	s_mode m_mode;
 
-    friend class Server;
-
   public:
     Client(sockaddr_in client_addr, int client_fd);
     ~Client(void);
@@ -50,6 +48,11 @@ private:
     const std::string	&get_nickname(void) const;
     const std::string	&get_username(void) const;
     const std::string	&get_hostname(void) const;
+    std::queue<IRCMessage *> &get_commands(void);
+    std::string &get_recv_buffer(void);
+    SendBuffer &get_send_buffer(void);
+    ChannelKeyPairMap &get_chan_key_lists(void);
+    size_t &get_channel_limits(void);
 	  std::string	get_usermode(void);
     const std::set<const std::string> &get_channel_list(void) const;
     bool is_registered(void) const;
@@ -62,6 +65,12 @@ private:
     void set_hostname(const std::string &hostname);
 	void push_message(const std::string &message);
 	void push_message(const std::string &message, int level);
+
+  void set_invisible_flag(bool toggle);
+  void set_operator_flag(bool toggle);
+  void set_server_notice_flag(bool toggle);
+  void set_wallops_flag(bool toggle);
+  
   std::string make_nickmask(void);
 };
 

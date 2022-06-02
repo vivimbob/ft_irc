@@ -66,6 +66,35 @@ const std::string&
   return m_hostname;
 }
 
+std::queue<IRCMessage *>&
+  Client::get_commands(void)
+{
+  return m_commands;
+}
+
+std::string&
+  Client::get_recv_buffer(void)
+{
+  return m_recv_buffer;
+}
+
+SendBuffer&
+  Client::get_send_buffer(void)
+{
+  return m_send_buffer;
+}
+
+ChannelKeyPairMap&
+  Client::get_chan_key_lists(void)
+{
+  return m_chan_key_lists;
+}
+
+size_t& Client::get_channel_limits(void)
+{
+  return m_channel_limits;
+}
+
 std::string
   Client::get_usermode(void)
 {
@@ -152,6 +181,30 @@ void
 	m_send_buffer.append(message);
 	Logger().log(level)
 		<< "Server Send to " << m_nickname << " [" << message << ']';
+}
+
+void
+  Client::set_invisible_flag(bool toggle)
+{
+  m_mode.i = toggle;
+}
+
+void
+  Client::set_operator_flag(bool toggle)
+{
+  m_mode.o = toggle;
+}
+
+void
+  Client::set_server_notice_flag(bool toggle)
+{
+  m_mode.s = toggle;
+}
+
+void
+  Client::set_wallops_flag(bool toggle)
+{
+  m_mode.w = toggle;
 }
 
 std::string
