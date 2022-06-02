@@ -46,33 +46,16 @@ class Channel
   public:
     Channel(const std::string &name, const std::string &key);
     ~Channel(void);
+
     const std::string &get_channel_name(void) const;
     const std::string &get_channel_topic(void) const;
     std::string get_channel_mode(void);
     const std::string &get_key(void) const;
     const size_t &get_user_limits(void) const;
     const MemberMap &get_user_lists(void);
-    bool get_mode_limit(void);
-    bool get_mode_invite_only(void);
-    bool get_mode_key(void);
+
     void set_channel_name(const std::string &name);
     void set_channel_topic(const std::string &topic);
-    void set_mode_key(bool b);
-    void set_key(const std::string &key);
-    void join(Client &client);
-    void invite(void);
-    void display_channel_info(void);
-    void display_topic(Client &client);
-    void display_names(Client &client);
-    bool is_empty(void) const;
-	bool is_operator(Client &client);
-	bool is_user_on_channel(Client *client);
-	bool is_protected_topic(void);
-    void add_operator(Client &client);
-    void delete_operator(Client &client);
-    void add_user(Client &client);
-    void delete_user(Client &client);
-
 	void set_private_flag(bool toggle);
 	void set_secret_flag(bool toggle);
 	void set_invite_flag(bool toggle);
@@ -83,6 +66,26 @@ class Channel
 	void set_limit(bool toggle, size_t limit);
 	void set_operator_flag(bool toggle, Client *client);
 	void set_voice_flag(bool toggle, Client *client);
+
+    void join(Client &client);
+    void invite(void);
+
+    void display_channel_info(void);
+    void display_topic(Client &client);
+    void display_names(Client &client);
+
+    bool is_empty(void) const;
+	bool is_operator(Client &client);
+	bool is_user_on_channel(Client *client);
+	bool is_protected_topic_mode(void);
+    bool is_invite_only_mode(void);
+    bool is_limit_mode(void);
+    bool is_key_mode(void);
+
+    void add_operator(Client &client);
+    void delete_operator(Client &client);
+    void add_user(Client &client);
+    void delete_user(Client &client);
 };
 
 #endif /* CHANNEL_HPP */
