@@ -234,15 +234,3 @@ void
 {
   m_user_lists.erase(&client);
 }
-
-void
-  Channel::add_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}
-
-void
-  Channel::delete_operator(Client &client)
-{
-	m_user_lists.find(&client)->second.mode.o = true;
-}

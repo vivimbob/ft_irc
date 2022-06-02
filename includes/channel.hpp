@@ -79,8 +79,6 @@ class Channel
     bool is_limit_mode(void);
     bool is_key_mode(void);
 
-    void add_operator(Client &client);
-    void delete_operator(Client &client);
     void add_user(Client &client);
     void delete_user(Client &client);
 };
