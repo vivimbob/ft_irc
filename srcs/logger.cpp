@@ -26,6 +26,23 @@
 
 /* Logger::_Impl member functions begin */
 
+  void 
+    Logger::_Impl::m_flush()
+  {
+      if (m_active_level < m_level)
+          return;
+
+      if (!m_oss.str().size())
+          return;
+
+      std::ostream* stream = _Impl::m_streams[m_active_level].second;
+      if (stream)
+	  {
+          *stream << m_oss.str() << "\033[0m" << std::endl;
+          stream->flush();
+      }
+  }
+
   Logger::_Impl::_Impl() : m_active_level(Info)
   {
   }
@@ -35,29 +52,7 @@
       m_flush();
   }
 
-  std::ostringstream& 
-    Logger::_Impl::m_get_stream(int level)
-  {
-      m_active_level = level;
-      _Impl::m_prefix_timestamp();
-      m_oss << _Impl::m_symbols[level].second << " ";
-      return m_oss;
-  }
-
-  void 
-    Logger::_Impl::m_set_loglevel(int level)
-  {
-      _Impl::m_level = level;
-  }
-
-  void 
-    Logger::_Impl::m_set_timestamp_mode(int timestamp_mode, std::string separator)
-  {
-      _Impl::m_timestamp_mode = timestamp_mode;
-      _Impl::m_timestamp_separator = separator;
-  }
-
-  void 
+   void 
     Logger::_Impl::m_prefix_timestamp()
   {
       std::string m_time_str;
@@ -91,21 +86,26 @@
       }
   }
 
-  void 
-    Logger::_Impl::m_flush()
+  std::ostringstream& 
+    Logger::_Impl::m_get_stream(int level)
   {
-      if (m_active_level < m_level)
-          return;
+      m_active_level = level;
+      _Impl::m_prefix_timestamp();
+      m_oss << _Impl::m_symbols[level].second << " ";
+      return m_oss;
+  }
 
-      if (!m_oss.str().size())
-          return;
+  void 
+    Logger::_Impl::m_set_loglevel(int level)
+  {
+      _Impl::m_level = level;
+  }
 
-      std::ostream* stream = _Impl::m_streams[m_active_level].second;
-      if (stream)
-	  {
-          *stream << m_oss.str() << "\033[0m" << std::endl;
-          stream->flush();
-      }
+  void 
+    Logger::_Impl::m_set_timestamp_mode(int timestamp_mode, std::string separator)
+  {
+      _Impl::m_timestamp_mode = timestamp_mode;
+      _Impl::m_timestamp_separator = separator;
   }
 
   std::ostringstream& 
