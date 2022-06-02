@@ -66,7 +66,10 @@ private:
     void set_hostname(const std::string &hostname);
 	void push_message(const std::string &message);
 	void push_message(const std::string &message, int level);
+
   void set_invisible_flag(bool toggle);
+  void set_operator_flag(bool toggle);
+  
   std::string make_nickmask(void);
 };
 

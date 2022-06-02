@@ -184,6 +184,12 @@ void
   m_mode.i = toggle;
 }
 
+void
+  Client::set_operator_flag(bool toggle)
+{
+  m_mode.o = toggle;
+}
+
 std::string
   Client::make_nickmask(void)
 {

@@ -191,7 +191,7 @@ void
 					break;
 				case 'o':
 					if (toggle == false)
-						client.m_mode.o = toggle;
+						client.set_operator_flag(toggle);
 					toggle = true;
 					break;
 				case 's':
