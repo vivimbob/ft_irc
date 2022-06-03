@@ -35,9 +35,9 @@ class Channel
     std::string m_key;
 	size_t m_user_limit;
 
-	s_mode m_mode;
-	std::string m_mode_string;
 	bool m_mode_string_need_update;
+	std::string m_mode_string;
+	s_mode m_mode;
     
     Channel(void);
     Channel(const Channel& cp);
