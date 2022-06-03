@@ -5,7 +5,7 @@
 void
     Server::m_process_nick_command(Client &client, IRCMessage &msg)
 {
-    if (!msg.get_params().size())
+    if (msg.get_params().empty())
     {
         client.push_message(msg.err_no_nickname_given(), Logger::Debug);
         return ;
@@ -30,13 +30,18 @@ void
     {
 		ClientMap::iterator it = m_client_map.begin();
         for (; it != m_client_map.end(); ++it)
-        {
             m_prepare_to_send(*it->second, ":" + client.get_nickname() + " NICK " + nickname + "\r\n");
-        }
+
+		if (m_client_map.count(client.get_nickname()))
+		{
+			m_client_map.erase(client.get_nickname());
+			m_client_map[nickname] = &client;
+		}
     }
+
     Logger().debug() << client.get_client_IP()  << " change nick to " << nickname;
     client.set_nickname(nickname);
 
-	if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
 		m_register_client(client, msg);
 }
