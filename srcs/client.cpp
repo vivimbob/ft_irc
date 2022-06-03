@@ -1,5 +1,6 @@
 #include "../includes/client.hpp"
 #include "../includes/logger.hpp"
+#include "../includes/channel.hpp"
 
 Client::Client(sockaddr_in client_addr, int client_fd)
   : m_client_addr(client_addr),
@@ -104,7 +105,7 @@ std::string
 	return m_mode_string;
 }
 
-const std::set<const std::string>&
+const std::set<Channel *>&
   Client::get_channel_list(void) const
 {
   return m_channel_list;
@@ -220,9 +221,9 @@ bool
 }
 
 bool
-  Client::is_already_joined(const std::string &channel_name)
+  Client::is_already_joined(Channel *channel)
 {
-	return m_channel_list.count(channel_name);
+	return m_channel_list.count(channel);
 }
 
 void
@@ -246,13 +247,13 @@ std::string
 }
 
 void
-  Client::insert_channel(const std::string &channel_name)
+  Client::insert_channel(Channel *channel)
 {
-	m_channel_list.insert(channel_name);
+	m_channel_list.insert(channel);
 }
 
 void
-  Client::erase_channel(const std::string &channel_name)
+  Client::erase_channel(Channel *channel)
 {
-	m_channel_list.erase(channel_name);
+	m_channel_list.erase(channel);
 }

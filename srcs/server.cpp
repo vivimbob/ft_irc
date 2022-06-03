@@ -151,6 +151,7 @@ void
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
     m_send_to_channel(client, client.get_commands().front()->build_quit_reply());
+	//client.leave_all_channel();
 	m_client_map.erase(client.get_nickname());
     delete &client;
     close(clientfd);
@@ -271,9 +272,9 @@ void
 void
   Server::m_send_to_channel(Client &client, const std::string &msg)
 {
-     std::set<const std::string>::iterator it = client.get_channel_list().begin();
+     std::set<Channel *>::iterator it = client.get_channel_list().begin();
      for (; it != client.get_channel_list().end(); ++it)
- 		m_send_to_channel(m_channel_map[*it], msg);
+ 		m_send_to_channel(*it, msg);
 }
 
 void

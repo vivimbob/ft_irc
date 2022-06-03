@@ -9,6 +9,8 @@
 #include "ircmessage.hpp"
 #include "utils.hpp"
 
+class Channel;
+
 class Client
 {
 private:
@@ -30,7 +32,7 @@ private:
     std::string m_servername;
     std::string m_realname;
     std::queue<IRCMessage *> m_commands;
-	std::set<const std::string> m_channel_list;
+	std::set<Channel *> m_channel_list;
     size_t m_channel_limits;
 
 	bool m_pass_registered:1;
@@ -57,7 +59,7 @@ private:
     SendBuffer &get_send_buffer(void);
     size_t &get_channel_limits(void);
 	  std::string	get_usermode(void);
-    const std::set<const std::string> &get_channel_list(void) const;
+    const std::set<Channel *> &get_channel_list(void) const;
 
     void set_nickname(const std::string &nickname);
     void set_username(const std::string &username);
@@ -75,15 +77,15 @@ private:
     bool is_nick_registered(void) const;
     bool is_user_registered(void) const;
 	bool is_join_available(void) const;
-	bool is_already_joined(const std::string &channel_name);
+	bool is_already_joined(Channel *channel);
 
 	void push_message(const std::string &message);
 	void push_message(const std::string &message, int level);
 
 	std::string make_nickmask(void);
 	
-	void insert_channel(const std::string &channel_name);
-	void erase_channel(const std::string &channel_name);
+	void insert_channel(Channel *channel);
+	void erase_channel(Channel *channel);
 };
 
 #endif /* CLIENT_HPP */

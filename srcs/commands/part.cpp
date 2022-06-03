@@ -29,7 +29,7 @@ void
             return ;
         }
         channel->delete_user(client);
-		client.erase_channel(*channel_it);
+		client.erase_channel(m_channel_map[*channel_it]);
         Logger().debug() << "Remove [" << client.get_nickname() <<
 			"] client from [" << channel->get_channel_name() << "] channel";
         m_send_to_channel(channel, msg.build_part_reply());
