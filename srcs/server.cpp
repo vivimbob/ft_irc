@@ -250,7 +250,6 @@ void
     Server::m_prepare_to_send(Client &client, const std::string &str_msg)
 {
     client.push_message(str_msg);
-	  Logger().trace() << client.get_nickname() << " [" << str_msg << ']';
     m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
     m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
 	  Logger().trace() << client.get_nickname() << " disable read event";
