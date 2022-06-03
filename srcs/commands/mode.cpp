@@ -187,20 +187,16 @@ void
 					break;
 				case 'i':
 					client.set_invisible_flag(toggle);
-					toggle = true;
 					break;
 				case 'o':
 					if (toggle == false)
 						client.set_operator_flag(toggle);
-					toggle = true;
 					break;
 				case 's':
 					client.set_server_notice_flag(toggle);
-					toggle = true;
 					break;
 				case 'w':
 					client.set_wallops_flag(toggle);
-					toggle = true;
 					break;
 				default:
 					client.push_message(msg.err_u_mode_unknown_flag(), Logger::Debug);
