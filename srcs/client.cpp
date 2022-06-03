@@ -122,12 +122,28 @@ void
 {
   m_username = username;
   m_user_registered = true;
+  Logger().debug() << get_client_IP()  << " set username to " << m_username;
 }
 
 void
   Client::set_hostname(const std::string &hostname)
 {
   m_hostname = hostname;
+  Logger().debug() << get_client_IP()  << " set hostname to " << m_hostname;
+}
+
+void
+  Client::set_servername(const std::string &servername)
+{
+  m_servername = servername;
+  Logger().debug() << get_client_IP()  << " set servername to " << m_servername;
+}
+
+void
+  Client::set_realname(const std::string &realname)
+{
+  m_realname = realname;
+  Logger().debug() << get_client_IP()  << " set realname to " << m_realname;
 }
 
 void

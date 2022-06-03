@@ -27,6 +27,8 @@ private:
     std::string	m_nickname;
     std::string	m_username;
     std::string m_hostname;
+    std::string m_servername;
+    std::string m_realname;
     std::queue<IRCMessage *> m_commands;
 	std::set<const std::string> m_channel_list;
     size_t m_channel_limits;
@@ -48,6 +50,8 @@ private:
     const std::string	&get_nickname(void) const;
     const std::string	&get_username(void) const;
     const std::string	&get_hostname(void) const;
+    const std::string	&get_servername(void) const;
+    const std::string	&get_realname(void) const;
     std::queue<IRCMessage *> &get_commands(void);
     std::string &get_recv_buffer(void);
     SendBuffer &get_send_buffer(void);
@@ -58,6 +62,8 @@ private:
     void set_nickname(const std::string &nickname);
     void set_username(const std::string &username);
     void set_hostname(const std::string &hostname);
+    void set_servername(const std::string &servername);
+    void set_realname(const std::string &realname);
     void set_password_flag(void);
 	void set_invisible_flag(bool toggle);
 	void set_operator_flag(bool toggle);
