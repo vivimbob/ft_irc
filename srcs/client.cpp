@@ -12,6 +12,7 @@ Client::Client(sockaddr_in client_addr, int client_fd)
 	m_mode.s = false;
 	m_mode.w = false;
 	m_mode.o = false;
+	m_mode_string_need_update = true;
   m_channel_limits = 10;
 }
 
@@ -40,12 +41,6 @@ char*
   Client::get_client_IP(void)
 {
   return inet_ntoa(m_client_addr.sin_addr);
-}
-
-const std::string&
-  Client::get_password(void) const
-{
-  return m_password;
 }
 
 const std::string&
@@ -92,32 +87,27 @@ size_t& Client::get_channel_limits(void)
 std::string
   Client::get_usermode(void)
 {
-	std::string message;
-
-	message.push_back('+');
-	if (m_mode.i)
-		message.push_back('i');
-	if (m_mode.o)
-		message.push_back('o');
-	if (m_mode.s)
-		message.push_back('s');
-	if (m_mode.w)
-		message.push_back('w');
-	return message;
+	if (m_mode_string_need_update)
+	{
+		m_mode_string.clear();
+		m_mode_string.push_back('+');
+		if (m_mode.i)
+			m_mode_string.push_back('i');
+		if (m_mode.o)
+			m_mode_string.push_back('o');
+		if (m_mode.s)
+			m_mode_string.push_back('s');
+		if (m_mode.w)
+			m_mode_string.push_back('w');
+		m_mode_string_need_update = false;
+	}
+	return m_mode_string;
 }
 
 const std::set<const std::string>&
   Client::get_channel_list(void) const
 {
   return m_channel_list;
-}
-
-
-void
-  Client::set_password(const std::string &pw)
-{
-  m_password = pw;
-  m_pass_registered = true;
 }
 
 void
@@ -138,6 +128,49 @@ void
   Client::set_hostname(const std::string &hostname)
 {
   m_hostname = hostname;
+}
+
+void
+  Client::set_password_flag(void)
+{
+  m_pass_registered = true;
+}
+
+void
+  Client::set_invisible_flag(bool toggle)
+{
+	if (m_mode.i == toggle)
+		return ;
+	m_mode.i = toggle;
+	m_mode_string_need_update = true;
+}
+
+void
+  Client::set_operator_flag(bool toggle)
+{
+	if (m_mode.o == toggle)
+		return ;
+	m_mode.o = toggle;
+	m_mode_string_need_update = true;
+}
+
+void
+  Client::set_server_notice_flag(bool toggle)
+{
+	if (m_mode.s == toggle)
+		return ;
+	m_mode.s = toggle;
+	m_mode_string_need_update = true;
+  m_mode.s = toggle;
+}
+
+void
+  Client::set_wallops_flag(bool toggle)
+{
+	if (m_mode.w == toggle)
+		return ;
+	m_mode.w = toggle;
+	m_mode_string_need_update = true;
 }
 
 bool
@@ -188,30 +221,6 @@ void
 	m_send_buffer.append(message);
 	Logger().log(level)
 		<< "Server Send to " << m_nickname << " [" << message << ']';
-}
-
-void
-  Client::set_invisible_flag(bool toggle)
-{
-  m_mode.i = toggle;
-}
-
-void
-  Client::set_operator_flag(bool toggle)
-{
-  m_mode.o = toggle;
-}
-
-void
-  Client::set_server_notice_flag(bool toggle)
-{
-  m_mode.s = toggle;
-}
-
-void
-  Client::set_wallops_flag(bool toggle)
-{
-  m_mode.w = toggle;
 }
 
 std::string

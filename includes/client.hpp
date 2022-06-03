@@ -24,7 +24,6 @@ private:
     int m_client_fd;
     SendBuffer m_send_buffer;
     std::string m_recv_buffer;
-    std::string m_password;
     std::string	m_nickname;
     std::string	m_username;
     std::string m_hostname;
@@ -36,6 +35,8 @@ private:
     bool m_nick_registered:1;
     bool m_user_registered:1;
 
+	bool m_mode_string_need_update:1;
+	std::string m_mode_string;
 	s_mode m_mode;
 
   public:
@@ -44,7 +45,6 @@ private:
     sockaddr_in get_client_addr(void);
     int get_socket(void);
     char* get_client_IP(void);
-    const std::string	&get_password(void) const;
     const std::string	&get_nickname(void) const;
     const std::string	&get_username(void) const;
     const std::string	&get_hostname(void) const;
@@ -55,10 +55,10 @@ private:
 	  std::string	get_usermode(void);
     const std::set<const std::string> &get_channel_list(void) const;
 
-    void set_password(const std::string &pw);
     void set_nickname(const std::string &nickname);
     void set_username(const std::string &username);
     void set_hostname(const std::string &hostname);
+    void set_password_flag(void);
 	void set_invisible_flag(bool toggle);
 	void set_operator_flag(bool toggle);
 	void set_server_notice_flag(bool toggle);
