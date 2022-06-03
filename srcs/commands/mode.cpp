@@ -12,7 +12,7 @@ void
 	
 	const std::string &target = msg.get_params()[0];
 
-	if (strchr("&#", target[0]) != NULL)
+	if (utils::is_channel_prefix(target))
 	{
 		std::string channel_name = target.substr(1);
 		if (!m_channel_map.count(channel_name))
