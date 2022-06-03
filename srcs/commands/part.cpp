@@ -17,12 +17,12 @@ void
     std::vector<const std::string>::iterator it = splited_channel.begin();
     for (; it != splited_channel.end(); ++it)
     {
-        if (!m_channel_map.count(*it) || !utils::is_channel_prefix(*it) || !utils::is_channel_name_valid(*it))
+        if (!m_channel_map.count(*it))
         {
             client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
             return ;
         }
-        if (m_channel_map.count(*it) && !m_channel_map[*it]->get_user_list().count(&client))
+        if (!m_channel_map[*it]->is_user_on_channel(&client))
         {
             client.push_message(msg.err_not_on_channel(*it), Logger::Debug);
             return ;
