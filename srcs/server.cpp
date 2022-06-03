@@ -149,7 +149,8 @@ void
 
     m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-    
+
+    m_send_to_channel(client, client.get_commands().front()->build_quit_reply());
 	m_client_map.erase(client.get_nickname());
     delete &client;
     close(clientfd);
