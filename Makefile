@@ -18,7 +18,6 @@ srcs		= channel.cpp\
 			  logger.cpp\
 			  server.cpp\
 			  utils.cpp\
-			  reply.cpp\
 			  $(commands:%=commands/%)
 
 SRCS    	= main.cpp\
