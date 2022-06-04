@@ -180,7 +180,7 @@ std::string
 std::string
 	IRCMessage::err_not_registered(void)
 {
-	return reply_servername_prefix("451") + " :You have not registerd\r\n";
+	return reply_servername_prefix("451") + " :You have not registered\r\n";
 }
 
 std::string
