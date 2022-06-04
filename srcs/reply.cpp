@@ -276,7 +276,7 @@ std::string
 std::string
 	IRCMessage::err_no_oper_host(void)
 {
-	return reply_servername_prefix("491") + " :No O-liens for your host\r\n";
+	return reply_servername_prefix("491") + " :No O-lines for your host\r\n";
 }
 
 std::string
