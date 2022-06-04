@@ -114,7 +114,7 @@ std::string
 std::string
 	IRCMessage::err_file_error(const std::string &file_op, const std::string &file)
 {
-	return reply_servername_prefix("424") + " :File erroe doing " + file_op + " on " + file + "\r\n";
+	return reply_servername_prefix("424") + " :File error doing " + file_op + " on " + file + "\r\n";
 }
 
 std::string
