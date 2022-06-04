@@ -36,7 +36,7 @@ std::string
 std::string
 	IRCMessage::err_no_such_channel(const std::string &channel_name)
 {
-	return reply_servername_prefix("403") + " " + channel_name + " :No such chanel\r\n";
+	return reply_servername_prefix("403") + " " + channel_name + " :No such channel\r\n";
 }
 
 std::string
