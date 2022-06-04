@@ -14,7 +14,7 @@ commands	= join.cpp\
 
 srcs		= channel.cpp\
 			  client.cpp\
-			  ircmessage.cpp\
+			  message.cpp\
 			  logger.cpp\
 			  server.cpp\
 			  utils.cpp\

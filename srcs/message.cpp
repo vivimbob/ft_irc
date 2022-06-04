@@ -1,4 +1,4 @@
-#include "../includes/ircmessage.hpp"
+#include "../includes/message.hpp"
 #include "../includes/logger.hpp"
 #include "../includes/client.hpp"
 
