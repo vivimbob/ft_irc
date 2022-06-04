@@ -50,6 +50,8 @@ class Server
         void m_process_quit_command(Client &client, Message &msg);
         void m_process_topic_command(Client &client, Message &msg);
         void m_process_part_command(Client &Client, Message &msg);
+        void m_process_channel_mode_command(Client &client, Message &msg, const std::string &channel_name);
+        void m_process_user_mode_command(Client &client, Message &msg, const std::string &nickname);
 
         void m_join_channel(Client &client, Message &msg, std::map<const std::string, const std::string> &chan_key_pair);
         

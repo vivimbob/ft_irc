@@ -14,7 +14,12 @@ void
         client.push_message(msg.err_already_registred(), Logger::Debug);
         return ;
     }
-    client.set_password(msg.get_params()[0]);
+	if (msg.get_params()[0] != m_password)
+	{
+		client.push_message(msg.err_passwd_mismatch(), Logger::Debug);
+		return;
+	}
+	client.set_password_flag();
 	if (client.is_registered() && !m_client_map.count(client.get_nickname()))
 		m_register_client(client, msg);
 }
