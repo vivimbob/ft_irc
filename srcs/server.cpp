@@ -133,7 +133,7 @@ void
         if (m_command_map.count(message->get_command()))
             (this->*m_command_map[message->get_command()])(client, *message);
         else
-			      client.push_message(message->err_unknown_command(), Logger::Debug);
+			client.push_message(message->err_unknown_command(), Logger::Debug);
         delete message;
     }
 }
@@ -149,8 +149,16 @@ void
 
     m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-    
-	  m_client_map.erase(client.get_nickname());
+
+	std::string message;
+	if (client.get_commands().empty())
+		message = IRCMessage(&client, "QUIT").build_quit_reply();
+	else
+		message = client.get_commands().front()->build_quit_reply();
+		
+    m_send_to_channel(client, message);
+	client.leave_all_channel();
+	m_client_map.erase(client.get_nickname());
     delete &client;
     close(clientfd);
 }
@@ -250,7 +258,6 @@ void
     Server::m_prepare_to_send(Client &client, const std::string &str_msg)
 {
     client.push_message(str_msg);
-	  Logger().trace() << client.get_nickname() << " [" << str_msg << ']';
     m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
     m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
 	  Logger().trace() << client.get_nickname() << " disable read event";
@@ -271,9 +278,9 @@ void
 void
   Server::m_send_to_channel(Client &client, const std::string &msg)
 {
-     std::set<const std::string>::iterator it = client.get_channel_list().begin();
+     std::set<Channel *>::iterator it = client.get_channel_list().begin();
      for (; it != client.get_channel_list().end(); ++it)
- 		m_send_to_channel(m_channel_map[*it], msg);
+ 		m_send_to_channel(*it, msg);
 }
 
 void

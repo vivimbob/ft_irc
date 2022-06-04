@@ -1,5 +1,6 @@
 #include "../includes/client.hpp"
 #include "../includes/logger.hpp"
+#include "../includes/channel.hpp"
 
 Client::Client(sockaddr_in client_addr, int client_fd)
   : m_client_addr(client_addr),
@@ -12,6 +13,7 @@ Client::Client(sockaddr_in client_addr, int client_fd)
 	m_mode.s = false;
 	m_mode.w = false;
 	m_mode.o = false;
+	m_mode_string_need_update = true;
   m_channel_limits = 10;
 }
 
@@ -40,12 +42,6 @@ char*
   Client::get_client_IP(void)
 {
   return inet_ntoa(m_client_addr.sin_addr);
-}
-
-const std::string&
-  Client::get_password(void) const
-{
-  return m_password;
 }
 
 const std::string&
@@ -92,32 +88,27 @@ size_t& Client::get_channel_limits(void)
 std::string
   Client::get_usermode(void)
 {
-	std::string message;
-
-	message.push_back('+');
-	if (m_mode.i)
-		message.push_back('i');
-	if (m_mode.o)
-		message.push_back('o');
-	if (m_mode.s)
-		message.push_back('s');
-	if (m_mode.w)
-		message.push_back('w');
-	return message;
+	if (m_mode_string_need_update)
+	{
+		m_mode_string.clear();
+		m_mode_string.push_back('+');
+		if (m_mode.i)
+			m_mode_string.push_back('i');
+		if (m_mode.o)
+			m_mode_string.push_back('o');
+		if (m_mode.s)
+			m_mode_string.push_back('s');
+		if (m_mode.w)
+			m_mode_string.push_back('w');
+		m_mode_string_need_update = false;
+	}
+	return m_mode_string;
 }
 
-const std::set<const std::string>&
+const std::set<Channel *>&
   Client::get_channel_list(void) const
 {
   return m_channel_list;
-}
-
-
-void
-  Client::set_password(const std::string &pw)
-{
-  m_password = pw;
-  m_pass_registered = true;
 }
 
 void
@@ -132,12 +123,71 @@ void
 {
   m_username = username;
   m_user_registered = true;
+  Logger().debug() << get_client_IP()  << " set username to " << m_username;
 }
 
 void
   Client::set_hostname(const std::string &hostname)
 {
   m_hostname = hostname;
+  Logger().debug() << get_client_IP()  << " set hostname to " << m_hostname;
+}
+
+void
+  Client::set_servername(const std::string &servername)
+{
+  m_servername = servername;
+  Logger().debug() << get_client_IP()  << " set servername to " << m_servername;
+}
+
+void
+  Client::set_realname(const std::string &realname)
+{
+  m_realname = realname;
+  Logger().debug() << get_client_IP()  << " set realname to " << m_realname;
+}
+
+void
+  Client::set_password_flag(void)
+{
+  m_pass_registered = true;
+}
+
+void
+  Client::set_invisible_flag(bool toggle)
+{
+	if (m_mode.i == toggle)
+		return ;
+	m_mode.i = toggle;
+	m_mode_string_need_update = true;
+}
+
+void
+  Client::set_operator_flag(bool toggle)
+{
+	if (m_mode.o == toggle)
+		return ;
+	m_mode.o = toggle;
+	m_mode_string_need_update = true;
+}
+
+void
+  Client::set_server_notice_flag(bool toggle)
+{
+	if (m_mode.s == toggle)
+		return ;
+	m_mode.s = toggle;
+	m_mode_string_need_update = true;
+  m_mode.s = toggle;
+}
+
+void
+  Client::set_wallops_flag(bool toggle)
+{
+	if (m_mode.w == toggle)
+		return ;
+	m_mode.w = toggle;
+	m_mode_string_need_update = true;
 }
 
 bool
@@ -171,9 +221,9 @@ bool
 }
 
 bool
-  Client::is_already_joined(const std::string &channel_name)
+  Client::is_already_joined(Channel *channel)
 {
-	return m_channel_list.count(channel_name);
+	return m_channel_list.count(channel);
 }
 
 void
@@ -190,30 +240,6 @@ void
 		<< "Server Send to " << m_nickname << " [" << message << ']';
 }
 
-void
-  Client::set_invisible_flag(bool toggle)
-{
-  m_mode.i = toggle;
-}
-
-void
-  Client::set_operator_flag(bool toggle)
-{
-  m_mode.o = toggle;
-}
-
-void
-  Client::set_server_notice_flag(bool toggle)
-{
-  m_mode.s = toggle;
-}
-
-void
-  Client::set_wallops_flag(bool toggle)
-{
-  m_mode.w = toggle;
-}
-
 std::string
   Client::make_nickmask(void)
 {
@@ -221,13 +247,23 @@ std::string
 }
 
 void
-  Client::insert_channel(const std::string &channel_name)
+  Client::insert_channel(Channel *channel)
 {
-	m_channel_list.insert(channel_name);
+	m_channel_list.insert(channel);
 }
 
 void
-  Client::erase_channel(const std::string &channel_name)
+  Client::erase_channel(Channel *channel)
 {
-	m_channel_list.erase(channel_name);
+	m_channel_list.erase(channel);
+}
+
+void
+  Client::leave_all_channel(void)
+{
+	std::set<Channel *>::iterator it = m_channel_list.begin();
+	std::set<Channel *>::iterator ite = m_channel_list.end();
+
+	for (;it != ite; ++it)
+		(**it).delete_user(*this);
 }

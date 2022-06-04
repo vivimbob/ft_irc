@@ -46,10 +46,12 @@ class Server
         void m_process_nick_command(Client &client, IRCMessage &msg);
         void m_process_user_command(Client &client, IRCMessage &msg);
         void m_process_join_command(Client &client, IRCMessage &msg);
-        void m_process_mode_command(Client &client, IRCMessage &msg);
         void m_process_quit_command(Client &client, IRCMessage &msg);
         void m_process_topic_command(Client &client, IRCMessage &msg);
         void m_process_part_command(Client &Client, IRCMessage &msg);
+        void m_process_mode_command(Client &client, IRCMessage &msg);
+        void m_process_channel_mode_command(Client &client, IRCMessage &msg, const std::string &channel_name);
+        void m_process_user_mode_command(Client &client, IRCMessage &msg, const std::string &nickname);
 
         void m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
         

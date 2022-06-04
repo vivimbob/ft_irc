@@ -39,7 +39,7 @@ void
             m_channel_map.insert(std::make_pair(channel_name, channel));
             channel->add_user(client);
             channel->set_operator_flag(true, &client);
-            client.insert_channel(channel_name);
+            client.insert_channel(channel);
             Logger().info() << "Create new channel :" << channel_name << " with " << key << " key by " << client.get_nickname();
         }
         else // join할 채널이 존재하는 경우
@@ -54,7 +54,7 @@ void
                 client.push_message(msg.err_invite_only_chan(channel_name), Logger::Debug);
                 return ;
             }
-             if (client.is_already_joined(channel_name)) // 이미 join된 경우
+             if (client.is_already_joined(channel)) // 이미 join된 경우
              {
                  client.push_message(":You have already joined in <" + channel_name + "> channel\r\n", Logger::Debug);
                  return ;
@@ -65,7 +65,7 @@ void
                 return ;
             }
             channel->add_user(client);
-            client.insert_channel(channel_name);
+            client.insert_channel(channel);
             Logger().info() << "Join channel :" << channel_name << " with " << key << " key by " << client.get_nickname();
         }
 
