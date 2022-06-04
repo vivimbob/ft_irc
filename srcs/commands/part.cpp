@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_part_command(Client &client, IRCMessage &msg)
+    Server::m_process_part_command(Client &client, Message &msg)
 {
 		if (msg.get_params().size() < 1 || msg.get_params().size() > 2)
     {

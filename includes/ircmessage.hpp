@@ -1,5 +1,5 @@
-#ifndef IRCMESSAGE_HPP
-#define IRCMESSAGE_HPP
+#ifndef MESSAGE_HPP
+#define MESSAGE_HPP
 
 #include <string>
 #include <vector>
@@ -9,7 +9,7 @@
 
 class Client;
 
-class IRCMessage
+class Message
 {
 private:
     std::string m_message;
@@ -20,17 +20,17 @@ private:
     size_t m_position;
 	Client *m_client;
 
-    IRCMessage(void);
-    IRCMessage(const IRCMessage& copy);
-    IRCMessage	&operator=(const IRCMessage& other);
+    Message(void);
+    Message(const Message& copy);
+    Message	&operator=(const Message& other);
 
     size_t next_position(void);
     std::string reply_servername_prefix(std::string command);
     std::string reply_nickmask_prefix(std::string command);
 
 public:
-    IRCMessage(Client *client, const std::string &message);
-    ~IRCMessage(void);
+    Message(Client *client, const std::string &message);
+    ~Message(void);
 
     void    parse_message(void);
     const std::string   &get_message(void) const;
@@ -106,4 +106,4 @@ public:
 
 };
 
-#endif /* IRCMESSAGE_HPP */
+#endif /* MESSAGE_HPP */

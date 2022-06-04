@@ -126,7 +126,7 @@ void
 {
     while (client.get_commands().size())
     {
-        IRCMessage *message = client.get_commands().front();
+        Message *message = client.get_commands().front();
 		    Logger().debug() << client.get_nickname() << " send [" << message->get_message() << ']';
         client.get_commands().pop();
         message->parse_message();
@@ -156,7 +156,7 @@ void
 }
 
 void
-	  Server::m_register_client(Client &client, IRCMessage &msg)
+	  Server::m_register_client(Client &client, Message &msg)
 {
 	  m_client_map[client.get_nickname()] = &client;
 	  client.push_message(msg.rpl_welcome(), Logger::Debug);
@@ -182,7 +182,7 @@ void
         size_t position = recv_buffer.find_first_of("\r\n", 0);
         while (position != static_cast<size_t>(std::string::npos))
         {
-            client.get_commands().push(new IRCMessage(&client,
+            client.get_commands().push(new Message(&client,
 						std::string(recv_buffer.begin(), recv_buffer.begin() + position)));
             recv_buffer.erase(0, position + 2);
             position = recv_buffer.find_first_of("\r\n", 0);

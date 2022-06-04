@@ -66,7 +66,7 @@ const std::string&
   return m_hostname;
 }
 
-std::queue<IRCMessage *>&
+std::queue<Message *>&
   Client::get_commands(void)
 {
   return m_commands;

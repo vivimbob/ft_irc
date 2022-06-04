@@ -21,7 +21,7 @@ class Server
 	  public:
 		    typedef std::map<std::string, Client*> ClientMap;
 		    typedef std::map<std::string, Channel*> ChannelMap;
-        typedef std::map<std::string, void (Server::*)(Client&, IRCMessage&)> CommandMap;
+        typedef std::map<std::string, void (Server::*)(Client&, Message&)> CommandMap;
 
     private:
         int m_kq;
@@ -42,16 +42,16 @@ class Server
 
         static CommandMap m_initial_command_map(void);
 
-        void m_process_pass_command(Client &client, IRCMessage &msg);
-        void m_process_nick_command(Client &client, IRCMessage &msg);
-        void m_process_user_command(Client &client, IRCMessage &msg);
-        void m_process_join_command(Client &client, IRCMessage &msg);
-        void m_process_mode_command(Client &client, IRCMessage &msg);
-        void m_process_quit_command(Client &client, IRCMessage &msg);
-        void m_process_topic_command(Client &client, IRCMessage &msg);
-        void m_process_part_command(Client &Client, IRCMessage &msg);
+        void m_process_pass_command(Client &client, Message &msg);
+        void m_process_nick_command(Client &client, Message &msg);
+        void m_process_user_command(Client &client, Message &msg);
+        void m_process_join_command(Client &client, Message &msg);
+        void m_process_mode_command(Client &client, Message &msg);
+        void m_process_quit_command(Client &client, Message &msg);
+        void m_process_topic_command(Client &client, Message &msg);
+        void m_process_part_command(Client &Client, Message &msg);
 
-        void m_join_channel(Client &client, IRCMessage &msg, std::map<const std::string, const std::string> &chan_key_pair);
+        void m_join_channel(Client &client, Message &msg, std::map<const std::string, const std::string> &chan_key_pair);
         
         void m_create_socket(void);
         void m_bind_socket(void);
@@ -63,7 +63,7 @@ class Server
         void m_handle_messages(Client &client);
         
         void m_disconnect_client(Client &client);
-        void m_register_client(Client &client, IRCMessage &msg);
+        void m_register_client(Client &client, Message &msg);
 
         void m_receive_client_msg(Client &client, int bytes);
         void m_send_client_msg(Client &client, int bytes);

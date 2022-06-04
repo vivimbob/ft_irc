@@ -2,7 +2,7 @@
 #include "../includes/logger.hpp"
 #include "../includes/client.hpp"
 
-IRCMessage::IRCMessage(Client *client, const std::string &message)
+Message::Message(Client *client, const std::string &message)
     : m_message(message),
       m_valid_message(true),
       m_position(0),
@@ -11,7 +11,7 @@ IRCMessage::IRCMessage(Client *client, const std::string &message)
 }
 
 size_t
-    IRCMessage::next_position(void)
+    Message::next_position(void)
 {
     m_position = m_message.find(' ', m_position);
     if (m_position == static_cast<size_t>(std::string::npos))
@@ -20,7 +20,7 @@ size_t
 }
 
 void
-    IRCMessage::parse_message(void)
+    Message::parse_message(void)
 {
     if (m_message.size() > m_position && m_message[0] == ':')
     {
@@ -59,31 +59,31 @@ void
     }
 }
 
-const std::string   &IRCMessage::get_message(void) const
+const std::string   &Message::get_message(void) const
 {
     return m_message;
 }
 
-const std::string   &IRCMessage::get_prefix(void) const
+const std::string   &Message::get_prefix(void) const
 {
     return m_prefix;
 }
 
-const std::string   &IRCMessage::get_command(void) const
+const std::string   &Message::get_command(void) const
 {
    return m_command;
 }
 
-const std::vector<std::string>  &IRCMessage::get_params(void) const
+const std::vector<std::string>  &Message::get_params(void) const
 {
     return m_parameters;
 }
 
-const bool    &IRCMessage::is_valid_message(void) const
+const bool    &Message::is_valid_message(void) const
 {
     return m_valid_message;
 }
 
-IRCMessage::~IRCMessage(void)
+Message::~Message(void)
 {
 }
