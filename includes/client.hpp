@@ -86,6 +86,7 @@ private:
 	
 	void insert_channel(Channel *channel);
 	void erase_channel(Channel *channel);
+	void leave_all_channel(void);
 };
 
 #endif /* CLIENT_HPP */

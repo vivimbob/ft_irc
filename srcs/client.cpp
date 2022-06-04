@@ -257,3 +257,13 @@ void
 {
 	m_channel_list.erase(channel);
 }
+
+void
+  Client::leave_all_channel(void)
+{
+	std::set<Channel *>::iterator it = m_channel_list.begin();
+	std::set<Channel *>::iterator ite = m_channel_list.end();
+
+	for (;it != ite; ++it)
+		(**it).delete_user(*this);
+}
