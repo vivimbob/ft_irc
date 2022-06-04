@@ -152,7 +152,7 @@ void
 
 	std::string message;
 	if (client.get_commands().empty())
-		message = IRCMessage(&client, "QUIT").build_quit_reply();
+		message = Message(&client, "QUIT").build_quit_reply();
 	else
 		message = client.get_commands().front()->build_quit_reply();
 		

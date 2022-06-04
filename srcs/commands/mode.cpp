@@ -146,7 +146,7 @@ void
 }
 
 void
-	Server::m_process_user_mode_command(Client &client, IRCMessage &msg, const std::string &nickname)
+	Server::m_process_user_mode_command(Client &client, Message &msg, const std::string &nickname)
 {
 		if (nickname != client.get_nickname())
 		{
@@ -196,7 +196,7 @@ void
 }
 
 void
-	Server::m_process_mode_command(Client &client, IRCMessage &msg)
+	Server::m_process_mode_command(Client &client, Message &msg)
 {
 	if (msg.get_params().empty())
 	{
