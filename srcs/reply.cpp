@@ -96,7 +96,7 @@ std::string
 std::string
 	IRCMessage::err_unknown_command(void)
 {
-	return reply_servername_prefix("421") + " " + m_command  + " :Unkown command\r\n";
+	return reply_servername_prefix("421") + " " + m_command  + " :Unknown command\r\n";
 }
 
 std::string
