@@ -7,14 +7,14 @@ Channel::Channel(const std::string &name, const std::string &key)
   m_channel_init_time(std::time(NULL)),
   m_key(key)
 {
-	m_mode.p = false;
-	m_mode.s = false;
-	m_mode.i = false;
-	m_mode.t = false;
-	m_mode.n = false;
-	m_mode.m = false;
-	m_mode.l = false;
-	m_mode.k = key.empty() ? false : true;
+	m_mode.private_channel = false;
+	m_mode.secret = false;
+	m_mode.invite = false;
+	m_mode.topic = false;
+	m_mode.no_message = false;
+	m_mode.moderate = false;
+	m_mode.limit = false;
+	m_mode.key = key.empty() ? false : true;
 	m_user_limit = 42;
 	m_mode_string_need_update = true;
 }
@@ -42,29 +42,29 @@ std::string
 	{
 		m_mode_string.clear();
 		m_mode_string.push_back('+');
-		if (m_mode.p)
+		if (m_mode.private_channel)
 			m_mode_string.push_back('p');
-		if (m_mode.s)
+		if (m_mode.secret)
 			m_mode_string.push_back('s');
-		if (m_mode.i)
+		if (m_mode.invite)
 			m_mode_string.push_back('i');
-		if (m_mode.t)
+		if (m_mode.topic)
 			m_mode_string.push_back('t');
-		if (m_mode.n)
+		if (m_mode.no_message)
 			m_mode_string.push_back('n');
-		if (m_mode.m)
+		if (m_mode.moderate)
 			m_mode_string.push_back('m');
-		if (m_mode.k)
+		if (m_mode.key)
 			m_mode_string.push_back('k');
-		if (m_mode.l)
+		if (m_mode.limit)
 			m_mode_string.push_back('l');
 		m_mode_string_need_update = false;
 	}
 	MemberShip &member = m_user_list.find(client)->second;
 	std::string member_mode_string;
-	if (member.mode.o)
+	if (member.mode.operater)
 		member_mode_string.push_back('o');
-	if (member.mode.v)
+	if (member.mode.voice)
 		member_mode_string.push_back('v');
 	return m_mode_string + member_mode_string;
 }
@@ -102,58 +102,58 @@ void
 void
   Channel::set_private_flag(bool toggle)
 {
-	if (m_mode.p == toggle)
+	if (m_mode.private_channel == toggle)
 		return;
-	m_mode.p = toggle;
+	m_mode.private_channel = toggle;
 	m_mode_string_need_update = true;
-	if (m_mode.p == true && m_mode.s == true)
-		m_mode.s = false;
+	if (m_mode.private_channel == true && m_mode.secret == true)
+		m_mode.secret = false;
 }
 
 void
   Channel::set_secret_flag(bool toggle)
 {
-	if (m_mode.s == toggle)
+	if (m_mode.secret == toggle)
 		return;
-	m_mode.s = toggle;
+	m_mode.secret = toggle;
 	m_mode_string_need_update = true;
-	if (m_mode.p == true && m_mode.s == true)
-		m_mode.p = false;
+	if (m_mode.private_channel == true && m_mode.secret == true)
+		m_mode.private_channel = false;
 }
 
 void
   Channel::set_invite_flag(bool toggle)
 {
-	if (m_mode.i == toggle)
+	if (m_mode.invite == toggle)
 		return;
-	m_mode.i = toggle;
+	m_mode.invite = toggle;
 	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_topic_flag(bool toggle)
 {
-	if (m_mode.t == toggle)
+	if (m_mode.topic == toggle)
 		return;
-	m_mode.t = toggle;
+	m_mode.topic = toggle;
 	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_no_messages_flag(bool toggle)
 {
-	if (m_mode.n == toggle)
+	if (m_mode.no_message == toggle)
 		return;
-	m_mode.n = toggle;
+	m_mode.no_message = toggle;
 	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_moderate_flag(bool toggle)
 {
-	if (m_mode.m == toggle)
+	if (m_mode.moderate == toggle)
 		return;
-	m_mode.m = toggle;
+	m_mode.moderate = toggle;
 	m_mode_string_need_update = true;
 }
 
@@ -162,9 +162,9 @@ void
 {
 	if (toggle == true)
 		m_key = key;
-	if (m_mode.k == toggle)
+	if (m_mode.key == toggle)
 		return;
-	m_mode.k = toggle;
+	m_mode.key = toggle;
 	m_mode_string_need_update = true;
 }
 
@@ -172,22 +172,22 @@ void
   Channel::set_limit(bool toggle, size_t limit)
 {
 	m_user_limit = limit;
-	if (m_mode.l == toggle)
+	if (m_mode.limit == toggle)
 		return;
-	m_mode.l = toggle;
+	m_mode.limit = toggle;
 	m_mode_string_need_update = true;
 }
 
 void
   Channel::set_operator_flag(bool toggle, Client *client)
 {
-	m_user_list.find(client)->second.mode.o = toggle;
+	m_user_list.find(client)->second.mode.operater = toggle;
 }
 
 void
   Channel::set_voice_flag(bool toggle, Client *client)
 {
-	m_user_list.find(client)->second.mode.v = toggle;
+	m_user_list.find(client)->second.mode.voice = toggle;
 }
 
 bool
@@ -205,7 +205,7 @@ bool
 bool
   Channel::is_operator(Client &client)
 {
-	return m_user_list.find(&client)->second.mode.o;
+	return m_user_list.find(&client)->second.mode.operater;
 }
 
 bool
@@ -217,25 +217,25 @@ bool
 bool
   Channel::is_protected_topic_mode(void)
 {
-	return m_mode.t;
+	return m_mode.topic;
 }
 
 bool
   Channel::is_limit_mode(void)
 {
-  return m_mode.l;
+  return m_mode.limit;
 }
 
 bool
   Channel::is_invite_only_mode(void)
 {
-  return m_mode.i;
+  return m_mode.invite;
 }
 
 bool
   Channel::is_key_mode(void)
 {
-  return m_mode.k;
+  return m_mode.key;
 }
 
 void

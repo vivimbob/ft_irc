@@ -14,14 +14,14 @@ class Channel
   private:
     struct s_mode
 	{
-		bool p:1;
-		bool s:1;
-		bool i:1;
-		bool t:1;
-		bool n:1;
-		bool m:1;
-		bool k:1;
-		bool l:1;
+		bool private_channel;
+		bool secret;
+		bool invite;
+		bool topic;
+		bool no_message;
+		bool moderate;
+		bool key;
+		bool limit;
 	};
 
   public:
