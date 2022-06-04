@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_nick_command(Client &client, IRCMessage &msg)
+    Server::m_process_nick_command(Client &client, Message &msg)
 {
     if (msg.get_params().empty())
     {

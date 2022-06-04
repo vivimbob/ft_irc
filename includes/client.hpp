@@ -6,7 +6,7 @@
 #include <queue>
 #include <set>
 #include "sendbuffer.hpp"
-#include "ircmessage.hpp"
+#include "message.hpp"
 #include "utils.hpp"
 
 class Channel;
@@ -31,7 +31,7 @@ private:
     std::string m_hostname;
     std::string m_servername;
     std::string m_realname;
-    std::queue<IRCMessage *> m_commands;
+    std::queue<Message *> m_commands;
 	std::set<Channel *> m_channel_list;
     size_t m_channel_limits;
 
@@ -54,7 +54,7 @@ private:
     const std::string	&get_hostname(void) const;
     const std::string	&get_servername(void) const;
     const std::string	&get_realname(void) const;
-    std::queue<IRCMessage *> &get_commands(void);
+    std::queue<Message *> &get_commands(void);
     std::string &get_recv_buffer(void);
     SendBuffer &get_send_buffer(void);
     size_t &get_channel_limits(void);

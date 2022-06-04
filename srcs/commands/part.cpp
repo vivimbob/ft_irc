@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_part_command(Client &client, IRCMessage &msg)
+    Server::m_process_part_command(Client &client, Message &msg)
 {
 	if (msg.get_params().empty())
     {
@@ -22,14 +22,14 @@ void
             client.push_message(msg.err_no_such_channel(*channel_it), Logger::Debug);
             return ;
         }
-		Channel *channel = m_channel_map[*channel_it];
-		if (!channel->get_user_list().count(&client))
+		    Channel *channel = m_channel_map[*channel_it];
+		    if (!channel->is_user_on_channel(&client))
         {
             client.push_message(msg.err_not_on_channel(*channel_it), Logger::Debug);
             return ;
         }
         channel->delete_user(client);
-		client.erase_channel(m_channel_map[*channel_it]);
+		    client.erase_channel(m_channel_map[*channel_it]);
         Logger().debug() << "Remove [" << client.get_nickname() <<
 			"] client from [" << channel->get_channel_name() << "] channel";
         m_send_to_channel(channel, msg.build_part_reply());

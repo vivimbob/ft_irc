@@ -2,7 +2,7 @@
 #include "../../includes/logger.hpp"
 
 void
-  Server::m_process_user_command(Client &client, IRCMessage &msg)
+  Server::m_process_user_command(Client &client, Message &msg)
 {
     if (msg.get_params().size() < 4)
     {

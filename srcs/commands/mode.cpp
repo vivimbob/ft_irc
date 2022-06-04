@@ -2,7 +2,7 @@
 #include "../../includes/logger.hpp"
 
 void
-	Server::m_process_channel_mode_command(Client &client, IRCMessage &msg, const std::string &channel_name)
+	Server::m_process_channel_mode_command(Client &client, Message &msg, const std::string &channel_name)
 {
 	if (!m_channel_map.count(channel_name))
 	{
@@ -206,7 +206,7 @@ void
 	
 	const std::string &target = msg.get_params()[0];
 
-	if (strchr("&#", target[0]) != NULL)
+	if (utils::is_channel_prefix(target))
 		m_process_channel_mode_command(client, msg, target);
 	else
 		m_process_user_mode_command(client, msg, target);

@@ -4,7 +4,7 @@
 #include <utility>
 
 void
-    Server::m_join_channel(Client &client, IRCMessage &msg, ChannelKeyPairMap &chan_key_pair)
+    Server::m_join_channel(Client &client, Message &msg, ChannelKeyPairMap &chan_key_pair)
 {
     for (ChannelKeyPairMap::iterator channel_key_it = chan_key_pair.begin();
 			channel_key_it != chan_key_pair.end();
@@ -89,7 +89,7 @@ void
 }
 
 void
-    Server::m_process_join_command(Client &client, IRCMessage &msg)
+    Server::m_process_join_command(Client &client, Message &msg)
 {
     if (msg.get_params().empty())
     {
