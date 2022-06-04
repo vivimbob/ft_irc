@@ -390,7 +390,7 @@ std::string
 std::string
 	IRCMessage::rpl_welcome(void)
 {
-	return reply_servername_prefix("001") + " Welcome to Interet Relay Network\n"
+	return reply_servername_prefix("001") + " Welcome to Internet Relay Network\n"
 		+ m_client->make_nickmask() + "\r\n";
 }
 
