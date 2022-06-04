@@ -33,7 +33,10 @@ void
 		switch (*mode)
 		{
 			case '+':
+				toggle = true;
+				break;
 			case '-':
+				toggle = false;
 				break;
 			case 'p':
 				channel->set_private_flag(toggle);
@@ -138,7 +141,6 @@ void
 			default:
 				client.push_message(msg.err_unknown_mode(*mode), Logger::Debug);
 		}
-		toggle = *mode == '-' ? false : true;
 		++mode;
 	}
 }
@@ -167,29 +169,27 @@ void
 			switch (*it)
 			{
 				case '+':
+					toggle = true;
+					break;
 				case '-':
+					toggle = false;
 					break;
 				case 'i':
 					client.set_invisible_flag(toggle);
-					toggle = true;
 					break;
 				case 'o':
 					if (toggle == false)
 						client.set_operator_flag(toggle);
-					toggle = true;
 					break;
 				case 's':
 					client.set_server_notice_flag(toggle);
-					toggle = true;
 					break;
 				case 'w':
 					client.set_wallops_flag(toggle);
-					toggle = true;
 					break;
 				default:
 					client.push_message(msg.err_u_mode_unknown_flag(), Logger::Debug);
 			}
-			toggle = *it == '-' ? false : true;
 			++it;
 		}
 		client.push_message(msg.rpl_user_mode_is(client.get_usermode()), Logger::Debug);
