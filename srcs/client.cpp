@@ -9,10 +9,10 @@ Client::Client(sockaddr_in client_addr, int client_fd)
     m_nick_registered(false),
     m_user_registered(false)
 {
-	m_mode.i = false;
-	m_mode.s = false;
-	m_mode.w = false;
-	m_mode.o = false;
+	m_mode.invisible = false;
+	m_mode.server_notice = false;
+	m_mode.wallops = false;
+	m_mode.operater = false;
 	m_mode_string_need_update = true;
   m_channel_limits = 10;
 }
@@ -92,13 +92,13 @@ std::string
 	{
 		m_mode_string.clear();
 		m_mode_string.push_back('+');
-		if (m_mode.i)
+		if (m_mode.invisible)
 			m_mode_string.push_back('i');
-		if (m_mode.o)
+		if (m_mode.operater)
 			m_mode_string.push_back('o');
-		if (m_mode.s)
+		if (m_mode.server_notice)
 			m_mode_string.push_back('s');
-		if (m_mode.w)
+		if (m_mode.wallops)
 			m_mode_string.push_back('w');
 		m_mode_string_need_update = false;
 	}
@@ -156,37 +156,36 @@ void
 void
   Client::set_invisible_flag(bool toggle)
 {
-	if (m_mode.i == toggle)
+	if (m_mode.invisible == toggle)
 		return ;
-	m_mode.i = toggle;
+	m_mode.invisible = toggle;
 	m_mode_string_need_update = true;
 }
 
 void
   Client::set_operator_flag(bool toggle)
 {
-	if (m_mode.o == toggle)
+	if (m_mode.operater == toggle)
 		return ;
-	m_mode.o = toggle;
+	m_mode.operater = toggle;
 	m_mode_string_need_update = true;
 }
 
 void
   Client::set_server_notice_flag(bool toggle)
 {
-	if (m_mode.s == toggle)
+	if (m_mode.server_notice == toggle)
 		return ;
-	m_mode.s = toggle;
+	m_mode.server_notice = toggle;
 	m_mode_string_need_update = true;
-  m_mode.s = toggle;
 }
 
 void
   Client::set_wallops_flag(bool toggle)
 {
-	if (m_mode.w == toggle)
+	if (m_mode.wallops == toggle)
 		return ;
-	m_mode.w = toggle;
+	m_mode.wallops = toggle;
 	m_mode_string_need_update = true;
 }
 

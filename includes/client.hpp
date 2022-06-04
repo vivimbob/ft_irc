@@ -16,10 +16,10 @@ class Client
 private:
 	struct s_mode
 	{
-		bool i:1;
-		bool s:1;
-		bool w:1;
-		bool o:1;
+		bool invisible;
+		bool server_notice;
+		bool wallops;
+		bool operater;
 	};
 
     sockaddr_in m_client_addr;
@@ -35,11 +35,11 @@ private:
 	std::set<Channel *> m_channel_list;
     size_t m_channel_limits;
 
-	bool m_pass_registered:1;
-    bool m_nick_registered:1;
-    bool m_user_registered:1;
+	bool m_pass_registered;
+    bool m_nick_registered;
+    bool m_user_registered;
 
-	bool m_mode_string_need_update:1;
+	bool m_mode_string_need_update;
 	std::string m_mode_string;
 	s_mode m_mode;
 

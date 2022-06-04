@@ -9,31 +9,13 @@ class MemberShip
 public :
 	struct s_mode
 	{
-		bool o:1;
-		bool v:1;
+		bool operater;
+		bool voice;
 	};
 
-  MemberShip()
-    : client(NULL),
-      channel(NULL)
-  {
-  }
-
-	MemberShip(Client *client, Channel *channel)
-		: client(client),
-		  channel(channel)
-	{
-		mode.o = false;
-		mode.v = false;
-	}	
-
-	MemberShip(const MemberShip& copy)
-		: client(copy.client),
-		  channel(copy.channel)
-	{
-		this->mode.o = copy.mode.o;
-		this->mode.v = copy.mode.v;
-	}
+	MemberShip();
+	MemberShip(Client *client, Channel *channel);
+	MemberShip(const MemberShip& copy);
 
 	Client *const client;
 	Channel *const channel;

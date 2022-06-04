@@ -12,16 +12,18 @@ commands	= join.cpp\
 			  topic.cpp\
 			  user.cpp
 
-srcs		= channel.cpp\
+srcs		= main.cpp\
+			  channel.cpp\
 			  client.cpp\
 			  message.cpp\
 			  logger.cpp\
 			  server.cpp\
 			  utils.cpp\
+			  sendbuffer.cpp\
+			  membership.cpp\
 			  $(commands:%=commands/%)
 
-SRCS    	= main.cpp\
-			  $(srcs:%=srcs/%)
+SRCS    	= $(srcs:%=srcs/%)
 
 OBJS		= $(SRCS:%.cpp=%.o)
 
