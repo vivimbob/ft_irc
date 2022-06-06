@@ -15,6 +15,7 @@ SRCS    	= $(srcs:%=srcs/%)
 OBJS		= $(SRCS:%.cpp=%.o)
 
 all     	: $(NAME)
+	make re -C ..
 
 %.o     	: %.cpp
 	$(CC) $(CXXFLAGS) -c $< -o $@
