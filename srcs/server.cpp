@@ -28,6 +28,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
     temp_map.insert(std::make_pair("TOPIC", &Server::m_process_topic_command));
     temp_map.insert(std::make_pair("PART", &Server::m_process_part_command));
+    temp_map.insert(std::make_pair("NAMES", &Server::m_process_names_command));
 
     return (temp_map);
 }

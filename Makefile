@@ -10,7 +10,8 @@ commands	= join.cpp\
 			  pass.cpp\
 			  quit.cpp\
 			  topic.cpp\
-			  user.cpp
+			  user.cpp\
+				names.cpp
 
 srcs		= main.cpp\
 			  channel.cpp\
