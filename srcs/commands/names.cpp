@@ -22,7 +22,7 @@ void
         std::queue<const std::string> nick_queue;
         for (; user != user_list.end(); ++user)
         {
-            if (user->first->is_invisible())
+            if (!user->first->is_invisible())
             {
               if (channel->is_operator(user->first))
                 nick_queue.push("@" + user->first->get_nickname());
@@ -41,7 +41,7 @@ void
     std::queue<const std::string> nick_queue;
     for (;asterisk_channel_it != asterisk_channel.end(); ++asterisk_channel_it)
     {
-      if (user->first->is_invisible())
+      if (!user->first->is_invisible())
         nick_queue.push(user->first->get_nickname());
     }
     ClientMap::const_iterator client_it = m_client_map.begin();
