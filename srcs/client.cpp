@@ -225,6 +225,12 @@ bool
 	return m_channel_list.count(channel);
 }
 
+bool
+  Client::is_invisible(void) const
+{
+	return m_mode.invisible;
+}
+
 void
   Client::push_message(const std::string &message)
 {
