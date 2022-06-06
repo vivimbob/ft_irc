@@ -38,10 +38,12 @@ void
     m_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_listen_fd == -1)
     {
-        Logger().error() << "Failed to create socket. errno " << errno;
+        Logger().error() << "Failed to create socket. errno " << errno << ":" << strerror(errno);
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Create socket " << m_listen_fd;
+	int toggle = 1;
+	setsockopt(m_listen_fd, SOL_SOCKET, SO_REUSEPORT, (const void *)&toggle, sizeof(toggle));
 }
 
 void
@@ -54,7 +56,7 @@ void
 
     if (bind(m_listen_fd, (struct sockaddr *)&m_sockaddr, sizeof(sockaddr_in)) == -1)
     {
-        Logger().error() << "Failed to bind to port and address" << m_port << ". errno: " << errno;
+        Logger().error() << "Failed to bind to port and address" << m_port << ". errno: " << errno << ":" << strerror(errno);
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Bind Port :" << m_port << " IP :" <<  inet_ntoa(m_sockaddr.sin_addr);
@@ -65,7 +67,7 @@ void
 {
     if (listen(m_listen_fd, SOMAXCONN) == -1)
     {
-        Logger().error() << "Failed to listen on socket. errno: " << errno;
+        Logger().error() << "Failed to listen on socket. errno: " << errno << ":" << strerror(errno);
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Listen on socket";
@@ -87,7 +89,7 @@ void
     m_kq = kqueue();
     if (m_kq == -1)
     {
-        Logger().error() << "Failed to allocate kqueue. errno: " << errno;
+        Logger().error() << "Failed to allocate kqueue. errno: " << errno << ":" << strerror(errno);
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Allocate kqueue " << m_kq;
@@ -105,7 +107,7 @@ void
     client_fd = accept(m_listen_fd, (sockaddr*)(&client_addr), (socklen_t*)(&client_addr_len));
     if (client_fd == -1)
     {
-        Logger().error() << "Failed to accept client. errno: " << errno;
+        Logger().error() << "Failed to accept client. errno: " << errno << ":" << strerror(errno);
         exit(EXIT_FAILURE);
     }
 
