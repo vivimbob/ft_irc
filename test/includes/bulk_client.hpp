@@ -1,0 +1,3 @@
+#ifndef BULK_CLIENT_HPP
+#define BULK_CLIENT_HPP
+#endif /* BULK_CLIENT_HPP */
