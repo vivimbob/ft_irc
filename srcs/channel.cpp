@@ -203,15 +203,15 @@ bool
 }
 
 bool
-  Channel::is_operator(Client *client)
+  Channel::is_operator(Client &client)
 {
-	return m_user_list.find(client)->second.mode.operater;
+	return m_user_list.find(&client)->second.mode.operater;
 }
 
 bool
-  Channel::is_voice_mode(Client *client)
+  Channel::is_voice_mode(Client &client)
 {
-	return m_user_list.find(client)->second.mode.voice;
+	return m_user_list.find(&client)->second.mode.voice;
 }
 
 bool

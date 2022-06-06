@@ -15,7 +15,7 @@ void
 		client.push_message(msg.rpl_channel_mode_is(channel_name, channel->get_channel_mode(&client)), Logger::Debug);
 		return ;
 	}
-	if (!channel->is_operator(&client))
+	if (!channel->is_operator(client))
 	{
 		client.push_message(msg.err_chanoprivs_needed(channel_name), Logger::Debug);
 		return ;

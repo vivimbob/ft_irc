@@ -24,9 +24,9 @@ void
         {
             if (!user->first->is_invisible())
             {
-              if (channel->is_operator(user->first))
+              if (channel->is_operator(*user->first))
                 nick_queue.push("@" + user->first->get_nickname());
-              else if (channel->is_voice_mode(user->first))
+              else if (channel->is_voice_mode(*user->first))
                 nick_queue.push("+" + user->first->get_nickname());
               else
                 nick_queue.push(user->first->get_nickname());
