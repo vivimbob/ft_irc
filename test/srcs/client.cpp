@@ -59,6 +59,7 @@ void Client::write(std::string msg)
 	m_ergo_fifo << msg;
 	m_ergo_fifo.flush();
 #endif
+	sleep(1);
 }
 
 bool Client::diff()

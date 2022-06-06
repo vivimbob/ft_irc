@@ -8,6 +8,7 @@ testcase	= register.cpp
 srcs		= main.cpp\
 			  client.cpp\
 			  test.cpp\
+			  bulk_client.cpp\
 			  $(testcase:%=testcase/%)
 
 SRCS    	= $(srcs:%=srcs/%)
@@ -15,7 +16,7 @@ SRCS    	= $(srcs:%=srcs/%)
 OBJS		= $(SRCS:%.cpp=%.o)
 
 all     	: $(NAME)
-	make re -C ..
+	make -C ..
 
 %.o     	: %.cpp
 	$(CC) $(CXXFLAGS) -c $< -o $@
@@ -30,3 +31,7 @@ fclean    	: clean
 	rm -rf $(NAME)
 
 re			: fclean all
+
+#살아 있는 서버있는지 체크
+check		:
+	lsof -i :6667.6668
