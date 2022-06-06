@@ -238,6 +238,18 @@ bool
   return m_mode.key;
 }
 
+bool
+  Channel::is_private_mode(void)
+{
+  return m_mode.private_channel;
+}
+
+bool
+  Channel::is_secret_mode(void)
+{
+  return m_mode.secret;
+}
+
 void
   Channel::add_user(Client &client)
 {
