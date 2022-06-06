@@ -75,6 +75,8 @@ class Channel
     bool is_invite_only_mode(void);
     bool is_limit_mode(void);
     bool is_key_mode(void);
+    bool is_private_mode(void);
+    bool is_secret_mode(void);
 
     void add_user(Client &client);
     void delete_user(Client &client);
