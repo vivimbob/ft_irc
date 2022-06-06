@@ -22,7 +22,7 @@ void
 
 	if (msg.get_params().size() == 2)
 	{
-		if (channel->is_protected_topic_mode() && !channel->is_operator(client))	
+		if (channel->is_protected_topic_mode() && !channel->is_operator(&client))	
 		{
 			client.push_message(msg.err_chanoprivs_needed(channel_name), Logger::Debug);
 			return ;
