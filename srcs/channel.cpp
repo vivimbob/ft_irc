@@ -209,6 +209,12 @@ bool
 }
 
 bool
+  Channel::is_voice_mode(Client &client)
+{
+	return m_user_list.find(&client)->second.mode.voice;
+}
+
+bool
   Channel::is_user_on_channel(Client *client)
 {
 	return m_user_list.count(client);
