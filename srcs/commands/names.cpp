@@ -101,6 +101,34 @@ void
           store_nickname_in_queue(channel, *user->first, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
+      else
+      {
+        if (!channel->is_private_mode() && !channel->is_secret_mode())
+        {
+          const Channel::MemberMap &user_list = channel->get_user_list();
+          Channel::MemberMap::const_iterator user = user_list.begin();
+          for (; user != user_list.end(); ++user)
+          {
+            if (!user->first->is_invisible())
+              store_nickname_in_queue(channel, *user->first, nick_queue);
+          }
+          client.push_message(msg.rpl_namreply("=" + channel_name, nick_queue));
+        }
+        else if (channel->is_private_mode())
+        {
+          const Channel::MemberMap &user_list = channel->get_user_list();
+          Channel::MemberMap::const_iterator user = user_list.begin();
+          for (; user != user_list.end(); ++user)
+          {
+            if (!user->first->is_invisible())
+              store_nickname_in_queue(channel, *user->first, nick_queue);
+          }
+          client.push_message(msg.rpl_namreply("*", nick_queue));
+        }
+        else
+          client.push_message(msg.rpl_endofnames(channel_name));
+      }
     }
+    client.push_message(msg.rpl_endofnames(*(--channel_it)));
   }
 }
