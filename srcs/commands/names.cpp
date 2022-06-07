@@ -2,6 +2,27 @@
 #include "../../includes/utils.hpp"
 #include "../../includes/server.hpp"
 
+std::string
+  get_channel_symbol(Channel *channel)
+{
+  if (channel->is_private_mode())
+    return "*";
+  else if (channel->is_secret_mode())
+    return "@";
+  return "=";
+}
+
+void
+  store_nickname_in_queue(Channel *channel, Client &client, std::queue<const std::string> &nick_queue)
+{
+  if (channel->is_operator(client))
+    nick_queue.push("@" + client.get_nickname());
+  else if (channel->is_voice_mode(client))
+    nick_queue.push("+" + client.get_nickname());
+  else
+    nick_queue.push(client.get_nickname());
+}
+
 void
   Server::m_process_names_command(Client &client, Message &msg)
 {
@@ -19,22 +40,9 @@ void
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol;
-        if (channel->is_private_mode())
-          symbol = "*";
-        else if (channel->is_secret_mode())
-          symbol = "@";
-        else
-          symbol = "=";
+        std::string symbol = get_channel_symbol(channel);
         for (; user != user_list.end(); ++user)
-        {
-          if (channel->is_operator(*user->first))
-            nick_queue.push("@" + user->first->get_nickname());
-          else if (channel->is_voice_mode(*user->first))
-            nick_queue.push("+" + user->first->get_nickname());
-          else
-            nick_queue.push(user->first->get_nickname());
-        }
+          store_nickname_in_queue(channel, *user->first, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
       else if (channel->is_private_mode() || channel->is_secret_mode()) // 가입 안되어있고 채널이 private, secret 모드일 때
@@ -46,14 +54,7 @@ void
         for (; user != user_list.end(); ++user)
         {
           if (!user->first->is_invisible())
-          {
-            if (channel->is_operator(*user->first))
-              nick_queue.push("@" + user->first->get_nickname());
-            else if (channel->is_voice_mode(*user->first))
-              nick_queue.push("+" + user->first->get_nickname());
-            else
-              nick_queue.push(user->first->get_nickname());
-          }
+            store_nickname_in_queue(channel, *user->first, nick_queue);
         }
         client.push_message(msg.rpl_namreply("=" + channel_name, nick_queue));
       }
