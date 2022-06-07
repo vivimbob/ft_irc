@@ -101,10 +101,13 @@ void
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it) // ','로 구분되어 저장된 채널 리스트 순회
     {
-      if (!m_channel_map.count(*channel_it))
-        continue;
       const std::string &channel_name = *channel_it;
       Channel *channel = m_channel_map[channel_name];
+      if (!m_channel_map.count(channel_name)) // 잘못된 채널일 떄
+      {
+        client.push_message(msg.rpl_endofnames(channel_name));
+        continue;
+      }
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
@@ -124,7 +127,7 @@ void
           iterate_user_not_joined(channel, nick_queue);
           client.push_message(msg.rpl_namreply("*", nick_queue));
         }
-        else // secret, 잘못된 채널일 때
+        else // secret
           client.push_message(msg.rpl_endofnames(channel_name));
       }
     }
