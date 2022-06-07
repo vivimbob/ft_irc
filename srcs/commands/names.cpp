@@ -106,25 +106,25 @@ void
       const std::string &channel_name = *channel_it;
       Channel *channel = m_channel_map[channel_name];
       std::queue<const std::string> nick_queue;
-      if (client.is_already_joined(channel))
+      if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
         std::string symbol = get_channel_symbol(channel);
         iterate_user_joined(channel, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
-      else
+      else // 가입되어 있지 않을 때
       {
-        if (!channel->is_private_mode() && !channel->is_secret_mode())
+        if (!channel->is_private_mode() && !channel->is_secret_mode()) // 일반(public) 채널일떄
         {
           iterate_user_not_joined(channel, nick_queue, true);
           client.push_message(msg.rpl_namreply("=" + channel_name, nick_queue));
         }
-        else if (channel->is_private_mode())
+        else if (channel->is_private_mode()) // private 채널일 때
         {
           iterate_user_not_joined(channel, nick_queue);
           client.push_message(msg.rpl_namreply("*", nick_queue));
         }
-        else
+        else // secret, 잘못된 채널일 때
           client.push_message(msg.rpl_endofnames(channel_name));
       }
     }
