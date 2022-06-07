@@ -89,6 +89,8 @@ void
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it)
     {
+      if (!m_channel_map.count(*channel_it))
+        continue;
       const std::string &channel_name = *channel_it;
       Channel *channel = m_channel_map[channel_name];
       const Channel::MemberMap &user_list = channel->get_user_list();
