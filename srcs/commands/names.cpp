@@ -20,17 +20,29 @@ void
         const Channel::MemberMap &user_list = channel->get_user_list();
         Channel::MemberMap::const_iterator user = user_list.begin();
         std::queue<const std::string> nick_queue;
+        bool is_joined = false;
+        if (client.is_already_joined(channel))
+          is_joined = true;
         for (; user != user_list.end(); ++user)
         {
-            if (!user->first->is_invisible())
-            {
-              if (channel->is_operator(*user->first))
-                nick_queue.push("@" + user->first->get_nickname());
-              else if (channel->is_voice_mode(*user->first))
-                nick_queue.push("+" + user->first->get_nickname());
-              else
-                nick_queue.push(user->first->get_nickname());
-            }
+          if (is_joined)
+          {
+            if (channel->is_operator(*user->first))
+              nick_queue.push("@" + user->first->get_nickname());
+            else if (channel->is_voice_mode(*user->first))
+              nick_queue.push("+" + user->first->get_nickname());
+            else
+              nick_queue.push(user->first->get_nickname());
+          }
+          else if (!user->first->is_invisible())
+          {
+            if (channel->is_operator(*user->first))
+              nick_queue.push("@" + user->first->get_nickname());
+            else if (channel->is_voice_mode(*user->first))
+              nick_queue.push("+" + user->first->get_nickname());
+            else
+              nick_queue.push(user->first->get_nickname());
+          }
         }
         client.push_message(msg.rpl_namreply("=" + channel_name, nick_queue));
       }
