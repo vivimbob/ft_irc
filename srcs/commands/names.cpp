@@ -82,4 +82,9 @@ void
     client.push_message(msg.rpl_namreply("*", nick_queue));
     client.push_message(msg.rpl_endofnames("*"));
   }
+  else if (msg.get_params().size() == 1) // 파라미터 있을 때
+  {
+    std::vector<const std::string> channel_list;
+    utils::split_by_comma(channel_list, msg.get_params()[0]);
+  }
 }
