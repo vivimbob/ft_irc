@@ -2,7 +2,7 @@
 #include "../../includes/utils.hpp"
 #include "../../includes/server.hpp"
 
-std::string
+inline std::string
   get_channel_symbol(Channel *channel)
 {
   if (channel->is_private_mode())
@@ -12,7 +12,7 @@ std::string
   return "=";
 }
 
-void
+inline void
   store_nickname_in_queue(Channel *channel, Client &client, std::queue<const std::string> &nick_queue)
 {
   if (channel->is_operator(client))
@@ -87,7 +87,7 @@ void
     std::vector<const std::string> channel_list;
     utils::split_by_comma(channel_list, msg.get_params()[0]);
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
-    for (; channel_it != channel_list.end(); ++channel_it)
+    for (; channel_it != channel_list.end(); ++channel_it) // ','로 구분되어 저장된 채널 리스트 순회
     {
       if (!m_channel_map.count(*channel_it))
         continue;
