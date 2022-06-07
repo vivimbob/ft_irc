@@ -86,5 +86,21 @@ void
   {
     std::vector<const std::string> channel_list;
     utils::split_by_comma(channel_list, msg.get_params()[0]);
+    std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
+    for (; channel_it != channel_list.end(); ++channel_it)
+    {
+      const std::string &channel_name = *channel_it;
+      Channel *channel = m_channel_map[channel_name];
+      const Channel::MemberMap &user_list = channel->get_user_list();
+      Channel::MemberMap::const_iterator user = user_list.begin();
+      std::queue<const std::string> nick_queue;
+      if (client.is_already_joined(channel))
+      {
+        std::string symbol = get_channel_symbol(channel);
+        for (; user != user_list.end(); ++user)
+          store_nickname_in_queue(channel, *user->first, nick_queue);
+        client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
+      }
+    }
   }
 }
