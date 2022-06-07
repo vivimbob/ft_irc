@@ -13,28 +13,38 @@ void
     {
       const std::string &channel_name = channel_it->first;
       Channel *channel = channel_it->second;
-      if (channel->is_private_mode() || channel->is_secret_mode())
+      const Channel::MemberMap &user_list = channel->get_user_list();
+      Channel::MemberMap::const_iterator user = user_list.begin();
+      std::queue<const std::string> nick_queue;
+      if (client.is_already_joined(channel))
+      {
+        std::string symbol;
+        if (channel->is_private_mode())
+          symbol = "*";
+        else if (channel->is_secret_mode())
+          symbol = "@";
+        else
+          symbol = "=";
+        for (; user != user_list.end(); ++user)
+        {
+          if (channel->is_operator(*user->first))
+            nick_queue.push("@" + user->first->get_nickname());
+          else if (channel->is_voice_mode(*user->first))
+            nick_queue.push("+" + user->first->get_nickname());
+          else
+            nick_queue.push(user->first->get_nickname());
+        }
+        client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
+      }
+      else if (channel->is_private_mode() || channel->is_secret_mode())
         asterisk_channel.push_back(channel_name);
       else
       {
         const Channel::MemberMap &user_list = channel->get_user_list();
         Channel::MemberMap::const_iterator user = user_list.begin();
-        std::queue<const std::string> nick_queue;
-        bool is_joined = false;
-        if (client.is_already_joined(channel))
-          is_joined = true;
         for (; user != user_list.end(); ++user)
         {
-          if (is_joined)
-          {
-            if (channel->is_operator(*user->first))
-              nick_queue.push("@" + user->first->get_nickname());
-            else if (channel->is_voice_mode(*user->first))
-              nick_queue.push("+" + user->first->get_nickname());
-            else
-              nick_queue.push(user->first->get_nickname());
-          }
-          else if (!user->first->is_invisible())
+          if (!user->first->is_invisible())
           {
             if (channel->is_operator(*user->first))
               nick_queue.push("@" + user->first->get_nickname());
