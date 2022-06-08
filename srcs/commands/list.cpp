@@ -9,8 +9,6 @@ void iterate_channel(Channel *channel, Client &client)
 
 void Server::m_process_list_command(Client &client, Message &msg)
 {
-  (void)client;
-  (void)msg;
   if (msg.get_params().empty())
   {
     ChannelMap::const_iterator channel_it = m_channel_map.begin();
