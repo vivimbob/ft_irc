@@ -3,7 +3,8 @@ CC      	= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 # CXXFLAGS  = -std=c++98
 
-testcase	= register.cpp
+testcase	= register.cpp\
+			  private_message.cpp
 
 srcs		= main.cpp\
 			  client.cpp\
@@ -34,4 +35,4 @@ re			: fclean all
 
 #살아 있는 서버있는지 체크
 check		:
-	lsof -i :6667.6668
+	lsof -i :6667,6668

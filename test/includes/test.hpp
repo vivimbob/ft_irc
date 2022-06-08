@@ -13,7 +13,9 @@ struct s_server_fd
 
 int execute(char *command);
 int execute(std::string command);
+
 void test_register();
+void test_private_message();
 
 void test_start();
 

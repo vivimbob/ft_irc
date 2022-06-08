@@ -3,8 +3,8 @@
 #include "../../includes/bulk_client.hpp"
 #include <ios>
 #include <unistd.h>
-
 #include <iostream>
+
 static void case_01()
 {
 	BulkClient client(1, "case_01");
