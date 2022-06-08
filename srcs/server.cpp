@@ -29,6 +29,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("TOPIC", &Server::m_process_topic_command));
     temp_map.insert(std::make_pair("PART", &Server::m_process_part_command));
     temp_map.insert(std::make_pair("NAMES", &Server::m_process_names_command));
+    temp_map.insert(std::make_pair("PRIVMSG", &Server::m_process_privmsg_command));
 
     return (temp_map);
 }
