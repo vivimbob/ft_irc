@@ -9,6 +9,7 @@ void iterate_channel(Channel *channel, Client &client, Message &msg)
     const std::string &symbol = utils::get_channel_symbol(channel);
     const size_t number_of_clients = channel->get_user_list().size();
     const std::string &topic = channel->get_channel_topic();
+    client.push_message(msg.rpl_list(symbol + channel->get_channel_name(), std::to_string(number_of_clients), topic));
   }
 }
 
