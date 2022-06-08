@@ -32,4 +32,5 @@ void Server::m_process_list_command(Client &client, Message &msg)
     for (; channel_it != channel_list.end(); ++channel_it)
       iterate_channel(m_channel_map[*channel_it], client, msg);
   }
+  client.push_message(msg.rpl_listend());
 }
