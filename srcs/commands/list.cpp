@@ -6,7 +6,9 @@ void iterate_channel(Channel *channel, Client &client)
 {
   if (client.is_already_joined(channel) || (!channel->is_private_mode() && !channel->is_secret_mode()))
   {
-    const std::string symbol = utils::get_channel_symbol(channel);
+    const std::string &symbol = utils::get_channel_symbol(channel);
+    const size_t number_of_clients = channel->get_user_list().size();
+    const std::string &topic = channel->get_channel_topic();
   }
 }
 
