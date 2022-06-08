@@ -20,9 +20,8 @@ void Server::m_process_list_command(Client &client, Message &msg)
   if (msg.get_params().empty())
   {
     ChannelMap::const_iterator channel_it = m_channel_map.begin();
-    Channel *channel = channel_it->second;
     for (; channel_it != m_channel_map.end(); ++channel_it)
-      iterate_channel(channel, client, msg);
+      iterate_channel(channel_it->second, client, msg);
   }
   else if (msg.get_params().size() == 1)
   {
