@@ -30,7 +30,10 @@ void Server::m_process_list_command(Client &client, Message &msg)
     utils::split_by_comma(channel_list, msg.get_params()[0]);
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it)
-      iterate_channel(m_channel_map[*channel_it], client, msg);
+    {
+      if (m_channel_map.count(*channel_it))
+        iterate_channel(m_channel_map[*channel_it], client, msg);
+    }
   }
   client.push_message(msg.rpl_listend());
 }
