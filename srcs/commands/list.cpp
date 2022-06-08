@@ -4,8 +4,10 @@
 
 void iterate_channel(Channel *channel, Client &client)
 {
-  (void)channel;
-  (void)client;
+  if (client.is_already_joined(channel) || (!channel->is_private_mode() && !channel->is_secret_mode()))
+  {
+    const std::string symbol = utils::get_channel_symbol(channel);
+  }
 }
 
 void Server::m_process_list_command(Client &client, Message &msg)

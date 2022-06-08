@@ -37,6 +37,16 @@ namespace utils
         return false;
     return true;
   }
+
+  std::string
+    get_channel_symbol(Channel *channel)
+  {
+    if (channel->is_private_mode())
+      return "*";
+    else if (channel->is_secret_mode())
+      return "@";
+    return "=";
+  }
   
   void
     split_by_comma(std::vector<const std::string> &splited_params, const std::string &params)
