@@ -4,13 +4,15 @@
 
 void iterate_channel(Channel *channel, Client &client, Message &msg)
 {
+  const size_t number_of_clients = channel->get_user_list().size();
   if (client.is_already_joined(channel) || (!channel->is_private_mode() && !channel->is_secret_mode()))
   {
     const std::string &symbol = utils::get_channel_symbol(channel);
-    const size_t number_of_clients = channel->get_user_list().size();
     const std::string &topic = channel->get_channel_topic();
     client.push_message(msg.rpl_list(symbol + channel->get_channel_name(), std::to_string(number_of_clients), topic));
   }
+  else if (channel->is_private_mode())
+    client.push_message(msg.rpl_list("Prv", std::to_string(number_of_clients), ""));
 }
 
 void Server::m_process_list_command(Client &client, Message &msg)
