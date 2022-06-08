@@ -21,9 +21,14 @@ void
     {
        if (utils::is_channel_prefix(*it))
        {
+           if (!m_channel_map.count(*it))
+                client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
+//            m_send_to_channel(m_channel_map[*it], );
        }
        else
        {
        }
     }
 }
+
+

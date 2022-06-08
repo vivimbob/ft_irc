@@ -47,4 +47,26 @@ namespace utils
     while (std::getline(iss, elem, ','))
         splited_params.push_back(elem);
   }
+
+  ClientInfo
+    parse_client_info(std::string client_info)
+  {
+    const char *offset_exclamation_mark = strchr(client_info.data(), '!'); 
+    const char *offset_percent_mark= strchr(client_info.data(), '!'); 
+    // \! 가 있는 경우
+      // 뒤에 @이 있어야함
+      // 앞에 있는 건 nick
+      // /! @ 사이있는 건 user
+      // @ 뒤는 host
+    // %가 있는 경우
+      // 뒤에 @가 있을 수도 있음
+      // 맨 앞은 user
+      // % 뒤는 host
+      // @ 이 있는 경우 servername
+    // @가 있는 경우
+      // 앞에서 나머지 경우가 다 처리 됐으니
+      // user@severname 케이스만 처리하면 됨
+    // 어떤 기호도 없는 경우
+      //nickname임
+  }
 }
