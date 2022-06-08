@@ -4,7 +4,8 @@
 
 void iterate_channel(Channel *channel, Client &client)
 {
-
+  (void)channel;
+  (void)client;
 }
 
 void Server::m_process_list_command(Client &client, Message &msg)
@@ -12,7 +13,6 @@ void Server::m_process_list_command(Client &client, Message &msg)
   if (msg.get_params().empty())
   {
     ChannelMap::const_iterator channel_it = m_channel_map.begin();
-    const std::string &channel_name = channel_it->first;
     Channel *channel = channel_it->second;
     for (; channel_it != m_channel_map.end(); ++channel_it)
       iterate_channel(channel, client);
