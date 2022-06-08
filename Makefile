@@ -11,7 +11,8 @@ commands	= join.cpp\
 			  quit.cpp\
 			  topic.cpp\
 			  user.cpp\
-				names.cpp
+			  names.cpp\
+			  privmsg.cpp
 
 srcs		= main.cpp\
 			  channel.cpp\

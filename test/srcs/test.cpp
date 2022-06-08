@@ -39,6 +39,7 @@ int execute(std::string command)
 void test_start()
 {
 	test_register();
+	test_private_message();
 	//test_join();
 	//test_part();
 	//test_names();
