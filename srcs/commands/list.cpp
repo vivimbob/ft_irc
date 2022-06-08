@@ -2,7 +2,7 @@
 #include "../../includes/logger.hpp"
 #include "../../includes/utils.hpp"
 
-void iterate_channel(Channel *channel, Client &client)
+void iterate_channel(Channel *channel, Client &client, Message &msg)
 {
   if (client.is_already_joined(channel) || (!channel->is_private_mode() && !channel->is_secret_mode()))
   {
@@ -19,7 +19,7 @@ void Server::m_process_list_command(Client &client, Message &msg)
     ChannelMap::const_iterator channel_it = m_channel_map.begin();
     Channel *channel = channel_it->second;
     for (; channel_it != m_channel_map.end(); ++channel_it)
-      iterate_channel(channel, client);
+      iterate_channel(channel, client, msg);
   }
   else if (msg.get_params().size() == 1)
   {
@@ -27,6 +27,6 @@ void Server::m_process_list_command(Client &client, Message &msg)
     utils::split_by_comma(channel_list, msg.get_params()[0]);
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it)
-      iterate_channel(m_channel_map[*channel_it], client);
+      iterate_channel(m_channel_map[*channel_it], client, msg);
   }
 }
