@@ -16,6 +16,7 @@ int execute(std::string command);
 
 void test_register();
 void test_private_message();
+void test_list_message();
 
 void test_start();
 

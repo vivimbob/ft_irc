@@ -40,10 +40,10 @@ void test_start()
 {
 	test_register();
 	test_private_message();
+	test_list_message();
 	//test_join();
 	//test_part();
 	//test_names();
-	//test_list();
 	//test_topic();
 	//test_mix();
 	//test_regular_user();
