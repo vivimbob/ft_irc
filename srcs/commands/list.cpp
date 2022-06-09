@@ -2,7 +2,7 @@
 #include "../../includes/logger.hpp"
 #include "../../includes/utils.hpp"
 
-void iterate_channel(Channel *channel, Client &client, Message &msg)
+void send_list_to_client(Channel *channel, Client &client, Message &msg)
 {
   const size_t number_of_clients = channel->get_user_list().size();
   if (client.is_already_joined(channel) || (!channel->is_private_mode() && !channel->is_secret_mode()))
@@ -21,7 +21,7 @@ void Server::m_process_list_command(Client &client, Message &msg)
   {
     ChannelMap::const_iterator channel_it = m_channel_map.begin();
     for (; channel_it != m_channel_map.end(); ++channel_it)
-      iterate_channel(channel_it->second, client, msg);
+      send_list_to_client(channel_it->second, client, msg);
   }
   else if (msg.get_params().size() == 1)
   {
@@ -31,7 +31,7 @@ void Server::m_process_list_command(Client &client, Message &msg)
     for (; channel_it != channel_list.end(); ++channel_it)
     {
       if (m_channel_map.count(*channel_it))
-        iterate_channel(m_channel_map[*channel_it], client, msg);
+        send_list_to_client(m_channel_map[*channel_it], client, msg);
     }
   }
   client.push_message(msg.rpl_listend());
