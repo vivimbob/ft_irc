@@ -5,7 +5,7 @@
 void send_list_to_client(Channel *channel, Client &client, Message &msg)
 {
   const size_t number_of_clients = channel->get_user_list().size();
-  if (client.is_already_joined(channel) || (!channel->is_private_mode() && !channel->is_secret_mode()))
+  if (client.is_already_joined(channel) || !(channel->is_private_mode() || channel->is_secret_mode()))
   {
     const std::string &symbol = utils::attach_channel_symbol(channel);
     const std::string &topic = channel->get_channel_topic();
