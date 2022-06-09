@@ -41,12 +41,11 @@ namespace utils
   std::string
     attach_channel_symbol(Channel *channel)
   {
-    std::string channel_name = channel->get_channel_name();
     if (channel->is_private_mode())
-      return "*" + channel_name;
+      return "*";
     else if (channel->is_secret_mode())
-      return "@" + channel_name;
-    return "=" + channel_name;
+      return "@";
+    return "=";
   }
   
   void

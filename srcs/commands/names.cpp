@@ -49,12 +49,12 @@ void
     std::vector<std::string> asterisk_channel;
     for (; channel_it != m_channel_map.end(); ++channel_it) // 현재 개설되어있는 채널 순회
     {
-      std::string channel_name;
+      std::string channel_name = channel_it->first;
       Channel *channel = channel_it->second;
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        channel_name = utils::attach_channel_symbol(channel);
+        channel_name = utils::attach_channel_symbol(channel) + channel_name;
         store_nickname_in_queue(channel, nick_queue);
         client.push_message(msg.rpl_namreply(channel_name, nick_queue));
       }
@@ -91,17 +91,17 @@ void
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it) // ','로 구분되어 저장된 채널 리스트 순회
     {
-      if (!m_channel_map.count(*channel_it)) // 잘못된 채널일 떄
+      std::string channel_name = channel_it->first;
+      if (!m_channel_map.count(channel_name)) // 잘못된 채널일 떄
       {
-        client.push_message(msg.rpl_endofnames(*channel_it));
+        client.push_message(msg.rpl_endofnames(channel_name));
         continue;
       }
-      std::string channel_name;
-      Channel *channel = m_channel_map[*channel_it];
+      Channel *channel = m_channel_map[channel_name];
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        channel_name = utils::attach_channel_symbol(channel);
+        channel_name = utils::attach_channel_symbol(channel) + channel_name;
         store_nickname_in_queue(channel, nick_queue);
         client.push_message(msg.rpl_namreply(channel_name, nick_queue));
       }
