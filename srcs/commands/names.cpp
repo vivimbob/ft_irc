@@ -54,7 +54,7 @@ void
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol = utils::get_channel_symbol(channel);
+        std::string symbol = utils::attach_channel_symbol(channel);
         store_nickname_in_queue(channel, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
@@ -101,7 +101,7 @@ void
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol = utils::get_channel_symbol(channel);
+        std::string symbol = utils::attach_channel_symbol(channel);
         store_nickname_in_queue(channel, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
