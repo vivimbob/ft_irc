@@ -13,7 +13,8 @@ commands	= join.cpp\
 			  user.cpp\
 			  names.cpp\
 			  privmsg.cpp\
-				list.cpp
+				list.cpp\
+				notice.cpp
 
 srcs		= main.cpp\
 			  channel.cpp\
