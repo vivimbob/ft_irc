@@ -40,6 +40,7 @@ void test_start()
 {
 	test_register();
 	test_private_message();
+	test_notice_message();
 	test_list_message();
 	//test_join();
 	//test_part();
@@ -49,8 +50,6 @@ void test_start()
 	//test_regular_user();
 	//test_operator_user();
 	//test_send_message();
-	//test_private_message();
-	//test_notice_message();
 	//test_channel_commands();
 	//test_invite();
 
