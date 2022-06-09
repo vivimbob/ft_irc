@@ -13,7 +13,7 @@ inline std::string
 }
 
 inline void
-  store_nickname_in_queue(Channel *channel, Client &client, std::queue<const std::string> &nick_queue)
+  attach_client_status(Channel *channel, Client &client, std::queue<const std::string> &nick_queue)
 {
   if (channel->is_operator(client))
     nick_queue.push("@" + client.get_nickname());
@@ -33,7 +33,7 @@ inline void
     if (!user->first->is_invisible())
     {
       if (is_public)
-        store_nickname_in_queue(channel, *user->first, nick_queue);
+        attach_client_status(channel, *user->first, nick_queue);
       else
         nick_queue.push(user->first->get_nickname());
     }
@@ -46,7 +46,7 @@ inline void
   const Channel::MemberMap &user_list = channel->get_user_list();
   Channel::MemberMap::const_iterator user = user_list.begin();
   for (; user != user_list.end(); ++user)
-    store_nickname_in_queue(channel, *user->first, nick_queue);
+    attach_client_status(channel, *user->first, nick_queue);
 }
 
 void
