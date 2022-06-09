@@ -51,22 +51,38 @@ namespace utils
   ClientInfo
     parse_client_info(std::string client_info)
   {
-    const char *offset_exclamation_mark = strchr(client_info.data(), '!'); 
-    const char *offset_percent_mark= strchr(client_info.data(), '!'); 
-    // \! 가 있는 경우
-      // 뒤에 @이 있어야함
-      // 앞에 있는 건 nick
-      // /! @ 사이있는 건 user
-      // @ 뒤는 host
-    // %가 있는 경우
-      // 뒤에 @가 있을 수도 있음
-      // 맨 앞은 user
-      // % 뒤는 host
-      // @ 이 있는 경우 servername
-    // @가 있는 경우
-      // 앞에서 나머지 경우가 다 처리 됐으니
-      // user@severname 케이스만 처리하면 됨
-    // 어떤 기호도 없는 경우
-      //nickname임
+    const char *offset_exclamation_mark = strchr(client_info.data(), '!');
+    const char *offset_percent_sign = strchr(client_info.data(), '%'); 
+    const char *offset_at_sign = strchr(client_info.data(), '@'); 
+	ClientInfo client;
+
+	if (offset_exclamation_mark && offset_exclamation_mark < offset_at_sign) // nick!user@host
+	{
+		client.nickname = client_info.substr(0, offset_exclamation_mark - client_info.data());
+		client.username = client_info.substr(offset_exclamation_mark - client_info.data() + 1, offset_at_sign - offset_exclamation_mark - 1);
+		client.hostname = client_info.substr(offset_at_sign - client_info.data() + 1);
+	}
+	else if (offset_percent_sign)
+	{
+		if (!offset_at_sign) // user%host
+		{
+			client.username = client_info.substr(0, offset_percent_sign - client_info.data());
+			client.hostname = client_info.substr(offset_percent_sign - client_info.data() + 1);
+		}
+		else if (offset_percent_sign < offset_at_sign) // user%host@servername
+		{
+			client.username = client_info.substr(0, offset_percent_sign - client_info.data());
+			client.hostname = client_info.substr(offset_percent_sign - client_info.data() + 1, offset_at_sign - offset_percent_sign - 1);
+			client.servername = client_info.substr(offset_at_sign - client_info.data() + 1);
+		}
+	}
+	else if (offset_at_sign) //user@servsername
+	{
+		client.username = client_info.substr(0, offset_at_sign - client_info.data());
+		client.servername = client_info.substr(offset_at_sign - client_info.data() + 1);
+	}
+	else //nickname
+		client.nickname = client_info;
+	return client;
   }
 }
