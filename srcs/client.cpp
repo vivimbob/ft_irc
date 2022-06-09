@@ -231,6 +231,19 @@ bool
 	return m_mode.invisible;
 }
 
+bool
+  Client::is_same_client(utils::ClientInfo client_info)
+{
+	if (!client_info.nickname.empty() && m_nickname != client_info.nickname)
+		return false;
+	if (!client_info.username.empty() && m_username != client_info.username)
+		return false;
+	if (!client_info.hostname.empty() && m_hostname != client_info.hostname)
+		return false;
+	if (!client_info.servername.empty() && m_servername != client_info.servername)
+		return false;
+	return true;
+}
 void
   Client::push_message(const std::string &message)
 {

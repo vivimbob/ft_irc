@@ -102,7 +102,8 @@ public:
     std::string rpl_welcome(void);
 
     std::string build_quit_reply(void);
-    std::string build_part_reply(void);
+    std::string build_part_reply(const std::string &channel);
+    std::string build_privmsg_reply(const std::string &target);
 
 };
 

@@ -1,7 +1,52 @@
 #include "../../includes/server.hpp"
+#include "../../includes/logger.hpp"
+#include "../../includes/utils.hpp"
 
 void
     Server::m_process_privmsg_command(Client &client, Message &msg)
 {
-	(void)client; (void)msg;
+	const std::vector<std::string> &parameter = msg.get_params();
+    
+    if (parameter.empty())
+        client.push_message(msg.err_no_recipient(), Logger::Debug);
+    if (parameter.size() == 1)
+        client.push_message(msg.err_no_text_to_send(), Logger::Debug);
+    
+    std::vector<const std::string> target_list;
+    utils::split_by_comma(target_list, parameter[0]);
+
+    std::vector<const std::string>::iterator it = target_list.begin();
+    std::vector<const std::string>::iterator ite = target_list.end();
+    for (;it != ite; ++it)
+    {
+       if (utils::is_channel_prefix(*it))
+       {
+           if (!m_channel_map.count(*it))
+                client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
+            m_send_to_channel(m_channel_map[*it], msg.build_privmsg_reply(*it));
+       }
+       else
+       {
+		   utils::ClientInfo client_info = utils::parse_client_info(*it);
+
+		   ClientMap::iterator client_it = m_client_map.begin();
+		   ClientMap::iterator client_ite = m_client_map.end();
+		   size_t matched_client_number = 0;
+		   Client *matched_client;
+		   for (; client_it != client_ite; ++client_it)
+		   {
+			   if (client_it->second->is_same_client(client_info))
+			   {
+				   matched_client = client_it->second;
+				   ++matched_client_number;
+			   }
+		   }
+		   if (matched_client_number == 0)
+			   client.push_message(msg.err_no_such_nick(*it), Logger::Debug);
+		   else if (matched_client_number == 1)
+			   m_prepare_to_send(*matched_client, msg.build_privmsg_reply(*it));
+		   else
+			   client.push_message(msg.err_too_many_targets(*it), Logger::Debug);
+       }
+    }
 }
