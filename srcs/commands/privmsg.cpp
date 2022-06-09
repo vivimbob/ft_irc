@@ -15,38 +15,38 @@ void
     std::vector<const std::string> target_list;
     utils::split_by_comma(target_list, parameter[0]);
 
-    std::vector<const std::string>::iterator it = target_list.begin();
-    std::vector<const std::string>::iterator ite = target_list.end();
-    for (;it != ite; ++it)
+    std::vector<const std::string>::iterator target_it = target_list.begin();
+    std::vector<const std::string>::iterator target_ite = target_list.end();
+    for (;target_it != target_ite; ++target_it)
     {
-       if (utils::is_channel_prefix(*it))
+       if (utils::is_channel_prefix(*target_it))
        {
-           if (!m_channel_map.count(*it))
-                client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
-            m_send_to_channel(m_channel_map[*it], msg.build_privmsg_reply(*it));
+           if (!m_channel_map.count(*target_it))
+                client.push_message(msg.err_no_such_channel(*target_it), Logger::Debug);
+            m_send_to_channel(m_channel_map[*target_it], msg.build_privmsg_reply(*target_it));
        }
        else
        {
-		   utils::ClientInfo client_info = utils::parse_client_info(*it);
+		   utils::ClientInfo client_info = utils::parse_client_info(*target_it);
 
 		   ClientMap::iterator client_it = m_client_map.begin();
 		   ClientMap::iterator client_ite = m_client_map.end();
-		   size_t matched_client_number = 0;
+		   size_t number_of_matched_client = 0;
 		   Client *matched_client;
 		   for (; client_it != client_ite; ++client_it)
 		   {
 			   if (client_it->second->is_same_client(client_info))
 			   {
 				   matched_client = client_it->second;
-				   ++matched_client_number;
+				   ++number_of_matched_client;
 			   }
 		   }
-		   if (matched_client_number == 0)
-			   client.push_message(msg.err_no_such_nick(*it), Logger::Debug);
-		   else if (matched_client_number == 1)
-			   m_prepare_to_send(*matched_client, msg.build_privmsg_reply(*it));
+		   if (number_of_matched_client == 0)
+			   client.push_message(msg.err_no_such_nick(*target_it), Logger::Debug);
+		   else if (number_of_matched_client == 1)
+			   m_prepare_to_send(*matched_client, msg.build_privmsg_reply(*target_it));
 		   else
-			   client.push_message(msg.err_too_many_targets(*it), Logger::Debug);
+			   client.push_message(msg.err_too_many_targets(*target_it), Logger::Debug);
        }
     }
 }
