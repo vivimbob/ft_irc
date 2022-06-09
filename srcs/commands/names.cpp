@@ -49,14 +49,14 @@ void
     std::vector<std::string> asterisk_channel;
     for (; channel_it != m_channel_map.end(); ++channel_it) // 현재 개설되어있는 채널 순회
     {
-      const std::string &channel_name = channel_it->first;
+      std::string channel_name;
       Channel *channel = channel_it->second;
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol = utils::attach_channel_symbol(channel);
+        channel_name = utils::attach_channel_symbol(channel);
         store_nickname_in_queue(channel, nick_queue);
-        client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
+        client.push_message(msg.rpl_namreply(channel_name, nick_queue));
       }
       else if (channel->is_private_mode() || channel->is_secret_mode()) // 가입 안되어있고 채널이 private, secret 모드일 때
         asterisk_channel.push_back(channel_name);
@@ -91,19 +91,19 @@ void
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it) // ','로 구분되어 저장된 채널 리스트 순회
     {
-      const std::string &channel_name = *channel_it;
-      Channel *channel = m_channel_map[channel_name];
-      if (!m_channel_map.count(channel_name)) // 잘못된 채널일 떄
+      std::string channel_name;
+      Channel *channel = m_channel_map[*channel_it];
+      if (!m_channel_map.count(*channel_it)) // 잘못된 채널일 떄
       {
-        client.push_message(msg.rpl_endofnames(channel_name));
+        client.push_message(msg.rpl_endofnames(*channel_it));
         continue;
       }
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol = utils::attach_channel_symbol(channel);
+        channel_name = utils::attach_channel_symbol(channel);
         store_nickname_in_queue(channel, nick_queue);
-        client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
+        client.push_message(msg.rpl_namreply(channel_name, nick_queue));
       }
       else // 가입되어 있지 않을 때
       {
