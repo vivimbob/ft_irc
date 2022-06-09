@@ -23,12 +23,30 @@ void
        {
            if (!m_channel_map.count(*it))
                 client.push_message(msg.err_no_such_channel(*it), Logger::Debug);
-//            m_send_to_channel(m_channel_map[*it], );
+            m_send_to_channel(m_channel_map[*it], msg.build_privmsg_reply(*it));
        }
        else
        {
+		   utils::ClientInfo client_info = utils::parse_client_info(*it);
+
+		   ClientMap::iterator client_it = m_client_map.begin();
+		   ClientMap::iterator client_ite = m_client_map.end();
+		   size_t matched_client_number = 0;
+		   Client *matched_client;
+		   for (; client_it != client_ite; ++client_it)
+		   {
+			   if (client_it->second->is_same_client(client_info))
+			   {
+				   matched_client = client_it->second;
+				   ++matched_client_number;
+			   }
+		   }
+		   if (matched_client_number == 0)
+			   client.push_message(msg.err_no_such_nick(*it), Logger::Debug);
+		   else if (matched_client_number == 1)
+			   m_prepare_to_send(*matched_client, msg.build_privmsg_reply(*it));
+		   else
+			   client.push_message(msg.err_too_many_targets(*it), Logger::Debug);
        }
     }
 }
-
-
