@@ -490,7 +490,7 @@ std::string
 }
 
 std::string
-  Message::build_part_reply(void)
+  Message::build_part_reply(const std::string &channel)
 {
   std::string param;
 
@@ -498,5 +498,11 @@ std::string
     param = m_parameters[1];
   else
     param = m_client->get_nickname();
-  return reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" + param + "\r\n";
+  return reply_nickmask_prefix(m_command) + " " + channel + " :" + param + "\r\n";
+}
+
+std::string
+  Message::build_privmsg_reply(const std::string &target)
+{
+  return reply_nickmask_prefix(m_command) + " " + target + " :" + m_parameters[1] + "\r\n";
 }
