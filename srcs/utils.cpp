@@ -39,7 +39,7 @@ namespace utils
   }
 
   std::string
-    get_channel_symbol(Channel *channel)
+    attach_channel_symbol(Channel *channel)
   {
     if (channel->is_private_mode())
       return "*";
