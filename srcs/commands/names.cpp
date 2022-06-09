@@ -91,7 +91,7 @@ void
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it) // ','로 구분되어 저장된 채널 리스트 순회
     {
-      std::string channel_name = channel_it->first;
+      std::string channel_name = *channel_it;
       if (!m_channel_map.count(channel_name)) // 잘못된 채널일 떄
       {
         client.push_message(msg.rpl_endofnames(channel_name));
