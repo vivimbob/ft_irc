@@ -22,7 +22,7 @@ namespace utils
   bool is_nickname_valid(std::string nick); bool is_channel_prefix(const std::string &chan);
   bool is_channel_name_valid(const std::string &chan);
   void split_by_comma(std::vector<const std::string> &splited_params, const std::string &params);
-  ClientInfo parse_client_info(std::string client_info);
+  ClientInfo parse_client_info(std::string client_str);
 }
 
 #endif /* UTILS_HPP */
