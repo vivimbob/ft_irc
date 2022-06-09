@@ -23,7 +23,7 @@ void
        {
            if (!m_channel_map.count(*target_it))
                 client.push_message(msg.err_no_such_channel(*target_it), Logger::Debug);
-            m_send_to_channel(m_channel_map[*target_it], msg.build_privmsg_reply(*target_it));
+            m_send_to_channel(m_channel_map[*target_it], msg.build_message_reply(*target_it));
        }
        else
        {
@@ -44,7 +44,7 @@ void
 		   if (number_of_matched_client == 0)
 			   client.push_message(msg.err_no_such_nick(*target_it), Logger::Debug);
 		   else if (number_of_matched_client == 1)
-			   m_prepare_to_send(*matched_client, msg.build_privmsg_reply(*target_it));
+			   m_prepare_to_send(*matched_client, msg.build_message_reply(*target_it));
 		   else
 			   client.push_message(msg.err_too_many_targets(*target_it), Logger::Debug);
        }
