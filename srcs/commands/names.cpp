@@ -91,13 +91,13 @@ void
     std::vector<const std::string>::const_iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it) // ','로 구분되어 저장된 채널 리스트 순회
     {
-      std::string channel_name;
-      Channel *channel = m_channel_map[*channel_it];
       if (!m_channel_map.count(*channel_it)) // 잘못된 채널일 떄
       {
         client.push_message(msg.rpl_endofnames(*channel_it));
         continue;
       }
+      std::string channel_name;
+      Channel *channel = m_channel_map[*channel_it];
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
