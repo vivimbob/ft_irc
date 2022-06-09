@@ -2,16 +2,6 @@
 #include "../../includes/utils.hpp"
 #include "../../includes/server.hpp"
 
-inline std::string
-  get_channel_symbol(Channel *channel)
-{
-  if (channel->is_private_mode())
-    return "*";
-  else if (channel->is_secret_mode())
-    return "@";
-  return "=";
-}
-
 inline void
   attach_client_status(Channel *channel, Client &client, std::queue<const std::string> &nick_queue)
 {
@@ -24,7 +14,7 @@ inline void
 }
 
 inline void
-  iterate_user_not_joined(Channel *channel, std::queue<const std::string>& nick_queue, bool is_public = false)
+  store_nickname_in_queue(Channel *channel, std::queue<const std::string>& nick_queue, bool is_public)
 {
   const Channel::MemberMap &user_list = channel->get_user_list();
   Channel::MemberMap::const_iterator user = user_list.begin();
@@ -41,7 +31,7 @@ inline void
 }
 
 inline void
-  iterate_user_joined(Channel *channel, std::queue<const std::string>& nick_queue)
+  store_nickname_in_queue(Channel *channel, std::queue<const std::string>& nick_queue)
 {
   const Channel::MemberMap &user_list = channel->get_user_list();
   Channel::MemberMap::const_iterator user = user_list.begin();
@@ -64,15 +54,15 @@ void
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol = get_channel_symbol(channel);
-        iterate_user_joined(channel, nick_queue);
+        std::string symbol = utils::get_channel_symbol(channel);
+        store_nickname_in_queue(channel, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
       else if (channel->is_private_mode() || channel->is_secret_mode()) // 가입 안되어있고 채널이 private, secret 모드일 때
         asterisk_channel.push_back(channel_name);
       else // 가입 안되어있고 채널이 public일 때
       {
-        iterate_user_not_joined(channel, nick_queue, true);
+        store_nickname_in_queue(channel, nick_queue, true);
         client.push_message(msg.rpl_namreply("=" + channel_name, nick_queue));
       }
     }
@@ -83,7 +73,7 @@ void
     for (; asterisk_channel_it != asterisk_channel.end(); ++asterisk_channel_it) // 가입 안되어있고 채널이 private, secret 모드일 때
     {
       Channel *channel = m_channel_map[*asterisk_channel_it];
-      iterate_user_not_joined(channel, nick_queue);
+      store_nickname_in_queue(channel, nick_queue, false);
     }
     ClientMap::const_iterator client_it = m_client_map.begin();
     for (;client_it != m_client_map.end(); ++client_it) // 클라이언트가 어느 채널에도 속하지 않을 때
@@ -111,20 +101,20 @@ void
       std::queue<const std::string> nick_queue;
       if (client.is_already_joined(channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
       {
-        std::string symbol = get_channel_symbol(channel);
-        iterate_user_joined(channel, nick_queue);
+        std::string symbol = utils::get_channel_symbol(channel);
+        store_nickname_in_queue(channel, nick_queue);
         client.push_message(msg.rpl_namreply(symbol + channel_name, nick_queue));
       }
       else // 가입되어 있지 않을 때
       {
         if (!channel->is_private_mode() && !channel->is_secret_mode()) // 일반(public) 채널일떄
         {
-          iterate_user_not_joined(channel, nick_queue, true);
+          store_nickname_in_queue(channel, nick_queue, true);
           client.push_message(msg.rpl_namreply("=" + channel_name, nick_queue));
         }
         else if (channel->is_private_mode()) // private 채널일 때
         {
-          iterate_user_not_joined(channel, nick_queue);
+          store_nickname_in_queue(channel, nick_queue, false);
           client.push_message(msg.rpl_namreply("*", nick_queue));
         }
         else // secret
