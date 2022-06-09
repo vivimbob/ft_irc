@@ -1,4 +1,5 @@
 #include "../includes/utils.hpp"
+#include "../includes/channel.hpp"
 
 namespace utils
 {

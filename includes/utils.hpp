@@ -6,7 +6,6 @@
 #include <vector>
 #include <sstream>
 #include <map>
-#include "channel.hpp"
 
 typedef std::map<const std::string, const std::string> ChannelKeyPairMap;
 

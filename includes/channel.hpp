@@ -6,8 +6,9 @@
 #include <map>
 #include <ctime>
 #include "message.hpp"
-#include "client.hpp"
 #include "membership.hpp"
+
+class Client;
 
 class Channel
 {
