@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include <ctime>
 #include "message.hpp"
 #include "membership.hpp"
@@ -32,6 +33,7 @@ class Channel
     std::string m_channel_name;
     time_t m_channel_init_time;
     MemberMap m_member_list;
+    std::set<Client *> m_invitation_list;
     std::string m_channel_topic;
     std::string m_key;
 	size_t m_user_limit;
