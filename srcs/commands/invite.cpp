@@ -39,5 +39,6 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       client.push_message(msg.err_chanoprivs_needed(channel_name), Logger::Debug);
       return ;
     }
+    client.push_message(msg.rpl_inviting(channel_name, nickname));
   }
 }
