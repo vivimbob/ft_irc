@@ -31,7 +31,7 @@ class Channel
   private:
     std::string m_channel_name;
     time_t m_channel_init_time;
-    MemberMap m_user_list;
+    MemberMap m_member_list;
     std::string m_channel_topic;
     std::string m_key;
 	size_t m_user_limit;
