@@ -8,9 +8,15 @@ void
 	const std::vector<std::string> &parameter = msg.get_params();
     
     if (parameter.empty())
+	{
         client.push_message(msg.err_no_recipient(), Logger::Debug);
+		return ;
+	}
     if (parameter.size() == 1)
+	{
         client.push_message(msg.err_no_text_to_send(), Logger::Debug);
+		return ;
+	}
     
     std::vector<const std::string> target_list;
     utils::split_by_comma(target_list, parameter[0]);
