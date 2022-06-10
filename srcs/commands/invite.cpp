@@ -19,5 +19,11 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       client.push_message(msg.err_no_such_nick(first_param), Logger::Debug);
       return ;
     }
+    const std::string second_param = msg.get_params()[1];
+    if (!m_channel_map.count(second_param))
+    {
+      client.push_message(msg.err_no_such_channel(second_param), Logger::Debug);
+      return ;
+    }
   }
 }
