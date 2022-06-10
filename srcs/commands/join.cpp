@@ -49,7 +49,7 @@ void
                 client.push_message(msg.err_channel_is_full(channel_name), Logger::Debug);
                 return ;
             }
-            if (channel->is_invite_only_mode()) // invite-only인 경우
+            if (channel->is_invite_only_mode() && !channel->is_user_on_invitation_list(&client)) // invite-only인 경우
             {
                 client.push_message(msg.err_invite_only_chan(channel_name), Logger::Debug);
                 return ;
@@ -66,6 +66,8 @@ void
             }
             channel->add_user(client);
             client.insert_channel(channel);
+            if (channel->is_user_on_invitation_list(&client))
+                channel->delete_user_invitation_list(client);
             Logger().info() << "Join channel :" << channel_name << " with " << key << " key by " << client.get_nickname();
         }
 
