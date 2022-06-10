@@ -3,20 +3,12 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_privmsg_command(Client &client, Message &msg)
+    Server::m_process_notice_command(Client &client, Message &msg)
 {
 	const std::vector<std::string> &parameter = msg.get_params();
     
-    if (parameter.empty())
-	{
-        client.push_message(msg.err_no_recipient(), Logger::Debug);
+    if (parameter.size()  < 2)
 		return ;
-	}
-    if (parameter.size() == 1)
-	{
-        client.push_message(msg.err_no_text_to_send(), Logger::Debug);
-		return ;
-	}
     
     std::vector<const std::string> target_list;
     utils::split_by_comma(target_list, parameter[0]);
@@ -47,12 +39,8 @@ void
 				   ++number_of_matched_client;
 			   }
 		   }
-		   if (number_of_matched_client == 0)
-			   client.push_message(msg.err_no_such_nick(*target_it), Logger::Debug);
-		   else if (number_of_matched_client == 1)
+		   if (number_of_matched_client == 1)
 			   m_prepare_to_send(*matched_client, msg.build_message_reply(*target_it));
-		   else
-			   client.push_message(msg.err_too_many_targets(*target_it), Logger::Debug);
        }
     }
 }

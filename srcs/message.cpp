@@ -502,7 +502,7 @@ std::string
 }
 
 std::string
-  Message::build_privmsg_reply(const std::string &target)
+  Message::build_message_reply(const std::string &target)
 {
   return reply_nickmask_prefix(m_command) + " " + target + " :" + m_parameters[1] + "\r\n";
 }
