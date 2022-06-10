@@ -31,5 +31,10 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       client.push_message(msg.err_not_on_channel(channel_name), Logger::Debug);
       return ;
     }
+    if (m_client_map[nickname]->is_already_joined(channel))
+    {
+      client.push_message(msg.err_user_on_channel(nickname, channel_name), Logger::Debug);
+      return ;
+    }
   }
 }
