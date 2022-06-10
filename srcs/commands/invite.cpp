@@ -41,5 +41,6 @@ void Server::m_process_invite_command(Client &client, Message &msg)
     }
     client.push_message(msg.rpl_inviting(channel_name, nickname));
     m_prepare_to_send(*m_client_map[nickname], msg.build_invite_reply(nickname, channel_name));
+    channel->add_user_invitation_list(*m_client_map[nickname]);
   }
 }
