@@ -104,6 +104,7 @@ public:
     std::string build_quit_reply(void);
     std::string build_part_reply(const std::string &channel);
     std::string build_message_reply(const std::string &target);
+    std::string build_invite_reply(const std::string &nick, const std::string &channel);
 
 };
 
