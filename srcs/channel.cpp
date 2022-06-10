@@ -60,7 +60,7 @@ std::string
 			m_mode_string.push_back('l');
 		m_mode_string_need_update = false;
 	}
-	MemberShip &member = m_user_list.find(client)->second;
+	MemberShip &member = m_member_list.find(client)->second;
 	std::string member_mode_string;
 	if (member.mode.operater)
 		member_mode_string.push_back('o');
@@ -84,7 +84,7 @@ const size_t&
 const std::map<Client*, MemberShip>&
   Channel::get_user_list(void)
 {
-  return m_user_list;
+  return m_member_list;
 }
 
 void
@@ -181,43 +181,49 @@ void
 void
   Channel::set_operator_flag(bool toggle, Client *client)
 {
-	m_user_list.find(client)->second.mode.operater = toggle;
+	m_member_list.find(client)->second.mode.operater = toggle;
 }
 
 void
   Channel::set_voice_flag(bool toggle, Client *client)
 {
-	m_user_list.find(client)->second.mode.voice = toggle;
+	m_member_list.find(client)->second.mode.voice = toggle;
 }
 
 bool
   Channel::is_empty()
 {
-  return m_user_list.empty();
+  return m_member_list.empty();
 }
 
 bool
   Channel::is_full()
 {
-  return m_user_list.size() >= m_user_limit;
+  return m_member_list.size() >= m_user_limit;
 }
 
 bool
   Channel::is_operator(Client &client)
 {
-	return m_user_list.find(&client)->second.mode.operater;
+	return m_member_list.find(&client)->second.mode.operater;
 }
 
 bool
   Channel::is_voice_mode(Client &client)
 {
-	return m_user_list.find(&client)->second.mode.voice;
+	return m_member_list.find(&client)->second.mode.voice;
 }
 
 bool
   Channel::is_user_on_channel(Client *client)
 {
-	return m_user_list.count(client);
+	return m_member_list.count(client);
+}
+
+bool
+  Channel::is_user_on_invitation_list(Client *client)
+{
+	return m_invitation_list.count(client);
 }
 
 bool
@@ -259,11 +265,23 @@ bool
 void
   Channel::add_user(Client &client)
 {
-  m_user_list.insert(std::make_pair(&client, MemberShip(&client, this)));
+  m_member_list.insert(std::make_pair(&client, MemberShip(&client, this)));
 }
 
 void
   Channel::delete_user(Client &client)
 {
-  m_user_list.erase(&client);
+  m_member_list.erase(&client);
+}
+
+void
+  Channel::add_user_invitation_list(Client &client)
+{
+  m_invitation_list.insert(&client);
+}
+
+void
+  Channel::delete_user_invitation_list(Client &client)
+{
+  m_invitation_list.erase(&client);
 }

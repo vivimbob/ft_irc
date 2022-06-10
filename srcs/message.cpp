@@ -428,9 +428,9 @@ std::string
 }
 
 std::string
-	Message::rpl_inviting(const std::string& channel, const std::string& nick)
+	Message::rpl_inviting(const std::string& nick, const std::string& channel)
 {
-	return reply_servername_prefix("341") + " " + channel + " " + nick + "\r\n";
+	return reply_servername_prefix("341") + " " + nick + " " + channel + "\r\n";
 }
 
 std::string
@@ -505,4 +505,10 @@ std::string
   Message::build_message_reply(const std::string &target)
 {
   return reply_nickmask_prefix(m_command) + " " + target + " :" + m_parameters[1] + "\r\n";
+}
+
+std::string
+  Message::build_invite_reply(const std::string &nick, const std::string &channel)
+{
+  return reply_nickmask_prefix(m_command) + " " + nick + " " + channel + "\r\n";
 }

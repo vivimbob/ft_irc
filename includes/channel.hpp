@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include <ctime>
 #include "message.hpp"
 #include "membership.hpp"
@@ -31,7 +32,8 @@ class Channel
   private:
     std::string m_channel_name;
     time_t m_channel_init_time;
-    MemberMap m_user_list;
+    MemberMap m_member_list;
+    std::set<Client *> m_invitation_list;
     std::string m_channel_topic;
     std::string m_key;
 	size_t m_user_limit;
@@ -73,6 +75,7 @@ class Channel
 	bool is_operator(Client &client);
     bool is_voice_mode(Client &client);
 	bool is_user_on_channel(Client *client);
+  bool is_user_on_invitation_list(Client *client);
 	bool is_protected_topic_mode(void);
     bool is_invite_only_mode(void);
     bool is_limit_mode(void);
@@ -82,6 +85,8 @@ class Channel
 
     void add_user(Client &client);
     void delete_user(Client &client);
+    void add_user_invitation_list(Client &client);
+    void delete_user_invitation_list(Client &client);
 };
 
 #endif /* CHANNEL_HPP */
