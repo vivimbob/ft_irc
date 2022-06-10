@@ -36,5 +36,10 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       client.push_message(msg.err_user_on_channel(nickname, channel_name), Logger::Debug);
       return ;
     }
+    if (channel->is_invite_only_mode() && !channel->is_operator(client))
+    {
+      client.push_message(msg.err_chanoprivs_needed(channel_name), Logger::Debug);
+      return ;
+    }
   }
 }
