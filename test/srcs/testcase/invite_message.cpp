@@ -3,3 +3,7 @@
 #include <ios>
 #include <unistd.h>
 #include <iostream>
+
+void test_invite_message()
+{
+}
