@@ -57,6 +57,7 @@ class Server
         void m_process_invite_command(Client &client, Message &msg);
         void m_process_privmsg_command(Client &client, Message &msg);
         void m_process_notice_command(Client &client, Message &msg);
+        void m_process_kick_command(Client &client, Message &msg);
 
         void m_join_channel(Client &client, Message &msg, std::map<const std::string, const std::string> &chan_key_pair);
         

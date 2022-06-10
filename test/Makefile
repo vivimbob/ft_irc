@@ -7,7 +7,8 @@ testcase	= register.cpp\
 			  private_message.cpp\
 				list_message.cpp\
 				notice_message.cpp\
-				invite_message.cpp
+				invite_message.cpp\
+				kick.cpp
 
 srcs		= main.cpp\
 			  client.cpp\

@@ -43,6 +43,7 @@ void test_start()
 	test_notice_message();
 	test_list_message();
 	test_invite_message();
+	test_kick();
 	//test_join();
 	//test_part();
 	//test_names();
