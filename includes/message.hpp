@@ -93,7 +93,7 @@ public:
     std::string rpl_channel_mode_is(const std::string& channel, const std::string& mode);
     std::string rpl_notopic(const std::string& channel);
     std::string rpl_topic(const std::string& channel, const std::string& topic);
-    std::string rpl_inviting(const std::string& channel, const std::string& nick);
+    std::string rpl_inviting(const std::string& nick, const std::string& channel);
     std::string rpl_namreply(const std::string& channel, std::queue<const std::string>& nick);
     std::string rpl_endofnames(const std::string& channel);
     std::string rpl_banlist(const std::string& channel, const std::string& banid);

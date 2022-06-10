@@ -39,7 +39,7 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       client.push_message(msg.err_chanoprivs_needed(channel_name), Logger::Debug);
       return ;
     }
-    client.push_message(msg.rpl_inviting(channel_name, nickname));
+    client.push_message(msg.rpl_inviting(nickname, channel_name));
     m_prepare_to_send(*m_client_map[nickname], msg.build_invite_reply(nickname, channel_name));
     channel->add_user_invitation_list(*m_client_map[nickname]);
   }
