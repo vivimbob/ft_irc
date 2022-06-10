@@ -18,6 +18,7 @@ void test_register();
 void test_private_message();
 void test_list_message();
 void test_notice_message();
+void test_invite_message();
 
 void test_start();
 

@@ -42,6 +42,7 @@ void test_start()
 	test_private_message();
 	test_notice_message();
 	test_list_message();
+	test_invite_message();
 	//test_join();
 	//test_part();
 	//test_names();
@@ -51,7 +52,6 @@ void test_start()
 	//test_operator_user();
 	//test_send_message();
 	//test_channel_commands();
-	//test_invite();
 
 	//test_user_mode();
 	//test_channel_mode();

@@ -6,7 +6,8 @@ CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 testcase	= register.cpp\
 			  private_message.cpp\
 				list_message.cpp\
-				notice_message.cpp
+				notice_message.cpp\
+				invite_message.cpp
 
 srcs		= main.cpp\
 			  client.cpp\
