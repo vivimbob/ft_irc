@@ -44,28 +44,30 @@ void
         }
         else // join할 채널이 존재하는 경우
         {
-            if (channel->is_limit_mode() && channel->is_full()) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
+            if (client.is_already_joined(channel)) // 이미 join된 경우
             {
-                client.push_message(msg.err_channel_is_full(channel_name), Logger::Debug);
+                client.push_message(":You have already joined in <" + channel_name + "> channel\r\n", Logger::Debug);
                 return ;
             }
-            if (channel->is_invite_only_mode()) // invite-only인 경우
-            {
-                client.push_message(msg.err_invite_only_chan(channel_name), Logger::Debug);
-                return ;
-            }
-             if (client.is_already_joined(channel)) // 이미 join된 경우
-             {
-                 client.push_message(":You have already joined in <" + channel_name + "> channel\r\n", Logger::Debug);
-                 return ;
-             }
             if ((channel->is_key_mode()) && (key != channel->get_key())) // key mode인데 key가 안 맞을 때
             {
                 client.push_message(msg.err_bad_channel_key(channel_name), Logger::Debug);
                 return ;
             }
+            if (channel->is_limit_mode() && channel->is_full()) // 현재 채널이 포함할 수 있는 최대 유저 수에 도달했을 때
+            {
+                client.push_message(msg.err_channel_is_full(channel_name), Logger::Debug);
+                return ;
+            }
+            if (channel->is_invite_only_mode() && !channel->is_user_on_invitation_list(&client)) // invite-only인 경우
+            {
+                client.push_message(msg.err_invite_only_chan(channel_name), Logger::Debug);
+                return ;
+            }
             channel->add_user(client);
             client.insert_channel(channel);
+            if (channel->is_user_on_invitation_list(&client))
+                channel->delete_user_invitation_list(client);
             Logger().info() << "Join channel :" << channel_name << " with " << key << " key by " << client.get_nickname();
         }
 
