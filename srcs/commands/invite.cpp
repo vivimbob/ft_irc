@@ -40,5 +40,6 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       return ;
     }
     client.push_message(msg.rpl_inviting(channel_name, nickname));
+    m_prepare_to_send(*m_client_map[nickname], msg.build_invite_reply(nickname, channel_name));
   }
 }
