@@ -221,6 +221,12 @@ bool
 }
 
 bool
+  Channel::is_user_on_invitation_list(Client *client)
+{
+	return m_invitation_list.count(client);
+}
+
+bool
   Channel::is_protected_topic_mode(void)
 {
 	return m_mode.topic;

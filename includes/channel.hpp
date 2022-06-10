@@ -75,6 +75,7 @@ class Channel
 	bool is_operator(Client &client);
     bool is_voice_mode(Client &client);
 	bool is_user_on_channel(Client *client);
+  bool is_user_on_invitation_list(Client *client);
 	bool is_protected_topic_mode(void);
     bool is_invite_only_mode(void);
     bool is_limit_mode(void);
