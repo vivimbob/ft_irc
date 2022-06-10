@@ -273,3 +273,15 @@ void
 {
   m_member_list.erase(&client);
 }
+
+void
+  Channel::add_user_invitation_list(Client &client)
+{
+  m_invitation_list.insert(&client);
+}
+
+void
+  Channel::delete_user_invitation_list(Client &client)
+{
+  m_invitation_list.erase(&client);
+}

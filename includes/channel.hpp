@@ -85,6 +85,8 @@ class Channel
 
     void add_user(Client &client);
     void delete_user(Client &client);
+    void add_user_invitation_list(Client &client);
+    void delete_user_invitation_list(Client &client);
 };
 
 #endif /* CHANNEL_HPP */
