@@ -11,30 +11,12 @@ class SendBuffer : public std::string
         SendBuffer(const SendBuffer& copy);
         SendBuffer &operator=(const SendBuffer& copy);
     public:
-        SendBuffer(void)
-            : m_offset(0)
-        {
-        }
-
-        ~SendBuffer(void)
-        {
-        }
+        SendBuffer(void);
+        ~SendBuffer(void);
         
-        void    clear()
-        {
-            this->std::string::clear();
-            m_offset = 0;
-        }
-
-        unsigned int get_offset(void) const
-        {
-            return m_offset;
-        }
-
-        void    set_offset(unsigned int offset)
-        {
-            m_offset = offset;
-        }
+        void    clear();
+        unsigned int get_offset(void) const;
+        void    set_offset(unsigned int offset);
 };
 
 #endif  /* SENDBUFFER_HPP */

@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iostream>
 #include <map>
+#include <utility>
 
 class Logger
 {
@@ -18,9 +19,7 @@ class Logger
         Trace,
         Debug,
         Info,
-        Warning,
         Error,
-        Fatal,
         None
     };
 
@@ -56,13 +55,10 @@ class Logger
       info(void);
 
     std::ostringstream& 
-      warning(void);
-
-    std::ostringstream& 
       error(void);
 
     std::ostringstream& 
-      fatal(void);
+      log(int level);
 
   private:
     Logger(const Logger &log);
@@ -86,9 +82,9 @@ class Logger::_Impl
 
 /* Member types begin */
 
-    typedef std::map<int, std::string> _Symbol_Map;
+    typedef std::pair<int, std::string> _Symbol;
 
-    typedef std::map<int, std::ostream *> _Stream_Map;
+    typedef std::pair<int, std::ostream *> _Stream;
 
 /* Member types end */
 
@@ -110,13 +106,7 @@ class Logger::_Impl
       m_info(void);
 
     std::ostringstream& 
-      m_warning(void);
-
-    std::ostringstream& 
       m_error(void);
-
-    std::ostringstream& 
-      m_fatal(void);
 
     static void 
       m_set_loglevel(int level);
@@ -133,9 +123,9 @@ class Logger::_Impl
     void 
       m_prefix_timestamp(void);
 
-    static _Symbol_Map m_initial_symbol_map(void);
-
-    static _Stream_Map m_initial_stream_map(void);
+//    static _Symbol_Map m_initial_symbol_map(void);
+//
+//    static _Stream_Map m_initial_stream_map(void);
 
 /* Member functions end */
 
@@ -143,9 +133,8 @@ class Logger::_Impl
 
   private:
 
-    static _Symbol_Map m_symbols;
-
-    static _Stream_Map m_streams;
+    static _Symbol m_symbols[4];
+    static _Stream m_streams[4];
 
     static int m_level;
 

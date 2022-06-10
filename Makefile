@@ -1,31 +1,50 @@
-NAME    = ircserv
-CC      = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+NAME    	= ircserv
+CC      	= c++
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 # CXXFLAGS  = -std=c++98
 
-SRCS    = main.cpp\
-		srcs/channel.cpp\
-		srcs/client.cpp\
-		srcs/ircmessage.cpp\
-    srcs/logger.cpp\
-		srcs/server.cpp\
-		srcs/utils.cpp\
-		srcs/reply.cpp
+commands	= join.cpp\
+			  mode.cpp\
+			  nick.cpp\
+			  part.cpp\
+			  pass.cpp\
+			  quit.cpp\
+			  topic.cpp\
+			  user.cpp\
+			  names.cpp\
+			  privmsg.cpp\
+				list.cpp\
+				notice.cpp\
+				invite.cpp\
+				kick.cpp
 
-OBJS    = $(SRCS:%.cpp=%.o)
+srcs		= main.cpp\
+			  channel.cpp\
+			  client.cpp\
+			  message.cpp\
+			  logger.cpp\
+			  server.cpp\
+			  utils.cpp\
+			  sendbuffer.cpp\
+			  membership.cpp\
+			  $(commands:%=commands/%)
 
-all     : $(NAME)
+SRCS    	= $(srcs:%=srcs/%)
 
-%.o     : %.cpp
+OBJS		= $(SRCS:%.cpp=%.o)
+
+all     	: $(NAME)
+
+%.o     	: %.cpp
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
-$(NAME)   : $(OBJS)
+$(NAME)   	: $(OBJS)
 	$(CC) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
-clean   :
+clean   	:
 	rm -rf $(OBJS)
 
-fclean    : clean
+fclean    	: clean
 	rm -rf $(NAME)
 
-re      : fclean all
+re			: fclean all

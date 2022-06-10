@@ -1,0 +1,14 @@
+*3
+$3
+set
+$10
+db.version
+$2
+22
+*3
+$3
+set
+$19
+crypto.cloak_secret
+$43
+njWqA-hWyw06uMWzkvi9EbnvMy1-0UMSFQuGrQAxL00
