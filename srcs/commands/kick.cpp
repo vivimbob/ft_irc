@@ -63,7 +63,7 @@ void
 
 			if (!m_client_map.count(nick))
 			{
-				client.push_message(msg.err_user_not_in_channel(nick, channel_name), Logger::Debug);
+				client.push_message(msg.err_no_such_nick(nick), Logger::Debug);
 				continue;
 			}
 			Client *target_client = m_client_map[nick];
@@ -117,7 +117,7 @@ void
 
 			if (!m_client_map.count(nick))
 			{
-				client.push_message(msg.err_user_not_in_channel(nick, channel_name), Logger::Debug);
+				client.push_message(msg.err_no_such_nick(nick), Logger::Debug);
 				continue;
 			}
 
