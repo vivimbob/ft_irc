@@ -12,24 +12,26 @@ void Server::m_process_invite_command(Client &client, Message &msg)
   else if (msg.get_params().size() == 2)
   {
     const std::string nickname = msg.get_params()[0];
+    const std::string channel_name = msg.get_params()[1];
+    Channel *channel = m_channel_map[channel_name];
+    Client *target_client = m_client_map[nickname];
+    
     if (!m_client_map.count(nickname))
     {
       client.push_message(msg.err_no_such_nick(nickname), Logger::Debug);
       return ;
     }
-    const std::string channel_name = msg.get_params()[1];
     if (!m_channel_map.count(channel_name))
     {
       client.push_message(msg.err_no_such_channel(channel_name), Logger::Debug);
       return ;
     }
-    Channel *channel = m_channel_map[channel_name];
     if (!client.is_already_joined(channel))
     {
       client.push_message(msg.err_not_on_channel(channel_name), Logger::Debug);
       return ;
     }
-    if (m_client_map[nickname]->is_already_joined(channel))
+    if (target_client->is_already_joined(channel))
     {
       client.push_message(msg.err_user_on_channel(nickname, channel_name), Logger::Debug);
       return ;
@@ -40,7 +42,7 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       return ;
     }
     client.push_message(msg.rpl_inviting(nickname, channel_name));
-    m_prepare_to_send(*m_client_map[nickname], msg.build_invite_reply(nickname, channel_name));
-    channel->add_user_invitation_list(*m_client_map[nickname]);
+    m_prepare_to_send(*target_client, msg.build_invite_reply(nickname, channel_name));
+    channel->add_user_invitation_list(*target_client);
   }
 }
