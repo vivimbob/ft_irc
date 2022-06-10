@@ -25,5 +25,11 @@ void Server::m_process_invite_command(Client &client, Message &msg)
       client.push_message(msg.err_no_such_channel(channel_name), Logger::Debug);
       return ;
     }
+    Channel *channel = m_channel_map[channel_name];
+    if (!client.is_already_joined(channel))
+    {
+      client.push_message(msg.err_not_on_channel(channel_name), Logger::Debug);
+      return ;
+    }
   }
 }
