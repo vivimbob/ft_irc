@@ -34,3 +34,16 @@ Bot::~Bot()
 {
 
 }
+
+void Bot::store_line_by_line()
+{
+  SendBuffer &bot_buffer = this->get_send_buffer();
+  size_t position = bot_buffer.find_first_of("\r\n", 0);
+  while (position != static_cast<size_t>(std::string::npos))
+  {
+      this->get_commands().push(new Message(this,
+      std::string(bot_buffer.begin(), bot_buffer.begin() + position)));
+      bot_buffer.erase(0, position + 2);
+      position = bot_buffer.find_first_of("\r\n", 0);
+  }
+}

@@ -346,5 +346,8 @@ void
             else if(event.filter == EVFILT_WRITE)
                 m_send_client_msg(*(Client *)event.udata, event.data);
         }
+        bot.store_line_by_line();
+        if (bot.get_commands().size())
+          m_handle_messages(bot);
     }
 }
