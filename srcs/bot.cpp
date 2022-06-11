@@ -17,6 +17,7 @@ Bot::CommandMap
 void Bot::m_process_help_command(Client &client, Message &msg)
 {
   client.push_message("Hi! " + client.get_nickname() + " \r\n");
+  client.push_message("This is " + msg.get_params()[1] + " command\r\n");
   client.push_message("There are some commands that you can use in command line\r\n");
   client.push_message("command list : [help, time]\r\n");
 }
@@ -58,8 +59,14 @@ void Bot::handle_messages(Client &client)
       Logger().debug() << this->get_nickname() << " send [" << message->get_message() << ']';
       this->get_commands().pop();
       message->parse_message();
-      if (m_bot_command_map.count(message->get_command()))
-          (this->*m_bot_command_map[message->get_command()])(client, *message);
+      std::string bot_command = message->get_params()[1];
+      std::string::iterator it = bot_command.begin();
+      std::string::iterator ite = bot_command.end();
+      for (; it != ite; ++it)
+        if ((unsigned)*it - 'a' < 26)
+          *it ^= 0b100000;
+      if (m_bot_command_map.count(bot_command))
+          (this->*m_bot_command_map[bot_command])(client, *message);
       else
           client.push_message(message->err_unknown_command(), Logger::Debug);
       delete message;
