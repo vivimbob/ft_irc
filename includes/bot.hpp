@@ -6,6 +6,17 @@
 class Bot : public Client
 {
   public:
+    typedef std::map<std::string, void (Bot::*)(Client&, Message&)> CommandMap;
+
+  private:
+    static CommandMap m_bot_command_map;
+
+    static CommandMap m_initial_bot_command_map();
+
+    void m_process_help_command(Client &client, Message &msg);
+    void m_process_time_command(Client &client, Message &msg);
+
+  public:
     Bot(std::string nickname);
     ~Bot(void);
 };
