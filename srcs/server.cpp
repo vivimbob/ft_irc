@@ -336,9 +336,11 @@ void
     {
         event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
 		Logger().trace() << event_count << " new kevent";
+        Client *client;
         for (int i = 0; i < event_count; ++i)
         {
             struct kevent &event = m_event_list[i];
+            client = (Client *)event.udata;
             if (event.ident == (unsigned int)m_listen_fd)
                 m_accept_client();
             else if (event.filter == EVFILT_READ)
@@ -348,6 +350,6 @@ void
         }
         bot.store_line_by_line();
         if (bot.get_commands().size())
-          m_handle_messages(bot);
+          bot.handle_messages(*client);
     }
 }
