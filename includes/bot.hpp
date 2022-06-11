@@ -20,6 +20,8 @@ class Bot : public Client
     Bot(std::string nickname);
     ~Bot(void);
     void store_line_by_line(void);
+    void handle_messages(Client &client);
+
 };
 
 #endif /* BOT_HPP */
