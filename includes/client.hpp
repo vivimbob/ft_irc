@@ -24,15 +24,9 @@ private:
 
     sockaddr_in m_client_addr;
     int m_client_fd;
-    SendBuffer m_send_buffer;
     std::string m_recv_buffer;
-    std::string	m_nickname;
-    std::string	m_username;
-    std::string m_hostname;
-    std::string m_servername;
-    std::string m_realname;
     std::queue<Message *> m_commands;
-	std::set<Channel *> m_channel_list;
+	  std::set<Channel *> m_channel_list;
     size_t m_channel_limits;
 
 	bool m_pass_registered;
@@ -43,7 +37,16 @@ private:
 	std::string m_mode_string;
 	s_mode m_mode;
 
+  protected:
+    std::string	m_nickname;
+    std::string	m_username;
+    std::string m_hostname;
+    std::string m_servername;
+    std::string m_realname;
+    SendBuffer m_send_buffer;
+
   public:
+    Client();
     Client(sockaddr_in client_addr, int client_fd);
     ~Client(void);
     sockaddr_in get_client_addr(void);
