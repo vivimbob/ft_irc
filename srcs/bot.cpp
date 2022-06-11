@@ -13,6 +13,18 @@ Bot::CommandMap
     return (temp_map);
 }
 
+void Bot::m_process_help_command(Client &client, Message &msg)
+{
+  (void)client;
+  (void)msg;
+}
+
+void Bot::m_process_time_command(Client &client, Message &msg)
+{
+  (void)client;
+  (void)msg;
+}
+
 Bot::Bot(std::string nickname)
 {
   m_nickname = nickname;

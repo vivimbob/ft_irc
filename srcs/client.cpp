@@ -17,6 +17,11 @@ Client::Client(sockaddr_in client_addr, int client_fd)
   m_channel_limits = 10;
 }
 
+Client::Client(void)
+{
+  
+}
+
 Client::~Client(void)
 {
   while (m_commands.size())
