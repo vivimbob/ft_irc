@@ -27,6 +27,7 @@ srcs		= main.cpp\
 			  utils.cpp\
 			  sendbuffer.cpp\
 			  membership.cpp\
+				bot.cpp\
 			  $(commands:%=commands/%)
 
 SRCS    	= $(srcs:%=srcs/%)
