@@ -1,6 +1,7 @@
 #include "../includes/server.hpp"
 #include "../includes/logger.hpp"
 #include "../includes/client.hpp"
+#include "../includes/bot.hpp"
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -176,6 +177,7 @@ void
 {
 	  m_client_map[client.get_nickname()] = &client;
 	  client.push_message(msg.rpl_welcome(), Logger::Debug);
+	  client.push_message("Irc bot is ready to wait for your orders!\r\n", Logger::Debug);
 	  Logger().info() << client.get_nickname() << " is registered to server"; 
 }
 
@@ -328,6 +330,7 @@ void
 {
     int event_count = 0;
 
+    Bot bot("$bot");
 	  Logger().info() << "[Server running]";
     while (true)
     {
