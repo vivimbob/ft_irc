@@ -1,6 +1,7 @@
 #ifndef BOT_HPP
 #define BOT_HPP
 
+#include <cstdlib>
 #include "client.hpp"
 
 class Bot : public Client
@@ -16,6 +17,7 @@ class Bot : public Client
     void m_process_help_command(Client &client, Message &msg);
     void m_process_date_command(Client &client, Message &msg);
     void m_process_time_command(Client &client, Message &msg);
+    void m_process_coin_command(Client &client, Message &msg);
 
   public:
     Bot(std::string nickname);
