@@ -29,7 +29,7 @@ void Bot::m_process_help_command(Client &client, Message &msg)
   client.push_message("Hi! " + client.get_nickname() + " \r\n");
   client.push_message("This is " + msg.get_params()[1] + " command\r\n");
   client.push_message("There are some commands that you can use in command line\r\n");
-  client.push_message("command list : [help, date]\r\n");
+  client.push_message("command list : [help, date, time]\r\n");
 }
 
 void Bot::m_process_date_command(Client &client, Message &msg)
