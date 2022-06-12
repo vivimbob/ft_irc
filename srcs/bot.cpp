@@ -97,7 +97,7 @@ void Bot::handle_messages(Client &client)
       message->parse_message();
       if (!(message->get_command() == "PRIVMSG" || message->get_command() == "NOTICE"))
       {
-        client.push_message("Please type either PRIVMSG or NOTICE command to use BOT\r\n");
+        client.push_message("Please type either PRIVMSG or NOTICE command to use bot\r\n");
         return ;
       }
       std::string bot_command = message->get_params()[1];
@@ -111,7 +111,7 @@ void Bot::handle_messages(Client &client)
       else
       {
           client.push_message("Please type right command\r\n", Logger::Debug);
-          client.push_message("You might want to use 'help' command\r\n", Logger::Debug);
+          client.push_message("You might want to use 'help' command, and you can use bot\r\n", Logger::Debug);
       }
       delete message;
   }

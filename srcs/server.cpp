@@ -177,7 +177,7 @@ void
 {
 	  m_client_map[client.get_nickname()] = &client;
 	  client.push_message(msg.rpl_welcome(), Logger::Debug);
-	  client.push_message("Irc bot is ready to wait for your orders!\r\n", Logger::Debug);
+	  client.push_message("bot named BOT is ready to wait for your orders!\r\n", Logger::Debug);
 	  Logger().info() << client.get_nickname() << " is registered to server"; 
 }
 
