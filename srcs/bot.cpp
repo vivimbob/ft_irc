@@ -10,6 +10,7 @@ Bot::CommandMap
 
     temp_map.insert(std::make_pair("HELP", &Bot::m_process_help_command));
     temp_map.insert(std::make_pair("DATE", &Bot::m_process_date_command));
+    temp_map.insert(std::make_pair("TIME", &Bot::m_process_time_command));
 
     return (temp_map);
 }
@@ -33,6 +34,21 @@ void Bot::m_process_date_command(Client &client, Message &msg)
     client.push_message("Hi! " + client.get_nickname() + " \r\n");
     client.push_message("This is " + msg.get_params()[1] + " command\r\n");
     client.push_message("The current date is " + std::string(buffer) + "\r\n");
+  }
+
+}
+
+void Bot::m_process_time_command(Client &client, Message &msg)
+{
+  time_t m_raw_time;
+  char buffer[50];
+  time(&m_raw_time);
+
+  if(std::strftime(buffer, sizeof(buffer), "%H:%m:%S", std::localtime(&m_raw_time)))
+  {
+    client.push_message("Hi! " + client.get_nickname() + " \r\n");
+    client.push_message("This is " + msg.get_params()[1] + " command\r\n");
+    client.push_message("The current time is " + std::string(buffer) + "\r\n");
   }
 
 }

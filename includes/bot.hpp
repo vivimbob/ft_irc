@@ -15,6 +15,7 @@ class Bot : public Client
 
     void m_process_help_command(Client &client, Message &msg);
     void m_process_date_command(Client &client, Message &msg);
+    void m_process_time_command(Client &client, Message &msg);
 
   public:
     Bot(std::string nickname);
