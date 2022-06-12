@@ -92,7 +92,10 @@ void Bot::handle_messages(Client &client)
       if (m_bot_command_map.count(bot_command))
           (this->*m_bot_command_map[bot_command])(client, *message);
       else
-          client.push_message(message->err_unknown_command(), Logger::Debug);
+      {
+          client.push_message("Please type right command\r\n", Logger::Debug);
+          client.push_message("You might want to use 'help' command\r\n", Logger::Debug);
+      }
       delete message;
   }
 }
