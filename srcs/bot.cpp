@@ -30,6 +30,9 @@ void Bot::m_process_help_command(Client &client, Message &msg)
   client.push_message("This is " + msg.get_params()[1] + " command\r\n");
   client.push_message("There are some commands that you can use in command line\r\n");
   client.push_message("command list : [help, date, time]\r\n");
+  client.push_message("-------How to use command-------\r\n");
+  client.push_message("format : [privmsg or notice] [bot name] :[bot command]\r\n");
+  client.push_message("example : privmsg $bot :help\r\n");
 }
 
 void Bot::m_process_date_command(Client &client, Message &msg)
