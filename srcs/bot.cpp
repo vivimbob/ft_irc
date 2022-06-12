@@ -95,6 +95,11 @@ void Bot::handle_messages(Client &client)
       Logger().debug() << this->get_nickname() << " send [" << message->get_message() << ']';
       this->get_commands().pop();
       message->parse_message();
+      if (!(message->get_command() == "PRIVMSG" || message->get_command() == "NOTICE"))
+      {
+        client.push_message("Please type either PRIVMSG or NOTICE command to use BOT\r\n");
+        return ;
+      }
       std::string bot_command = message->get_params()[1];
       std::string::iterator it = bot_command.begin();
       std::string::iterator ite = bot_command.end();
