@@ -330,8 +330,8 @@ void
 {
     int event_count = 0;
 
-    Bot bot("$bot");
-    m_client_map.insert(std::make_pair("$bot", &bot));
+    Bot bot("BOT");
+    m_client_map.insert(std::make_pair("BOT", &bot));
 	  Logger().info() << "[Server running]";
     while (true)
     {

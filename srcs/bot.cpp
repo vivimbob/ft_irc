@@ -32,7 +32,7 @@ void Bot::m_process_help_command(Client &client, Message &msg)
   client.push_message("command list : [help, date, time]\r\n");
   client.push_message("-------How to use command-------\r\n");
   client.push_message("format : [privmsg or notice] [bot name] :[bot command]\r\n");
-  client.push_message("example : privmsg $bot :help\r\n");
+  client.push_message("example : privmsg BOT :help\r\n");
 }
 
 void Bot::m_process_date_command(Client &client, Message &msg)
@@ -41,7 +41,7 @@ void Bot::m_process_date_command(Client &client, Message &msg)
   char buffer[50];
   time(&m_raw_time);
 
-  if(std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", std::localtime(&m_raw_time)))
+  if(std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %a", std::localtime(&m_raw_time)))
   {
     client.push_message("Hi! " + client.get_nickname() + " \r\n");
     client.push_message("This is " + msg.get_params()[1] + " command\r\n");
@@ -56,7 +56,7 @@ void Bot::m_process_time_command(Client &client, Message &msg)
   char buffer[50];
   time(&m_raw_time);
 
-  if(std::strftime(buffer, sizeof(buffer), "%H:%m:%S", std::localtime(&m_raw_time)))
+  if(std::strftime(buffer, sizeof(buffer), "%X", std::localtime(&m_raw_time)))
   {
     client.push_message("Hi! " + client.get_nickname() + " \r\n");
     client.push_message("This is " + msg.get_params()[1] + " command\r\n");
