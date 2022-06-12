@@ -15,6 +15,15 @@ Bot::CommandMap
     return (temp_map);
 }
 
+Bot::Bot(std::string nickname)
+{
+  m_nickname = nickname;
+}
+
+Bot::~Bot()
+{
+}
+
 void Bot::m_process_help_command(Client &client, Message &msg)
 {
   client.push_message("Hi! " + client.get_nickname() + " \r\n");
@@ -50,16 +59,6 @@ void Bot::m_process_time_command(Client &client, Message &msg)
     client.push_message("This is " + msg.get_params()[1] + " command\r\n");
     client.push_message("The current time is " + std::string(buffer) + "\r\n");
   }
-
-}
-
-Bot::Bot(std::string nickname)
-{
-  m_nickname = nickname;
-}
-
-Bot::~Bot()
-{
 
 }
 
