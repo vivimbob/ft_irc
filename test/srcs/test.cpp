@@ -42,21 +42,21 @@ int
 void
     test_start()
 {
-    test_register();
-    test_private_message();
-    test_notice_message();
-    test_list_message();
-    test_invite_message();
-    test_kick_message();
-    // test_join();
-    // test_part();
-    // test_names();
-    // test_topic();
-    // test_mix();
-    // test_regular_user();
-    // test_operator_user();
-    // test_send_message();
-    // test_channel_commands();
+	test_register();
+	test_private_message();
+	test_notice_message();
+	test_list_message();
+	test_invite_message();
+	test_kick_message();
+	//test_join();
+	//test_part();
+	//test_names();
+	//test_topic();
+	//test_mix();
+	//test_regular_user();
+	//test_operator_user();
+	//test_send_message();
+	//test_channel_commands();
 
     // test_user_mode();
     // test_channel_mode();

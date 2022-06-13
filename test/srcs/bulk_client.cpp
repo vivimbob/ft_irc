@@ -16,13 +16,12 @@ BulkClient::~BulkClient()
 // 로그가 정렬을 위해 client번호는 1부터
 BulkClient::BulkClient(int num, std::string test_case)
 {
-    m_test_case = test_case;
-    for (int i = 0; i <= num; ++i)
-    {
-        m_clients.push_back(new Client(i, test_case));
-        sleep(1);
-    }
-}
+	m_test_case = test_case;
+	for (int i = 0; i < num; ++i)
+	{
+		m_clients.push_back(new Client(i, test_case));
+		sleep(1);
+	}
 
 void
     BulkClient::write(int num, std::string message)
