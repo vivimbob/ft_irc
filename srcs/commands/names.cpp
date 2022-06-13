@@ -3,8 +3,8 @@
 #include "../../includes/utils.hpp"
 
 inline void
-    attach_client_status(Channel *channel,
-                         Client &client,
+    attach_client_status(Channel                       *channel,
+                         Client                        &client,
                          std::queue<const std::string> &nick_queue)
 {
     if (channel->is_operator(client))
@@ -16,11 +16,11 @@ inline void
 }
 
 inline void
-    store_nickname_in_queue(Channel *channel,
+    store_nickname_in_queue(Channel                       *channel,
                             std::queue<const std::string> &nick_queue,
-                            bool is_public)
+                            bool                           is_public)
 {
-    const Channel::MemberMap &user_list = channel->get_user_list();
+    const Channel::MemberMap          &user_list = channel->get_user_list();
     Channel::MemberMap::const_iterator user = user_list.begin();
     for (; user != user_list.end(); ++user)
     {
@@ -35,10 +35,10 @@ inline void
 }
 
 inline void
-    store_nickname_in_queue(Channel *channel,
+    store_nickname_in_queue(Channel                       *channel,
                             std::queue<const std::string> &nick_queue)
 {
-    const Channel::MemberMap &user_list = channel->get_user_list();
+    const Channel::MemberMap          &user_list = channel->get_user_list();
     Channel::MemberMap::const_iterator user = user_list.begin();
     for (; user != user_list.end(); ++user)
         attach_client_status(channel, *user->first, nick_queue);
@@ -51,12 +51,12 @@ void
     if (msg.get_params().empty()) // 파라미터 없을 때
     {
         ChannelMap::const_iterator channel_it = m_channel_map.begin();
-        std::vector<std::string> asterisk_channel;
+        std::vector<std::string>   asterisk_channel;
         for (; channel_it != m_channel_map.end();
              ++channel_it) // 현재 개설되어있는 채널 순회
         {
-            std::string channel_name = channel_it->first;
-            Channel *channel = channel_it->second;
+            std::string                   channel_name = channel_it->first;
+            Channel                      *channel = channel_it->second;
             std::queue<const std::string> nick_queue;
             if (client.is_already_joined(
                     channel)) // 해당 클라이언트가 채널에 가입되어 있을 때
@@ -115,7 +115,7 @@ void
                 client.push_message(msg.rpl_endofnames(channel_name));
                 continue;
             }
-            Channel *channel = m_channel_map[channel_name];
+            Channel                      *channel = m_channel_map[channel_name];
             std::queue<const std::string> nick_queue;
             if (client.is_already_joined(
                     channel)) // 해당 클라이언트가 채널에 가입되어 있을 때

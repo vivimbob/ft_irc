@@ -30,17 +30,17 @@ class Channel
     typedef std::map<Client *, MemberShip> MemberMap;
 
   private:
-    std::string m_channel_name;
-    time_t m_channel_init_time;
-    MemberMap m_member_list;
+    std::string        m_channel_name;
+    time_t             m_channel_init_time;
+    MemberMap          m_member_list;
     std::set<Client *> m_invitation_list;
-    std::string m_channel_topic;
-    std::string m_key;
-    size_t m_user_limit;
+    std::string        m_channel_topic;
+    std::string        m_key;
+    size_t             m_user_limit;
 
-    bool m_mode_string_need_update;
+    bool        m_mode_string_need_update;
     std::string m_mode_string;
-    s_mode m_mode;
+    s_mode      m_mode;
 
     Channel();
     Channel(const Channel &cp);
@@ -52,10 +52,10 @@ class Channel
 
     const std::string &get_channel_name() const;
     const std::string &get_channel_topic() const;
-    std::string get_channel_mode(Client *client);
+    std::string        get_channel_mode(Client *client);
     const std::string &get_key() const;
-    const size_t &get_user_limit() const;
-    const MemberMap &get_user_list();
+    const size_t      &get_user_limit() const;
+    const MemberMap   &get_user_list();
 
     void set_channel_name(const std::string &name);
     void set_channel_topic(const std::string &topic);

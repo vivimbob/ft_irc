@@ -15,9 +15,9 @@ class SendBuffer : public std::string
     SendBuffer();
     ~SendBuffer();
 
-    void clear();
+    void         clear();
     unsigned int get_offset() const;
-    void set_offset(unsigned int offset);
+    void         set_offset(unsigned int offset);
 };
 
 #endif /* SENDBUFFER_HPP */

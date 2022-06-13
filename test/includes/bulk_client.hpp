@@ -7,7 +7,7 @@ class BulkClient
 {
   private:
     std::vector<Client *> m_clients;
-    std::string m_test_case;
+    std::string           m_test_case;
 
   public:
     BulkClient();

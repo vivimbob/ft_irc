@@ -52,7 +52,7 @@ std::string
 
 void
     split_by_comma(std::vector<const std::string> &splited_params,
-                   const std::string &params)
+                   const std::string              &params)
 {
     std::istringstream iss(params);
 
@@ -67,7 +67,7 @@ ClientInfo
     const char *offset_exclamation_mark = strchr(client_str.data(), '!');
     const char *offset_percent_sign = strchr(client_str.data(), '%');
     const char *offset_at_sign = strchr(client_str.data(), '@');
-    ClientInfo client;
+    ClientInfo  client;
 
     if (offset_exclamation_mark &&
         offset_exclamation_mark < offset_at_sign) // nick!user@host

@@ -4,15 +4,15 @@
 #include <utility>
 
 void
-    Server::m_join_channel(Client &client,
-                           Message &msg,
+    Server::m_join_channel(Client            &client,
+                           Message           &msg,
                            ChannelKeyPairMap &chan_key_pair)
 {
     for (ChannelKeyPairMap::iterator channel_key_it = chan_key_pair.begin();
          channel_key_it != chan_key_pair.end();
          ++channel_key_it) // 채널과 키쌍을 순회하면서 확인
     {
-        Channel *channel = NULL;
+        Channel           *channel = NULL;
         const std::string &channel_name = channel_key_it->first;
         const std::string &key = channel_key_it->second;
 
@@ -95,14 +95,14 @@ void
                             << key << " key by " << client.get_nickname();
         }
 
-        const Channel::MemberMap &user_list = channel->get_user_list();
+        const Channel::MemberMap          &user_list = channel->get_user_list();
         Channel::MemberMap::const_iterator user = user_list.begin();
-        std::queue<const std::string> nick_queue;
+        std::queue<const std::string>      nick_queue;
         for (; user != user_list.end(); ++user)
             nick_queue.push(user->first->get_nickname());
         client.push_message(msg.rpl_namreply(channel_name, nick_queue));
 
-        std::string reply_msg;
+        std::string        reply_msg;
         const std::string &channel_topic = channel->get_channel_topic();
 
         if (channel_topic.empty())
@@ -123,7 +123,7 @@ void
         return;
     }
 
-    ChannelKeyPairMap channel_key_pair;
+    ChannelKeyPairMap              channel_key_pair;
     std::vector<const std::string> channel_list;
 
     utils::split_by_comma(channel_list, msg.get_params()[0]);

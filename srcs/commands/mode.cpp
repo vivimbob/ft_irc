@@ -2,8 +2,8 @@
 #include "../../includes/server.hpp"
 
 void
-    Server::m_process_channel_mode_command(Client &client,
-                                           Message &msg,
+    Server::m_process_channel_mode_command(Client            &client,
+                                           Message           &msg,
                                            const std::string &channel_name)
 {
     if (!m_channel_map.count(channel_name))
@@ -34,7 +34,7 @@ void
         msg.get_params().end();
     std::string::const_iterator mode = parameter->begin();
     std::string::const_iterator mode_end = parameter->end();
-    int parameter_need_mode_count = 0;
+    int                         parameter_need_mode_count = 0;
 
     bool toggle = true;
     while (mode != mode_end && parameter_need_mode_count < 3)
@@ -189,8 +189,8 @@ void
 }
 
 void
-    Server::m_process_user_mode_command(Client &client,
-                                        Message &msg,
+    Server::m_process_user_mode_command(Client            &client,
+                                        Message           &msg,
                                         const std::string &nickname)
 {
     if (nickname != client.get_nickname())

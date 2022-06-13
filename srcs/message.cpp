@@ -437,9 +437,9 @@ std::string
 }
 
 std::string
-    Message::rpl_list(const std::string channel,
+    Message::rpl_list(const std::string  channel,
                       const std::string &visible,
-                      const std::string topic)
+                      const std::string  topic)
 {
     return reply_servername_prefix("322") + " " + channel + " " + visible +
            " :" + topic + "\r\n";
@@ -453,8 +453,8 @@ std::string
 
 std::string
     Message::rpl_channel_mode_is(const std::string &channel,
-                                 bool toggle,
-                                 char mode,
+                                 bool               toggle,
+                                 char               mode,
                                  const std::string &mode_params)
 {
     char mode_prefix = toggle == true ? '+' : '-';
@@ -490,7 +490,7 @@ std::string
 }
 
 std::string
-    Message::rpl_namreply(const std::string &channel,
+    Message::rpl_namreply(const std::string             &channel,
                           std::queue<const std::string> &nick)
 {
     std::string message = reply_servername_prefix("353") + " " + channel + " :";

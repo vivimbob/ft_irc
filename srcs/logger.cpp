@@ -58,7 +58,7 @@ void
     case Date_time_ver1:
     {
         time_t m_raw_time;
-        char buffer[50];
+        char   buffer[50];
         time(&m_raw_time);
 
         if (std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
@@ -68,7 +68,7 @@ void
     break;
     case Date_time_ver2:
     {
-        time_t m_raw_time;
+        time_t      m_raw_time;
         std::string m_time_str;
         time(&m_raw_time);
         m_time_str = ctime(&m_raw_time);
@@ -97,7 +97,7 @@ void
 }
 
 void
-    Logger::_Impl::m_set_timestamp_mode(int timestamp_mode,
+    Logger::_Impl::m_set_timestamp_mode(int         timestamp_mode,
                                         std::string separator)
 {
     _Impl::m_timestamp_mode = timestamp_mode;

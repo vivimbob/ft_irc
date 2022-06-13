@@ -32,8 +32,8 @@ void
 
             ClientMap::iterator client_it = m_client_map.begin();
             ClientMap::iterator client_ite = m_client_map.end();
-            size_t number_of_matched_client = 0;
-            Client *matched_client;
+            size_t              number_of_matched_client = 0;
+            Client             *matched_client;
             for (; client_it != client_ite; ++client_it)
             {
                 if (client_it->second->is_same_client(client_info))
