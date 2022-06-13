@@ -22,6 +22,7 @@ BulkClient::BulkClient(int num, std::string test_case)
 		m_clients.push_back(new Client(i, test_case));
 		sleep(1);
 	}
+}
 
 void
     BulkClient::write(int num, std::string message)
