@@ -17,7 +17,7 @@ BulkClient::~BulkClient()
 BulkClient::BulkClient(int num, std::string test_case)
 {
 	m_test_case = test_case;
-	for (int i = 0; i <= num; ++i)
+	for (int i = 0; i < num; ++i)
 	{
 		m_clients.push_back(new Client(i, test_case));
 		sleep(1);

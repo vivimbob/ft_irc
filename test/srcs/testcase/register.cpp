@@ -9,7 +9,7 @@ static void case_01()
 {
 	BulkClient client(1, "case_01");
 
-	client.write(1, "PASS 1234\r\nNICK client1\r\nUSER client01 tester tester tester\r\n");
+	client.write(0, "PASS 1234\r\nNICK client1\r\nUSER client01 tester tester tester\r\n");
 	client.print_result();
 }
 
@@ -30,4 +30,5 @@ void test_register()
 	std::cout << "\x1b[32m[test register]\x1b[0m" << std::endl;
 	case_01();
 	case_02();
+
 }
