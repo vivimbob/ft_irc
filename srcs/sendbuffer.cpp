@@ -1,10 +1,10 @@
 #include "../includes/sendbuffer.hpp"
 
-SendBuffer::SendBuffer(void) : m_offset(0)
+SendBuffer::SendBuffer() : m_offset(0)
 {
 }
 
-SendBuffer::~SendBuffer(void)
+SendBuffer::~SendBuffer()
 {
 }
 
@@ -16,7 +16,7 @@ void
 }
 
 unsigned int
-    SendBuffer::get_offset(void) const
+    SendBuffer::get_offset() const
 {
     return m_offset;
 }

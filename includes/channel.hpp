@@ -42,20 +42,20 @@ class Channel
     std::string m_mode_string;
     s_mode m_mode;
 
-    Channel(void);
+    Channel();
     Channel(const Channel &cp);
     Channel &operator=(const Channel &cp);
 
   public:
     Channel(const std::string &name, const std::string &key);
-    ~Channel(void);
+    ~Channel();
 
-    const std::string &get_channel_name(void) const;
-    const std::string &get_channel_topic(void) const;
+    const std::string &get_channel_name() const;
+    const std::string &get_channel_topic() const;
     std::string get_channel_mode(Client *client);
-    const std::string &get_key(void) const;
-    const size_t &get_user_limit(void) const;
-    const MemberMap &get_user_list(void);
+    const std::string &get_key() const;
+    const size_t &get_user_limit() const;
+    const MemberMap &get_user_list();
 
     void set_channel_name(const std::string &name);
     void set_channel_topic(const std::string &topic);
@@ -70,18 +70,18 @@ class Channel
     void set_operator_flag(bool toggle, Client *client);
     void set_voice_flag(bool toggle, Client *client);
 
-    bool is_empty(void);
-    bool is_full(void);
+    bool is_empty();
+    bool is_full();
     bool is_operator(Client &client);
     bool is_voice_mode(Client &client);
     bool is_user_on_channel(Client *client);
     bool is_user_on_invitation_list(Client *client);
-    bool is_protected_topic_mode(void);
-    bool is_invite_only_mode(void);
-    bool is_limit_mode(void);
-    bool is_key_mode(void);
-    bool is_private_mode(void);
-    bool is_secret_mode(void);
+    bool is_protected_topic_mode();
+    bool is_invite_only_mode();
+    bool is_limit_mode();
+    bool is_key_mode();
+    bool is_private_mode();
+    bool is_secret_mode();
 
     void add_user(Client &client);
     void delete_user(Client &client);

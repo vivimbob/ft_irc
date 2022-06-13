@@ -17,7 +17,7 @@ Client::Client(sockaddr_in client_addr, int client_fd)
     m_channel_limits = 10;
 }
 
-Client::~Client(void)
+Client::~Client()
 {
     while (m_commands.size())
     {
@@ -27,67 +27,67 @@ Client::~Client(void)
 }
 
 sockaddr_in
-    Client::get_client_addr(void)
+    Client::get_client_addr()
 {
     return m_client_addr;
 }
 
 int
-    Client::get_socket(void)
+    Client::get_socket()
 {
     return m_client_fd;
 }
 
 char *
-    Client::get_client_IP(void)
+    Client::get_client_IP()
 {
     return inet_ntoa(m_client_addr.sin_addr);
 }
 
 const std::string &
-    Client::get_nickname(void) const
+    Client::get_nickname() const
 {
     return m_nickname;
 }
 
 const std::string &
-    Client::get_username(void) const
+    Client::get_username() const
 {
     return m_username;
 }
 
 const std::string &
-    Client::get_hostname(void) const
+    Client::get_hostname() const
 {
     return m_hostname;
 }
 
 std::queue<Message *> &
-    Client::get_commands(void)
+    Client::get_commands()
 {
     return m_commands;
 }
 
 std::string &
-    Client::get_recv_buffer(void)
+    Client::get_recv_buffer()
 {
     return m_recv_buffer;
 }
 
 SendBuffer &
-    Client::get_send_buffer(void)
+    Client::get_send_buffer()
 {
     return m_send_buffer;
 }
 
 size_t &
-    Client::get_channel_limits(void)
+    Client::get_channel_limits()
 {
     return m_channel_limits;
 }
 
 std::string
-    Client::get_usermode(void)
+    Client::get_usermode()
 {
     if (m_mode_string_need_update)
     {
@@ -107,7 +107,7 @@ std::string
 }
 
 const std::set<Channel *> &
-    Client::get_channel_list(void) const
+    Client::get_channel_list() const
 {
     return m_channel_list;
 }
@@ -150,7 +150,7 @@ void
 }
 
 void
-    Client::set_password_flag(void)
+    Client::set_password_flag()
 {
     m_pass_registered = true;
 }
@@ -192,31 +192,31 @@ void
 }
 
 bool
-    Client::is_registered(void) const
+    Client::is_registered() const
 {
     return m_pass_registered & m_nick_registered & m_user_registered;
 }
 
 bool
-    Client::is_pass_registered(void) const
+    Client::is_pass_registered() const
 {
     return m_pass_registered;
 }
 
 bool
-    Client::is_nick_registered(void) const
+    Client::is_nick_registered() const
 {
     return m_nick_registered;
 }
 
 bool
-    Client::is_user_registered(void) const
+    Client::is_user_registered() const
 {
     return m_user_registered;
 }
 
 bool
-    Client::is_join_available(void) const
+    Client::is_join_available() const
 {
     return m_channel_list.size() < m_channel_limits;
 }
@@ -228,7 +228,7 @@ bool
 }
 
 bool
-    Client::is_invisible(void) const
+    Client::is_invisible() const
 {
     return m_mode.invisible;
 }
@@ -262,7 +262,7 @@ void
 }
 
 std::string
-    Client::make_nickmask(void)
+    Client::make_nickmask()
 {
     return m_nickname + '!' + m_username + '@' + m_hostname;
 }
@@ -280,7 +280,7 @@ void
 }
 
 void
-    Client::leave_all_channel(void)
+    Client::leave_all_channel()
 {
     std::set<Channel *>::iterator it = m_channel_list.begin();
     std::set<Channel *>::iterator ite = m_channel_list.end();

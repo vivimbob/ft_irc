@@ -1,6 +1,6 @@
 #include "../includes/membership.hpp"
 
-MemberShip::MemberShip(void) : client(), channel()
+MemberShip::MemberShip() : client(), channel()
 {
 }
 

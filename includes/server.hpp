@@ -37,11 +37,11 @@ class Server
     static CommandMap m_command_map;
 
   private:
-    Server(void);
+    Server();
     Server(const Server &server);
     Server &operator=(const Server &server);
 
-    static CommandMap m_initial_command_map(void);
+    static CommandMap m_initial_command_map();
 
     void m_process_pass_command(Client &client, Message &msg);
     void m_process_nick_command(Client &client, Message &msg);
@@ -69,17 +69,17 @@ class Server
         Message &msg,
         std::map<const std::string, const std::string> &chan_key_pair);
 
-    void m_create_socket(void);
-    void m_bind_socket(void);
-    void m_listen_socket(void);
+    void m_create_socket();
+    void m_bind_socket();
+    void m_listen_socket();
     void m_update_event(int identity,
                         short filter,
                         u_short flags,
                         u_int fflags,
                         int data,
                         void *udata);
-    void m_create_kqueue(void);
-    void m_accept_client(void);
+    void m_create_kqueue();
+    void m_accept_client();
 
     void m_handle_messages(Client &client);
 
@@ -92,12 +92,12 @@ class Server
     void m_send_to_channel(Channel *channel, const std::string &msg);
     void m_send_to_channel(Client &client, const std::string &msg);
 
-    void m_initialize_server(void);
+    void m_initialize_server();
 
   public:
-    ~Server(void);
+    ~Server();
     Server(int argc, char **argv);
-    void run(void);
+    void run();
 };
 
 #endif /* SERVER_HPP */

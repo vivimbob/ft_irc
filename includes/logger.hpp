@@ -35,21 +35,21 @@ class Logger
     /* Member functions begin */
 
   public:
-    Logger(void);
+    Logger();
 
-    ~Logger(void);
+    ~Logger();
 
     static void set_loglevel(int level);
 
     static void set_timestamp_mode(int time, std::string separator = " ");
 
-    std::ostringstream &trace(void);
+    std::ostringstream &trace();
 
-    std::ostringstream &debug(void);
+    std::ostringstream &debug();
 
-    std::ostringstream &info(void);
+    std::ostringstream &info();
 
-    std::ostringstream &error(void);
+    std::ostringstream &error();
 
     std::ostringstream &log(int level);
 
@@ -82,31 +82,31 @@ class Logger::_Impl
     /* Member functions begin */
 
   public:
-    _Impl(void);
+    _Impl();
 
-    ~_Impl(void);
+    ~_Impl();
 
-    std::ostringstream &m_trace(void);
+    std::ostringstream &m_trace();
 
-    std::ostringstream &m_debug(void);
+    std::ostringstream &m_debug();
 
-    std::ostringstream &m_info(void);
+    std::ostringstream &m_info();
 
-    std::ostringstream &m_error(void);
+    std::ostringstream &m_error();
 
     static void m_set_loglevel(int level);
 
     static void m_set_timestamp_mode(int time, std::string separator);
 
-    void m_flush(void);
+    void m_flush();
 
     std::ostringstream &m_get_stream(int level);
 
-    void m_prefix_timestamp(void);
+    void m_prefix_timestamp();
 
-    //    static _Symbol_Map m_initial_symbol_map(void);
+    //    static _Symbol_Map m_initial_symbol_map();
     //
-    //    static _Stream_Map m_initial_stream_map(void);
+    //    static _Stream_Map m_initial_stream_map();
 
     /* Member functions end */
 

@@ -11,7 +11,7 @@ Message::Message(Client *client, const std::string &message)
 }
 
 size_t
-    Message::next_position(void)
+    Message::next_position()
 {
     m_position = m_message.find(' ', m_position);
     if (m_position == static_cast<size_t>(std::string::npos))
@@ -20,7 +20,7 @@ size_t
 }
 
 void
-    Message::parse_message(void)
+    Message::parse_message()
 {
     if (m_message.size() > m_position && m_message[0] == ':')
     {
@@ -66,36 +66,36 @@ void
 }
 
 const std::string &
-    Message::get_message(void) const
+    Message::get_message() const
 {
     return m_message;
 }
 
 const std::string &
-    Message::get_prefix(void) const
+    Message::get_prefix() const
 {
     return m_prefix;
 }
 
 const std::string &
-    Message::get_command(void) const
+    Message::get_command() const
 {
     return m_command;
 }
 
 const std::vector<std::string> &
-    Message::get_params(void) const
+    Message::get_params() const
 {
     return m_parameters;
 }
 
 const bool &
-    Message::is_valid_message(void) const
+    Message::is_valid_message() const
 {
     return m_valid_message;
 }
 
-Message::~Message(void)
+Message::~Message()
 {
 }
 
@@ -168,20 +168,20 @@ std::string
 }
 
 std::string
-    Message::err_no_origin(void)
+    Message::err_no_origin()
 {
     return reply_servername_prefix("409") + " :No origin specified\r\n";
 }
 
 std::string
-    Message::err_no_recipient(void)
+    Message::err_no_recipient()
 {
     return reply_servername_prefix("411") + " :No recipient given (" +
            m_command + ")\r\n";
 }
 
 std::string
-    Message::err_no_text_to_send(void)
+    Message::err_no_text_to_send()
 {
     return reply_servername_prefix("412") + " :No text to send\r\n";
 }
@@ -201,14 +201,14 @@ std::string
 }
 
 std::string
-    Message::err_unknown_command(void)
+    Message::err_unknown_command()
 {
     return reply_servername_prefix("421") + " " + m_command +
            " :Unknown command\r\n";
 }
 
 std::string
-    Message::err_no_motd(void)
+    Message::err_no_motd()
 {
     return reply_servername_prefix("422") + " :MOTD Files is missing\r\n";
 }
@@ -228,7 +228,7 @@ std::string
 }
 
 std::string
-    Message::err_no_nickname_given(void)
+    Message::err_no_nickname_given()
 {
     return reply_servername_prefix("431") + " :No nickname given\r\n";
 }
@@ -285,51 +285,51 @@ std::string
 }
 
 std::string
-    Message::err_summon_disabled(void)
+    Message::err_summon_disabled()
 {
     return reply_servername_prefix("445") + " :SUMMON has been disabled\r\n";
 }
 
 std::string
-    Message::err_users_disabled(void)
+    Message::err_users_disabled()
 {
     return reply_servername_prefix("446") + " :USERS has been disabled\r\n";
 }
 
 std::string
-    Message::err_not_registered(void)
+    Message::err_not_registered()
 {
     return reply_servername_prefix("451") + " :You have not registered\r\n";
 }
 
 std::string
-    Message::err_need_more_params(void)
+    Message::err_need_more_params()
 {
     return reply_servername_prefix("461") + " " + m_command +
            " :Not enough parameters\r\n";
 }
 
 std::string
-    Message::err_already_registred(void)
+    Message::err_already_registred()
 {
     return reply_servername_prefix("462") + " :You may not reregister\r\n";
 }
 
 std::string
-    Message::err_no_perm_for_host(void)
+    Message::err_no_perm_for_host()
 {
     return reply_servername_prefix("463") +
            " :Your host isn't among the privileged\r\n";
 }
 
 std::string
-    Message::err_passwd_mismatch(void)
+    Message::err_passwd_mismatch()
 {
     return reply_servername_prefix("464") + " :Password incorrect\r\n";
 }
 
 std::string
-    Message::err_youre_banned_creep(void)
+    Message::err_youre_banned_creep()
 {
     return reply_servername_prefix("465") +
            " :You are banned from this server\r\n";
@@ -385,7 +385,7 @@ std::string
 }
 
 std::string
-    Message::err_no_privileges(void)
+    Message::err_no_privileges()
 {
     return reply_servername_prefix("481") +
            " :Permission Denied- You're not an IRC operator\r\n";
@@ -399,25 +399,25 @@ std::string
 }
 
 std::string
-    Message::err_cant_kill_server(void)
+    Message::err_cant_kill_server()
 {
     return reply_servername_prefix("483") + " :You cant kill a server\r\n";
 }
 
 std::string
-    Message::err_no_oper_host(void)
+    Message::err_no_oper_host()
 {
     return reply_servername_prefix("491") + " :No O-lines for your host\r\n";
 }
 
 std::string
-    Message::err_u_mode_unknown_flag(void)
+    Message::err_u_mode_unknown_flag()
 {
     return reply_servername_prefix("501") + " :Unknown MODE flag\r\n";
 }
 
 std::string
-    Message::err_users_dont_match(void)
+    Message::err_users_dont_match()
 {
     return reply_servername_prefix("502") +
            " :Cant change mode for other users\r\n";
@@ -431,7 +431,7 @@ std::string
 }
 
 std::string
-    Message::rpl_liststart(void)
+    Message::rpl_liststart()
 {
     return reply_servername_prefix("321") + " Channel :Users name\r\n";
 }
@@ -446,7 +446,7 @@ std::string
 }
 
 std::string
-    Message::rpl_listend(void)
+    Message::rpl_listend()
 {
     return reply_servername_prefix("323") + " :End of /LIST\r\n";
 }
@@ -534,7 +534,7 @@ std::string
 }
 
 std::string
-    Message::rpl_welcome(void)
+    Message::rpl_welcome()
 {
     return reply_servername_prefix("001") +
            " Welcome to Internet Relay Network\n" + m_client->make_nickmask() +
@@ -542,7 +542,7 @@ std::string
 }
 
 std::string
-    Message::build_quit_reply(void)
+    Message::build_quit_reply()
 {
     std::string reason = "";
 

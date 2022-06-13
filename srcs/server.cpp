@@ -42,7 +42,7 @@ Server::CommandMap
 }
 
 void
-    Server::m_create_socket(void)
+    Server::m_create_socket()
 {
     m_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_listen_fd == -1)
@@ -58,7 +58,7 @@ void
 }
 
 void
-    Server::m_bind_socket(void)
+    Server::m_bind_socket()
 {
     memset(&m_sockaddr, 0, sizeof(sockaddr_in));
     m_sockaddr.sin_family = AF_INET;
@@ -77,7 +77,7 @@ void
 }
 
 void
-    Server::m_listen_socket(void)
+    Server::m_listen_socket()
 {
     if (listen(m_listen_fd, SOMAXCONN) == -1)
     {
@@ -104,7 +104,7 @@ void
 }
 
 void
-    Server::m_create_kqueue(void)
+    Server::m_create_kqueue()
 {
     m_kq = kqueue();
     if (m_kq == -1)
@@ -120,7 +120,7 @@ void
 }
 
 void
-    Server::m_accept_client(void)
+    Server::m_accept_client()
 {
     sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
@@ -315,7 +315,7 @@ void
 }
 
 void
-    Server::m_initialize_server(void)
+    Server::m_initialize_server()
 {
     m_create_socket();
     m_bind_socket();
@@ -323,7 +323,7 @@ void
     m_create_kqueue();
 }
 
-Server::~Server(void)
+Server::~Server()
 {
 }
 
@@ -343,7 +343,7 @@ Server::Server(int argc, char **argv) : m_kq(-1), m_listen_fd(-1), m_port(-1)
 }
 
 void
-    Server::run(void)
+    Server::run()
 {
     int event_count = 0;
 

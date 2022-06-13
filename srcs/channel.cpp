@@ -19,18 +19,18 @@ Channel::Channel(const std::string &name, const std::string &key)
     m_mode_string_need_update = true;
 }
 
-Channel::~Channel(void)
+Channel::~Channel()
 {
 }
 
 const std::string &
-    Channel::get_channel_name(void) const
+    Channel::get_channel_name() const
 {
     return m_channel_name;
 }
 
 const std::string &
-    Channel::get_channel_topic(void) const
+    Channel::get_channel_topic() const
 {
     return m_channel_topic;
 }
@@ -70,19 +70,19 @@ std::string
 }
 
 const std::string &
-    Channel::get_key(void) const
+    Channel::get_key() const
 {
     return m_key;
 }
 
 const size_t &
-    Channel::get_user_limit(void) const
+    Channel::get_user_limit() const
 {
     return m_user_limit;
 }
 
 const std::map<Client *, MemberShip> &
-    Channel::get_user_list(void)
+    Channel::get_user_list()
 {
     return m_member_list;
 }
@@ -227,37 +227,37 @@ bool
 }
 
 bool
-    Channel::is_protected_topic_mode(void)
+    Channel::is_protected_topic_mode()
 {
     return m_mode.topic;
 }
 
 bool
-    Channel::is_limit_mode(void)
+    Channel::is_limit_mode()
 {
     return m_mode.limit;
 }
 
 bool
-    Channel::is_invite_only_mode(void)
+    Channel::is_invite_only_mode()
 {
     return m_mode.invite;
 }
 
 bool
-    Channel::is_key_mode(void)
+    Channel::is_key_mode()
 {
     return m_mode.key;
 }
 
 bool
-    Channel::is_private_mode(void)
+    Channel::is_private_mode()
 {
     return m_mode.private_channel;
 }
 
 bool
-    Channel::is_secret_mode(void)
+    Channel::is_secret_mode()
 {
     return m_mode.secret;
 }

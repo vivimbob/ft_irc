@@ -12,11 +12,11 @@ class SendBuffer : public std::string
     SendBuffer &operator=(const SendBuffer &copy);
 
   public:
-    SendBuffer(void);
-    ~SendBuffer(void);
+    SendBuffer();
+    ~SendBuffer();
 
     void clear();
-    unsigned int get_offset(void) const;
+    unsigned int get_offset() const;
     void set_offset(unsigned int offset);
 };
 
