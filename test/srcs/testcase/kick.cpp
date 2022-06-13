@@ -1,9 +1,10 @@
-#include "../../includes/test.hpp"
 #include "../../includes/bulk_client.hpp"
+#include "../../includes/test.hpp"
 #include <ios>
-#include <unistd.h>
 #include <iostream>
+#include <unistd.h>
 
-void test_kick_message()
+void
+    test_kick_message()
 {
 }
