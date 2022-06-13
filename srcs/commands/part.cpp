@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_part_command(Client &client, Message &msg)
+    Server::m_process_part_command(Client& client, Message& msg)
 {
     if (msg.get_params().empty())
     {
@@ -23,7 +23,7 @@ void
                                 Logger::Debug);
             return;
         }
-        Channel *channel = m_channel_map[*channel_it];
+        Channel* channel = m_channel_map[*channel_it];
         if (!channel->is_user_on_channel(&client))
         {
             client.push_message(msg.err_not_on_channel(*channel_it),

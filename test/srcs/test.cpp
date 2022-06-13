@@ -3,10 +3,10 @@
 #include <unistd.h>
 
 int
-    execute(char *command)
+    execute(char* command)
 {
-    bash_argv[0] = (char *)"/bin/bash";
-    bash_argv[1] = (char *)"-c";
+    bash_argv[0] = (char*)"/bin/bash";
+    bash_argv[1] = (char*)"-c";
     bash_argv[2] = command;
     bash_argv[3] = NULL;
     int fd       = fork();
@@ -23,9 +23,9 @@ int
 int
     execute(std::string command)
 {
-    bash_argv[0] = (char *)"/bin/bash";
-    bash_argv[1] = (char *)"-c";
-    bash_argv[2] = (char *)command.data();
+    bash_argv[0] = (char*)"/bin/bash";
+    bash_argv[1] = (char*)"-c";
+    bash_argv[2] = (char*)command.data();
     ;
     bash_argv[3] = NULL;
     int fd       = fork();

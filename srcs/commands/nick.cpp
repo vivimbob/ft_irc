@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_nick_command(Client &client, Message &msg)
+    Server::m_process_nick_command(Client& client, Message& msg)
 {
     if (msg.get_params().empty())
     {
@@ -11,7 +11,7 @@ void
         return;
     }
 
-    const std::string &nickname = msg.get_params()[0];
+    const std::string& nickname = msg.get_params()[0];
 
     if (!utils::is_nickname_valid(nickname))
     {

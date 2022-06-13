@@ -29,7 +29,7 @@ void
     if (!m_oss.str().size())
         return;
 
-    std::ostream *stream = _Impl::m_streams[m_active_level].second;
+    std::ostream* stream = _Impl::m_streams[m_active_level].second;
     if (stream)
     {
         *stream << m_oss.str() << "\033[0m" << std::endl;
@@ -81,7 +81,7 @@ void
     }
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::_Impl::m_get_stream(int level)
 {
     m_active_level = level;
@@ -104,25 +104,25 @@ void
     _Impl::m_timestamp_separator = separator;
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::_Impl::m_trace()
 {
     return m_get_stream(Trace);
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::_Impl::m_debug()
 {
     return m_get_stream(Debug);
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::_Impl::m_info()
 {
     return m_get_stream(Info);
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::_Impl::m_error()
 {
     return m_get_stream(Error);
@@ -153,31 +153,31 @@ void
     _Impl::m_set_timestamp_mode(timestamp_mode, separator);
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::trace()
 {
     return m_impl->m_trace();
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::debug()
 {
     return m_impl->m_debug();
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::info()
 {
     return m_impl->m_info();
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::error()
 {
     return m_impl->m_error();
 }
 
-std::ostringstream &
+std::ostringstream&
     Logger::log(int level)
 {
     return m_impl->m_get_stream(level);

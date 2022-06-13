@@ -2,7 +2,7 @@
 #include "../../includes/server.hpp"
 
 void
-    Server::m_process_pass_command(Client &client, Message &msg)
+    Server::m_process_pass_command(Client& client, Message& msg)
 {
     if (!msg.get_params().size())
     {

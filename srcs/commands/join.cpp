@@ -4,17 +4,17 @@
 #include <utility>
 
 void
-    Server::m_join_channel(Client            &client,
-                           Message           &msg,
-                           ChannelKeyPairMap &chan_key_pair)
+    Server::m_join_channel(Client&            client,
+                           Message&           msg,
+                           ChannelKeyPairMap& chan_key_pair)
 {
     for (ChannelKeyPairMap::iterator channel_key_it = chan_key_pair.begin();
          channel_key_it != chan_key_pair.end();
          ++channel_key_it) // 채널과 키쌍을 순회하면서 확인
     {
-        Channel           *channel      = NULL;
-        const std::string &channel_name = channel_key_it->first;
-        const std::string &key          = channel_key_it->second;
+        Channel*           channel      = NULL;
+        const std::string& channel_name = channel_key_it->first;
+        const std::string& key          = channel_key_it->second;
 
         if (m_channel_map.count(channel_name))
             channel = m_channel_map[channel_name];
@@ -95,7 +95,7 @@ void
                             << key << " key by " << client.get_nickname();
         }
 
-        const Channel::MemberMap          &user_list = channel->get_user_list();
+        const Channel::MemberMap&          user_list = channel->get_user_list();
         Channel::MemberMap::const_iterator user      = user_list.begin();
         std::queue<const std::string>      nick_queue;
         for (; user != user_list.end(); ++user)
@@ -103,7 +103,7 @@ void
         client.push_message(msg.rpl_namreply(channel_name, nick_queue));
 
         std::string        reply_msg;
-        const std::string &channel_topic = channel->get_channel_topic();
+        const std::string& channel_topic = channel->get_channel_topic();
 
         if (channel_topic.empty())
             reply_msg = msg.rpl_notopic(channel_name);
@@ -115,7 +115,7 @@ void
 }
 
 void
-    Server::m_process_join_command(Client &client, Message &msg)
+    Server::m_process_join_command(Client& client, Message& msg)
 {
     if (msg.get_params().empty())
     {

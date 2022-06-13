@@ -3,7 +3,7 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_invite_command(Client &client, Message &msg)
+    Server::m_process_invite_command(Client& client, Message& msg)
 {
     if (msg.get_params().size() < 2)
     {
@@ -12,8 +12,8 @@ void
     }
     const std::string nickname      = msg.get_params()[0];
     const std::string channel_name  = msg.get_params()[1];
-    Channel          *channel       = m_channel_map[channel_name];
-    Client           *target_client = m_client_map[nickname];
+    Channel*          channel       = m_channel_map[channel_name];
+    Client*           target_client = m_client_map[nickname];
 
     if (!m_client_map.count(nickname))
     {

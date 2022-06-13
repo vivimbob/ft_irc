@@ -38,49 +38,49 @@ int
     return m_client_fd;
 }
 
-char *
+char*
     Client::get_client_IP()
 {
     return inet_ntoa(m_client_addr.sin_addr);
 }
 
-const std::string &
+const std::string&
     Client::get_nickname() const
 {
     return m_nickname;
 }
 
-const std::string &
+const std::string&
     Client::get_username() const
 {
     return m_username;
 }
 
-const std::string &
+const std::string&
     Client::get_hostname() const
 {
     return m_hostname;
 }
 
-std::queue<Message *> &
+std::queue<Message*>&
     Client::get_commands()
 {
     return m_commands;
 }
 
-std::string &
+std::string&
     Client::get_recv_buffer()
 {
     return m_recv_buffer;
 }
 
-SendBuffer &
+SendBuffer&
     Client::get_send_buffer()
 {
     return m_send_buffer;
 }
 
-size_t &
+size_t&
     Client::get_channel_limits()
 {
     return m_channel_limits;
@@ -106,21 +106,21 @@ std::string
     return m_mode_string;
 }
 
-const std::set<Channel *> &
+const std::set<Channel*>&
     Client::get_channel_list() const
 {
     return m_channel_list;
 }
 
 void
-    Client::set_nickname(const std::string &nickname)
+    Client::set_nickname(const std::string& nickname)
 {
     m_nickname        = nickname;
     m_nick_registered = true;
 }
 
 void
-    Client::set_username(const std::string &username)
+    Client::set_username(const std::string& username)
 {
     m_username        = username;
     m_user_registered = true;
@@ -128,14 +128,14 @@ void
 }
 
 void
-    Client::set_hostname(const std::string &hostname)
+    Client::set_hostname(const std::string& hostname)
 {
     m_hostname = hostname;
     Logger().debug() << get_client_IP() << " set hostname to " << m_hostname;
 }
 
 void
-    Client::set_servername(const std::string &servername)
+    Client::set_servername(const std::string& servername)
 {
     m_servername = servername;
     Logger().debug() << get_client_IP() << " set servername to "
@@ -143,7 +143,7 @@ void
 }
 
 void
-    Client::set_realname(const std::string &realname)
+    Client::set_realname(const std::string& realname)
 {
     m_realname = realname;
     Logger().debug() << get_client_IP() << " set realname to " << m_realname;
@@ -222,7 +222,7 @@ bool
 }
 
 bool
-    Client::is_already_joined(Channel *channel)
+    Client::is_already_joined(Channel* channel)
 {
     return m_channel_list.count(channel);
 }
@@ -248,13 +248,13 @@ bool
     return true;
 }
 void
-    Client::push_message(const std::string &message)
+    Client::push_message(const std::string& message)
 {
     m_send_buffer.append(message);
 }
 
 void
-    Client::push_message(const std::string &message, int level)
+    Client::push_message(const std::string& message, int level)
 {
     m_send_buffer.append(message);
     Logger().log(level) << "Server Send to " << m_nickname << " [" << message
@@ -268,13 +268,13 @@ std::string
 }
 
 void
-    Client::insert_channel(Channel *channel)
+    Client::insert_channel(Channel* channel)
 {
     m_channel_list.insert(channel);
 }
 
 void
-    Client::erase_channel(Channel *channel)
+    Client::erase_channel(Channel* channel)
 {
     m_channel_list.erase(channel);
 }
@@ -282,8 +282,8 @@ void
 void
     Client::leave_all_channel()
 {
-    std::set<Channel *>::iterator it  = m_channel_list.begin();
-    std::set<Channel *>::iterator ite = m_channel_list.end();
+    std::set<Channel*>::iterator it  = m_channel_list.begin();
+    std::set<Channel*>::iterator ite = m_channel_list.end();
 
     for (; it != ite; ++it)
         (**it).delete_user(*this);

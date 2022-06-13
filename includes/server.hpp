@@ -12,16 +12,16 @@
 #include <sys/event.h>
 #include <vector>
 
-#define QUEUE_SIZE 1024
+#define QUEUE_SIZE   1024
 #define IPV4_MTU_MAX 65535
 #define IPV4_MTU_MIN 68
 
 class Server
 {
   public:
-    typedef std::map<std::string, Client *>  ClientMap;
-    typedef std::map<std::string, Channel *> ChannelMap;
-    typedef std::map<std::string, void (Server::*)(Client &, Message &)>
+    typedef std::map<std::string, Client*>  ClientMap;
+    typedef std::map<std::string, Channel*> ChannelMap;
+    typedef std::map<std::string, void (Server::*)(Client&, Message&)>
         CommandMap;
 
   private:
@@ -38,36 +38,36 @@ class Server
 
   private:
     Server();
-    Server(const Server &server);
-    Server &operator=(const Server &server);
+    Server(const Server& server);
+    Server& operator=(const Server& server);
 
     static CommandMap m_initial_command_map();
 
-    void m_process_pass_command(Client &client, Message &msg);
-    void m_process_nick_command(Client &client, Message &msg);
-    void m_process_user_command(Client &client, Message &msg);
-    void m_process_join_command(Client &client, Message &msg);
-    void m_process_mode_command(Client &client, Message &msg);
-    void m_process_quit_command(Client &client, Message &msg);
-    void m_process_topic_command(Client &client, Message &msg);
-    void m_process_part_command(Client &Client, Message &msg);
-    void m_process_channel_mode_command(Client            &client,
-                                        Message           &msg,
-                                        const std::string &channel_name);
-    void m_process_user_mode_command(Client            &client,
-                                     Message           &msg,
-                                     const std::string &nickname);
-    void m_process_names_command(Client &client, Message &msg);
-    void m_process_list_command(Client &client, Message &msg);
-    void m_process_invite_command(Client &client, Message &msg);
-    void m_process_privmsg_command(Client &client, Message &msg);
-    void m_process_notice_command(Client &client, Message &msg);
-    void m_process_kick_command(Client &client, Message &msg);
+    void m_process_pass_command(Client& client, Message& msg);
+    void m_process_nick_command(Client& client, Message& msg);
+    void m_process_user_command(Client& client, Message& msg);
+    void m_process_join_command(Client& client, Message& msg);
+    void m_process_mode_command(Client& client, Message& msg);
+    void m_process_quit_command(Client& client, Message& msg);
+    void m_process_topic_command(Client& client, Message& msg);
+    void m_process_part_command(Client& Client, Message& msg);
+    void m_process_channel_mode_command(Client&            client,
+                                        Message&           msg,
+                                        const std::string& channel_name);
+    void m_process_user_mode_command(Client&            client,
+                                     Message&           msg,
+                                     const std::string& nickname);
+    void m_process_names_command(Client& client, Message& msg);
+    void m_process_list_command(Client& client, Message& msg);
+    void m_process_invite_command(Client& client, Message& msg);
+    void m_process_privmsg_command(Client& client, Message& msg);
+    void m_process_notice_command(Client& client, Message& msg);
+    void m_process_kick_command(Client& client, Message& msg);
 
     void m_join_channel(
-        Client                                         &client,
-        Message                                        &msg,
-        std::map<const std::string, const std::string> &chan_key_pair);
+        Client&                                         client,
+        Message&                                        msg,
+        std::map<const std::string, const std::string>& chan_key_pair);
 
     void m_create_socket();
     void m_bind_socket();
@@ -77,26 +77,26 @@ class Server
                         u_short flags,
                         u_int   fflags,
                         int     data,
-                        void   *udata);
+                        void*   udata);
     void m_create_kqueue();
     void m_accept_client();
 
-    void m_handle_messages(Client &client);
+    void m_handle_messages(Client& client);
 
-    void m_disconnect_client(Client &client);
-    void m_register_client(Client &client, Message &msg);
+    void m_disconnect_client(Client& client);
+    void m_register_client(Client& client, Message& msg);
 
-    void m_receive_client_msg(Client &client, int bytes);
-    void m_send_client_msg(Client &client, int bytes);
-    void m_prepare_to_send(Client &client, const std::string &str_msg);
-    void m_send_to_channel(Channel *channel, const std::string &msg);
-    void m_send_to_channel(Client &client, const std::string &msg);
+    void m_receive_client_msg(Client& client, int bytes);
+    void m_send_client_msg(Client& client, int bytes);
+    void m_prepare_to_send(Client& client, const std::string& str_msg);
+    void m_send_to_channel(Channel* channel, const std::string& msg);
+    void m_send_to_channel(Client& client, const std::string& msg);
 
     void m_initialize_server();
 
   public:
     ~Server();
-    Server(int argc, char **argv);
+    Server(int argc, char** argv);
     void run();
 };
 

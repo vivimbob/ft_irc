@@ -18,7 +18,7 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'true'
 Language: Cpp
-PointerAlignment: Right
+PointerAlignment: Left
 SpaceBeforeParens: ControlStatements
 Standard: Cpp03
 TabWidth: '4'

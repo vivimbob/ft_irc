@@ -2,7 +2,7 @@
 #include "../includes/logger.hpp"
 #include <utility>
 
-Channel::Channel(const std::string &name, const std::string &key)
+Channel::Channel(const std::string& name, const std::string& key)
     : m_channel_name(name),
       m_channel_init_time(std::time(NULL)),
       m_key(key)
@@ -23,20 +23,20 @@ Channel::~Channel()
 {
 }
 
-const std::string &
+const std::string&
     Channel::get_channel_name() const
 {
     return m_channel_name;
 }
 
-const std::string &
+const std::string&
     Channel::get_channel_topic() const
 {
     return m_channel_topic;
 }
 
 std::string
-    Channel::get_channel_mode(Client *client)
+    Channel::get_channel_mode(Client* client)
 {
     if (m_mode_string_need_update)
     {
@@ -60,7 +60,7 @@ std::string
             m_mode_string.push_back('l');
         m_mode_string_need_update = false;
     }
-    MemberShip &member = m_member_list.find(client)->second;
+    MemberShip& member = m_member_list.find(client)->second;
     std::string member_mode_string;
     if (member.mode.operater)
         member_mode_string.push_back('o');
@@ -69,32 +69,32 @@ std::string
     return m_mode_string + member_mode_string;
 }
 
-const std::string &
+const std::string&
     Channel::get_key() const
 {
     return m_key;
 }
 
-const size_t &
+const size_t&
     Channel::get_user_limit() const
 {
     return m_user_limit;
 }
 
-const std::map<Client *, MemberShip> &
+const std::map<Client*, MemberShip>&
     Channel::get_user_list()
 {
     return m_member_list;
 }
 
 void
-    Channel::set_channel_name(const std::string &name)
+    Channel::set_channel_name(const std::string& name)
 {
     this->m_channel_name = name;
 }
 
 void
-    Channel::set_channel_topic(const std::string &topic)
+    Channel::set_channel_topic(const std::string& topic)
 {
     this->m_channel_topic = topic;
 }
@@ -179,13 +179,13 @@ void
 }
 
 void
-    Channel::set_operator_flag(bool toggle, Client *client)
+    Channel::set_operator_flag(bool toggle, Client* client)
 {
     m_member_list.find(client)->second.mode.operater = toggle;
 }
 
 void
-    Channel::set_voice_flag(bool toggle, Client *client)
+    Channel::set_voice_flag(bool toggle, Client* client)
 {
     m_member_list.find(client)->second.mode.voice = toggle;
 }
@@ -203,25 +203,25 @@ bool
 }
 
 bool
-    Channel::is_operator(Client &client)
+    Channel::is_operator(Client& client)
 {
     return m_member_list.find(&client)->second.mode.operater;
 }
 
 bool
-    Channel::is_voice_mode(Client &client)
+    Channel::is_voice_mode(Client& client)
 {
     return m_member_list.find(&client)->second.mode.voice;
 }
 
 bool
-    Channel::is_user_on_channel(Client *client)
+    Channel::is_user_on_channel(Client* client)
 {
     return m_member_list.count(client);
 }
 
 bool
-    Channel::is_user_on_invitation_list(Client *client)
+    Channel::is_user_on_invitation_list(Client* client)
 {
     return m_invitation_list.count(client);
 }
@@ -263,25 +263,25 @@ bool
 }
 
 void
-    Channel::add_user(Client &client)
+    Channel::add_user(Client& client)
 {
     m_member_list.insert(std::make_pair(&client, MemberShip(&client, this)));
 }
 
 void
-    Channel::delete_user(Client &client)
+    Channel::delete_user(Client& client)
 {
     m_member_list.erase(&client);
 }
 
 void
-    Channel::add_user_invitation_list(Client &client)
+    Channel::add_user_invitation_list(Client& client)
 {
     m_invitation_list.insert(&client);
 }
 
 void
-    Channel::delete_user_invitation_list(Client &client)
+    Channel::delete_user_invitation_list(Client& client)
 {
     m_invitation_list.erase(&client);
 }

@@ -2,9 +2,9 @@
 #include "../../includes/server.hpp"
 
 void
-    Server::m_process_channel_mode_command(Client            &client,
-                                           Message           &msg,
-                                           const std::string &channel_name)
+    Server::m_process_channel_mode_command(Client&            client,
+                                           Message&           msg,
+                                           const std::string& channel_name)
 {
     if (!m_channel_map.count(channel_name))
     {
@@ -12,7 +12,7 @@ void
                             Logger::Debug);
         return;
     }
-    Channel *channel = m_channel_map.at(channel_name);
+    Channel* channel = m_channel_map.at(channel_name);
     if (msg.get_params().size() < 2)
     {
         client.push_message(
@@ -136,7 +136,7 @@ void
                         Logger::Debug);
                     break; // no such nick;
                 }
-                Client *user = iterator_user->second;
+                Client* user = iterator_user->second;
                 if (!channel->is_user_on_channel(user))
                 {
                     client.push_message(msg.err_not_on_channel(channel_name),
@@ -167,7 +167,7 @@ void
                         Logger::Debug);
                     break; // no such nick;
                 }
-                Client *user = iterator_user->second;
+                Client* user = iterator_user->second;
                 if (!channel->is_user_on_channel(user))
                 {
                     client.push_message(msg.err_not_on_channel(channel_name),
@@ -189,9 +189,9 @@ void
 }
 
 void
-    Server::m_process_user_mode_command(Client            &client,
-                                        Message           &msg,
-                                        const std::string &nickname)
+    Server::m_process_user_mode_command(Client&            client,
+                                        Message&           msg,
+                                        const std::string& nickname)
 {
     if (nickname != client.get_nickname())
     {
@@ -243,7 +243,7 @@ void
 }
 
 void
-    Server::m_process_mode_command(Client &client, Message &msg)
+    Server::m_process_mode_command(Client& client, Message& msg)
 {
     if (msg.get_params().empty())
     {
@@ -251,7 +251,7 @@ void
         return;
     }
 
-    const std::string &target = msg.get_params()[0];
+    const std::string& target = msg.get_params()[0];
 
     if (utils::is_channel_prefix(target))
         m_process_channel_mode_command(client, msg, target);

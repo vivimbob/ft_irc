@@ -3,9 +3,9 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_kick_command(Client &client, Message &msg)
+    Server::m_process_kick_command(Client& client, Message& msg)
 {
-    const std::vector<std::string> &parameter = msg.get_params();
+    const std::vector<std::string>& parameter = msg.get_params();
     if (parameter.size() < 2)
     {
         client.push_message(msg.err_need_more_params(), Logger::Debug);
@@ -24,11 +24,11 @@ void
         return;
     }
 
-    Channel *channel;
+    Channel* channel;
 
     if (channel_list.size() == 1)
     {
-        const std::string &channel_name = channel_list[0];
+        const std::string& channel_name = channel_list[0];
 
         if (!utils::is_channel_prefix(channel_name))
         {
@@ -63,14 +63,14 @@ void
 
         for (; nick_it != nick_ite; ++nick_it)
         {
-            const std::string &nick = *nick_it;
+            const std::string& nick = *nick_it;
 
             if (!m_client_map.count(nick))
             {
                 client.push_message(msg.err_no_such_nick(nick), Logger::Debug);
                 continue;
             }
-            Client *target_client = m_client_map[nick];
+            Client* target_client = m_client_map[nick];
 
             if (channel->is_user_on_channel(target_client))
             {
@@ -94,8 +94,8 @@ void
 
         for (; nick_it != nick_ite; ++nick_it, ++channel_it)
         {
-            const std::string &channel_name = *channel_it;
-            const std::string &nick         = *nick_it;
+            const std::string& channel_name = *channel_it;
+            const std::string& nick         = *nick_it;
 
             if (!utils::is_channel_prefix(channel_name))
             {
@@ -133,7 +133,7 @@ void
                 continue;
             }
 
-            Client *target_client = m_client_map[nick];
+            Client* target_client = m_client_map[nick];
 
             if (channel->is_user_on_channel(target_client))
             {

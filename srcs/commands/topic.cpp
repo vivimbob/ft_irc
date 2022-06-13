@@ -2,7 +2,7 @@
 #include "../../includes/server.hpp"
 
 void
-    Server::m_process_topic_command(Client &client, Message &msg)
+    Server::m_process_topic_command(Client& client, Message& msg)
 {
     if (msg.get_params().empty())
     {
@@ -10,7 +10,7 @@ void
         return;
     }
 
-    const std::string &channel_name = msg.get_params()[0];
+    const std::string& channel_name = msg.get_params()[0];
 
     if (!m_channel_map.count(channel_name))
     {
@@ -19,7 +19,7 @@ void
         return;
     }
 
-    Channel *channel = m_channel_map[channel_name];
+    Channel* channel = m_channel_map[channel_name];
 
     if (msg.get_params().size() == 2)
     {

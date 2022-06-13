@@ -4,7 +4,7 @@ MemberShip::MemberShip() : client(), channel()
 {
 }
 
-MemberShip::MemberShip(Client *client, Channel *channel)
+MemberShip::MemberShip(Client* client, Channel* channel)
     : client(client),
       channel(channel)
 {
@@ -12,7 +12,7 @@ MemberShip::MemberShip(Client *client, Channel *channel)
     mode.voice    = false;
 }
 
-MemberShip::MemberShip(const MemberShip &copy)
+MemberShip::MemberShip(const MemberShip& copy)
     : client(copy.client),
       channel(copy.channel)
 {

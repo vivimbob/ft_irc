@@ -2,7 +2,7 @@
 #include "../includes/client.hpp"
 #include "../includes/logger.hpp"
 
-Message::Message(Client *client, const std::string &message)
+Message::Message(Client* client, const std::string& message)
     : m_message(message),
       m_valid_message(true),
       m_position(0),
@@ -65,31 +65,31 @@ void
     }
 }
 
-const std::string &
+const std::string&
     Message::get_message() const
 {
     return m_message;
 }
 
-const std::string &
+const std::string&
     Message::get_prefix() const
 {
     return m_prefix;
 }
 
-const std::string &
+const std::string&
     Message::get_command() const
 {
     return m_command;
 }
 
-const std::vector<std::string> &
+const std::vector<std::string>&
     Message::get_params() const
 {
     return m_parameters;
 }
 
-const bool &
+const bool&
     Message::is_valid_message() const
 {
     return m_valid_message;
@@ -119,49 +119,49 @@ std::string
 }
 
 std::string
-    Message::err_no_such_nick(const std::string &nickname)
+    Message::err_no_such_nick(const std::string& nickname)
 {
     return reply_servername_prefix("401") + " " + nickname +
            " :No such nick/channel\r\n";
 }
 
 std::string
-    Message::err_no_such_server(const std::string &server_name)
+    Message::err_no_such_server(const std::string& server_name)
 {
     return reply_servername_prefix("402") + " " + server_name +
            " :No such server\r\n";
 }
 
 std::string
-    Message::err_no_such_channel(const std::string &channel_name)
+    Message::err_no_such_channel(const std::string& channel_name)
 {
     return reply_servername_prefix("403") + " " + channel_name +
            " :No such channel\r\n";
 }
 
 std::string
-    Message::err_cannot_send_to_chan(const std::string &channel_name)
+    Message::err_cannot_send_to_chan(const std::string& channel_name)
 {
     return reply_servername_prefix("404") + " " + channel_name +
            " :Cannot send to channel\r\n";
 }
 
 std::string
-    Message::err_too_many_channels(const std::string &channel_name)
+    Message::err_too_many_channels(const std::string& channel_name)
 {
     return reply_servername_prefix("405") + " " + channel_name +
            " :You have joined too many channels\r\n";
 }
 
 std::string
-    Message::err_was_no_such_nick(const std::string &nickname)
+    Message::err_was_no_such_nick(const std::string& nickname)
 {
     return reply_servername_prefix("406") + " " + nickname +
            " :There was no such nickname\r\n";
 }
 
 std::string
-    Message::err_too_many_targets(const std::string &target)
+    Message::err_too_many_targets(const std::string& target)
 {
     return reply_servername_prefix("407") + " " + target +
            " :Duplicate recipients. No message delivered\r\n";
@@ -187,14 +187,14 @@ std::string
 }
 
 std::string
-    Message::err_no_toplevel(const std::string &mask)
+    Message::err_no_toplevel(const std::string& mask)
 {
     return reply_servername_prefix("413") + " " + mask +
            " :No toplevel domain specified\r\n";
 }
 
 std::string
-    Message::err_wild_toplevel(const std::string &mask)
+    Message::err_wild_toplevel(const std::string& mask)
 {
     return reply_servername_prefix("414") + " " + mask +
            " :Wildcard in toplevel domain\r\n";
@@ -214,14 +214,14 @@ std::string
 }
 
 std::string
-    Message::err_no_admin_info(const std::string &server)
+    Message::err_no_admin_info(const std::string& server)
 {
     return reply_servername_prefix("423") + " " + server +
            " :No administrative info available\r\n";
 }
 
 std::string
-    Message::err_file_error(const std::string &file_op, const std::string &file)
+    Message::err_file_error(const std::string& file_op, const std::string& file)
 {
     return reply_servername_prefix("424") + " :File error doing " + file_op +
            " on " + file + "\r\n";
@@ -234,51 +234,51 @@ std::string
 }
 
 std::string
-    Message::err_erroneus_nickname(const std::string &nick)
+    Message::err_erroneus_nickname(const std::string& nick)
 {
     return reply_servername_prefix("432") + " " + nick +
            " :Erroneus nickname\r\n";
 }
 
 std::string
-    Message::err_nickname_in_use(const std::string &nick)
+    Message::err_nickname_in_use(const std::string& nick)
 {
     return reply_servername_prefix("433") + " " + nick +
            " :Nickname is already in use\r\n";
 }
 
 std::string
-    Message::err_nick_collision(const std::string &nick)
+    Message::err_nick_collision(const std::string& nick)
 {
     return reply_servername_prefix("436") + " " + nick +
            " :Nickname collision KILL\r\n";
 }
 
 std::string
-    Message::err_user_not_in_channel(const std::string &nick,
-                                     const std::string &channel)
+    Message::err_user_not_in_channel(const std::string& nick,
+                                     const std::string& channel)
 {
     return reply_servername_prefix("441") + " " + nick + " " + channel +
            " :They aren't on that channel\r\n";
 }
 
 std::string
-    Message::err_not_on_channel(const std::string &channel)
+    Message::err_not_on_channel(const std::string& channel)
 {
     return reply_servername_prefix("442") + " " + channel +
            " :You're not on that channel\r\n";
 }
 
 std::string
-    Message::err_user_on_channel(const std::string &user,
-                                 const std::string &channel)
+    Message::err_user_on_channel(const std::string& user,
+                                 const std::string& channel)
 {
     return reply_servername_prefix("443") + " " + user + " " + channel +
            " :is already on channel\r\n";
 }
 
 std::string
-    Message::err_no_login(const std::string &user)
+    Message::err_no_login(const std::string& user)
 {
     return reply_servername_prefix("444") + " " + user +
            " :User not logged in\r\n";
@@ -336,49 +336,49 @@ std::string
 }
 
 std::string
-    Message::err_key_set(const std::string &channel)
+    Message::err_key_set(const std::string& channel)
 {
     return reply_servername_prefix("467") + " " + channel +
            " :Channel key already set\r\n";
 }
 
 std::string
-    Message::err_channel_is_full(const std::string &channel)
+    Message::err_channel_is_full(const std::string& channel)
 {
     return reply_servername_prefix("471") + " " + channel +
            " :Cannot join channel (+l)\r\n";
 }
 
 std::string
-    Message::err_unknown_mode(const char &chr)
+    Message::err_unknown_mode(const char& chr)
 {
     return reply_servername_prefix("472") + " " + chr +
            " :is unknown mode char to me\r\n";
 }
 
 std::string
-    Message::err_invite_only_chan(const std::string &channel)
+    Message::err_invite_only_chan(const std::string& channel)
 {
     return reply_servername_prefix("473") + " " + channel +
            " :Cannot join channel (+i)\r\n";
 }
 
 std::string
-    Message::err_banned_from_chan(const std::string &channel)
+    Message::err_banned_from_chan(const std::string& channel)
 {
     return reply_servername_prefix("474") + " " + channel +
            " :Cannot join channel (+b)\r\n";
 }
 
 std::string
-    Message::err_bad_channel_key(const std::string &channel)
+    Message::err_bad_channel_key(const std::string& channel)
 {
     return reply_servername_prefix("475") + " " + channel +
            " :Cannot join channel (+k)\r\n";
 }
 
 std::string
-    Message::err_bad_chan_mask(const std::string &channel)
+    Message::err_bad_chan_mask(const std::string& channel)
 {
     return reply_servername_prefix("476") + " " + channel +
            " :Bad Channel Mask\r\n";
@@ -392,7 +392,7 @@ std::string
 }
 
 std::string
-    Message::err_chanoprivs_needed(const std::string &channel)
+    Message::err_chanoprivs_needed(const std::string& channel)
 {
     return reply_servername_prefix("482") + " " + channel +
            " :You're not channel operator\r\n";
@@ -424,7 +424,7 @@ std::string
 }
 
 std::string
-    Message::rpl_away(const std::string &nick, const std::string &away_message)
+    Message::rpl_away(const std::string& nick, const std::string& away_message)
 {
     return reply_servername_prefix("301") + " " + nick + " :" + away_message +
            "\r\n";
@@ -438,7 +438,7 @@ std::string
 
 std::string
     Message::rpl_list(const std::string  channel,
-                      const std::string &visible,
+                      const std::string& visible,
                       const std::string  topic)
 {
     return reply_servername_prefix("322") + " " + channel + " " + visible +
@@ -452,10 +452,10 @@ std::string
 }
 
 std::string
-    Message::rpl_channel_mode_is(const std::string &channel,
+    Message::rpl_channel_mode_is(const std::string& channel,
                                  bool               toggle,
                                  char               mode,
-                                 const std::string &mode_params)
+                                 const std::string& mode_params)
 {
     char mode_prefix = toggle == true ? '+' : '-';
     return reply_servername_prefix("324") + " " + channel + " " + mode_prefix +
@@ -463,35 +463,35 @@ std::string
 }
 
 std::string
-    Message::rpl_channel_mode_is(const std::string &channel,
-                                 const std::string &mode)
+    Message::rpl_channel_mode_is(const std::string& channel,
+                                 const std::string& mode)
 {
     return reply_servername_prefix("324") + " " + channel + " " + mode + "\r\n";
 }
 
 std::string
-    Message::rpl_notopic(const std::string &channel)
+    Message::rpl_notopic(const std::string& channel)
 {
     return reply_servername_prefix("331") + " " + channel +
            " :No topic is set\r\n";
 }
 
 std::string
-    Message::rpl_topic(const std::string &channel, const std::string &topic)
+    Message::rpl_topic(const std::string& channel, const std::string& topic)
 {
     return reply_servername_prefix("332") + " " + channel + " :" + topic +
            "\r\n";
 }
 
 std::string
-    Message::rpl_inviting(const std::string &nick, const std::string &channel)
+    Message::rpl_inviting(const std::string& nick, const std::string& channel)
 {
     return reply_servername_prefix("341") + " " + nick + " " + channel + "\r\n";
 }
 
 std::string
-    Message::rpl_namreply(const std::string             &channel,
-                          std::queue<const std::string> &nick)
+    Message::rpl_namreply(const std::string&             channel,
+                          std::queue<const std::string>& nick)
 {
     std::string message = reply_servername_prefix("353") + " " + channel + " :";
 
@@ -506,28 +506,28 @@ std::string
 }
 
 std::string
-    Message::rpl_endofnames(const std::string &channel)
+    Message::rpl_endofnames(const std::string& channel)
 {
     return reply_servername_prefix("353") + " " + channel +
            " :End of /NAMES list\r\n";
 }
 
 std::string
-    Message::rpl_banlist(const std::string &channel, const std::string &banid)
+    Message::rpl_banlist(const std::string& channel, const std::string& banid)
 {
     return reply_servername_prefix("367") + " " + channel + " " + banid +
            "\r\n";
 }
 
 std::string
-    Message::rpl_endofbanlist(const std::string &channel)
+    Message::rpl_endofbanlist(const std::string& channel)
 {
     return reply_servername_prefix("368") + " " + channel +
            " :End of channel ban list\r\n";
 }
 
 std::string
-    Message::rpl_user_mode_is(const std::string &user_mode_string)
+    Message::rpl_user_mode_is(const std::string& user_mode_string)
 {
     return reply_servername_prefix("221") + " :Your user mode is [" +
            user_mode_string + "]\r\n";
@@ -552,7 +552,7 @@ std::string
 }
 
 std::string
-    Message::build_part_reply(const std::string &channel)
+    Message::build_part_reply(const std::string& channel)
 {
     std::string param;
 
@@ -565,23 +565,23 @@ std::string
 }
 
 std::string
-    Message::build_message_reply(const std::string &target)
+    Message::build_message_reply(const std::string& target)
 {
     return reply_nickmask_prefix(m_command) + " " + target + " :" +
            m_parameters[1] + "\r\n";
 }
 
 std::string
-    Message::build_invite_reply(const std::string &nick,
-                                const std::string &channel)
+    Message::build_invite_reply(const std::string& nick,
+                                const std::string& channel)
 {
     return reply_nickmask_prefix(m_command) + " " + nick + " " + channel +
            "\r\n";
 }
 
 std::string
-    Message::build_kick_reply(const std::string &channel,
-                              const std::string &nick)
+    Message::build_kick_reply(const std::string& channel,
+                              const std::string& nick)
 {
     return reply_nickmask_prefix(m_command) + " " + channel + " " + nick +
            "\r\n";

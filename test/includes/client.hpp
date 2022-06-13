@@ -2,7 +2,7 @@
 #define TEST_CLIENT_HPP
 #include <fstream>
 
-#define ERGO 6667
+#define ERGO    6667
 #define IRCSERV 6668
 
 class Client

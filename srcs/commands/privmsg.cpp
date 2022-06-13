@@ -3,9 +3,9 @@
 #include "../../includes/utils.hpp"
 
 void
-    Server::m_process_privmsg_command(Client &client, Message &msg)
+    Server::m_process_privmsg_command(Client& client, Message& msg)
 {
-    const std::vector<std::string> &parameter = msg.get_params();
+    const std::vector<std::string>& parameter = msg.get_params();
 
     if (parameter.empty())
     {
@@ -41,7 +41,7 @@ void
             ClientMap::iterator client_it                = m_client_map.begin();
             ClientMap::iterator client_ite               = m_client_map.end();
             size_t              number_of_matched_client = 0;
-            Client             *matched_client;
+            Client*             matched_client;
             for (; client_it != client_ite; ++client_it)
             {
                 if (client_it->second->is_same_client(client_info))

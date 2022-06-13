@@ -53,7 +53,7 @@ void
     }
     Logger().info() << "Create socket " << m_listen_fd;
     int toggle = 1;
-    setsockopt(m_listen_fd, SOL_SOCKET, SO_REUSEPORT, (const void *)&toggle,
+    setsockopt(m_listen_fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
                sizeof(toggle));
 }
 
@@ -65,8 +65,8 @@ void
     m_sockaddr.sin_addr.s_addr = INADDR_ANY;
     m_sockaddr.sin_port        = htons(m_port);
 
-    if (bind(m_listen_fd, (struct sockaddr *)&m_sockaddr,
-             sizeof(sockaddr_in)) == -1)
+    if (bind(m_listen_fd, (struct sockaddr*)&m_sockaddr, sizeof(sockaddr_in)) ==
+        -1)
     {
         Logger().error() << "Failed to bind to port and address" << m_port
                          << ". errno: " << errno << ":" << strerror(errno);
@@ -96,7 +96,7 @@ void
                            u_short flags,
                            u_int   fflags,
                            int     data,
-                           void   *udata)
+                           void*   udata)
 {
     struct kevent kev;
     EV_SET(&kev, identity, filter, flags, fflags, data, udata);
@@ -126,8 +126,8 @@ void
     int         client_addr_len = sizeof(client_addr);
     int         client_fd       = -1;
 
-    client_fd = accept(m_listen_fd, (sockaddr *)(&client_addr),
-                       (socklen_t *)(&client_addr_len));
+    client_fd = accept(m_listen_fd, (sockaddr*)(&client_addr),
+                       (socklen_t*)(&client_addr_len));
     if (client_fd == -1)
     {
         Logger().error() << "Failed to accept client. errno: " << errno << ":"
@@ -137,7 +137,7 @@ void
 
     fcntl(client_fd, F_SETFL, O_NONBLOCK);
 
-    Client *client_info = new Client(client_addr, client_fd);
+    Client* client_info = new Client(client_addr, client_fd);
 
     m_update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, client_info);
     m_update_event(client_fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0,
@@ -149,11 +149,11 @@ void
 }
 
 void
-    Server::m_handle_messages(Client &client)
+    Server::m_handle_messages(Client& client)
 {
     while (client.get_commands().size())
     {
-        Message *message = client.get_commands().front();
+        Message* message = client.get_commands().front();
         Logger().debug() << client.get_nickname() << " send ["
                          << message->get_message() << ']';
         client.get_commands().pop();
@@ -167,9 +167,9 @@ void
 }
 
 void
-    Server::m_disconnect_client(Client &client)
+    Server::m_disconnect_client(Client& client)
 {
-    const unsigned int &clientfd = client.get_socket();
+    const unsigned int& clientfd = client.get_socket();
 
     Logger().info() << "Client disconnect [address :" << client.get_client_IP()
                     << ':' << client.get_client_addr().sin_port
@@ -192,7 +192,7 @@ void
 }
 
 void
-    Server::m_register_client(Client &client, Message &msg)
+    Server::m_register_client(Client& client, Message& msg)
 {
     m_client_map[client.get_nickname()] = &client;
     client.push_message(msg.rpl_welcome(), Logger::Debug);
@@ -200,11 +200,11 @@ void
 }
 
 void
-    Server::m_receive_client_msg(Client &client, int data_len)
+    Server::m_receive_client_msg(Client& client, int data_len)
 {
-    const unsigned int &clientfd = client.get_socket();
+    const unsigned int& clientfd = client.get_socket();
 
-    char *buffer = m_read_buffer;
+    char* buffer = m_read_buffer;
     if (data_len <= IPV4_MTU_MIN)
         data_len = IPV4_MTU_MAX;
 
@@ -212,7 +212,7 @@ void
 
     if (recv_data_len > 0)
     {
-        std::string &recv_buffer = client.get_recv_buffer();
+        std::string& recv_buffer = client.get_recv_buffer();
         recv_buffer.append(buffer, recv_data_len);
 
         size_t position = recv_buffer.find_first_of("\r\n", 0);
@@ -242,12 +242,12 @@ void
 }
 
 void
-    Server::m_send_client_msg(Client &client, int available_bytes)
+    Server::m_send_client_msg(Client& client, int available_bytes)
 {
-    SendBuffer         &send_buffer      = client.get_send_buffer();
+    SendBuffer&         send_buffer      = client.get_send_buffer();
     int                 remain_data_len  = 0;
     int                 attempt_data_len = 0;
-    const unsigned int &clientfd         = client.get_socket();
+    const unsigned int& clientfd         = client.get_socket();
 
     if (available_bytes > IPV4_MTU_MAX)
         available_bytes = IPV4_MTU_MAX;
@@ -285,7 +285,7 @@ void
 }
 
 void
-    Server::m_prepare_to_send(Client &client, const std::string &str_msg)
+    Server::m_prepare_to_send(Client& client, const std::string& str_msg)
 {
     client.push_message(str_msg);
     m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
@@ -295,9 +295,9 @@ void
 }
 
 void
-    Server::m_send_to_channel(Channel *channel, const std::string &msg)
+    Server::m_send_to_channel(Channel* channel, const std::string& msg)
 {
-    const Channel::MemberMap          &user_list = channel->get_user_list();
+    const Channel::MemberMap&          user_list = channel->get_user_list();
     Channel::MemberMap::const_iterator user      = user_list.begin();
 
     Logger().trace() << "send message to channel :"
@@ -307,9 +307,9 @@ void
 }
 
 void
-    Server::m_send_to_channel(Client &client, const std::string &msg)
+    Server::m_send_to_channel(Client& client, const std::string& msg)
 {
-    std::set<Channel *>::iterator it = client.get_channel_list().begin();
+    std::set<Channel*>::iterator it = client.get_channel_list().begin();
     for (; it != client.get_channel_list().end(); ++it)
         m_send_to_channel(*it, msg);
 }
@@ -327,7 +327,7 @@ Server::~Server()
 {
 }
 
-Server::Server(int argc, char **argv) : m_kq(-1), m_listen_fd(-1), m_port(-1)
+Server::Server(int argc, char** argv) : m_kq(-1), m_listen_fd(-1), m_port(-1)
 {
     if (argc != 3)
     {
@@ -354,13 +354,13 @@ void
         Logger().trace() << event_count << " new kevent";
         for (int i = 0; i < event_count; ++i)
         {
-            struct kevent &event = m_event_list[i];
+            struct kevent& event = m_event_list[i];
             if (event.ident == (unsigned int)m_listen_fd)
                 m_accept_client();
             else if (event.filter == EVFILT_READ)
-                m_receive_client_msg(*(Client *)event.udata, event.data);
+                m_receive_client_msg(*(Client*)event.udata, event.data);
             else if (event.filter == EVFILT_WRITE)
-                m_send_client_msg(*(Client *)event.udata, event.data);
+                m_send_client_msg(*(Client*)event.udata, event.data);
         }
     }
 }

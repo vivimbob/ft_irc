@@ -14,11 +14,11 @@ class MemberShip
     };
 
     MemberShip();
-    MemberShip(Client *client, Channel *channel);
-    MemberShip(const MemberShip &copy);
+    MemberShip(Client* client, Channel* channel);
+    MemberShip(const MemberShip& copy);
 
-    Client *const  client;
-    Channel *const channel;
+    Client* const  client;
+    Channel* const channel;
     s_mode         mode;
 };
 

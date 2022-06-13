@@ -8,8 +8,8 @@ BulkClient::BulkClient()
 
 BulkClient::~BulkClient()
 {
-    std::vector<Client *>::iterator it  = m_clients.begin();
-    std::vector<Client *>::iterator ite = m_clients.end();
+    std::vector<Client*>::iterator it  = m_clients.begin();
+    std::vector<Client*>::iterator ite = m_clients.end();
     for (; it != ite; ++it)
         delete *it;
 }
@@ -34,8 +34,8 @@ void
     BulkClient::print_result()
 {
     std::cout << m_test_case << ": ";
-    std::vector<Client *>::iterator it  = m_clients.begin();
-    std::vector<Client *>::iterator ite = m_clients.end();
+    std::vector<Client*>::iterator it  = m_clients.begin();
+    std::vector<Client*>::iterator ite = m_clients.end();
     for (int i = 0; it != ite; ++it, ++i)
     {
         if (!(*it)->diff())

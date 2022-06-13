@@ -43,19 +43,19 @@ class Logger
 
     static void set_timestamp_mode(int time, std::string separator = " ");
 
-    std::ostringstream &trace();
+    std::ostringstream& trace();
 
-    std::ostringstream &debug();
+    std::ostringstream& debug();
 
-    std::ostringstream &info();
+    std::ostringstream& info();
 
-    std::ostringstream &error();
+    std::ostringstream& error();
 
-    std::ostringstream &log(int level);
+    std::ostringstream& log(int level);
 
   private:
-    Logger(const Logger &log);
-    Logger &operator=(const Logger &log);
+    Logger(const Logger& log);
+    Logger& operator=(const Logger& log);
 
     /* Member functions end */
 
@@ -63,7 +63,7 @@ class Logger
 
   private:
     class _Impl;
-    _Impl *m_impl;
+    _Impl* m_impl;
 
     /* Member variable end */
 };
@@ -75,7 +75,7 @@ class Logger::_Impl
 
     typedef std::pair<int, std::string> _Symbol;
 
-    typedef std::pair<int, std::ostream *> _Stream;
+    typedef std::pair<int, std::ostream*> _Stream;
 
     /* Member types end */
 
@@ -86,13 +86,13 @@ class Logger::_Impl
 
     ~_Impl();
 
-    std::ostringstream &m_trace();
+    std::ostringstream& m_trace();
 
-    std::ostringstream &m_debug();
+    std::ostringstream& m_debug();
 
-    std::ostringstream &m_info();
+    std::ostringstream& m_info();
 
-    std::ostringstream &m_error();
+    std::ostringstream& m_error();
 
     static void m_set_loglevel(int level);
 
@@ -100,7 +100,7 @@ class Logger::_Impl
 
     void m_flush();
 
-    std::ostringstream &m_get_stream(int level);
+    std::ostringstream& m_get_stream(int level);
 
     void m_prefix_timestamp();
 

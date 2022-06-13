@@ -3,14 +3,14 @@
 #include "../../includes/utils.hpp"
 
 void
-    send_list_to_client(Channel *channel, Client &client, Message &msg)
+    send_list_to_client(Channel* channel, Client& client, Message& msg)
 {
     const size_t number_of_clients = channel->get_user_list().size();
     if (client.is_already_joined(channel) ||
         !(channel->is_private_mode() || channel->is_secret_mode()))
     {
-        const std::string &symbol = utils::attach_channel_symbol(channel);
-        const std::string &topic  = channel->get_channel_topic();
+        const std::string& symbol = utils::attach_channel_symbol(channel);
+        const std::string& topic  = channel->get_channel_topic();
         client.push_message(msg.rpl_list(symbol + channel->get_channel_name(),
                                          std::to_string(number_of_clients),
                                          topic));
@@ -21,7 +21,7 @@ void
 }
 
 void
-    Server::m_process_list_command(Client &client, Message &msg)
+    Server::m_process_list_command(Client& client, Message& msg)
 {
     if (msg.get_params().empty())
     {

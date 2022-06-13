@@ -24,13 +24,13 @@ bool
 }
 
 bool
-    is_channel_prefix(const std::string &chan)
+    is_channel_prefix(const std::string& chan)
 {
     return (chan[0] == '#' || chan[0] == '&');
 }
 
 bool
-    is_channel_name_valid(const std::string &chan)
+    is_channel_name_valid(const std::string& chan)
 {
     if (chan.length() > 50)
         return false;
@@ -41,7 +41,7 @@ bool
 }
 
 std::string
-    attach_channel_symbol(Channel *channel)
+    attach_channel_symbol(Channel* channel)
 {
     if (channel->is_private_mode())
         return "*";
@@ -51,8 +51,8 @@ std::string
 }
 
 void
-    split_by_comma(std::vector<const std::string> &splited_params,
-                   const std::string              &params)
+    split_by_comma(std::vector<const std::string>& splited_params,
+                   const std::string&              params)
 {
     std::istringstream iss(params);
 
@@ -64,9 +64,9 @@ void
 ClientInfo
     parse_client_info(std::string client_str)
 {
-    const char *offset_exclamation_mark = strchr(client_str.data(), '!');
-    const char *offset_percent_sign     = strchr(client_str.data(), '%');
-    const char *offset_at_sign          = strchr(client_str.data(), '@');
+    const char* offset_exclamation_mark = strchr(client_str.data(), '!');
+    const char* offset_percent_sign     = strchr(client_str.data(), '%');
+    const char* offset_at_sign          = strchr(client_str.data(), '@');
     ClientInfo  client;
 
     if (offset_exclamation_mark &&
