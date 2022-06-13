@@ -11,16 +11,16 @@ function start_server()
 
 function start_client()
 {
-	./bridge 6667 6668 6669
+	./mini 6667 6668 6669
 }
 
 trap "pkill -P $$" SIGINT
 trap "pkill -P $$" SIGTERM
 trap "pkill -P $$" SIGQUIT
 
-c++ ./bridge/srcs/main.cpp -o bridge
+c++ ./bridge/srcs/main.cpp -o mini
 
 start_server
 sleep 2
 start_client
-
+pkill -P $$

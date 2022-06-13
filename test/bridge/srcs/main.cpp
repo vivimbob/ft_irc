@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: minjakim <minjakim@student.42seoul.kr      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/14 06:17:47 by minjakim          #+#    #+#             */
-/*   Updated: 2022/06/14 06:31:35 by minjakim         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <arpa/inet.h>
 #include <cstdio>
 #include <fcntl.h>
@@ -78,9 +66,11 @@ int
         return (0);
     int           fd[--argc];
     struct kevent events[argc];
+    std::string   buffer;
     std::string   message;
     int           i;
     int           count;
+    int           len;
     timespec      timer;
     timer.tv_sec = 2;
 
@@ -91,15 +81,18 @@ int
     while (true)
     {
         std::cout << "Enter message: ";
-        if (!std::getline(std::cin, message))
-            continue;
+        std::getline(std::cin, message);
         message += "\r\n";
         for (i = 0; i < argc; ++i)
             write(fd[i], message.data(), message.size());
-        while ((count = kevent(kq, NULL, 0, events, argc, &timer)) > 0)
+        while ((count = kevent(kq, NULL, 0, events, argc, &timer)))
         {
             for (i = 0; i < count; ++i)
-                buffers[events->ident] += events[i].data;
+            {
+                buffer.resize(events[i].data);
+                len = read(events[i].ident, buffer., events[i].data);
+                buffers[events[i].ident] += buffer;
+            }
         }
         for (i = 0; i < argc; ++i)
         {
