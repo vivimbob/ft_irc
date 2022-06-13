@@ -100,7 +100,7 @@ void
     Logger::_Impl::m_set_timestamp_mode(int         timestamp_mode,
                                         std::string separator)
 {
-    _Impl::m_timestamp_mode = timestamp_mode;
+    _Impl::m_timestamp_mode      = timestamp_mode;
     _Impl::m_timestamp_separator = separator;
 }
 

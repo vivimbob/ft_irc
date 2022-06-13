@@ -61,9 +61,9 @@ void
     Server::m_bind_socket()
 {
     memset(&m_sockaddr, 0, sizeof(sockaddr_in));
-    m_sockaddr.sin_family = AF_INET;
+    m_sockaddr.sin_family      = AF_INET;
     m_sockaddr.sin_addr.s_addr = INADDR_ANY;
-    m_sockaddr.sin_port = htons(m_port);
+    m_sockaddr.sin_port        = htons(m_port);
 
     if (bind(m_listen_fd, (struct sockaddr *)&m_sockaddr,
              sizeof(sockaddr_in)) == -1)
@@ -124,7 +124,7 @@ void
 {
     sockaddr_in client_addr;
     int         client_addr_len = sizeof(client_addr);
-    int         client_fd = -1;
+    int         client_fd       = -1;
 
     client_fd = accept(m_listen_fd, (sockaddr *)(&client_addr),
                        (socklen_t *)(&client_addr_len));
@@ -244,10 +244,10 @@ void
 void
     Server::m_send_client_msg(Client &client, int available_bytes)
 {
-    SendBuffer         &send_buffer = client.get_send_buffer();
-    int                 remain_data_len = 0;
+    SendBuffer         &send_buffer      = client.get_send_buffer();
+    int                 remain_data_len  = 0;
     int                 attempt_data_len = 0;
-    const unsigned int &clientfd = client.get_socket();
+    const unsigned int &clientfd         = client.get_socket();
 
     if (available_bytes > IPV4_MTU_MAX)
         available_bytes = IPV4_MTU_MAX;
@@ -298,7 +298,7 @@ void
     Server::m_send_to_channel(Channel *channel, const std::string &msg)
 {
     const Channel::MemberMap          &user_list = channel->get_user_list();
-    Channel::MemberMap::const_iterator user = user_list.begin();
+    Channel::MemberMap::const_iterator user      = user_list.begin();
 
     Logger().trace() << "send message to channel :"
                      << channel->get_channel_name();

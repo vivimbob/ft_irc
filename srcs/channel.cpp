@@ -7,15 +7,15 @@ Channel::Channel(const std::string &name, const std::string &key)
       m_channel_init_time(std::time(NULL)),
       m_key(key)
 {
-    m_mode.private_channel = false;
-    m_mode.secret = false;
-    m_mode.invite = false;
-    m_mode.topic = false;
-    m_mode.no_message = false;
-    m_mode.moderate = false;
-    m_mode.limit = false;
-    m_mode.key = key.empty() ? false : true;
-    m_user_limit = 42;
+    m_mode.private_channel    = false;
+    m_mode.secret             = false;
+    m_mode.invite             = false;
+    m_mode.topic              = false;
+    m_mode.no_message         = false;
+    m_mode.moderate           = false;
+    m_mode.limit              = false;
+    m_mode.key                = key.empty() ? false : true;
+    m_user_limit              = 42;
     m_mode_string_need_update = true;
 }
 
@@ -104,7 +104,7 @@ void
 {
     if (m_mode.private_channel == toggle)
         return;
-    m_mode.private_channel = toggle;
+    m_mode.private_channel    = toggle;
     m_mode_string_need_update = true;
     if (m_mode.private_channel == true && m_mode.secret == true)
         m_mode.secret = false;
@@ -115,7 +115,7 @@ void
 {
     if (m_mode.secret == toggle)
         return;
-    m_mode.secret = toggle;
+    m_mode.secret             = toggle;
     m_mode_string_need_update = true;
     if (m_mode.private_channel == true && m_mode.secret == true)
         m_mode.private_channel = false;
@@ -126,7 +126,7 @@ void
 {
     if (m_mode.invite == toggle)
         return;
-    m_mode.invite = toggle;
+    m_mode.invite             = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -135,7 +135,7 @@ void
 {
     if (m_mode.topic == toggle)
         return;
-    m_mode.topic = toggle;
+    m_mode.topic              = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -144,7 +144,7 @@ void
 {
     if (m_mode.no_message == toggle)
         return;
-    m_mode.no_message = toggle;
+    m_mode.no_message         = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -153,7 +153,7 @@ void
 {
     if (m_mode.moderate == toggle)
         return;
-    m_mode.moderate = toggle;
+    m_mode.moderate           = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -164,7 +164,7 @@ void
         m_key = key;
     if (m_mode.key == toggle)
         return;
-    m_mode.key = toggle;
+    m_mode.key                = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -174,7 +174,7 @@ void
     m_user_limit = limit;
     if (m_mode.limit == toggle)
         return;
-    m_mode.limit = toggle;
+    m_mode.limit              = toggle;
     m_mode_string_need_update = true;
 }
 

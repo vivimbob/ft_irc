@@ -12,9 +12,9 @@ void
          channel_key_it != chan_key_pair.end();
          ++channel_key_it) // 채널과 키쌍을 순회하면서 확인
     {
-        Channel           *channel = NULL;
+        Channel           *channel      = NULL;
         const std::string &channel_name = channel_key_it->first;
-        const std::string &key = channel_key_it->second;
+        const std::string &key          = channel_key_it->second;
 
         if (m_channel_map.count(channel_name))
             channel = m_channel_map[channel_name];
@@ -96,7 +96,7 @@ void
         }
 
         const Channel::MemberMap          &user_list = channel->get_user_list();
-        Channel::MemberMap::const_iterator user = user_list.begin();
+        Channel::MemberMap::const_iterator user      = user_list.begin();
         std::queue<const std::string>      nick_queue;
         for (; user != user_list.end(); ++user)
             nick_queue.push(user->first->get_nickname());

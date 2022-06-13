@@ -10,9 +10,9 @@ void
         client.push_message(msg.err_need_more_params(), Logger::Debug);
         return;
     }
-    const std::string nickname = msg.get_params()[0];
-    const std::string channel_name = msg.get_params()[1];
-    Channel          *channel = m_channel_map[channel_name];
+    const std::string nickname      = msg.get_params()[0];
+    const std::string channel_name  = msg.get_params()[1];
+    Channel          *channel       = m_channel_map[channel_name];
     Client           *target_client = m_client_map[nickname];
 
     if (!m_client_map.count(nickname))

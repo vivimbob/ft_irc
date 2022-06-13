@@ -9,12 +9,12 @@ Client::Client(sockaddr_in client_addr, int client_fd)
       m_nick_registered(false),
       m_user_registered(false)
 {
-    m_mode.invisible = false;
-    m_mode.server_notice = false;
-    m_mode.wallops = false;
-    m_mode.operater = false;
+    m_mode.invisible          = false;
+    m_mode.server_notice      = false;
+    m_mode.wallops            = false;
+    m_mode.operater           = false;
     m_mode_string_need_update = true;
-    m_channel_limits = 10;
+    m_channel_limits          = 10;
 }
 
 Client::~Client()
@@ -115,14 +115,14 @@ const std::set<Channel *> &
 void
     Client::set_nickname(const std::string &nickname)
 {
-    m_nickname = nickname;
+    m_nickname        = nickname;
     m_nick_registered = true;
 }
 
 void
     Client::set_username(const std::string &username)
 {
-    m_username = username;
+    m_username        = username;
     m_user_registered = true;
     Logger().debug() << get_client_IP() << " set username to " << m_username;
 }
@@ -160,7 +160,7 @@ void
 {
     if (m_mode.invisible == toggle)
         return;
-    m_mode.invisible = toggle;
+    m_mode.invisible          = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -169,7 +169,7 @@ void
 {
     if (m_mode.operater == toggle)
         return;
-    m_mode.operater = toggle;
+    m_mode.operater           = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -178,7 +178,7 @@ void
 {
     if (m_mode.server_notice == toggle)
         return;
-    m_mode.server_notice = toggle;
+    m_mode.server_notice      = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -187,7 +187,7 @@ void
 {
     if (m_mode.wallops == toggle)
         return;
-    m_mode.wallops = toggle;
+    m_mode.wallops            = toggle;
     m_mode_string_need_update = true;
 }
 
@@ -282,7 +282,7 @@ void
 void
     Client::leave_all_channel()
 {
-    std::set<Channel *>::iterator it = m_channel_list.begin();
+    std::set<Channel *>::iterator it  = m_channel_list.begin();
     std::set<Channel *>::iterator ite = m_channel_list.end();
 
     for (; it != ite; ++it)

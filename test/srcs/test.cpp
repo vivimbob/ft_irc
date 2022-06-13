@@ -9,7 +9,7 @@ int
     bash_argv[1] = (char *)"-c";
     bash_argv[2] = command;
     bash_argv[3] = NULL;
-    int fd = fork();
+    int fd       = fork();
     if (fd == 0)
         execv(bash_argv[0], bash_argv);
     if (fd < 0)
@@ -28,7 +28,7 @@ int
     bash_argv[2] = (char *)command.data();
     ;
     bash_argv[3] = NULL;
-    int fd = fork();
+    int fd       = fork();
     if (fd == 0)
         execv(bash_argv[0], bash_argv);
     if (fd < 0)

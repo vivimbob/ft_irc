@@ -12,10 +12,10 @@ void
 {
 #if TEST_IRCSERV == 1
     char *ircserv_argv[4];
-    ircserv_argv[0] = (char *)"../ircserv";
-    ircserv_argv[1] = (char *)"6668";
-    ircserv_argv[2] = (char *)"1234";
-    ircserv_argv[3] = NULL;
+    ircserv_argv[0]   = (char *)"../ircserv";
+    ircserv_argv[1]   = (char *)"6668";
+    ircserv_argv[2]   = (char *)"1234";
+    ircserv_argv[3]   = NULL;
     server_fd.ircserv = fork();
     if (server_fd.ircserv == 0)
     {
@@ -38,9 +38,9 @@ void
 
 #if TEST_ERGO == 1
     char *ergo_argv[3];
-    ergo_argv[0] = (char *)"./ergo";
-    ergo_argv[1] = (char *)"run";
-    ergo_argv[2] = NULL;
+    ergo_argv[0]   = (char *)"./ergo";
+    ergo_argv[1]   = (char *)"run";
+    ergo_argv[2]   = NULL;
     server_fd.ergo = fork();
     if (server_fd.ergo == 0)
     {

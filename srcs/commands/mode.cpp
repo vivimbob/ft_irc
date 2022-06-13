@@ -32,8 +32,8 @@ void
         msg.get_params().begin() + 1;
     std::vector<std::string>::const_iterator parameter_end =
         msg.get_params().end();
-    std::string::const_iterator mode = parameter->begin();
-    std::string::const_iterator mode_end = parameter->end();
+    std::string::const_iterator mode                      = parameter->begin();
+    std::string::const_iterator mode_end                  = parameter->end();
     int                         parameter_need_mode_count = 0;
 
     bool toggle = true;
@@ -206,7 +206,7 @@ void
         return;
     }
 
-    std::string::const_iterator it = msg.get_params()[1].begin();
+    std::string::const_iterator it  = msg.get_params()[1].begin();
     std::string::const_iterator ite = msg.get_params()[1].end();
 
     bool toggle = true;

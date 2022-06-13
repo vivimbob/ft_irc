@@ -21,7 +21,7 @@ inline void
                             bool                           is_public)
 {
     const Channel::MemberMap          &user_list = channel->get_user_list();
-    Channel::MemberMap::const_iterator user = user_list.begin();
+    Channel::MemberMap::const_iterator user      = user_list.begin();
     for (; user != user_list.end(); ++user)
     {
         if (!user->first->is_invisible())
@@ -39,7 +39,7 @@ inline void
                             std::queue<const std::string> &nick_queue)
 {
     const Channel::MemberMap          &user_list = channel->get_user_list();
-    Channel::MemberMap::const_iterator user = user_list.begin();
+    Channel::MemberMap::const_iterator user      = user_list.begin();
     for (; user != user_list.end(); ++user)
         attach_client_status(channel, *user->first, nick_queue);
 }
@@ -56,7 +56,7 @@ void
              ++channel_it) // 현재 개설되어있는 채널 순회
         {
             std::string                   channel_name = channel_it->first;
-            Channel                      *channel = channel_it->second;
+            Channel                      *channel      = channel_it->second;
             std::queue<const std::string> nick_queue;
             if (client.is_already_joined(
                     channel)) // 해당 클라이언트가 채널에 가입되어 있을 때

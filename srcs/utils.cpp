@@ -65,8 +65,8 @@ ClientInfo
     parse_client_info(std::string client_str)
 {
     const char *offset_exclamation_mark = strchr(client_str.data(), '!');
-    const char *offset_percent_sign = strchr(client_str.data(), '%');
-    const char *offset_at_sign = strchr(client_str.data(), '@');
+    const char *offset_percent_sign     = strchr(client_str.data(), '%');
+    const char *offset_at_sign          = strchr(client_str.data(), '@');
     ClientInfo  client;
 
     if (offset_exclamation_mark &&

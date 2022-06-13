@@ -9,7 +9,7 @@ MemberShip::MemberShip(Client *client, Channel *channel)
       channel(channel)
 {
     mode.operater = false;
-    mode.voice = false;
+    mode.voice    = false;
 }
 
 MemberShip::MemberShip(const MemberShip &copy)
@@ -17,5 +17,5 @@ MemberShip::MemberShip(const MemberShip &copy)
       channel(copy.channel)
 {
     this->mode.operater = copy.mode.operater;
-    this->mode.voice = copy.mode.voice;
+    this->mode.voice    = copy.mode.voice;
 }

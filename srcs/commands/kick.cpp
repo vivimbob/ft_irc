@@ -58,7 +58,7 @@ void
             return;
         }
 
-        std::vector<const std::string>::iterator nick_it = nick_list.begin();
+        std::vector<const std::string>::iterator nick_it  = nick_list.begin();
         std::vector<const std::string>::iterator nick_ite = nick_list.end();
 
         for (; nick_it != nick_ite; ++nick_it)
@@ -87,7 +87,7 @@ void
     }
     else
     {
-        std::vector<const std::string>::iterator nick_it = nick_list.begin();
+        std::vector<const std::string>::iterator nick_it  = nick_list.begin();
         std::vector<const std::string>::iterator nick_ite = nick_list.end();
         std::vector<const std::string>::iterator channel_it =
             channel_list.begin();
@@ -95,7 +95,7 @@ void
         for (; nick_it != nick_ite; ++nick_it, ++channel_it)
         {
             const std::string &channel_name = *channel_it;
-            const std::string &nick = *nick_it;
+            const std::string &nick         = *nick_it;
 
             if (!utils::is_channel_prefix(channel_name))
             {

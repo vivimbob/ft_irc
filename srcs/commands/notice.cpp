@@ -13,7 +13,7 @@ void
     std::vector<const std::string> target_list;
     utils::split_by_comma(target_list, parameter[0]);
 
-    std::vector<const std::string>::iterator target_it = target_list.begin();
+    std::vector<const std::string>::iterator target_it  = target_list.begin();
     std::vector<const std::string>::iterator target_ite = target_list.end();
     for (; target_it != target_ite; ++target_it)
     {
@@ -30,8 +30,8 @@ void
             utils::ClientInfo client_info =
                 utils::parse_client_info(*target_it);
 
-            ClientMap::iterator client_it = m_client_map.begin();
-            ClientMap::iterator client_ite = m_client_map.end();
+            ClientMap::iterator client_it                = m_client_map.begin();
+            ClientMap::iterator client_ite               = m_client_map.end();
             size_t              number_of_matched_client = 0;
             Client             *matched_client;
             for (; client_it != client_ite; ++client_it)

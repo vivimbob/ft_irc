@@ -10,7 +10,7 @@ void
         !(channel->is_private_mode() || channel->is_secret_mode()))
     {
         const std::string &symbol = utils::attach_channel_symbol(channel);
-        const std::string &topic = channel->get_channel_topic();
+        const std::string &topic  = channel->get_channel_topic();
         client.push_message(msg.rpl_list(symbol + channel->get_channel_name(),
                                          std::to_string(number_of_clients),
                                          topic));

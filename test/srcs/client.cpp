@@ -17,7 +17,7 @@ Client::Client()
 Client::Client(int fifo, std::string test_case)
 {
     m_ircserv_fifo_file = "./fifo/" + std::to_string(fifo) + ".ircserv";
-    m_log_file = "./log/" + test_case + "." + std::to_string(fifo);
+    m_log_file          = "./log/" + test_case + "." + std::to_string(fifo);
 #if TEST_IRCSERV == 1
     close(mkfifo(m_ircserv_fifo_file.data(), 0666));
     m_ircserv_fd =

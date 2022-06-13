@@ -1,6 +1,7 @@
 ---
 AccessModifierOffset: '-2'
 AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveAssignments: Consecutive
 AllowAllConstructorInitializersOnNextLine: 'false'
 AllowShortBlocksOnASingleLine: 'false'
 AllowShortCaseLabelsOnASingleLine: 'false'
