@@ -37,8 +37,8 @@ server:
         # The standard plaintext port for IRC is 6667. Allowing plaintext over the
         # public Internet poses serious security and privacy issues. Accordingly,
         # we recommend using plaintext only on local (loopback) interfaces:
-        "127.0.0.1:6667": # (loopback ipv4, localhost-only)
-        "[::1]:6667":     # (loopback ipv6, localhost-only)
+        "127.0.0.1:6669": # (loopback ipv4, localhost-only)
+        # "[::1]:6667":     # (loopback ipv6, localhost-only)
         # If you need to serve plaintext on public interfaces, comment out the above
         # two lines and uncomment the line below (which listens on all interfaces):
         # ":6667":

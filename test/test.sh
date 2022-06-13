@@ -2,7 +2,7 @@
 
 function start_server()
 {
-	../ircserv 6669 1234 > /dev/null 2>&1 &
+	../ircserv 6667 1234 > /dev/null 2>&1 &
 	./servers/miniircd/miniircd --ports 6668 > /dev/null 2>&1 &
 	cd servers/ergo
 	./ergo run > /dev/null 2>&1 &
@@ -11,14 +11,16 @@ function start_server()
 
 function start_client()
 {
-	./srcs/a.out 6669 6668 6667
+	./bridge 6667 6668 6669
 }
 
 trap "pkill -P $$" SIGINT
 trap "pkill -P $$" SIGTERM
 trap "pkill -P $$" SIGQUIT
 
+c++ ./bridge/srcs/main.cpp -o bridge
+
 start_server
-sleep 1
+sleep 2
 start_client
 
