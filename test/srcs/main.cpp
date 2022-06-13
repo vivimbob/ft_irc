@@ -1,90 +1,85 @@
-#include "../includes/test.hpp"
-#include <csignal>
-#include <cstdlib>
+#include <arpa/inet.h>
+#include <cstdio>
 #include <fcntl.h>
 #include <iostream>
-#include <sys/wait.h>
+#include <sys/event.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <vector>
+
+int kq;
 
 void
-    run_server(s_server_fd& server_fd)
+    m_update_event(int     identity,
+                   short   filter,
+                   u_short flags,
+                   u_int   fflags,
+                   int     data,
+                   void*   udata)
 {
-#if TEST_IRCSERV == 1
-    char* ircserv_argv[4];
-    ircserv_argv[0]   = (char*)"../ircserv";
-    ircserv_argv[1]   = (char*)"6668";
-    ircserv_argv[2]   = (char*)"1234";
-    ircserv_argv[3]   = NULL;
-    server_fd.ircserv = fork();
-    if (server_fd.ircserv == 0)
-    {
-        int log_file =
-            open("./log/ircserv.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (log_file < 0)
-            std::cout << "log_file open error\n";
-        dup2(log_file, 1);
-        dup2(log_file, 2);
-        execv(ircserv_argv[0], ircserv_argv);
-    }
-    if (server_fd.ircserv < 0)
-    {
-        std::cout << "irc server run fail\n";
-        exit(0);
-    }
-    else
-        std::cout << "irc server are running\n";
-#endif
-
-#if TEST_ERGO == 1
-    char* ergo_argv[3];
-    ergo_argv[0]   = (char*)"./ergo";
-    ergo_argv[1]   = (char*)"run";
-    ergo_argv[2]   = NULL;
-    server_fd.ergo = fork();
-    if (server_fd.ergo == 0)
-    {
-        int log_file =
-            open("./log/ergo.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (log_file < 0)
-            std::cout << "log_file open error\n";
-        dup2(log_file, 1);
-        dup2(log_file, 2);
-        chdir("ergo");
-        execv(ergo_argv[0], ergo_argv);
-    }
-    if (server_fd.ergo < 0)
-    {
-        std::cout << "ergo server run fail\n";
-        exit(0);
-    }
-    else
-        std::cout << "ergo servers are running\n";
-#endif
+    struct kevent kev;
+    EV_SET(&kev, identity, filter, flags, fflags, data, udata);
+    kevent(kq, &kev, 1, NULL, 0, NULL);
 }
 
-void
-    kill_server(s_server_fd server_fd)
+int
+    client(char* port)
 {
-#if TEST_IRCSERV == 1
-    kill(server_fd.ircserv, 9);
-    std::cout << server_fd.ircserv << ": kill irc server\n";
-#endif
-#if TEST_ERGO == 1
-    kill(server_fd.ergo, 9);
-    std::cout << server_fd.ergo << ": kill ergo server\n";
-#endif
+    int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_fd == -1)
+    {
+        std::cerr << "socet create fail" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout << "socket create: " << socket_fd << std::endl;
+
+    fcntl(socket_fd, O_NONBLOCK);
+
+    sockaddr_in sock;
+
+    memset(&sock, 0, sizeof(sockaddr_in));
+    sock.sin_family      = AF_INET;
+    sock.sin_addr.s_addr = inet_addr("127.0.0.1");
+    sock.sin_port        = htons(atoi(port));
+    if (connect(socket_fd, (sockaddr*)&sock, sizeof(sockaddr_in)) == -1)
+    {
+        std::cerr << "connect with 127.0.0.1:" << sock.sin_port << "fail"
+                  << std::endl;
+        exit(1);
+    }
+    std::cerr << "connect with 127.0.0.1:" << sock.sin_port << "success"
+              << std::endl;
+    m_update_event(socket_fd, EVFILT_READ, EV_ADD, 0, 0, 0);
+    return (socket_fd);
 }
 
 int
     main(int argc, char** argv)
 {
-    (void)argc;
-    (void)argv;
+    int fd[argc - 1];
+    kq = kqueue();
 
-    s_server_fd server_fd;
-    run_server(server_fd);
-    sleep(2);
-    test_start();
-    kill_server(server_fd);
+    if (kq == -1)
+        exit(1);
+    for (int i = 0; i < argc - 1; ++i)
+        fd[i] = client(argv[i + 1]);
+
+    std::string   buffer;
+    char          recv_buffer[512];
+    int           read_len;
+    int           event_count;
+    struct kevent kev[1024];
+    timespec      timer;
+    timer.tv_sec = 1;
+    while (true)
+    {
+        std::cout << "Enter message: ";
+        std::getline(std::cin, buffer);
+        buffer += "\r\n";
+        for (int i = 0; i < argc - 1; ++i)
+            write(fd[i], buffer.data(), buffer.size());
+        event_count = kevent(kq, NULL, 0, kev, 1024, &timer);
+    }
+    // 전송 후
 }
