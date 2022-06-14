@@ -15,6 +15,7 @@
 
 int                        kq;
 std::map<int, std::string> server_buffers;
+#define SIZE_EVENTS 1024
 
 void
     m_update_event(int     identity,
@@ -69,7 +70,7 @@ int
     int           fd[--argc];
     std::string   server_names[3] = {" ft_irc", " miniircd", " ergo"};
     std::string   server_trims[3];
-    struct kevent events[1024];
+    struct kevent events[SIZE_EVENTS];
     std::string   buffer;
     std::string   message;
     int           i;
@@ -86,7 +87,7 @@ int
         fd[i] = client(argv[i + 1]);
     for (i = 0; i < argc; ++i)
         write(fd[i], register_message.data(), register_message.size());
-    while ((count = kevent(kq, NULL, 0, events, 1024, &timer)) > 0)
+    while ((count = kevent(kq, NULL, 0, events, SIZE_EVENTS, &timer)) > 0)
     {
         for (i = 0; i < count; ++i)
         {
@@ -114,7 +115,7 @@ int
             write(fd[i], message.data(), message.size());
         if (message == "quit\r\n")
             return (0);
-        while ((count = kevent(kq, NULL, 0, events, 512, &timer)) > 0)
+        while ((count = kevent(kq, NULL, 0, events, SIZE_EVENTS, &timer)) > 0)
         {
             for (i = 0; i < count; ++i)
             {
@@ -130,6 +131,8 @@ int
                       << std::endl;
         for (i = 0; i < argc; ++i)
         {
+            if (server_buffers[fd[i]].find("PING") != std::string::npos)
+                write(fd[i], "PONG test\r\n", 11);
             pos = 0;
             while ((pos = server_buffers[fd[i]].find(server_trims[i].data(),
                                                      pos)) != std::string::npos)
