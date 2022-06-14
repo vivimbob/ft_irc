@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+mypy --disallow-incomplete-defs --disallow-untyped-calls --disallow-untyped-decorators --disallow-untyped-defs miniircd test.py
+pyflakes3 miniircd test.py
+pycodestyle miniircd test.py
+nosetests3
