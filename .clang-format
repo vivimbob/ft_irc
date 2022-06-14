@@ -22,3 +22,4 @@ PointerAlignment: Left
 SpaceBeforeParens: ControlStatements
 Standard: Cpp03
 TabWidth: '4'
+...
