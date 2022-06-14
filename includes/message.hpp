@@ -122,6 +122,7 @@ class Message
                                    const std::string& channel);
     std::string build_kick_reply(const std::string& chanel,
                                  const std::string& nick);
+    std::string build_nick_reply(const std::string& nick);
 };
 
 #endif /* MESSAGE_HPP */
