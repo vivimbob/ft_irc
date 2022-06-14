@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-typedef std::map<const std::string, const std::string> ChannelKeyPairMap;
-
 class Channel;
+class Client;
+class Message;
 
 namespace utils
 {
@@ -24,10 +24,11 @@ struct ClientInfo
 bool        is_nickname_valid(std::string nick);
 bool        is_channel_prefix(const std::string& chan);
 bool        is_channel_name_valid(const std::string& chan);
-std::string attach_channel_symbol(Channel* channel);
 void        split_by_comma(std::vector<const std::string>& splited_params,
                            const std::string&              params);
 ClientInfo  parse_client_info(std::string client_str);
+void		send_name_reply(Channel* channel, Client& client, Message& msg);
+void		send_topic_reply(Channel* channel, Client& client, Message& msg);
 } // namespace utils
 
 #endif /* UTILS_HPP */

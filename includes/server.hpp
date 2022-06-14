@@ -64,11 +64,6 @@ class Server
     void m_process_notice_command(Client& client, Message& msg);
     void m_process_kick_command(Client& client, Message& msg);
 
-    void m_join_channel(
-        Client&                                         client,
-        Message&                                        msg,
-        std::map<const std::string, const std::string>& chan_key_pair);
-
     void m_create_socket();
     void m_bind_socket();
     void m_listen_socket();

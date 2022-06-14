@@ -14,34 +14,22 @@ class Channel;
 class Client
 {
   private:
-    struct s_mode
-    {
-        bool invisible;
-        bool server_notice;
-        bool wallops;
-        bool operater;
-    };
-
     sockaddr_in          m_client_addr;
     int                  m_client_fd;
     SendBuffer           m_send_buffer;
     std::string          m_recv_buffer;
     std::string          m_nickname;
     std::string          m_username;
-    std::string          m_hostname;
-    std::string          m_servername;
+    const std::string    m_hostname;
+    const std::string    m_servername;
     std::string          m_realname;
     std::queue<Message*> m_commands;
     std::set<Channel*>   m_channel_list;
-    size_t               m_channel_limits;
+    static const size_t  m_channel_limits = 10;
 
     bool m_pass_registered;
     bool m_nick_registered;
     bool m_user_registered;
-
-    bool        m_mode_string_need_update;
-    std::string m_mode_string;
-    s_mode      m_mode;
 
   public:
     Client(sockaddr_in client_addr, int client_fd);
@@ -52,19 +40,15 @@ class Client
     const std::string&        get_nickname() const;
     const std::string&        get_username() const;
     const std::string&        get_hostname() const;
-    const std::string&        get_servername() const;
     const std::string&        get_realname() const;
     std::queue<Message*>&     get_commands();
     std::string&              get_recv_buffer();
     SendBuffer&               get_send_buffer();
-    size_t&                   get_channel_limits();
-    std::string               get_usermode();
+    size_t                    get_channel_limits();
     const std::set<Channel*>& get_channel_list() const;
 
     void set_nickname(const std::string& nickname);
     void set_username(const std::string& username);
-    void set_hostname(const std::string& hostname);
-    void set_servername(const std::string& servername);
     void set_realname(const std::string& realname);
     void set_password_flag();
     void set_invisible_flag(bool toggle);

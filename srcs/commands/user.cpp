@@ -17,8 +17,6 @@ void
     }
 
     client.set_username(msg.get_params()[0]);
-    client.set_hostname(msg.get_params()[1]);
-    client.set_servername(msg.get_params()[2]);
     client.set_realname(msg.get_params()[3]);
     if (client.is_registered() && !m_client_map.count(client.get_nickname()))
         m_register_client(client, msg);
