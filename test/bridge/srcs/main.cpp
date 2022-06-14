@@ -68,11 +68,13 @@ int
         return (0);
     int           fd[--argc];
     std::string   server_names[3] = {" ft_irc", " miniircd", " ergo"};
+    std::string   server_trims[3];
     struct kevent events[1024];
     std::string   buffer;
     std::string   message;
     int           i;
     int           count;
+    int           pos;
     int           len;
     timespec      timer            = {2, 0};
     std::string   register_message = "pass 1234\r\nnick test\r\nuser testuser "
@@ -95,7 +97,12 @@ int
         }
     }
     for (i = 0; i < argc; ++i)
+    {
+        server_trims[i] = (server_buffers[fd[i]].erase(
+            server_buffers[fd[i]].find(' '), server_buffers[fd[i]].size()));
+        std::cout << server_trims[i] << std::endl;
         server_buffers[fd[i]].clear();
+    }
     while (true)
     {
         std::cout << "Enter message: ";
@@ -123,6 +130,11 @@ int
                       << std::endl;
         for (i = 0; i < argc; ++i)
         {
+            pos = 0;
+            while ((pos = server_buffers[fd[i]].find(server_trims[i].data(),
+                                                     pos)) != std::string::npos)
+                server_buffers[fd[i]].replace(pos, server_trims[i].length(),
+                                              "");
             std::cout << "---------------------------\n"
                       << "fd " << fd[i] << server_names[i] << "\n\n"
                       << server_buffers[fd[i]].data() << std::endl;
