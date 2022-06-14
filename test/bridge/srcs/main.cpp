@@ -81,14 +81,17 @@ int
     bool toggle = false;
     if (argc < 2)
         return (0);
-    int         fd[--argc];
-    std::string register_message = "pass 1234\r\nnick test\r\nuser testuser "
-                                   "testhost testservername :test realname\r\n";
+    argc -= 2;
+    int         fd[argc];
+    std::string nick = argv[1];
+    std::string register_message =
+        "pass 1234\r\nnick " + nick +
+        "\r\nuser testuser testhost testservername :test realname\r\n";
 
     if ((kq = kqueue()) == -1)
         return (1);
     for (i = 0; i < argc; ++i)
-        fd[i] = client(argv[i + 1]);
+        fd[i] = client(argv[i + 2]);
     for (i = 0; i < argc; ++i)
         write(fd[i], register_message.data(), register_message.size());
     while ((count = kevent(kq, NULL, 0, events, SIZE_EVENTS, &timer)) > 0)
