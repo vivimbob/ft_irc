@@ -13,16 +13,28 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-Server::CommandMap Server::m_command_map = Server::m_initial_command_map();
+Server::CommandMap Server::m_register_command_map =
+    Server::m_initial_register_command_map();
+Server::CommandMap Server::m_channel_command_map =
+    Server::m_initial_channel_command_map();
 
 Server::CommandMap
-    Server::m_initial_command_map()
+    Server::m_initial_register_command_map()
 {
     Server::CommandMap temp_map;
 
     temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
     temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
     temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
+
+    return (temp_map);
+}
+
+Server::CommandMap
+    Server::m_initial_channel_command_map()
+{
+    Server::CommandMap temp_map;
+
     temp_map.insert(std::make_pair("JOIN", &Server::m_process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::m_process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
