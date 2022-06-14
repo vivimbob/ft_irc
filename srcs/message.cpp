@@ -586,3 +586,9 @@ std::string
     return reply_nickmask_prefix(m_command) + " " + channel + " " + nick +
            "\r\n";
 }
+
+std::string
+    Message::build_nick_reply(const std::string& nick)
+{
+    return reply_nickmask_prefix(m_command) + " " + nick + "\r\n";
+}
