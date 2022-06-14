@@ -79,7 +79,7 @@ int
     main(int argc, char** argv)
 {
     bool toggle = false;
-    if (argc < 2)
+    if (argc < 3)
         return (0);
     argc -= 2;
     int         fd[argc];
