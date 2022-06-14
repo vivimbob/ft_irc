@@ -496,8 +496,8 @@ std::string
 std::string
     Message::rpl_endofnames(const std::string& channel)
 {
-    return reply_servername_prefix("353") + " " + channel +
-           " :End of /NAMES list\r\n";
+    return reply_servername_prefix("366") + " " + channel +
+           " :End of NAMES list\r\n";
 }
 
 std::string
