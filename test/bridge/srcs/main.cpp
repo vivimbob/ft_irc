@@ -99,7 +99,7 @@ int
     for (i = 0; i < argc; ++i)
     {
         server_trims[i] = (server_buffers[fd[i]].erase(
-            server_buffers[fd[i]].find(' '), server_buffers[fd[i]].size()));
+            server_buffers[fd[i]].find(' ') + 1, server_buffers[fd[i]].size()));
         std::cout << server_trims[i] << std::endl;
         server_buffers[fd[i]].clear();
     }
