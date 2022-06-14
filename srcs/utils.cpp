@@ -129,7 +129,8 @@ void
                                     user_it->first->get_nickname(),
                                     client.is_already_joined(channel)));
 
-    client.push_message(msg.rpl_namreply(channel_name, nick_queue));
+    if (nick_queue.size())
+        client.push_message(msg.rpl_namreply(channel_name, nick_queue));
     client.push_message(msg.rpl_endofnames(channel_name));
 }
 
