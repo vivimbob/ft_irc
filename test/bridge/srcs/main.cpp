@@ -1,10 +1,13 @@
 #include <arpa/inet.h>
+#include <csetjmp>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
+#include <istream>
 #include <map>
+#include <pthread.h>
 #include <string>
 #include <sys/event.h>
 #include <sys/socket.h>
@@ -16,6 +19,16 @@
 int                        kq;
 std::map<int, std::string> server_buffers;
 #define SIZE_EVENTS 1024
+std::string   server_names[3] = {" ft_irc", " miniircd", " ergo"};
+std::string   server_trims[3];
+struct kevent events[SIZE_EVENTS];
+std::string   buffer;
+std::string   message;
+int           i;
+int           count;
+int           pos;
+int           len;
+timespec      timer = {2, 0};
 
 void
     m_update_event(int     identity,
@@ -65,21 +78,12 @@ int
 int
     main(int argc, char** argv)
 {
+    bool toggle = false;
     if (argc < 2)
         return (0);
-    int           fd[--argc];
-    std::string   server_names[3] = {" ft_irc", " miniircd", " ergo"};
-    std::string   server_trims[3];
-    struct kevent events[SIZE_EVENTS];
-    std::string   buffer;
-    std::string   message;
-    int           i;
-    int           count;
-    int           pos;
-    int           len;
-    timespec      timer            = {2, 0};
-    std::string   register_message = "pass 1234\r\nnick test\r\nuser testuser "
-                                     "testhost testservername :test realname\r\n";
+    int         fd[--argc];
+    std::string register_message = "pass 1234\r\nnick test\r\nuser testuser "
+                                   "testhost testservername :test realname\r\n";
 
     if ((kq = kqueue()) == -1)
         return (1);
@@ -115,6 +119,8 @@ int
             write(fd[i], message.data(), message.size());
         if (message == "quit\r\n")
             return (0);
+        message.clear();
+        fflush(stdin);
         while ((count = kevent(kq, NULL, 0, events, SIZE_EVENTS, &timer)) > 0)
         {
             for (i = 0; i < count; ++i)
@@ -125,23 +131,28 @@ int
                 buffer[len] = '\0';
                 server_buffers[events[i].ident].append(buffer);
             }
+            toggle = true;
         }
         if (count == -1)
             std::cout << "kevent: " << count << ": " << std::strerror(errno)
                       << std::endl;
-        for (i = 0; i < argc; ++i)
+        if (toggle == true)
         {
-            if (server_buffers[fd[i]].find("PING") != std::string::npos)
-                write(fd[i], "PONG test\r\n", 11);
-            pos = 0;
-            while ((pos = server_buffers[fd[i]].find(server_trims[i].data(),
-                                                     pos)) != std::string::npos)
-                server_buffers[fd[i]].replace(pos, server_trims[i].length(),
-                                              "");
-            std::cout << "---------------------------\n"
-                      << "fd " << fd[i] << server_names[i] << "\n\n"
-                      << server_buffers[fd[i]].data() << std::endl;
-            server_buffers[fd[i]].clear();
+            for (i = 0; i < argc; ++i)
+            {
+                if (server_buffers[fd[i]].find("PING") != std::string::npos)
+                    write(fd[i], "PONG test\r\n", 11);
+                pos = 0;
+                while ((pos = server_buffers[fd[i]].find(
+                            server_trims[i].data(), pos)) != std::string::npos)
+                    server_buffers[fd[i]].replace(pos, server_trims[i].length(),
+                                                  "");
+                std::cout << "---------------------------\n"
+                          << "fd " << fd[i] << server_names[i] << "\n\n"
+                          << server_buffers[fd[i]].data() << std::endl;
+                server_buffers[fd[i]].clear();
+            }
+            toggle = false;
         }
     }
 }
