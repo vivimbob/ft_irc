@@ -5,16 +5,12 @@
 Client::Client(sockaddr_in client_addr, int client_fd)
     : m_client_addr(client_addr),
       m_client_fd(client_fd),
+      m_hostname("ft_irc"),
+      m_servername("ft_irc"),
       m_pass_registered(false),
       m_nick_registered(false),
       m_user_registered(false)
 {
-    m_mode.invisible          = false;
-    m_mode.server_notice      = false;
-    m_mode.wallops            = false;
-    m_mode.operater           = false;
-    m_mode_string_need_update = true;
-    m_channel_limits          = 10;
 }
 
 Client::~Client()
@@ -80,30 +76,10 @@ SendBuffer&
     return m_send_buffer;
 }
 
-size_t&
+size_t
     Client::get_channel_limits()
 {
     return m_channel_limits;
-}
-
-std::string
-    Client::get_usermode()
-{
-    if (m_mode_string_need_update)
-    {
-        m_mode_string.clear();
-        m_mode_string.push_back('+');
-        if (m_mode.invisible)
-            m_mode_string.push_back('i');
-        if (m_mode.operater)
-            m_mode_string.push_back('o');
-        if (m_mode.server_notice)
-            m_mode_string.push_back('s');
-        if (m_mode.wallops)
-            m_mode_string.push_back('w');
-        m_mode_string_need_update = false;
-    }
-    return m_mode_string;
 }
 
 const std::set<Channel*>&
@@ -128,21 +104,6 @@ void
 }
 
 void
-    Client::set_hostname(const std::string& hostname)
-{
-    m_hostname = hostname;
-    Logger().debug() << get_client_IP() << " set hostname to " << m_hostname;
-}
-
-void
-    Client::set_servername(const std::string& servername)
-{
-    m_servername = servername;
-    Logger().debug() << get_client_IP() << " set servername to "
-                     << m_servername;
-}
-
-void
     Client::set_realname(const std::string& realname)
 {
     m_realname = realname;
@@ -153,42 +114,6 @@ void
     Client::set_password_flag()
 {
     m_pass_registered = true;
-}
-
-void
-    Client::set_invisible_flag(bool toggle)
-{
-    if (m_mode.invisible == toggle)
-        return;
-    m_mode.invisible          = toggle;
-    m_mode_string_need_update = true;
-}
-
-void
-    Client::set_operator_flag(bool toggle)
-{
-    if (m_mode.operater == toggle)
-        return;
-    m_mode.operater           = toggle;
-    m_mode_string_need_update = true;
-}
-
-void
-    Client::set_server_notice_flag(bool toggle)
-{
-    if (m_mode.server_notice == toggle)
-        return;
-    m_mode.server_notice      = toggle;
-    m_mode_string_need_update = true;
-}
-
-void
-    Client::set_wallops_flag(bool toggle)
-{
-    if (m_mode.wallops == toggle)
-        return;
-    m_mode.wallops            = toggle;
-    m_mode_string_need_update = true;
 }
 
 bool
@@ -225,12 +150,6 @@ bool
     Client::is_already_joined(Channel* channel)
 {
     return m_channel_list.count(channel);
-}
-
-bool
-    Client::is_invisible() const
-{
-    return m_mode.invisible;
 }
 
 bool

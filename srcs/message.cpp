@@ -350,9 +350,9 @@ std::string
 }
 
 std::string
-    Message::err_unknown_mode(const char& chr)
+    Message::err_unknown_mode(const std::string& flag)
 {
-    return reply_servername_prefix("472") + " " + chr +
+    return reply_servername_prefix("472") + " " + flag +
            " :is unknown mode char to me\r\n";
 }
 
@@ -452,21 +452,9 @@ std::string
 }
 
 std::string
-    Message::rpl_channel_mode_is(const std::string& channel,
-                                 bool               toggle,
-                                 char               mode,
-                                 const std::string& mode_params)
+    Message::rpl_channel_mode_is(const std::string& channel)
 {
-    char mode_prefix = toggle == true ? '+' : '-';
-    return reply_servername_prefix("324") + " " + channel + " " + mode_prefix +
-           mode + " " + mode_params + "\r\n";
-}
-
-std::string
-    Message::rpl_channel_mode_is(const std::string& channel,
-                                 const std::string& mode)
-{
-    return reply_servername_prefix("324") + " " + channel + " " + mode + "\r\n";
+    return reply_servername_prefix("324") + " " + channel + " +\r\n";
 }
 
 std::string
@@ -527,10 +515,9 @@ std::string
 }
 
 std::string
-    Message::rpl_user_mode_is(const std::string& user_mode_string)
-{
-    return reply_servername_prefix("221") + " :Your user mode is [" +
-           user_mode_string + "]\r\n";
+    Message::rpl_user_mode_is()
+{;
+    return reply_servername_prefix("221") + " +\r\n";
 }
 
 std::string
@@ -591,4 +578,10 @@ std::string
     Message::build_nick_reply(const std::string& nick)
 {
     return reply_nickmask_prefix(m_command) + " " + nick + "\r\n";
+}
+
+std::string
+    Message::build_join_reply(const std::string& channel)
+{
+    return reply_nickmask_prefix(m_command) + " " + channel + "\r\n";
 }

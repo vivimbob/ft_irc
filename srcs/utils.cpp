@@ -1,5 +1,7 @@
 #include "../includes/utils.hpp"
 #include "../includes/channel.hpp"
+#include "../includes/client.hpp"
+#include "../includes/logger.hpp"
 
 namespace utils
 {
@@ -38,16 +40,6 @@ bool
         if (chan[index] == ' ' || chan[index] == ',' || chan[index] == 0x7)
             return false;
     return true;
-}
-
-std::string
-    attach_channel_symbol(Channel* channel)
-{
-    if (channel->is_private_mode())
-        return "*";
-    else if (channel->is_secret_mode())
-        return "@";
-    return "=";
 }
 
 void
@@ -111,4 +103,48 @@ ClientInfo
         client.nickname = client_str;
     return client;
 }
+
+static const std::string
+    masked_nick(bool operater, const std::string& nickname, bool on_channel)
+{
+    if (on_channel && operater)
+        return "@" + nickname;
+    else
+        return nickname;
+}
+
+void
+    send_name_reply(Channel* channel, Client& client, Message& msg)
+{
+    std::queue<const std::string> nick_queue;
+    std::string channel_name = "= " + channel->get_channel_name();
+
+    Channel::MemberMap::const_iterator user_it =
+        channel->get_user_list().begin();
+    Channel::MemberMap::const_iterator user_ite =
+        channel->get_user_list().end();
+
+    for (; user_it != user_ite; ++user_it)
+        nick_queue.push(masked_nick(channel->is_operator(*user_it->first),
+                                    user_it->first->get_nickname(),
+                                    client.is_already_joined(channel)));
+
+    client.push_message(msg.rpl_namreply(channel_name, nick_queue));
+    client.push_message(msg.rpl_endofnames(channel_name));
+}
+
+void
+    send_topic_reply(Channel* channel, Client& client, Message& msg)
+{
+    std::string        reply_msg;
+    const std::string& channel_topic = channel->get_channel_topic();
+
+    if (channel_topic.empty())
+        reply_msg = msg.rpl_notopic(channel->get_channel_name());
+    else
+        reply_msg = msg.rpl_topic(channel->get_channel_name(), channel_topic);
+
+    client.push_message(reply_msg, Logger::Debug);
+}
+
 } // namespace utils

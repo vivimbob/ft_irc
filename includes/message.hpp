@@ -76,7 +76,7 @@ class Message
     std::string err_youre_banned_creep();
     std::string err_key_set(const std::string& channel);
     std::string err_channel_is_full(const std::string& channel);
-    std::string err_unknown_mode(const char& chr);
+    std::string err_unknown_mode(const std::string& flag);
     std::string err_invite_only_chan(const std::string& channel);
     std::string err_banned_from_chan(const std::string& channel);
     std::string err_bad_channel_key(const std::string& channel);
@@ -95,13 +95,7 @@ class Message
                          const std::string& visible,
                          const std::string  topic);
     std::string rpl_listend();
-    std::string
-                rpl_channel_mode_is(const std::string& channel,
-                                    bool               toggle,
-                                    char               mode,
-                                    const std::string& mode_params = std::string());
-    std::string rpl_channel_mode_is(const std::string& channel,
-                                    const std::string& mode);
+    std::string rpl_channel_mode_is(const std::string& channel);
     std::string rpl_notopic(const std::string& channel);
     std::string rpl_topic(const std::string& channel, const std::string& topic);
     std::string rpl_inviting(const std::string& nick,
@@ -112,7 +106,7 @@ class Message
     std::string rpl_banlist(const std::string& channel,
                             const std::string& banid);
     std::string rpl_endofbanlist(const std::string& channel);
-    std::string rpl_user_mode_is(const std::string& user_mode_string);
+    std::string rpl_user_mode_is();
     std::string rpl_welcome();
 
     std::string build_quit_reply();
@@ -123,6 +117,7 @@ class Message
     std::string build_kick_reply(const std::string& chanel,
                                  const std::string& nick);
     std::string build_nick_reply(const std::string& nick);
+    std::string build_join_reply(const std::string& channel);
 };
 
 #endif /* MESSAGE_HPP */
