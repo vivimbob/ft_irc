@@ -26,6 +26,7 @@ Server::CommandMap
     temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
     temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
     temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
+    temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
 
     return (temp_map);
 }
@@ -35,6 +36,9 @@ Server::CommandMap
 {
     Server::CommandMap temp_map;
 
+    temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
+    temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
+    temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
     temp_map.insert(std::make_pair("JOIN", &Server::m_process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::m_process_mode_command));
     temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
