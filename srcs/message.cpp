@@ -42,22 +42,9 @@ void
     {
         if (m_message[m_position] == ':')
         {
-            std::string s(m_message.begin() + m_position + 1, m_message.begin() + next_position());
-            if (!m_parameters.empty() && m_parameters[0][0] == '$') // bot의 명령어가 파라미터를 추가로 받는 경우에 필요함.
-            {
-                m_parameters.push_back(s);
-                m_position = m_message.find_first_not_of(' ', m_position);
-            }
-            else
-            {
-                while (m_message.size() > m_position)
-                {
-                    s.append(" ");
-                    m_position = m_message.find_first_not_of(' ', m_position);
-                    s.append(m_message.begin() + m_position, m_message.begin() + next_position());
-                }
-                m_parameters.push_back(s);
-            }
+            std::string s(m_message.begin() + m_position + 1, m_message.end());
+            m_position = m_message.size() + 1;
+            m_parameters.push_back(s);
         }
         else
         {
