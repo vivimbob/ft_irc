@@ -232,7 +232,18 @@ void
                     Message(&client, "QUIT").build_quit_reply(reason));
             }
     }
-    client.leave_all_channel();
+    std::set<Channel*>::iterator channel_it  =client.get_channel_list().begin();
+    std::set<Channel*>::iterator channel_ite  =client.get_channel_list().end();
+
+    for (; channel_it != channel_ite; ++channel_it)
+	{
+        (*channel_it)->delete_user(client);
+		if ((*channel_it)->is_empty())
+		{
+			m_channel_map.erase((*channel_it)->get_channel_name());
+			delete (*channel_it);
+		}
+	}
     m_client_map.erase(client.get_nickname());
     delete &client;
     close(clientfd);
