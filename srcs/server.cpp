@@ -174,6 +174,8 @@ void
                          << message->get_message() << ']';
         client.get_commands().pop();
         message->parse_message();
+        if (message->get_command().empty())
+            continue;
         if (!client.is_registered())
         {
             if (m_register_command_map.count(message->get_command()))
