@@ -33,7 +33,7 @@ void
         {
             client.push_message(msg.err_no_such_channel(channel_name),
                                 Logger::Debug);
-			continue;
+            continue;
         }
 
         else if (!channel) // join할 채널이 없는 경우(새로 만듦)
@@ -68,8 +68,8 @@ void
 
         Logger().info() << "Create new channel :" << channel_name << " : @"
                         << client.get_nickname();
-		m_send_to_channel(channel, msg.build_join_reply(channel_name));
-		utils::send_topic_reply(channel, client, msg);
-		utils::send_name_reply(channel, client, msg);
+        m_send_to_channel(channel, msg.build_join_reply(channel_name));
+        utils::send_topic_reply(channel, client, msg);
+        utils::send_name_reply(channel, client, msg);
     }
 }

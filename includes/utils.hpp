@@ -21,14 +21,14 @@ struct ClientInfo
     std::string servername;
 };
 
-bool        is_nickname_valid(std::string nick);
-bool        is_channel_prefix(const std::string& chan);
-bool        is_channel_name_valid(const std::string& chan);
-void        split_by_comma(std::vector<const std::string>& splited_params,
-                           const std::string&              params);
-ClientInfo  parse_client_info(std::string client_str);
-void		send_name_reply(Channel* channel, Client& client, Message& msg);
-void		send_topic_reply(Channel* channel, Client& client, Message& msg);
+bool       is_nickname_valid(std::string nick);
+bool       is_channel_prefix(const std::string& chan);
+bool       is_channel_name_valid(const std::string& chan);
+void       split_by_comma(std::vector<const std::string>& splited_params,
+                          const std::string&              params);
+ClientInfo parse_client_info(std::string client_str);
+void       send_name_reply(Channel* channel, Client& client, Message& msg);
+void       send_topic_reply(Channel* channel, Client& client, Message& msg);
 } // namespace utils
 
 #endif /* UTILS_HPP */

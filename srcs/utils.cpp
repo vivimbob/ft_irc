@@ -129,7 +129,8 @@ void
                                     client.is_already_joined(channel)));
 
     if (nick_queue.size())
-        client.push_message(msg.rpl_namreply("= " + channel->get_channel_name(), nick_queue));
+        client.push_message(
+            msg.rpl_namreply("= " + channel->get_channel_name(), nick_queue));
     client.push_message(msg.rpl_endofnames(channel->get_channel_name()));
 }
 
