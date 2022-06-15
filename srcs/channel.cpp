@@ -67,6 +67,8 @@ bool
 bool
     Channel::is_operator(Client& client)
 {
+    if (m_member_list.find(&client) == m_member_list.end())
+        return false;
     return m_member_list.find(&client)->second.mode_operater;
 }
 
