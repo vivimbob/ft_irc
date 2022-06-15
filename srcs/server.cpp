@@ -216,8 +216,22 @@ void
     m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
-    m_send_to_channel(client, Message(&client, "QUIT").build_quit_reply(reason),
-                      &client);
+    std::set<Client*>            client_check_list;
+    std::set<Channel*>::iterator it = client.get_channel_list().begin();
+    for (; it != client.get_channel_list().end(); ++it)
+    {
+        const Channel::MemberMap&          user_list = (*it)->get_user_list();
+        Channel::MemberMap::const_iterator user      = user_list.begin();
+
+        for (; user != user_list.end(); ++user)
+            if (!client_check_list.count(user->first) && user->first != &client)
+            {
+                client_check_list.insert(user->first);
+                m_prepare_to_send(
+                    *user->first,
+                    Message(&client, "QUIT").build_quit_reply(reason));
+            }
+    }
     client.leave_all_channel();
     m_client_map.erase(client.get_nickname());
     delete &client;
