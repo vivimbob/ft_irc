@@ -31,7 +31,7 @@ void
                 client.push_message(msg.err_no_such_channel(*target_it),
                                     Logger::Debug);
             m_send_to_channel(m_channel_map[*target_it],
-                              msg.build_message_reply(*target_it));
+                              msg.build_message_reply(*target_it), &client);
         }
         else
         {
@@ -50,13 +50,13 @@ void
                     ++number_of_matched_client;
                 }
             }
-            if (number_of_matched_client == 0)
+            if (msg.get_command() != "NOTICE" && number_of_matched_client == 0)
                 client.push_message(msg.err_no_such_nick(*target_it),
                                     Logger::Debug);
             else if (number_of_matched_client == 1)
                 m_prepare_to_send(*matched_client,
                                   msg.build_message_reply(*target_it));
-            else
+            else if (msg.get_command() != "NOTICE")
                 client.push_message(msg.err_too_many_targets(*target_it),
                                     Logger::Debug);
         }

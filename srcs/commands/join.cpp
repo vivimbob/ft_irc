@@ -54,12 +54,7 @@ void
         else // join할 채널이 존재하는 경우
         {
             if (client.is_already_joined(channel)) // 이미 join된 경우
-            {
-                client.push_message(":You have already joined in <" +
-                                        channel_name + "> channel\r\n",
-                                    Logger::Debug);
                 continue;
-            }
             if (channel->is_full()) // 현재 채널이 포함할 수 있는 최대 유저 수에
                                     // 도달했을 때
             {
@@ -73,8 +68,8 @@ void
 
         Logger().info() << "Create new channel :" << channel_name << " : @"
                         << client.get_nickname();
-		m_send_to_channel(channel, channel_name);
-		utils::send_name_reply(channel, client, msg);
+		m_send_to_channel(channel, msg.build_join_reply(channel_name));
 		utils::send_topic_reply(channel, client, msg);
+		utils::send_name_reply(channel, client, msg);
     }
 }

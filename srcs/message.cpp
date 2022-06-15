@@ -45,14 +45,8 @@ void
         if (m_message[m_position] == ':')
         {
             std::string s(m_message.begin() + m_position + 1,
-                          m_message.begin() + next_position());
-            while (m_message.size() > m_position)
-            {
-                s.append(" ");
-                m_position = m_message.find_first_not_of(' ', m_position);
-                s.append(m_message.begin() + m_position,
-                         m_message.begin() + next_position());
-            }
+                          m_message.end());
+			m_position = m_message.size() + 1; 
             m_parameters.push_back(s);
         }
         else
@@ -103,7 +97,7 @@ std::string
     Message::reply_servername_prefix(std::string command)
 {
     std::string msg;
-    msg = msg + ":" + m_client->get_client_IP() + " " + command + " " +
+    msg = msg + ":ft_irc " + command + " " +
           m_client->get_nickname();
     if (m_client->get_nickname().empty())
         msg += "*";
@@ -417,10 +411,10 @@ std::string
 }
 
 std::string
-    Message::err_users_dont_match()
+    Message::err_users_dont_match(const std::string& action)
 {
     return reply_servername_prefix("502") +
-           " :Cant change mode for other users\r\n";
+           " :Can't " + action + " modes for other users\r\n";
 }
 
 std::string
@@ -496,8 +490,8 @@ std::string
 std::string
     Message::rpl_endofnames(const std::string& channel)
 {
-    return reply_servername_prefix("353") + " " + channel +
-           " :End of /NAMES list\r\n";
+    return reply_servername_prefix("366") + " " + channel +
+           " :End of NAMES list\r\n";
 }
 
 std::string
@@ -517,7 +511,6 @@ std::string
 std::string
     Message::rpl_user_mode_is()
 {
-    ;
     return reply_servername_prefix("221") + " +\r\n";
 }
 
@@ -530,13 +523,9 @@ std::string
 }
 
 std::string
-    Message::build_quit_reply()
+    Message::build_quit_reply(const std::string& reason)
 {
-    std::string reason = "";
-
-    if (!m_parameters.empty())
-        reason = m_parameters[0];
-    return reply_nickmask_prefix(m_command) + " :" + reason + "\r\n";
+	return reply_nickmask_prefix("QUIT") + " :" + reason + "\r\n";
 }
 
 std::string
@@ -586,4 +575,11 @@ std::string
     Message::build_join_reply(const std::string& channel)
 {
     return reply_nickmask_prefix(m_command) + " " + channel + "\r\n";
+}
+
+std::string
+    Message::build_topic_reply()
+{
+    return reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" +
+           m_parameters[1] + "\r\n";
 }
