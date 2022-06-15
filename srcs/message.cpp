@@ -576,11 +576,11 @@ std::string
 
 std::string
     Message::build_kick_reply(const std::string& channel,
-                              const std::string& oper_nick,
-                              const std::string& nick)
+                              const std::string& nick,
+                              const std::string& oper_nick)
 {
-    return reply_nickmask_prefix(m_command) + " " + channel + " " + oper_nick +
-           " " + nick + "\r\n";
+    return reply_nickmask_prefix(m_command) + " " + channel + " " + nick + " " +
+           oper_nick + "\r\n";
 }
 
 std::string

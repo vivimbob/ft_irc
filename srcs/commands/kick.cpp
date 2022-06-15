@@ -79,9 +79,9 @@ void
                     Logger::Debug);
                 continue;
             }
-            m_send_to_channel(
-                channel, msg.build_kick_reply(channel_name,
-                                              client.get_nickname(), nick));
+            m_send_to_channel(channel,
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }
@@ -143,9 +143,9 @@ void
                     Logger::Debug);
                 continue;
             }
-            m_send_to_channel(
-                channel, msg.build_kick_reply(channel_name,
-                                              client.get_nickname(), nick));
+            m_send_to_channel(channel,
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }
