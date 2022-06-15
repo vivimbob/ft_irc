@@ -3,21 +3,6 @@ CC      	= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 # CXXFLAGS  = -std=c++98
 
-commands	= join.cpp\
-			  mode.cpp\
-			  nick.cpp\
-			  part.cpp\
-			  pass.cpp\
-			  quit.cpp\
-			  topic.cpp\
-			  user.cpp\
-			  names.cpp\
-			  privmsg.cpp\
-				list.cpp\
-				notice.cpp\
-				invite.cpp\
-				kick.cpp
-
 srcs		= main.cpp\
 			  channel.cpp\
 			  client.cpp\
@@ -26,8 +11,7 @@ srcs		= main.cpp\
 			  server.cpp\
 			  utils.cpp\
 			  sendbuffer.cpp\
-			  membership.cpp\
-			  $(commands:%=commands/%)
+			  membership.cpp
 
 SRCS    	= $(srcs:%=srcs/%)
 

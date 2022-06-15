@@ -29,6 +29,7 @@ void       split_by_comma(std::vector<const std::string>& splited_params,
 ClientInfo parse_client_info(std::string client_str);
 void       send_name_reply(Channel* channel, Client& client, Message& msg);
 void       send_topic_reply(Channel* channel, Client& client, Message& msg);
+void       push_message(Client& client, std::string msg);
 } // namespace utils
 
 #endif /* UTILS_HPP */

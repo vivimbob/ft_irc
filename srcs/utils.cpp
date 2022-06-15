@@ -1,10 +1,11 @@
 #include "../includes/utils.hpp"
 #include "../includes/channel.hpp"
 #include "../includes/client.hpp"
-#include "../includes/logger.hpp"
+#include "../lib/logger.hpp"
 
 namespace utils
 {
+
 static inline bool
     is_special(char c)
 {
@@ -145,7 +146,14 @@ void
     else
         reply_msg = msg.rpl_topic(channel->get_channel_name(), channel_topic);
 
-    client.push_message(reply_msg, Logger::Debug);
+    client.push_message(reply_msg);
+}
+
+void
+	push_message(Client& client, std::string msg)
+{
+	client.push_message(msg);
+	Logger().debug() << msg;
 }
 
 } // namespace utils

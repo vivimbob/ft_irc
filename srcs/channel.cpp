@@ -1,5 +1,5 @@
 #include "../includes/channel.hpp"
-#include "../includes/logger.hpp"
+#include "../lib/logger.hpp"
 #include <utility>
 
 Channel::Channel(const std::string& name) : m_channel_name(name)

@@ -66,7 +66,6 @@ class Client
     bool is_same_client(utils::ClientInfo client_info);
 
     void push_message(const std::string& message);
-    void push_message(const std::string& message, int level);
 
     std::string make_nickmask();
 

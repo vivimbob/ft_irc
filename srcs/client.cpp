@@ -1,6 +1,5 @@
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
-#include "../includes/logger.hpp"
 
 Client::Client(sockaddr_in client_addr, int client_fd)
     : m_client_addr(client_addr),
@@ -100,14 +99,12 @@ void
 {
     m_username        = username;
     m_user_registered = true;
-    Logger().debug() << get_client_IP() << " set username to " << m_username;
 }
 
 void
     Client::set_realname(const std::string& realname)
 {
     m_realname = realname;
-    Logger().debug() << get_client_IP() << " set realname to " << m_realname;
 }
 
 void
@@ -170,14 +167,6 @@ void
     Client::push_message(const std::string& message)
 {
     m_send_buffer.append(message);
-}
-
-void
-    Client::push_message(const std::string& message, int level)
-{
-    m_send_buffer.append(message);
-    Logger().log(level) << "Server Send to " << m_nickname << " [" << message
-                        << ']';
 }
 
 std::string

@@ -1,6 +1,6 @@
 #include "../includes/message.hpp"
 #include "../includes/client.hpp"
-#include "../includes/logger.hpp"
+#include "../lib/logger.hpp"
 
 Message::Message(Client* client, const std::string& message)
     : m_message(message),

@@ -1,6 +1,6 @@
 #include "../includes/server.hpp"
 #include "../includes/client.hpp"
-#include "../includes/logger.hpp"
+#include "../lib/logger.hpp"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <cstdlib>
@@ -12,6 +12,60 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+/* utility start */
+
+void
+    Server::m_update_event(int     identity,
+                           short   filter,
+                           u_short flags,
+                           u_int   fflags,
+                           int     data,
+                           void*   udata)
+{
+    struct kevent kev;
+    EV_SET(&kev, identity, filter, flags, fflags, data, udata);
+    kevent(m_kq, &kev, 1, NULL, 0, NULL);
+}
+
+void
+    Server::m_prepare_to_send(Client& client, const std::string& str_msg)
+{
+    client.push_message(str_msg);
+    m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
+    m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+    Logger().trace() << client.get_nickname() << " disable read event";
+    Logger().trace() << client.get_nickname() << " enable write event";
+}
+
+void
+    Server::m_send_to_channel(Channel*           channel,
+                              const std::string& msg,
+                              Client*            exclusion)
+{
+    const Channel::MemberMap&          user_list = channel->get_user_list();
+    Channel::MemberMap::const_iterator user      = user_list.begin();
+
+    Logger().trace() << "send message to channel :"
+                     << channel->get_channel_name();
+    for (; user != user_list.end(); ++user)
+        if (user->first != exclusion)
+            m_prepare_to_send(*user->first, msg);
+}
+
+void
+    Server::m_send_to_channel(Client&            client,
+                              const std::string& msg,
+                              Client*            exclusion)
+{
+    std::set<Channel*>::iterator it = client.get_channel_list().begin();
+    for (; it != client.get_channel_list().end(); ++it)
+        m_send_to_channel(*it, msg, exclusion);
+}
+
+/* utility start */
+
+/* process command start */
 
 Server::CommandMap Server::m_register_command_map =
     Server::m_initial_register_command_map();
@@ -56,6 +110,682 @@ Server::CommandMap
 
     return (temp_map);
 }
+
+void
+    Server::m_process_pass_command(Client& client, Message& msg)
+{
+    if (!msg.get_params().size())
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+    if (client.is_registered())
+    {
+        client.push_message(msg.err_already_registred());
+        return;
+    }
+    if (msg.get_params()[0] != m_password)
+    {
+        client.push_message(msg.err_passwd_mismatch());
+        return;
+    }
+    client.set_password_flag();
+    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+        m_register_client(client, msg);
+}
+
+void
+    Server::m_process_nick_command(Client& client, Message& msg)
+{
+    if (msg.get_params().empty())
+    {
+        client.push_message(msg.err_no_nickname_given());
+        return;
+    }
+
+    const std::string& nickname = msg.get_params()[0];
+
+    if (!utils::is_nickname_valid(nickname))
+    {
+        client.push_message(msg.err_erroneus_nickname(nickname));
+        return;
+    }
+
+    if (m_client_map.count(nickname))
+    {
+        if (nickname != client.get_nickname())
+            client.push_message(msg.err_nickname_in_use(nickname));
+        return;
+    }
+
+    if (client.is_registered())
+    {
+        m_send_to_channel(client, msg.build_nick_reply(nickname), &client);
+        client.push_message(msg.build_nick_reply(nickname));
+        if (m_client_map.count(client.get_nickname()))
+        {
+            m_client_map.erase(client.get_nickname());
+            m_client_map[nickname] = &client;
+        }
+    }
+
+    Logger().debug() << client.get_client_IP() << " change nick to "
+                     << nickname;
+    client.set_nickname(nickname);
+
+    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+        m_register_client(client, msg);
+}
+
+void
+    Server::m_process_user_command(Client& client, Message& msg)
+{
+    if (msg.get_params().size() < 4)
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    if (client.is_registered())
+    {
+        client.push_message(msg.err_already_registred());
+        return;
+    }
+
+    client.set_username(msg.get_params()[0]);
+    client.set_realname(msg.get_params()[3]);
+    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+        m_register_client(client, msg);
+}
+
+void
+    Server::m_process_quit_command(Client& client, Message& msg)
+{
+    std::string message = "Quit";
+    if (msg.get_params().size())
+        message += " :" + msg.get_params()[0];
+    m_disconnect_client(client, message);
+}
+
+void
+    Server::m_process_join_command(Client& client, Message& msg)
+{
+    if (msg.get_params().empty())
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    std::vector<const std::string> channel_list;
+
+    utils::split_by_comma(channel_list, msg.get_params()[0]);
+
+    for (std::vector<const std::string>::iterator channel_it =
+             channel_list.begin();
+         channel_it != channel_list.end();
+         ++channel_it) // 채널과 키쌍을 순회하면서 확인
+    {
+        Channel*           channel      = NULL;
+        const std::string& channel_name = *channel_it;
+
+        if (m_channel_map.count(channel_name))
+            channel = m_channel_map[channel_name];
+
+        if (!utils::is_channel_prefix(channel_name) ||
+            !utils::is_channel_name_valid(channel_name))
+        // 채널이름 앞에 #, & 있는지, 이름이 유효한지
+        {
+            client.push_message(msg.err_no_such_channel(channel_name));
+            continue;
+        }
+
+        else if (!channel) // join할 채널이 없는 경우(새로 만듦)
+        {
+            if (!client.is_join_available()) // join할 클라이언트가 이미 참여할
+                                             // 수 있는 채널 갯수에 도달했을때
+            {
+                client.push_message(msg.err_too_many_channels(channel_name));
+                continue;
+            }
+            channel = new Channel(channel_name);
+            m_channel_map.insert(std::make_pair(channel_name, channel));
+            channel->add_user(client);
+            channel->set_operator_flag(true, &client);
+            client.insert_channel(channel);
+        }
+        else // join할 채널이 존재하는 경우
+        {
+            if (client.is_already_joined(channel)) // 이미 join된 경우
+                continue;
+            if (channel->is_full()) // 현재 채널이 포함할 수 있는 최대 유저 수에
+                                    // 도달했을 때
+            {
+                client.push_message(msg.err_channel_is_full(channel_name));
+                continue;
+            }
+            channel->add_user(client);
+            client.insert_channel(channel);
+        }
+
+        Logger().info() << "Create new channel :" << channel_name << " : @"
+                        << client.get_nickname();
+        m_send_to_channel(channel, msg.build_join_reply(channel_name));
+        utils::send_topic_reply(channel, client, msg);
+        utils::send_name_reply(channel, client, msg);
+    }
+}
+
+void
+    Server::m_process_channel_mode_command(Client&            client,
+                                           Message&           msg,
+                                           const std::string& channel_name)
+{
+    if (!m_channel_map.count(channel_name))
+    {
+        client.push_message(msg.err_no_such_channel(channel_name));
+        return;
+    }
+    Channel* channel = m_channel_map.at(channel_name);
+    if (msg.get_params().size() == 1)
+    {
+        client.push_message(msg.rpl_channel_mode_is(channel_name));
+        return;
+    }
+    if (!channel->is_operator(client))
+    {
+        client.push_message(msg.err_chanoprivs_needed(channel_name));
+        return;
+    }
+
+    client.push_message(msg.err_unknown_mode(msg.get_params()[1]));
+}
+
+void
+    Server::m_process_user_mode_command(Client&            client,
+                                        Message&           msg,
+                                        const std::string& nickname)
+{
+    if (!m_client_map.count(nickname))
+    {
+        client.push_message(msg.err_no_such_nick(nickname));
+        return;
+    }
+
+    if (nickname != client.get_nickname())
+    {
+        if (msg.get_params().size() == 1)
+            client.push_message(msg.err_users_dont_match("view"));
+        else
+            client.push_message(msg.err_users_dont_match("change"));
+        return;
+    }
+
+    if (msg.get_params().size() == 1)
+    {
+        client.push_message(msg.rpl_user_mode_is());
+        return;
+    }
+
+    client.push_message(msg.err_u_mode_unknown_flag());
+}
+
+void
+    Server::m_process_mode_command(Client& client, Message& msg)
+{
+    if (msg.get_params().empty())
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    const std::string& target = msg.get_params()[0];
+
+    if (utils::is_channel_prefix(target))
+        m_process_channel_mode_command(client, msg, target);
+    else
+        m_process_user_mode_command(client, msg, target);
+}
+
+void
+    Server::m_process_invite_command(Client& client, Message& msg)
+{
+    if (msg.get_params().size() < 2)
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+    const std::string& nickname     = msg.get_params()[0];
+    const std::string& channel_name = msg.get_params()[1];
+
+    if (!m_client_map.count(nickname))
+    {
+        client.push_message(msg.err_no_such_nick(nickname));
+        return;
+    }
+    Client* target_client = m_client_map[nickname];
+    if (!m_channel_map.count(channel_name))
+    {
+        client.push_message(msg.err_no_such_channel(channel_name));
+        return;
+    }
+    Channel* channel = m_channel_map[channel_name];
+    if (!client.is_already_joined(channel))
+    {
+        client.push_message(msg.err_not_on_channel(channel_name));
+        return;
+    }
+    if (target_client->is_already_joined(channel))
+    {
+        client.push_message(msg.err_user_on_channel(nickname, channel_name));
+        return;
+    }
+    client.push_message(msg.rpl_inviting(nickname, channel_name));
+    m_prepare_to_send(*target_client,
+                      msg.build_invite_reply(nickname, channel_name));
+}
+
+void
+    Server::m_process_kick_command(Client& client, Message& msg)
+{
+    const std::vector<std::string>& parameter = msg.get_params();
+    if (parameter.size() < 2)
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    std::vector<const std::string> channel_list;
+    std::vector<const std::string> nick_list;
+
+    utils::split_by_comma(channel_list, parameter[0]);
+    utils::split_by_comma(nick_list, parameter[1]);
+
+    if (!(channel_list.size() == 1 || nick_list.size() == 1) &&
+        channel_list.size() != nick_list.size())
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    Channel* channel;
+
+    if (channel_list.size() == 1)
+    {
+        const std::string& channel_name = channel_list[0];
+
+        if (!utils::is_channel_prefix(channel_name) ||
+            !m_channel_map.count(channel_name))
+        {
+            client.push_message(msg.err_no_such_channel(channel_name));
+            return;
+        }
+
+        channel = m_channel_map[channel_name];
+
+        if (!channel->is_operator(client))
+        {
+            client.push_message(msg.err_chanoprivs_needed(channel_name));
+            return;
+        }
+
+        std::vector<const std::string>::iterator nick_it  = nick_list.begin();
+        std::vector<const std::string>::iterator nick_ite = nick_list.end();
+
+        for (; nick_it != nick_ite; ++nick_it)
+        {
+            const std::string& nick = *nick_it;
+
+            if (!m_client_map.count(nick))
+            {
+                client.push_message(msg.err_no_such_nick(nick));
+                continue;
+            }
+            Client* target_client = m_client_map[nick];
+
+            if (!channel->is_user_on_channel(target_client))
+            {
+                client.push_message(
+                    msg.err_user_not_in_channel(nick, channel_name));
+                continue;
+            }
+            m_send_to_channel(channel,
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
+            channel->delete_user(*target_client);
+            target_client->erase_channel(channel);
+        }
+    }
+    else if (nick_list.size() == 1)
+    {
+        const std::string& nick = nick_list[0];
+
+        if (!m_client_map.count(nick))
+        {
+            client.push_message(msg.err_no_such_nick(nick));
+            return;
+        }
+        Client* target_client = m_client_map[nick];
+        std::vector<const std::string>::iterator channel_it =
+            channel_list.begin();
+        std::vector<const std::string>::iterator channel_ite =
+            channel_list.end();
+        for (; channel_it != channel_ite; ++channel_it)
+        {
+            const std::string& channel_name = *channel_it;
+
+            if (!utils::is_channel_prefix(channel_name) ||
+                !m_channel_map.count(channel_name))
+            {
+                client.push_message(msg.err_no_such_channel(channel_name));
+                continue;
+            }
+
+            channel = m_channel_map[channel_name];
+
+            if (!channel->is_operator(client))
+            {
+                client.push_message(msg.err_chanoprivs_needed(channel_name));
+                continue;
+            }
+
+            if (!channel->is_user_on_channel(target_client))
+            {
+                client.push_message(
+                    msg.err_user_not_in_channel(nick, channel_name));
+                continue;
+            }
+            m_send_to_channel(channel,
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
+            channel->delete_user(*target_client);
+            target_client->erase_channel(channel);
+        }
+    }
+    else
+    {
+        std::vector<const std::string>::iterator nick_it  = nick_list.begin();
+        std::vector<const std::string>::iterator nick_ite = nick_list.end();
+        std::vector<const std::string>::iterator channel_it =
+            channel_list.begin();
+
+        for (; nick_it != nick_ite; ++nick_it, ++channel_it)
+        {
+            const std::string& channel_name = *channel_it;
+            const std::string& nick         = *nick_it;
+
+            if (!utils::is_channel_prefix(channel_name) ||
+                !m_channel_map.count(channel_name))
+            {
+                client.push_message(msg.err_no_such_channel(channel_name));
+                continue;
+            }
+
+            channel = m_channel_map[channel_name];
+
+            if (!channel->is_user_on_channel(&client))
+            {
+                client.push_message(msg.err_not_on_channel(channel_name));
+                continue;
+            }
+
+            if (!channel->is_operator(client))
+            {
+                client.push_message(msg.err_chanoprivs_needed(channel_name));
+                continue;
+            }
+
+            if (!m_client_map.count(nick))
+            {
+                client.push_message(msg.err_no_such_nick(nick));
+                continue;
+            }
+
+            Client* target_client = m_client_map[nick];
+
+            if (channel->is_user_on_channel(target_client))
+            {
+                client.push_message(
+                    msg.err_user_not_in_channel(nick, channel_name));
+                continue;
+            }
+            m_send_to_channel(channel,
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
+            channel->delete_user(*target_client);
+            target_client->erase_channel(channel);
+        }
+    }
+}
+
+void
+    Server::m_process_names_command(Client& client, Message& msg)
+{
+    std::queue<const std::string> nick_queue;
+    if (msg.get_params().empty())
+    {
+        ChannelMap::const_iterator channel_it = m_channel_map.begin();
+        for (; channel_it != m_channel_map.end(); ++channel_it)
+            utils::send_name_reply(channel_it->second, client, msg);
+
+        // 클라이언트가 어느 채널에도 속하지 않을 때
+        ClientMap::const_iterator client_it = m_client_map.begin();
+        for (; client_it != m_client_map.end(); ++client_it)
+            if (client_it->second->get_channel_list().empty())
+                nick_queue.push(client_it->first);
+
+        if (nick_queue.size())
+            client.push_message(msg.rpl_namreply("*", nick_queue));
+        client.push_message(msg.rpl_endofnames("*"));
+        return;
+    }
+    else
+    {
+        std::vector<const std::string> channel_list;
+        utils::split_by_comma(channel_list, msg.get_params()[0]);
+
+        for (int i = 0, size = channel_list.size(); i < size; ++i)
+        {
+            // 잘못된 채널일 때
+            if (!m_channel_map.count(channel_list[i]))
+            {
+                client.push_message(msg.rpl_endofnames(channel_list[i]));
+                continue;
+            }
+
+            utils::send_name_reply(m_channel_map[channel_list[i]], client, msg);
+        }
+    }
+}
+
+void
+    send_list_to_client(Channel* channel, Client& client, Message& msg)
+{
+    client.push_message(
+        msg.rpl_list(channel->get_channel_name(),
+                     std::to_string(channel->get_user_list().size()),
+                     channel->get_channel_topic()));
+}
+
+void
+    Server::m_process_list_command(Client& client, Message& msg)
+{
+    if (msg.get_params().empty())
+    {
+        ChannelMap::const_iterator channel_it = m_channel_map.begin();
+        for (; channel_it != m_channel_map.end(); ++channel_it)
+            send_list_to_client(channel_it->second, client, msg);
+    }
+
+    else if (msg.get_params().size() == 1)
+    {
+        std::vector<const std::string> channel_list;
+        utils::split_by_comma(channel_list, msg.get_params()[0]);
+
+        std::vector<const std::string>::iterator channel_it =
+            channel_list.begin();
+        for (; channel_it != channel_list.end(); ++channel_it)
+        {
+            if (m_channel_map.count(*channel_it))
+                send_list_to_client(m_channel_map[*channel_it], client, msg);
+            else
+                client.push_message(msg.err_no_such_channel(*channel_it));
+        }
+    }
+    client.push_message(msg.rpl_listend());
+}
+
+void
+    Server::m_process_part_command(Client& client, Message& msg)
+{
+    if (msg.get_params().empty())
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    std::vector<const std::string> channel_list;
+    utils::split_by_comma(channel_list, msg.get_params()[0]);
+
+    std::vector<const std::string>::iterator channel_it = channel_list.begin();
+    for (; channel_it != channel_list.end(); ++channel_it)
+    {
+        if (!m_channel_map.count(*channel_it))
+        {
+            client.push_message(msg.err_no_such_channel(*channel_it));
+            continue;
+        }
+        Channel* channel = m_channel_map[*channel_it];
+        if (!channel->is_user_on_channel(&client))
+        {
+            client.push_message(msg.err_not_on_channel(*channel_it));
+            continue;
+        }
+        m_send_to_channel(channel, msg.build_part_reply(*channel_it));
+        channel->delete_user(client);
+        client.erase_channel(channel);
+        if (channel->is_empty())
+            m_channel_map.erase(channel->get_channel_name());
+		delete channel;
+        Logger().debug() << "Remove [" << client.get_nickname()
+                         << "] client from [" << channel->get_channel_name()
+                         << "] channel";
+    }
+}
+
+void
+    Server::m_process_topic_command(Client& client, Message& msg)
+{
+    if (msg.get_params().empty())
+    {
+        client.push_message(msg.err_need_more_params());
+        return;
+    }
+
+    const std::string& channel_name = msg.get_params()[0];
+
+    if (!m_channel_map.count(channel_name))
+    {
+        client.push_message(msg.err_no_such_channel(channel_name));
+        return;
+    }
+
+    Channel* channel = m_channel_map[channel_name];
+
+    if (!channel->is_user_on_channel(&client))
+    {
+        client.push_message(msg.err_not_on_channel(channel_name));
+        return;
+    }
+
+    if (msg.get_params().size() == 1)
+    {
+        utils::send_topic_reply(channel, client, msg);
+        return;
+    }
+
+    if (!channel->is_operator(client))
+    {
+        client.push_message(msg.err_chanoprivs_needed(channel_name));
+        return;
+    }
+    channel->set_channel_topic(msg.get_params()[1]);
+
+    Logger().trace() << channel_name << " channel topic change to "
+                     << channel->get_channel_topic();
+
+    m_send_to_channel(channel, msg.build_topic_reply());
+}
+
+void
+    Server::m_process_privmsg_command(Client& client, Message& msg)
+{
+    const std::vector<std::string>& parameter = msg.get_params();
+
+    if (parameter.empty())
+    {
+        client.push_message(msg.err_no_recipient());
+        return;
+    }
+    if (parameter.size() == 1)
+    {
+        client.push_message(msg.err_no_text_to_send());
+        return;
+    }
+
+    std::vector<const std::string> target_list;
+    utils::split_by_comma(target_list, parameter[0]);
+
+    std::vector<const std::string>::iterator target_it  = target_list.begin();
+    std::vector<const std::string>::iterator target_ite = target_list.end();
+    for (; target_it != target_ite; ++target_it)
+    {
+        if (utils::is_channel_prefix(*target_it))
+        {
+            if (!m_channel_map.count(*target_it))
+            {
+                client.push_message(msg.err_no_such_channel(*target_it));
+                continue;
+            }
+            m_send_to_channel(m_channel_map[*target_it],
+                              msg.build_message_reply(*target_it), &client);
+        }
+        else
+        {
+            utils::ClientInfo client_info =
+                utils::parse_client_info(*target_it);
+
+            ClientMap::iterator client_it                = m_client_map.begin();
+            ClientMap::iterator client_ite               = m_client_map.end();
+            size_t              number_of_matched_client = 0;
+            Client*             matched_client;
+            for (; client_it != client_ite; ++client_it)
+            {
+                if (client_it->second->is_same_client(client_info))
+                {
+                    matched_client = client_it->second;
+                    ++number_of_matched_client;
+                }
+            }
+            if (msg.get_command() != "NOTICE" && number_of_matched_client == 0)
+                client.push_message(msg.err_no_such_nick(*target_it));
+            else if (number_of_matched_client == 1)
+                m_prepare_to_send(*matched_client,
+                                  msg.build_message_reply(*target_it));
+            else if (msg.get_command() != "NOTICE")
+                client.push_message(msg.err_too_many_targets(*target_it));
+        }
+    }
+}
+
+void
+    Server::m_process_notice_command(Client& client, Message& msg)
+{
+    m_process_privmsg_command(client, msg);
+}
+
+/* process command end */
+
+/* initailize server start */
 
 void
     Server::m_create_socket()
@@ -107,19 +837,6 @@ void
 }
 
 void
-    Server::m_update_event(int     identity,
-                           short   filter,
-                           u_short flags,
-                           u_int   fflags,
-                           int     data,
-                           void*   udata)
-{
-    struct kevent kev;
-    EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-    kevent(m_kq, &kev, 1, NULL, 0, NULL);
-}
-
-void
     Server::m_create_kqueue()
 {
     m_kq = kqueue();
@@ -134,6 +851,19 @@ void
     Logger().info() << "Listen socket(" << m_listen_fd
                     << ") assign read event to kqueue";
 }
+
+void
+    Server::m_initialize_server()
+{
+    m_create_socket();
+    m_bind_socket();
+    m_listen_socket();
+    m_create_kqueue();
+}
+
+/* initailize server end */
+
+/* server run start */
 
 void
     Server::m_accept_client()
@@ -184,11 +914,9 @@ void
             else
             {
                 if (m_channel_command_map.count(message->get_command()))
-                    client.push_message(message->err_not_registered(),
-                                        Logger::Debug);
+                    client.push_message(message->err_not_registered());
                 else
-                    client.push_message(message->err_unknown_command(),
-                                        Logger::Debug);
+                    client.push_message(message->err_unknown_command());
             }
         }
         else
@@ -197,8 +925,7 @@ void
                 (this->*m_channel_command_map[message->get_command()])(
                     client, *message);
             else
-                client.push_message(message->err_unknown_command(),
-                                    Logger::Debug);
+                client.push_message(message->err_unknown_command());
         }
         delete message;
     }
@@ -253,7 +980,7 @@ void
     Server::m_register_client(Client& client, Message& msg)
 {
     m_client_map[client.get_nickname()] = &client;
-    client.push_message(msg.rpl_welcome(), Logger::Debug);
+    client.push_message(msg.rpl_welcome());
     Logger().info() << client.get_nickname() << " is registered to server";
 }
 
@@ -339,50 +1066,6 @@ void
     }
 }
 
-void
-    Server::m_prepare_to_send(Client& client, const std::string& str_msg)
-{
-    client.push_message(str_msg);
-    m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
-    m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
-    Logger().trace() << client.get_nickname() << " disable read event";
-    Logger().trace() << client.get_nickname() << " enable write event";
-}
-
-void
-    Server::m_send_to_channel(Channel*           channel,
-                              const std::string& msg,
-                              Client*            exclusion)
-{
-    const Channel::MemberMap&          user_list = channel->get_user_list();
-    Channel::MemberMap::const_iterator user      = user_list.begin();
-
-    Logger().trace() << "send message to channel :"
-                     << channel->get_channel_name();
-    for (; user != user_list.end(); ++user)
-        if (user->first != exclusion)
-            m_prepare_to_send(*user->first, msg);
-}
-
-void
-    Server::m_send_to_channel(Client&            client,
-                              const std::string& msg,
-                              Client*            exclusion)
-{
-    std::set<Channel*>::iterator it = client.get_channel_list().begin();
-    for (; it != client.get_channel_list().end(); ++it)
-        m_send_to_channel(*it, msg, exclusion);
-}
-
-void
-    Server::m_initialize_server()
-{
-    m_create_socket();
-    m_bind_socket();
-    m_listen_socket();
-    m_create_kqueue();
-}
-
 Server::~Server()
 {
 }
@@ -424,3 +1107,5 @@ void
         }
     }
 }
+
+/* server run end */
