@@ -32,9 +32,10 @@ void
         }
         m_send_to_channel(channel, msg.build_part_reply(*channel_it));
         channel->delete_user(client);
-        client.erase_channel(m_channel_map[*channel_it]);
+        client.erase_channel(channel);
         if (channel->is_empty())
             m_channel_map.erase(channel->get_channel_name());
+		delete channel;
         Logger().debug() << "Remove [" << client.get_nickname()
                          << "] client from [" << channel->get_channel_name()
                          << "] channel";
