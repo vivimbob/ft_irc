@@ -6,6 +6,13 @@
 namespace utils
 {
 
+void
+	push_message(Client& client, std::string msg)
+{
+	client.push_message(msg);
+	Logger().debug() << msg;
+}
+
 static inline bool
     is_special(char c)
 {
@@ -132,7 +139,7 @@ void
     if (nick_queue.size())
         client.push_message(
             msg.rpl_namreply("= " + channel->get_channel_name(), nick_queue));
-    client.push_message(msg.rpl_endofnames(channel->get_channel_name()));
+	utils::push_message(client, msg.rpl_endofnames(channel->get_channel_name()));
 }
 
 void
@@ -146,14 +153,7 @@ void
     else
         reply_msg = msg.rpl_topic(channel->get_channel_name(), channel_topic);
 
-    client.push_message(reply_msg);
-}
-
-void
-	push_message(Client& client, std::string msg)
-{
-	client.push_message(msg);
-	Logger().debug() << msg;
+	utils::push_message(client, reply_msg);
 }
 
 } // namespace utils
