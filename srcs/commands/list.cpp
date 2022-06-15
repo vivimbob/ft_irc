@@ -29,8 +29,12 @@ void
         std::vector<const std::string>::iterator channel_it =
             channel_list.begin();
         for (; channel_it != channel_list.end(); ++channel_it)
+        {
             if (m_channel_map.count(*channel_it))
                 send_list_to_client(m_channel_map[*channel_it], client, msg);
+            else
+                client.push_message(msg.err_no_such_channel(*channel_it));
+        }
     }
     client.push_message(msg.rpl_listend());
 }

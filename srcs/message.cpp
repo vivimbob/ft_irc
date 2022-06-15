@@ -440,7 +440,7 @@ std::string
 std::string
     Message::rpl_listend()
 {
-    return reply_servername_prefix("323") + " :End of /LIST\r\n";
+    return reply_servername_prefix("323") + " :End of LIST\r\n";
 }
 
 std::string
