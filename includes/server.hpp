@@ -1,20 +1,17 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "./channel.hpp"
-#include "./client.hpp"
-#include "./sendbuffer.hpp"
+#include "sendbuffer.hpp"
+#include "channel.hpp"
+#include "client.hpp"
+#include "ft_irc.hpp"
 #include "utils.hpp"
-#include <arpa/inet.h>
-#include <map>
 #include <netinet/in.h>
-#include <string>
 #include <sys/event.h>
+#include <arpa/inet.h>
+#include <string>
 #include <vector>
-
-#define QUEUE_SIZE   1024
-#define IPV4_MTU_MAX 65535
-#define IPV4_MTU_MIN 68
+#include <map>
 
 class Server
 {

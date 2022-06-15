@@ -75,12 +75,6 @@ SendBuffer&
     return m_send_buffer;
 }
 
-size_t
-    Client::get_channel_limits()
-{
-    return m_channel_limits;
-}
-
 const std::set<Channel*>&
     Client::get_channel_list() const
 {
@@ -140,7 +134,7 @@ bool
 bool
     Client::is_join_available() const
 {
-    return m_channel_list.size() < m_channel_limits;
+    return m_channel_list.size() < CHANNEL_USER_LIMIT;
 }
 
 bool
@@ -163,6 +157,7 @@ bool
         return false;
     return true;
 }
+
 void
     Client::push_message(const std::string& message)
 {

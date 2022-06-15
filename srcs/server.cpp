@@ -244,7 +244,8 @@ void
             if (!client.is_join_available()) // join할 클라이언트가 이미 참여할
                                              // 수 있는 채널 갯수에 도달했을때
             {
-                utils::push_message(client, msg.err_too_many_channels(channel_name));
+                utils::push_message(client,
+                                    msg.err_too_many_channels(channel_name));
                 continue;
             }
             channel = new Channel(channel_name);
@@ -260,7 +261,8 @@ void
             if (channel->is_full()) // 현재 채널이 포함할 수 있는 최대 유저 수에
                                     // 도달했을 때
             {
-                utils::push_message(client, msg.err_channel_is_full(channel_name));
+                utils::push_message(client,
+                                    msg.err_channel_is_full(channel_name));
                 continue;
             }
             channel->add_user(client);
@@ -376,7 +378,8 @@ void
     }
     if (target_client->is_already_joined(channel))
     {
-        utils::push_message(client, msg.err_user_on_channel(nickname, channel_name));
+        utils::push_message(client,
+                            msg.err_user_on_channel(nickname, channel_name));
         return;
     }
     utils::push_message(client, msg.rpl_inviting(nickname, channel_name));
@@ -424,7 +427,8 @@ void
 
         if (!channel->is_operator(client))
         {
-            utils::push_message(client, msg.err_chanoprivs_needed(channel_name));
+            utils::push_message(client,
+                                msg.err_chanoprivs_needed(channel_name));
             return;
         }
 
@@ -444,8 +448,8 @@ void
 
             if (!channel->is_user_on_channel(target_client))
             {
-                utils::push_message(client, 
-                    msg.err_user_not_in_channel(nick, channel_name));
+                utils::push_message(
+                    client, msg.err_user_not_in_channel(nick, channel_name));
                 continue;
             }
             m_send_to_channel(channel,
@@ -476,7 +480,8 @@ void
             if (!utils::is_channel_prefix(channel_name) ||
                 !m_channel_map.count(channel_name))
             {
-                utils::push_message(client, msg.err_no_such_channel(channel_name));
+                utils::push_message(client,
+                                    msg.err_no_such_channel(channel_name));
                 continue;
             }
 
@@ -484,14 +489,15 @@ void
 
             if (!channel->is_operator(client))
             {
-                utils::push_message(client, msg.err_chanoprivs_needed(channel_name));
+                utils::push_message(client,
+                                    msg.err_chanoprivs_needed(channel_name));
                 continue;
             }
 
             if (!channel->is_user_on_channel(target_client))
             {
-                utils::push_message(client, 
-                    msg.err_user_not_in_channel(nick, channel_name));
+                utils::push_message(
+                    client, msg.err_user_not_in_channel(nick, channel_name));
                 continue;
             }
             m_send_to_channel(channel,
@@ -516,7 +522,8 @@ void
             if (!utils::is_channel_prefix(channel_name) ||
                 !m_channel_map.count(channel_name))
             {
-                utils::push_message(client, msg.err_no_such_channel(channel_name));
+                utils::push_message(client,
+                                    msg.err_no_such_channel(channel_name));
                 continue;
             }
 
@@ -524,13 +531,15 @@ void
 
             if (!channel->is_user_on_channel(&client))
             {
-                utils::push_message(client, msg.err_not_on_channel(channel_name));
+                utils::push_message(client,
+                                    msg.err_not_on_channel(channel_name));
                 continue;
             }
 
             if (!channel->is_operator(client))
             {
-                utils::push_message(client, msg.err_chanoprivs_needed(channel_name));
+                utils::push_message(client,
+                                    msg.err_chanoprivs_needed(channel_name));
                 continue;
             }
 
@@ -544,8 +553,8 @@ void
 
             if (channel->is_user_on_channel(target_client))
             {
-                utils::push_message(client, 
-                    msg.err_user_not_in_channel(nick, channel_name));
+                utils::push_message(
+                    client, msg.err_user_not_in_channel(nick, channel_name));
                 continue;
             }
             m_send_to_channel(channel,
@@ -588,7 +597,8 @@ void
             // 잘못된 채널일 때
             if (!m_channel_map.count(channel_list[i]))
             {
-                utils::push_message(client, msg.rpl_endofnames(channel_list[i]));
+                utils::push_message(client,
+                                    msg.rpl_endofnames(channel_list[i]));
                 continue;
             }
 
@@ -600,10 +610,10 @@ void
 void
     send_list_to_client(Channel* channel, Client& client, Message& msg)
 {
-    utils::push_message(client, 
-        msg.rpl_list(channel->get_channel_name(),
-                     std::to_string(channel->get_user_list().size()),
-                     channel->get_channel_topic()));
+    utils::push_message(
+        client, msg.rpl_list(channel->get_channel_name(),
+                             std::to_string(channel->get_user_list().size()),
+                             channel->get_channel_topic()));
 }
 
 void
@@ -628,7 +638,8 @@ void
             if (m_channel_map.count(*channel_it))
                 send_list_to_client(m_channel_map[*channel_it], client, msg);
             else
-                utils::push_message(client, msg.err_no_such_channel(*channel_it));
+                utils::push_message(client,
+                                    msg.err_no_such_channel(*channel_it));
         }
     }
     utils::push_message(client, msg.rpl_listend());
@@ -743,7 +754,8 @@ void
         {
             if (!m_channel_map.count(*target_it))
             {
-                utils::push_message(client, msg.err_no_such_channel(*target_it));
+                utils::push_message(client,
+                                    msg.err_no_such_channel(*target_it));
                 continue;
             }
             m_send_to_channel(m_channel_map[*target_it],
@@ -772,7 +784,8 @@ void
                 m_prepare_to_send(*matched_client,
                                   msg.build_message_reply(*target_it));
             else if (msg.get_command() != "NOTICE")
-                utils::push_message(client, msg.err_too_many_targets(*target_it));
+                utils::push_message(client,
+                                    msg.err_too_many_targets(*target_it));
         }
     }
 }
@@ -1078,7 +1091,7 @@ Server::Server(int argc, char** argv) : m_kq(-1), m_listen_fd(-1), m_port(-1)
         exit(EXIT_FAILURE);
     }
     m_port = atoi(argv[1]);
-    if (m_port < 0 || m_port > 65535)
+    if (m_port < 0 || m_port > PORT_MAX)
         Logger().error() << m_port << "is out of Port range (0 ~ 65535)";
     m_password = argv[2];
     Logger().info() << "Server start";

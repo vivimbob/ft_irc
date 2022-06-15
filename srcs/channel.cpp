@@ -22,12 +22,6 @@ const std::string&
     return m_channel_topic;
 }
 
-size_t
-    Channel::get_user_limit()
-{
-    return m_user_limit;
-}
-
 const std::map<Client*, MemberShip>&
     Channel::get_user_list()
 {
@@ -61,7 +55,7 @@ bool
 bool
     Channel::is_full()
 {
-    return m_member_list.size() >= m_user_limit;
+    return m_member_list.size() >= CHANNEL_USER_LIMIT;
 }
 
 bool
