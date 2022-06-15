@@ -174,10 +174,30 @@ void
                          << message->get_message() << ']';
         client.get_commands().pop();
         message->parse_message();
-        if (m_command_map.count(message->get_command()))
-            (this->*m_command_map[message->get_command()])(client, *message);
+        if (!client.is_registered())
+        {
+            if (m_register_command_map.count(message->get_command()))
+                (this->*m_register_command_map[message->get_command()])(
+                    client, *message);
+            else
+            {
+                if (m_channel_command_map.count(message->get_command()))
+                    client.push_message(message->err_not_registered(),
+                                        Logger::Debug);
+                else
+                    client.push_message(message->err_unknown_command(),
+                                        Logger::Debug);
+            }
+        }
         else
-            client.push_message(message->err_unknown_command(), Logger::Debug);
+        {
+            if (m_channel_command_map.count(message->get_command()))
+                (this->*m_channel_command_map[message->get_command()])(
+                    client, *message);
+            else
+                client.push_message(message->err_unknown_command(),
+                                    Logger::Debug);
+        }
         delete message;
     }
 }
