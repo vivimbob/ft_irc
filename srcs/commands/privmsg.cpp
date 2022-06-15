@@ -28,8 +28,11 @@ void
         if (utils::is_channel_prefix(*target_it))
         {
             if (!m_channel_map.count(*target_it))
+            {
                 client.push_message(msg.err_no_such_channel(*target_it),
                                     Logger::Debug);
+                continue;
+            }
             m_send_to_channel(m_channel_map[*target_it],
                               msg.build_message_reply(*target_it), &client);
         }
