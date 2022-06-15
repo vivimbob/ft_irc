@@ -35,9 +35,20 @@ void
                                         Message&           msg,
                                         const std::string& nickname)
 {
+    if (!m_client_map.count(nickname))
+    {
+        client.push_message(msg.err_no_such_nick(nickname), Logger::Debug);
+        return;
+    }
+
     if (nickname != client.get_nickname())
     {
-        client.push_message(msg.err_users_dont_match(), Logger::Debug);
+        if (msg.get_params().size() == 1)
+            client.push_message(msg.err_users_dont_match("view"),
+                                Logger::Debug);
+        else
+            client.push_message(msg.err_users_dont_match("change"),
+                                Logger::Debug);
         return;
     }
 
@@ -46,6 +57,7 @@ void
         client.push_message(msg.rpl_user_mode_is(), Logger::Debug);
         return;
     }
+
     client.push_message(msg.err_u_mode_unknown_flag(), Logger::Debug);
 }
 

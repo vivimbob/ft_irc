@@ -3,6 +3,8 @@
 void
     Server::m_process_quit_command(Client& client, Message& msg)
 {
-    (void)msg;
-    m_disconnect_client(client);
+	std::string message = "Quit";
+	if (msg.get_params().size())
+		message += " :" + msg.get_params()[0];
+    m_disconnect_client(client, message);
 }

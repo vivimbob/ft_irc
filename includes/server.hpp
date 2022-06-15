@@ -78,14 +78,18 @@ class Server
 
     void m_handle_messages(Client& client);
 
-    void m_disconnect_client(Client& client);
+    void m_disconnect_client(Client& client, std::string reason = "");
     void m_register_client(Client& client, Message& msg);
 
     void m_receive_client_msg(Client& client, int bytes);
     void m_send_client_msg(Client& client, int bytes);
     void m_prepare_to_send(Client& client, const std::string& str_msg);
-    void m_send_to_channel(Channel* channel, const std::string& msg);
-    void m_send_to_channel(Client& client, const std::string& msg);
+    void m_send_to_channel(Channel*           channel,
+                           const std::string& msg,
+                           Client*            exclusion = nullptr);
+    void m_send_to_channel(Client&            client,
+                           const std::string& msg,
+                           Client*            exclusion = nullptr);
 
     void m_initialize_server();
 

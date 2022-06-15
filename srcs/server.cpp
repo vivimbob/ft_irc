@@ -167,7 +167,7 @@ void
 }
 
 void
-    Server::m_disconnect_client(Client& client)
+    Server::m_disconnect_client(Client& client, std::string reason)
 {
     const unsigned int& clientfd = client.get_socket();
 
@@ -178,13 +178,8 @@ void
     m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
-    std::string message;
-    if (client.get_commands().empty())
-        message = Message(&client, "QUIT").build_quit_reply();
-    else
-        message = client.get_commands().front()->build_quit_reply();
-
-    m_send_to_channel(client, message);
+    m_send_to_channel(client, Message(&client, "QUIT").build_quit_reply(reason),
+                      &client);
     client.leave_all_channel();
     m_client_map.erase(client.get_nickname());
     delete &client;
@@ -204,10 +199,7 @@ void
 {
     const unsigned int& clientfd = client.get_socket();
 
-    char* buffer = m_read_buffer;
-    if (data_len <= IPV4_MTU_MIN)
-        data_len = IPV4_MTU_MAX;
-
+    char*   buffer        = m_read_buffer;
     ssize_t recv_data_len = recv(clientfd, buffer, data_len, 0);
 
     if (recv_data_len > 0)
@@ -238,7 +230,7 @@ void
         }
     }
     else if (recv_data_len == 0)
-        m_disconnect_client(client);
+        m_disconnect_client(client, "connection closed");
 }
 
 void
@@ -295,7 +287,9 @@ void
 }
 
 void
-    Server::m_send_to_channel(Channel* channel, const std::string& msg)
+    Server::m_send_to_channel(Channel*           channel,
+                              const std::string& msg,
+                              Client*            exclusion)
 {
     const Channel::MemberMap&          user_list = channel->get_user_list();
     Channel::MemberMap::const_iterator user      = user_list.begin();
@@ -303,15 +297,18 @@ void
     Logger().trace() << "send message to channel :"
                      << channel->get_channel_name();
     for (; user != user_list.end(); ++user)
-        m_prepare_to_send(*user->first, msg);
+        if (user->first != exclusion)
+            m_prepare_to_send(*user->first, msg);
 }
 
 void
-    Server::m_send_to_channel(Client& client, const std::string& msg)
+    Server::m_send_to_channel(Client&            client,
+                              const std::string& msg,
+                              Client*            exclusion)
 {
     std::set<Channel*>::iterator it = client.get_channel_list().begin();
     for (; it != client.get_channel_list().end(); ++it)
-        m_send_to_channel(*it, msg);
+        m_send_to_channel(*it, msg, exclusion);
 }
 
 void

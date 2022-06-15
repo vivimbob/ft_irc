@@ -21,32 +21,29 @@ void
 
     Channel* channel = m_channel_map[channel_name];
 
-    if (msg.get_params().size() >= 2)
+    if (!channel->is_user_on_channel(&client))
     {
-        if (!channel->is_operator(client))
-        {
-            client.push_message(msg.err_chanoprivs_needed(channel_name),
-                                Logger::Debug);
-            return;
-        }
-        channel->set_channel_topic(msg.get_params()[1]);
-
-        Logger().trace() << channel_name << " channel topic change to "
-                         << channel->get_channel_topic();
-    }
-
-    std::string reply_msg;
-
-    if (channel->get_channel_topic().empty())
-        reply_msg = msg.rpl_notopic(channel_name);
-    else
-        reply_msg = msg.rpl_topic(channel_name, channel->get_channel_topic());
-
-    if (msg.get_params().size() == 1)
-    {
-        client.push_message(reply_msg, Logger::Debug);
+        client.push_message(msg.err_not_on_channel(channel_name),
+                            Logger::Debug);
         return;
     }
 
-    m_send_to_channel(channel, reply_msg);
+    if (msg.get_params().size() == 1)
+    {
+        utils::send_topic_reply(channel, client, msg);
+        return;
+    }
+
+    if (!channel->is_operator(client))
+    {
+        client.push_message(msg.err_chanoprivs_needed(channel_name),
+                            Logger::Debug);
+        return;
+    }
+    channel->set_channel_topic(msg.get_params()[1]);
+
+    Logger().trace() << channel_name << " channel topic change to "
+                     << channel->get_channel_topic();
+
+    m_send_to_channel(channel, msg.build_topic_reply());
 }

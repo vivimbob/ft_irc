@@ -117,7 +117,6 @@ void
     send_name_reply(Channel* channel, Client& client, Message& msg)
 {
     std::queue<const std::string> nick_queue;
-    std::string channel_name = "= " + channel->get_channel_name();
 
     Channel::MemberMap::const_iterator user_it =
         channel->get_user_list().begin();
@@ -130,8 +129,8 @@ void
                                     client.is_already_joined(channel)));
 
     if (nick_queue.size())
-        client.push_message(msg.rpl_namreply(channel_name, nick_queue));
-    client.push_message(msg.rpl_endofnames(channel_name));
+        client.push_message(msg.rpl_namreply("= " + channel->get_channel_name(), nick_queue));
+    client.push_message(msg.rpl_endofnames(channel->get_channel_name()));
 }
 
 void
