@@ -345,7 +345,7 @@ std::string
     Message::err_unknown_mode(const std::string& flag)
 {
     return reply_servername_prefix("472") + " " + flag +
-           " :is unknown mode char to me\r\n";
+           " :Unknown MODE flag\r\n";
 }
 
 std::string
