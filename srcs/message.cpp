@@ -93,10 +93,10 @@ Message::~Message()
 }
 
 std::string
-    Message::reply_servername_prefix(std::string command)
+    Message::reply_servername_prefix(std::string numeric_reply)
 {
     std::string msg;
-    msg = msg + ":ft_irc " + command + " " + m_client->get_nickname();
+    msg = msg + ":ft_irc " + numeric_reply + " " + m_client->get_nickname();
     if (m_client->get_nickname().empty())
         msg += "*";
     return msg;
