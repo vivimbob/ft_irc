@@ -114,7 +114,8 @@ class Message
     std::string build_message_reply(const std::string& target);
     std::string build_invite_reply(const std::string& nick,
                                    const std::string& channel);
-    std::string build_kick_reply(const std::string& chanel,
+    std::string build_kick_reply(const std::string& channel,
+                                 const std::string& oper_nick,
                                  const std::string& nick);
     std::string build_nick_reply(const std::string& nick);
     std::string build_join_reply(const std::string& channel);
