@@ -86,7 +86,7 @@ class Message
     std::string err_cant_kill_server();
     std::string err_no_oper_host();
     std::string err_u_mode_unknown_flag();
-    std::string err_users_dont_match();
+    std::string err_users_dont_match(const std::string& action);
 
     std::string rpl_away(const std::string& nick,
                          const std::string& away_message);
@@ -109,7 +109,7 @@ class Message
     std::string rpl_user_mode_is();
     std::string rpl_welcome();
 
-    std::string build_quit_reply();
+    std::string build_quit_reply(const std::string& reason);
     std::string build_part_reply(const std::string& channel);
     std::string build_message_reply(const std::string& target);
     std::string build_invite_reply(const std::string& nick,
@@ -118,6 +118,7 @@ class Message
                                  const std::string& nick);
     std::string build_nick_reply(const std::string& nick);
     std::string build_join_reply(const std::string& channel);
+    std::string build_topic_reply();
 };
 
 #endif /* MESSAGE_HPP */
