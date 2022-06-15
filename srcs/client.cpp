@@ -1,11 +1,12 @@
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
+#include "../includes/ft_irc.hpp"
 
 Client::Client(sockaddr_in client_addr, int client_fd)
     : m_client_addr(client_addr),
       m_client_fd(client_fd),
-      m_hostname("ft_irc"),
-      m_servername("ft_irc"),
+      m_hostname(HOSTNAME),
+      m_servername(SERVERNAME),
       m_pass_registered(false),
       m_nick_registered(false),
       m_user_registered(false)

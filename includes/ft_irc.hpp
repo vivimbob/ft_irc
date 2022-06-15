@@ -5,8 +5,8 @@
 
 #define CLIENT_CAHNNEL_LIMIT	10
 
-#define HOSTNAME				localhost
-#define SERVERNAME				ft_irc
+#define HOSTNAME				"localhost"
+#define SERVERNAME				"ft_irc"
 
 #define QUEUE_SIZE				1024
 
