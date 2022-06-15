@@ -21,14 +21,14 @@ void
         {
             client.push_message(msg.err_no_such_channel(*channel_it),
                                 Logger::Debug);
-            return;
+            continue;
         }
         Channel* channel = m_channel_map[*channel_it];
         if (!channel->is_user_on_channel(&client))
         {
             client.push_message(msg.err_not_on_channel(*channel_it),
                                 Logger::Debug);
-            return;
+            continue;
         }
         m_send_to_channel(channel, msg.build_part_reply(*channel_it));
         channel->delete_user(client);
