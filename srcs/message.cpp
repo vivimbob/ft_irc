@@ -44,9 +44,8 @@ void
     {
         if (m_message[m_position] == ':')
         {
-            std::string s(m_message.begin() + m_position + 1,
-                          m_message.end());
-			m_position = m_message.size() + 1; 
+            std::string s(m_message.begin() + m_position + 1, m_message.end());
+            m_position = m_message.size() + 1;
             m_parameters.push_back(s);
         }
         else
@@ -97,8 +96,7 @@ std::string
     Message::reply_servername_prefix(std::string command)
 {
     std::string msg;
-    msg = msg + ":ft_irc " + command + " " +
-          m_client->get_nickname();
+    msg = msg + ":ft_irc " + command + " " + m_client->get_nickname();
     if (m_client->get_nickname().empty())
         msg += "*";
     return msg;
@@ -347,7 +345,7 @@ std::string
     Message::err_unknown_mode(const std::string& flag)
 {
     return reply_servername_prefix("472") + " " + flag +
-           " :is unknown mode char to me\r\n";
+           " :Unknown MODE flag\r\n";
 }
 
 std::string
@@ -413,8 +411,8 @@ std::string
 std::string
     Message::err_users_dont_match(const std::string& action)
 {
-    return reply_servername_prefix("502") +
-           " :Can't " + action + " modes for other users\r\n";
+    return reply_servername_prefix("502") + " :Can't " + action +
+           " modes for other users\r\n";
 }
 
 std::string
@@ -442,7 +440,7 @@ std::string
 std::string
     Message::rpl_listend()
 {
-    return reply_servername_prefix("323") + " :End of /LIST\r\n";
+    return reply_servername_prefix("323") + " :End of LIST\r\n";
 }
 
 std::string
@@ -525,7 +523,7 @@ std::string
 std::string
     Message::build_quit_reply(const std::string& reason)
 {
-	return reply_nickmask_prefix("QUIT") + " :" + reason + "\r\n";
+    return reply_nickmask_prefix("QUIT") + " :" + reason + "\r\n";
 }
 
 std::string

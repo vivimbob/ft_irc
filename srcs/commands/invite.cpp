@@ -10,8 +10,8 @@ void
         client.push_message(msg.err_need_more_params(), Logger::Debug);
         return;
     }
-    const std::string &nickname      = msg.get_params()[0];
-    const std::string &channel_name  = msg.get_params()[1];
+    const std::string& nickname     = msg.get_params()[0];
+    const std::string& channel_name = msg.get_params()[1];
 
     if (!m_client_map.count(nickname))
     {
@@ -25,7 +25,7 @@ void
                             Logger::Debug);
         return;
     }
-    Channel* channel       = m_channel_map[channel_name];
+    Channel* channel = m_channel_map[channel_name];
     if (!client.is_already_joined(channel))
     {
         client.push_message(msg.err_not_on_channel(channel_name),

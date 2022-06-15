@@ -18,8 +18,8 @@ void
             if (client_it->second->get_channel_list().empty())
                 nick_queue.push(client_it->first);
 
-		if (nick_queue.size())
-			client.push_message(msg.rpl_namreply("*", nick_queue));
+        if (nick_queue.size())
+            client.push_message(msg.rpl_namreply("*", nick_queue));
         client.push_message(msg.rpl_endofnames("*"));
         return;
     }
@@ -37,7 +37,7 @@ void
                 continue;
             }
 
-			utils::send_name_reply(m_channel_map[channel_list[i]], client, msg);
+            utils::send_name_reply(m_channel_map[channel_list[i]], client, msg);
         }
     }
 }

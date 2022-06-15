@@ -21,16 +21,16 @@ void
 
     if (m_client_map.count(nickname))
     {
-		if (nickname != client.get_nickname())
-        	client.push_message(msg.err_nickname_in_use(nickname), Logger::Debug);
+        if (nickname != client.get_nickname())
+            client.push_message(msg.err_nickname_in_use(nickname),
+                                Logger::Debug);
         return;
     }
 
     if (client.is_registered())
     {
-        ClientMap::iterator it = m_client_map.begin();
-        for (; it != m_client_map.end(); ++it)
-            m_prepare_to_send(client, msg.build_nick_reply(nickname));
+        m_send_to_channel(client, msg.build_nick_reply(nickname), &client);
+        client.push_message(msg.build_nick_reply(nickname));
         if (m_client_map.count(client.get_nickname()))
         {
             m_client_map.erase(client.get_nickname());

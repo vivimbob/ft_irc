@@ -5,5 +5,5 @@
 void
     Server::m_process_notice_command(Client& client, Message& msg)
 {
-	m_process_privmsg_command(client, msg);
+    m_process_privmsg_command(client, msg);
 }
