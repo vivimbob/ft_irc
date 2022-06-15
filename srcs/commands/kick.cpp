@@ -72,7 +72,7 @@ void
             }
             Client* target_client = m_client_map[nick];
 
-            if (channel->is_user_on_channel(target_client))
+            if (!channel->is_user_on_channel(target_client))
             {
                 client.push_message(
                     msg.err_user_not_in_channel(nick, channel_name),
@@ -80,7 +80,8 @@ void
                 continue;
             }
             m_send_to_channel(channel,
-                              msg.build_kick_reply(channel_name, nick));
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }
@@ -143,7 +144,8 @@ void
                 continue;
             }
             m_send_to_channel(channel,
-                              msg.build_kick_reply(channel_name, nick));
+                              msg.build_kick_reply(channel_name, nick,
+                                                   client.get_nickname()));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }

@@ -34,14 +34,16 @@ class Server
     struct kevent     m_event_list[QUEUE_SIZE];
     ClientMap         m_client_map;
     ChannelMap        m_channel_map;
-    static CommandMap m_command_map;
+    static CommandMap m_channel_command_map;
+    static CommandMap m_register_command_map;
 
   private:
     Server();
     Server(const Server& server);
     Server& operator=(const Server& server);
 
-    static CommandMap m_initial_command_map();
+    static CommandMap m_initial_channel_command_map();
+    static CommandMap m_initial_register_command_map();
 
     void m_process_pass_command(Client& client, Message& msg);
     void m_process_nick_command(Client& client, Message& msg);

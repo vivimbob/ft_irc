@@ -13,10 +13,26 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-Server::CommandMap Server::m_command_map = Server::m_initial_command_map();
+Server::CommandMap Server::m_register_command_map =
+    Server::m_initial_register_command_map();
+Server::CommandMap Server::m_channel_command_map =
+    Server::m_initial_channel_command_map();
 
 Server::CommandMap
-    Server::m_initial_command_map()
+    Server::m_initial_register_command_map()
+{
+    Server::CommandMap temp_map;
+
+    temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
+    temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
+    temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
+    temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
+
+    return (temp_map);
+}
+
+Server::CommandMap
+    Server::m_initial_channel_command_map()
 {
     Server::CommandMap temp_map;
 
@@ -158,10 +174,32 @@ void
                          << message->get_message() << ']';
         client.get_commands().pop();
         message->parse_message();
-        if (m_command_map.count(message->get_command()))
-            (this->*m_command_map[message->get_command()])(client, *message);
+        if (message->get_command().empty())
+            continue;
+        if (!client.is_registered())
+        {
+            if (m_register_command_map.count(message->get_command()))
+                (this->*m_register_command_map[message->get_command()])(
+                    client, *message);
+            else
+            {
+                if (m_channel_command_map.count(message->get_command()))
+                    client.push_message(message->err_not_registered(),
+                                        Logger::Debug);
+                else
+                    client.push_message(message->err_unknown_command(),
+                                        Logger::Debug);
+            }
+        }
         else
-            client.push_message(message->err_unknown_command(), Logger::Debug);
+        {
+            if (m_channel_command_map.count(message->get_command()))
+                (this->*m_channel_command_map[message->get_command()])(
+                    client, *message);
+            else
+                client.push_message(message->err_unknown_command(),
+                                    Logger::Debug);
+        }
         delete message;
     }
 }

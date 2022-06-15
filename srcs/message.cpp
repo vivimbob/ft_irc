@@ -22,6 +22,13 @@ size_t
 void
     Message::parse_message()
 {
+    if (m_message.size() > m_position && m_message[0] == ' ')
+    {
+        m_position = m_message.find_first_not_of(' ', m_position);
+        if (m_position == static_cast<size_t>(std::string::npos))
+            return;
+    }
+
     if (m_message.size() > m_position && m_message[0] == ':')
     {
         m_prefix.assign(m_message.begin() + 1,
@@ -558,10 +565,11 @@ std::string
 
 std::string
     Message::build_kick_reply(const std::string& channel,
-                              const std::string& nick)
+                              const std::string& nick,
+                              const std::string& oper_nick)
 {
-    return reply_nickmask_prefix(m_command) + " " + channel + " " + nick +
-           "\r\n";
+    return reply_nickmask_prefix(m_command) + " " + channel + " " + nick + " " +
+           oper_nick + "\r\n";
 }
 
 std::string
