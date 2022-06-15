@@ -22,13 +22,6 @@ size_t
 void
     Message::parse_message()
 {
-    if (m_message.size() > m_position && m_message[0] == ' ')
-    {
-        m_position = m_message.find_first_not_of(' ', m_position);
-        if (m_position == static_cast<size_t>(std::string::npos))
-            return;
-    }
-
     if (m_message.size() > m_position && m_message[0] == ':')
     {
         m_prefix.assign(m_message.begin() + 1,
