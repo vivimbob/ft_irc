@@ -136,24 +136,10 @@ std::string
 }
 
 std::string
-    Message::err_no_such_server(const std::string& server_name)
-{
-    return reply_servername_prefix("402") + " " + server_name +
-           " :No such server\r\n";
-}
-
-std::string
     Message::err_no_such_channel(const std::string& channel_name)
 {
     return reply_servername_prefix("403") + " " + channel_name +
            " :No such channel\r\n";
-}
-
-std::string
-    Message::err_cannot_send_to_chan(const std::string& channel_name)
-{
-    return reply_servername_prefix("404") + " " + channel_name +
-           " :Cannot send to channel\r\n";
 }
 
 std::string
@@ -164,23 +150,10 @@ std::string
 }
 
 std::string
-    Message::err_was_no_such_nick(const std::string& nickname)
-{
-    return reply_servername_prefix("406") + " " + nickname +
-           " :There was no such nickname\r\n";
-}
-
-std::string
     Message::err_too_many_targets(const std::string& target)
 {
     return reply_servername_prefix("407") + " " + target +
            " :Duplicate recipients. No message delivered\r\n";
-}
-
-std::string
-    Message::err_no_origin()
-{
-    return reply_servername_prefix("409") + " :No origin specified\r\n";
 }
 
 std::string
@@ -197,37 +170,10 @@ std::string
 }
 
 std::string
-    Message::err_no_toplevel(const std::string& mask)
-{
-    return reply_servername_prefix("413") + " " + mask +
-           " :No toplevel domain specified\r\n";
-}
-
-std::string
-    Message::err_wild_toplevel(const std::string& mask)
-{
-    return reply_servername_prefix("414") + " " + mask +
-           " :Wildcard in toplevel domain\r\n";
-}
-
-std::string
     Message::err_unknown_command()
 {
     return reply_servername_prefix("421") + " " + m_command +
            " :Unknown command\r\n";
-}
-
-std::string
-    Message::err_no_motd()
-{
-    return reply_servername_prefix("422") + " :MOTD Files is missing\r\n";
-}
-
-std::string
-    Message::err_no_admin_info(const std::string& server)
-{
-    return reply_servername_prefix("423") + " " + server +
-           " :No administrative info available\r\n";
 }
 
 std::string
@@ -258,13 +204,6 @@ std::string
 }
 
 std::string
-    Message::err_nick_collision(const std::string& nick)
-{
-    return reply_servername_prefix("436") + " " + nick +
-           " :Nickname collision KILL\r\n";
-}
-
-std::string
     Message::err_user_not_in_channel(const std::string& nick,
                                      const std::string& channel)
 {
@@ -288,25 +227,6 @@ std::string
 }
 
 std::string
-    Message::err_no_login(const std::string& user)
-{
-    return reply_servername_prefix("444") + " " + user +
-           " :User not logged in\r\n";
-}
-
-std::string
-    Message::err_summon_disabled()
-{
-    return reply_servername_prefix("445") + " :SUMMON has been disabled\r\n";
-}
-
-std::string
-    Message::err_users_disabled()
-{
-    return reply_servername_prefix("446") + " :USERS has been disabled\r\n";
-}
-
-std::string
     Message::err_not_registered()
 {
     return reply_servername_prefix("451") + " :You have not registered\r\n";
@@ -326,30 +246,9 @@ std::string
 }
 
 std::string
-    Message::err_no_perm_for_host()
-{
-    return reply_servername_prefix("463") +
-           " :Your host isn't among the privileged\r\n";
-}
-
-std::string
     Message::err_passwd_mismatch()
 {
     return reply_servername_prefix("464") + " :Password incorrect\r\n";
-}
-
-std::string
-    Message::err_youre_banned_creep()
-{
-    return reply_servername_prefix("465") +
-           " :You are banned from this server\r\n";
-}
-
-std::string
-    Message::err_key_set(const std::string& channel)
-{
-    return reply_servername_prefix("467") + " " + channel +
-           " :Channel key already set\r\n";
 }
 
 std::string
@@ -367,57 +266,10 @@ std::string
 }
 
 std::string
-    Message::err_invite_only_chan(const std::string& channel)
-{
-    return reply_servername_prefix("473") + " " + channel +
-           " :Cannot join channel (+i)\r\n";
-}
-
-std::string
-    Message::err_banned_from_chan(const std::string& channel)
-{
-    return reply_servername_prefix("474") + " " + channel +
-           " :Cannot join channel (+b)\r\n";
-}
-
-std::string
-    Message::err_bad_channel_key(const std::string& channel)
-{
-    return reply_servername_prefix("475") + " " + channel +
-           " :Cannot join channel (+k)\r\n";
-}
-
-std::string
-    Message::err_bad_chan_mask(const std::string& channel)
-{
-    return reply_servername_prefix("476") + " " + channel +
-           " :Bad Channel Mask\r\n";
-}
-
-std::string
-    Message::err_no_privileges()
-{
-    return reply_servername_prefix("481") +
-           " :Permission Denied- You're not an IRC operator\r\n";
-}
-
-std::string
     Message::err_chanoprivs_needed(const std::string& channel)
 {
     return reply_servername_prefix("482") + " " + channel +
            " :You're not channel operator\r\n";
-}
-
-std::string
-    Message::err_cant_kill_server()
-{
-    return reply_servername_prefix("483") + " :You cant kill a server\r\n";
-}
-
-std::string
-    Message::err_no_oper_host()
-{
-    return reply_servername_prefix("491") + " :No O-lines for your host\r\n";
 }
 
 std::string
@@ -431,19 +283,6 @@ std::string
 {
     return reply_servername_prefix("502") + " :Can't " + action +
            " modes for other users\r\n";
-}
-
-std::string
-    Message::rpl_away(const std::string& nick, const std::string& away_message)
-{
-    return reply_servername_prefix("301") + " " + nick + " :" + away_message +
-           "\r\n";
-}
-
-std::string
-    Message::rpl_liststart()
-{
-    return reply_servername_prefix("321") + " Channel :Users name\r\n";
 }
 
 std::string
@@ -508,20 +347,6 @@ std::string
 {
     return reply_servername_prefix("366") + " " + channel +
            " :End of NAMES list\r\n";
-}
-
-std::string
-    Message::rpl_banlist(const std::string& channel, const std::string& banid)
-{
-    return reply_servername_prefix("367") + " " + channel + " " + banid +
-           "\r\n";
-}
-
-std::string
-    Message::rpl_endofbanlist(const std::string& channel)
-{
-    return reply_servername_prefix("368") + " " + channel +
-           " :End of channel ban list\r\n";
 }
 
 std::string
