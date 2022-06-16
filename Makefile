@@ -15,18 +15,19 @@ srcs		= main.cpp\
 
 SRCS    	= $(srcs:%=srcs/%)
 
-OBJS		= $(SRCS:%.cpp=%.o)
+OBJS		= $(SRCS:srcs/%.cpp=objs/%.o)
 
 all     	: $(NAME)
 
-%.o     	: %.cpp
+objs/%.o     	: srcs/%.cpp
+	@mkdir -p $(dir ./objs/$*)
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
 $(NAME)   	: $(OBJS)
 	$(CC) $(CXXFLAGS) $(LIBFLAGS) $(OBJS) -o $(NAME)
 
 clean   	:
-	rm -rf $(OBJS)
+	rm -rf ./objs
 
 fclean    	: clean
 	rm -rf $(NAME)
