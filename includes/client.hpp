@@ -62,7 +62,6 @@ class Client
     bool is_join_available() const;
     bool is_already_joined(Channel* channel);
     bool is_invisible() const;
-    bool is_same_client(utils::ClientInfo client_info);
 
     void push_message(const std::string& message);
 

@@ -69,57 +69,6 @@ static const std::string
         return nickname;
 }
 
-ClientInfo
-    parse_client_info(std::string client_str)
-{
-    const char* offset_exclamation_mark = strchr(client_str.data(), '!');
-    const char* offset_percent_sign     = strchr(client_str.data(), '%');
-    const char* offset_at_sign          = strchr(client_str.data(), '@');
-    ClientInfo  client;
-
-    if (offset_exclamation_mark &&
-        offset_exclamation_mark < offset_at_sign) // nick!user@host
-    {
-        client.nickname =
-            client_str.substr(0, offset_exclamation_mark - client_str.data());
-        client.username =
-            client_str.substr(offset_exclamation_mark - client_str.data() + 1,
-                              offset_at_sign - offset_exclamation_mark - 1);
-        client.hostname =
-            client_str.substr(offset_at_sign - client_str.data() + 1);
-    }
-    else if (offset_percent_sign)
-    {
-        if (!offset_at_sign) // user%host
-        {
-            client.username =
-                client_str.substr(0, offset_percent_sign - client_str.data());
-            client.hostname =
-                client_str.substr(offset_percent_sign - client_str.data() + 1);
-        }
-        else if (offset_percent_sign < offset_at_sign) // user%host@servername
-        {
-            client.username =
-                client_str.substr(0, offset_percent_sign - client_str.data());
-            client.hostname =
-                client_str.substr(offset_percent_sign - client_str.data() + 1,
-                                  offset_at_sign - offset_percent_sign - 1);
-            client.servername =
-                client_str.substr(offset_at_sign - client_str.data() + 1);
-        }
-    }
-    else if (offset_at_sign) // user@servsername
-    {
-        client.username =
-            client_str.substr(0, offset_at_sign - client_str.data());
-        client.servername =
-            client_str.substr(offset_at_sign - client_str.data() + 1);
-    }
-    else // nickname
-        client.nickname = client_str;
-    return client;
-}
-
 /* utils parse function end */
 
 /* utils message function begin */

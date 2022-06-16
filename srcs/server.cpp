@@ -630,32 +630,11 @@ void
             m_send_to_channel(m_channel_map[*target_it],
                               msg.build_message_reply(*target_it), &client);
         }
-        else
-        {
-            utils::ClientInfo client_info =
-                utils::parse_client_info(*target_it);
-
-            ClientMap::iterator client_it                = m_client_map.begin();
-            ClientMap::iterator client_ite               = m_client_map.end();
-            size_t              number_of_matched_client = 0;
-            Client*             matched_client;
-            for (; client_it != client_ite; ++client_it)
-            {
-                if (client_it->second->is_same_client(client_info))
-                {
-                    matched_client = client_it->second;
-                    ++number_of_matched_client;
-                }
-            }
-            if (msg.get_command() != "NOTICE" && number_of_matched_client == 0)
-                utils::push_message(client, msg.err_no_such_nick(*target_it));
-            else if (number_of_matched_client == 1)
-                m_prepare_to_send(*matched_client,
-                                  msg.build_message_reply(*target_it));
-            else if (msg.get_command() != "NOTICE")
-                utils::push_message(client,
-                                    msg.err_too_many_targets(*target_it));
-        }
+        else if (m_client_map.count(*target_it))
+            m_prepare_to_send(*m_client_map[*target_it],
+                              msg.build_message_reply(*target_it));
+        else if (msg.get_command() != "NOTICE")
+            utils::push_message(client, msg.err_no_such_nick(*target_it));
     }
 }
 
