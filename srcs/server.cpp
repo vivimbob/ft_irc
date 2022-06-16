@@ -650,16 +650,16 @@ void
 void
     Server::m_create_socket()
 {
-    m_server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_server_fd == -1)
+    Server::m_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (Server::m_fd == -1)
     {
         Logger().error() << "Failed to create socket. errno " << errno << ":"
                          << strerror(errno);
         exit(EXIT_FAILURE);
     }
-    Logger().info() << "Create socket " << m_server_fd;
+    Logger().info() << "Create socket " << Server::m_fd;
     int toggle = 1;
-    setsockopt(m_server_fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
+    setsockopt(Server::m_fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
                sizeof(toggle));
 }
 
@@ -671,8 +671,8 @@ void
     m_sockaddr.sin_addr.s_addr = INADDR_ANY;
     m_sockaddr.sin_port        = htons(m_port);
 
-    if (bind(m_server_fd, (struct sockaddr*)&m_sockaddr, sizeof(sockaddr_in)) ==
-        -1)
+    if (bind(Server::m_fd, (struct sockaddr*)&m_sockaddr,
+             sizeof(sockaddr_in)) == -1)
     {
         Logger().error() << "Failed to bind to port and address" << m_port
                          << ". errno: " << errno << ":" << strerror(errno);
@@ -685,14 +685,14 @@ void
 void
     Server::m_listen_socket()
 {
-    if (listen(m_server_fd, SOMAXCONN) == -1)
+    if (listen(Server::m_fd, SOMAXCONN) == -1)
     {
         Logger().error() << "Failed to listen on socket. errno: " << errno
                          << ":" << strerror(errno);
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Listen on socket";
-    fcntl(m_server_fd, F_SETFL, O_NONBLOCK);
+    fcntl(Server::m_fd, F_SETFL, O_NONBLOCK);
     Logger().info() << "Socket set nonblock";
 }
 
@@ -707,8 +707,8 @@ void
         exit(EXIT_FAILURE);
     }
     Logger().info() << "Allocate kqueue " << m_kqueue;
-    m_update_event(m_server_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    Logger().info() << "Listen socket(" << m_server_fd
+    m_update_event(Server::m_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    Logger().info() << "Listen socket(" << Server::m_fd
                     << ") assign read event to kqueue";
 }
 
@@ -732,7 +732,7 @@ void
     int         client_addr_len = sizeof(client_addr);
     int         client_fd       = -1;
 
-    client_fd = accept(m_server_fd, (sockaddr*)(&client_addr),
+    client_fd = accept(Server::m_fd, (sockaddr*)(&client_addr),
                        (socklen_t*)(&client_addr_len));
     if (client_fd == -1)
     {
@@ -879,27 +879,19 @@ void
 void
     Server::m_send(struct kevent& event)
 {
-    Client&             client           = (Client&)event.udata;
-    SendBuffer&         send_buffer      = client.get_send_buffer();
-    int                 remain_data_len  = 0;
-    int                 attempt_data_len = 0;
-    const unsigned int& clientfd         = client.get_socket();
+    Client&     client          = (Client&)event.udata;
+    SendBuffer& send_buffer     = client.get_send_buffer();
+    int         remain_data_len = send_buffer.size() - send_buffer.get_offset();
+    const unsigned int& clientfd = client.get_socket();
 
     if (event.data > IPV4_MTU_MAX)
         event.data = IPV4_MTU_MAX;
     else if (event.data == 0)
         event.data = IPV4_MTU_MIN;
 
-    remain_data_len = send_buffer.size() - send_buffer.get_offset();
-
-    if (event.data >= remain_data_len)
-        attempt_data_len = remain_data_len;
-    else
-        attempt_data_len = event.data;
-
     ssize_t send_data_len =
         send(clientfd, send_buffer.data() + send_buffer.get_offset(),
-             attempt_data_len, 0);
+             event.data < remain_data_len ? event.data : remain_data_len, 0);
 
     if (send_data_len >= 0)
     {
@@ -922,10 +914,7 @@ Server::~Server()
 {
 }
 
-Server::Server(int argc, char** argv)
-    : m_kqueue(-1),
-      m_server_fd(-1),
-      m_port(-1)
+Server::Server(int argc, char** argv) : m_kqueue(-1), m_fd(-1), m_port(-1)
 {
     if (argc != 3)
     {
@@ -940,25 +929,34 @@ Server::Server(int argc, char** argv)
     m_initialize_server();
 }
 
+// struct kevent {
+//	uintptr_t       ident;  /* identifier for this event */
+//	int16_t         filter; /* filter for event */
+//	uint16_t        flags;  /* general flags */
+//	uint32_t        fflags; /* filter-specific flags */
+//	intptr_t        data;   /* filter-specific data */
+//	void            *udata; /* opaque user data identifier */
+// };
+
 void
     Server::run()
 {
     register int count;
-    register int i;
+    register int index;
 
-    Logger().info() << "[Server running]";
+    Logger().info() << "[Server is running]";
     while (true)
     {
         count = kevent(m_kqueue, NULL, 0, m_events, EVENTS_MAX, NULL);
         Logger().trace() << count << " new kevent";
-        for (i = 0; i < count; ++i)
+        for (index = 0; index < count; ++index)
         {
-            if (m_events[i].ident == (unsigned int)m_server_fd)
+            if (m_events[index].ident == (unsigned)Server::m_fd)
                 Server::m_accept();
-            else if (m_events[i].filter == EVFILT_READ)
-                Server::m_receive(m_events[i]);
-            else if (m_events[i].filter == EVFILT_WRITE)
-                Server::m_send(m_events[i]);
+            else if (m_events[index].filter == EVFILT_READ)
+                Server::m_receive(m_events[index]);
+            else if (m_events[index].filter == EVFILT_WRITE)
+                Server::m_send(m_events[index]);
         }
     }
 }

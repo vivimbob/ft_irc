@@ -23,7 +23,7 @@ class Server
 
   private:
     int               m_kqueue;
-    int               m_server_fd;
+    int               m_fd;
     int               m_port;
     std::string       m_password;
     sockaddr_in       m_sockaddr;
