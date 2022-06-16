@@ -7,6 +7,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
+#include <string>
 #include <sys/event.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -90,12 +91,8 @@ Server::CommandMap
 {
     Server::CommandMap temp_map;
 
-    temp_map.insert(std::make_pair("PASS", &Server::m_process_pass_command));
-    temp_map.insert(std::make_pair("NICK", &Server::m_process_nick_command));
-    temp_map.insert(std::make_pair("USER", &Server::m_process_user_command));
     temp_map.insert(std::make_pair("JOIN", &Server::m_process_join_command));
     temp_map.insert(std::make_pair("MODE", &Server::m_process_mode_command));
-    temp_map.insert(std::make_pair("QUIT", &Server::m_process_quit_command));
     temp_map.insert(std::make_pair("TOPIC", &Server::m_process_topic_command));
     temp_map.insert(std::make_pair("PART", &Server::m_process_part_command));
     temp_map.insert(std::make_pair("NAMES", &Server::m_process_names_command));
@@ -917,29 +914,20 @@ void
                          << message->get_message() << ']';
         client.get_commands().pop();
         message->parse_message();
-        if (message->get_command().empty())
-            continue;
-        if (!client.is_registered())
+        const std::string& command = message->get_command();
+
+        if (m_register_command_map.count(command))
+            (this->*m_register_command_map[command])(client, *message);
+        else if (m_channel_command_map.count(command))
         {
-            if (m_register_command_map.count(message->get_command()))
-                (this->*m_register_command_map[message->get_command()])(
-                    client, *message);
-            else
-            {
-                if (m_channel_command_map.count(message->get_command()))
-                    utils::push_message(client, message->err_not_registered());
-                else
-                    utils::push_message(client, message->err_unknown_command());
-            }
-        }
-        else
-        {
-            if (m_channel_command_map.count(message->get_command()))
+            if (client.is_registered())
                 (this->*m_channel_command_map[message->get_command()])(
                     client, *message);
             else
-                utils::push_message(client, message->err_unknown_command());
+                utils::push_message(client, message->err_not_registered());
         }
+        else if (!command.empty())
+            utils::push_message(client, message->err_unknown_command());
         delete message;
     }
 }
