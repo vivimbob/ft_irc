@@ -726,7 +726,7 @@ void
 /* server run start */
 
 void
-    Server::m_server_accept()
+    Server::m_accept()
 {
     sockaddr_in client_addr;
     int         client_addr_len = sizeof(client_addr);
@@ -836,7 +836,7 @@ void
 }
 
 void
-    Server::m_server_receive(struct kevent& event)
+    Server::m_receive(struct kevent& event)
 {
     Client& client        = (Client&)event.udata;
     char*   buffer        = m_read_buffer;
@@ -877,24 +877,25 @@ void
 }
 
 void
-    Server::m_server_send(Client& client, int available_bytes)
+    Server::m_send(struct kevent& event)
 {
+    Client&             client           = (Client&)event.udata;
     SendBuffer&         send_buffer      = client.get_send_buffer();
     int                 remain_data_len  = 0;
     int                 attempt_data_len = 0;
     const unsigned int& clientfd         = client.get_socket();
 
-    if (available_bytes > IPV4_MTU_MAX)
-        available_bytes = IPV4_MTU_MAX;
-    else if (available_bytes == 0)
-        available_bytes = IPV4_MTU_MIN;
+    if (event.data > IPV4_MTU_MAX)
+        event.data = IPV4_MTU_MAX;
+    else if (event.data == 0)
+        event.data = IPV4_MTU_MIN;
 
     remain_data_len = send_buffer.size() - send_buffer.get_offset();
 
-    if (available_bytes >= remain_data_len)
+    if (event.data >= remain_data_len)
         attempt_data_len = remain_data_len;
     else
-        attempt_data_len = available_bytes;
+        attempt_data_len = event.data;
 
     ssize_t send_data_len =
         send(clientfd, send_buffer.data() + send_buffer.get_offset(),
@@ -953,11 +954,11 @@ void
         for (i = 0; i < count; ++i)
         {
             if (m_events[i].ident == (unsigned int)m_server_fd)
-                m_server_accept();
+                Server::m_accept();
             else if (m_events[i].filter == EVFILT_READ)
-                m_server_receive(m_events[i]);
+                Server::m_receive(m_events[i]);
             else if (m_events[i].filter == EVFILT_WRITE)
-                m_server_send(m_events[i]);
+                Server::m_send(m_events[i]);
         }
     }
 }

@@ -72,16 +72,16 @@ class Server
                         u_int   fflags,
                         int     data,
                         void*   udata);
+    void m_accept();
+    void m_receive(struct kevent& event);
+    void m_send(struct kevent& event);
+
     void m_create_kqueue();
-    void m_server_accept();
-
     void m_handle_messages(Client& client);
-
     void m_disconnect_client(Client& client, std::string reason = "");
+
     void m_register_client(Client& client, Message& msg);
 
-    void m_server_receive(struct kevent& event);
-    void m_server_send(Client& client, int bytes);
     void m_prepare_to_send(Client& client, const std::string& str_msg);
     void m_send_to_channel(Channel*           channel,
                            const std::string& msg,
