@@ -921,8 +921,13 @@ void
         if (client.get_commands().size())
         {
             m_handle_messages(client);
-            m_update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);
-            m_update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+            if (client.get_send_buffer().size())
+            {
+                m_update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0,
+                               &client);
+                m_update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0,
+                               &client);
+            }
         }
     }
     else if (recv_data_len == 0)
