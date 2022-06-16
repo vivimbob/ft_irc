@@ -1,12 +1,12 @@
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
-#include "../includes/logger.hpp"
+#include "../includes/ft_irc.hpp"
 
 Client::Client(sockaddr_in client_addr, int client_fd)
     : m_client_addr(client_addr),
       m_client_fd(client_fd),
-      m_hostname("ft_irc"),
-      m_servername("ft_irc"),
+      m_hostname(HOSTNAME),
+      m_servername(SERVERNAME),
       m_pass_registered(false),
       m_nick_registered(false),
       m_user_registered(false)
@@ -76,12 +76,6 @@ SendBuffer&
     return m_send_buffer;
 }
 
-size_t
-    Client::get_channel_limits()
-{
-    return m_channel_limits;
-}
-
 const std::set<Channel*>&
     Client::get_channel_list() const
 {
@@ -100,14 +94,12 @@ void
 {
     m_username        = username;
     m_user_registered = true;
-    Logger().debug() << get_client_IP() << " set username to " << m_username;
 }
 
 void
     Client::set_realname(const std::string& realname)
 {
     m_realname = realname;
-    Logger().debug() << get_client_IP() << " set realname to " << m_realname;
 }
 
 void
@@ -143,7 +135,7 @@ bool
 bool
     Client::is_join_available() const
 {
-    return m_channel_list.size() < m_channel_limits;
+    return m_channel_list.size() < CHANNEL_USER_LIMIT;
 }
 
 bool
@@ -166,18 +158,11 @@ bool
         return false;
     return true;
 }
+
 void
     Client::push_message(const std::string& message)
 {
     m_send_buffer.append(message);
-}
-
-void
-    Client::push_message(const std::string& message, int level)
-{
-    m_send_buffer.append(message);
-    Logger().log(level) << "Server Send to " << m_nickname << " [" << message
-                        << ']';
 }
 
 std::string

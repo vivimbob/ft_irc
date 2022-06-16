@@ -25,7 +25,7 @@ class Message
     Message& operator=(const Message& other);
 
     size_t      next_position();
-    std::string reply_servername_prefix(std::string command);
+    std::string reply_servername_prefix(std::string numeric_reply);
     std::string reply_nickmask_prefix(std::string command);
 
   public:

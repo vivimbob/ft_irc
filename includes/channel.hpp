@@ -3,6 +3,7 @@
 
 #include "membership.hpp"
 #include "message.hpp"
+#include "ft_irc.hpp"
 #include <ctime>
 #include <map>
 #include <set>
@@ -20,7 +21,6 @@ class Channel
     std::string         m_channel_name;
     MemberMap           m_member_list;
     std::string         m_channel_topic;
-    static const size_t m_user_limit = 42;
 
     Channel();
     Channel(const Channel& cp);
@@ -32,7 +32,6 @@ class Channel
 
     const std::string& get_channel_name() const;
     const std::string& get_channel_topic() const;
-    size_t             get_user_limit();
     const MemberMap&   get_user_list();
 
     void set_channel_name(const std::string& name);

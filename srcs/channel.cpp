@@ -1,5 +1,5 @@
 #include "../includes/channel.hpp"
-#include "../includes/logger.hpp"
+#include "../lib/logger.hpp"
 #include <utility>
 
 Channel::Channel(const std::string& name) : m_channel_name(name)
@@ -20,12 +20,6 @@ const std::string&
     Channel::get_channel_topic() const
 {
     return m_channel_topic;
-}
-
-size_t
-    Channel::get_user_limit()
-{
-    return m_user_limit;
 }
 
 const std::map<Client*, MemberShip>&
@@ -61,7 +55,7 @@ bool
 bool
     Channel::is_full()
 {
-    return m_member_list.size() >= m_user_limit;
+    return m_member_list.size() >= CHANNEL_USER_LIMIT;
 }
 
 bool

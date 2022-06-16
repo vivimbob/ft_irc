@@ -1,11 +1,12 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "message.hpp"
 #include "sendbuffer.hpp"
+#include "message.hpp"
+#include "ft_irc.hpp"
 #include "utils.hpp"
-#include <arpa/inet.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <queue>
 #include <set>
 
@@ -25,7 +26,6 @@ class Client
     std::string          m_realname;
     std::queue<Message*> m_commands;
     std::set<Channel*>   m_channel_list;
-    static const size_t  m_channel_limits = 10;
 
     bool m_pass_registered;
     bool m_nick_registered;
@@ -44,7 +44,6 @@ class Client
     std::queue<Message*>&     get_commands();
     std::string&              get_recv_buffer();
     SendBuffer&               get_send_buffer();
-    size_t                    get_channel_limits();
     const std::set<Channel*>& get_channel_list() const;
 
     void set_nickname(const std::string& nickname);
@@ -66,7 +65,6 @@ class Client
     bool is_same_client(utils::ClientInfo client_info);
 
     void push_message(const std::string& message);
-    void push_message(const std::string& message, int level);
 
     std::string make_nickmask();
 

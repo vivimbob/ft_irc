@@ -1,4 +1,4 @@
-#include "../includes/logger.hpp"
+#include "logger.hpp"
 
 /* Logger::_Impl static member variables begin */
 

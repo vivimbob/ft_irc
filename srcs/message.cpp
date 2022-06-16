@@ -1,6 +1,6 @@
 #include "../includes/message.hpp"
 #include "../includes/client.hpp"
-#include "../includes/logger.hpp"
+#include "../lib/logger.hpp"
 
 Message::Message(Client* client, const std::string& message)
     : m_message(message),
@@ -93,10 +93,10 @@ Message::~Message()
 }
 
 std::string
-    Message::reply_servername_prefix(std::string command)
+    Message::reply_servername_prefix(std::string numeric_reply)
 {
     std::string msg;
-    msg = msg + ":ft_irc " + command + " " + m_client->get_nickname();
+    msg = msg + ":ft_irc " + numeric_reply + " " + m_client->get_nickname();
     if (m_client->get_nickname().empty())
         msg += "*";
     return msg;
