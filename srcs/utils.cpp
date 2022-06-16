@@ -52,8 +52,7 @@ bool
 }
 
 void
-    split_by_comma(std::vector<const std::string>& splited_params,
-                   const std::string&              params)
+    split_by_comma(ConstStringVector& splited_params, const std::string& params)
 {
     std::istringstream iss(params);
 
