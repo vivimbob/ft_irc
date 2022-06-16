@@ -498,7 +498,7 @@ void
     }
 }
 
-void
+static void
     send_list_to_client(Channel* channel, Client& client, Message& msg)
 {
     utils::push_message(
@@ -524,13 +524,11 @@ void
 
         ConstStringVector::iterator channel_it = channel_list.begin();
         for (; channel_it != channel_list.end(); ++channel_it)
-        {
             if (m_channel_map.count(*channel_it))
                 send_list_to_client(m_channel_map[*channel_it], client, msg);
             else
                 utils::push_message(client,
                                     msg.err_no_such_channel(*channel_it));
-        }
     }
     utils::push_message(client, msg.rpl_listend());
 }
