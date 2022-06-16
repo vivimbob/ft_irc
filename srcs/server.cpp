@@ -568,38 +568,27 @@ void
 void
     Server::m_process_topic_command(Client& client, Message& msg)
 {
-    if (msg.get_params().empty())
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().empty(), client, msg.err_need_more_params()))
         return;
-    }
-
     const std::string& channel_name = msg.get_params()[0];
-
     if (check_error(!m_channel_map.count(channel_name), client,
                     msg.err_no_such_channel(channel_name)))
         return;
-
     Channel* channel = m_channel_map[channel_name];
-
     if (check_error(!channel->is_user_on_channel(&client), client,
                     msg.err_not_on_channel(channel_name)))
         return;
-
     if (msg.get_params().size() == 1)
     {
         utils::send_topic_reply(channel, client, msg);
         return;
     }
-
     if (check_error(!channel->is_operator(client), client,
                     msg.err_chanoprivs_needed(channel_name)))
         return;
     channel->set_channel_topic(msg.get_params()[1]);
-
     Logger().trace() << channel_name << " channel topic change to "
                      << channel->get_channel_topic();
-
     m_send_to_channel(channel, msg.build_topic_reply());
 }
 
