@@ -13,7 +13,11 @@ srcs		= main.cpp\
 			  sendbuffer.cpp\
 			  membership.cpp
 
+lib		= logger.cpp
+
 SRCS    	= $(srcs:%=srcs/%)
+
+LIB				= $(lib:%=lib/%)
 
 OBJS		= $(SRCS:%.cpp=%.o)
 
