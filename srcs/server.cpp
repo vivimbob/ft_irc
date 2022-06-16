@@ -111,24 +111,26 @@ Server::CommandMap
     return (temp_map);
 }
 
+static bool
+    check_error(bool error_check, Client& client, std::string message)
+{
+    if (error_check)
+        utils::push_message(client, message);
+    return error_check;
+}
+
 void
     Server::m_process_pass_command(Client& client, Message& msg)
 {
-    if (!msg.get_params().size())
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().empty(), client,
+                    msg.err_need_more_params()))
         return;
-    }
-    if (client.is_registered())
-    {
-        utils::push_message(client, msg.err_already_registred());
+    if (check_error(client.is_registered(), client,
+                    msg.err_already_registred()))
         return;
-    }
-    if (msg.get_params()[0] != m_password)
-    {
-        utils::push_message(client, msg.err_passwd_mismatch());
+    if (check_error(msg.get_params()[0] != m_password, client,
+                    msg.err_passwd_mismatch()))
         return;
-    }
     client.set_password_flag();
     if (client.is_registered() && !m_client_map.count(client.get_nickname()))
         m_register_client(client, msg);
@@ -137,19 +139,15 @@ void
 void
     Server::m_process_nick_command(Client& client, Message& msg)
 {
-    if (msg.get_params().empty())
-    {
-        utils::push_message(client, msg.err_no_nickname_given());
+    if (check_error(msg.get_params().empty(), client,
+                    msg.err_no_nickname_given()))
         return;
-    }
 
     const std::string& nickname = msg.get_params()[0];
 
-    if (!utils::is_nickname_valid(nickname))
-    {
-        utils::push_message(client, msg.err_erroneus_nickname(nickname));
+    if (check_error(!utils::is_nickname_valid(nickname), client,
+                    msg.err_erroneus_nickname(nickname)))
         return;
-    }
 
     if (m_client_map.count(nickname))
     {
@@ -180,17 +178,13 @@ void
 void
     Server::m_process_user_command(Client& client, Message& msg)
 {
-    if (msg.get_params().size() < 4)
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().size() < 4, client,
+                    msg.err_need_more_params()))
         return;
-    }
 
-    if (client.is_registered())
-    {
-        utils::push_message(client, msg.err_already_registred());
+    if (check_error(client.is_registered(), client,
+                    msg.err_already_registred()))
         return;
-    }
 
     client.set_username(msg.get_params()[0]);
     client.set_realname(msg.get_params()[3]);
@@ -210,11 +204,9 @@ void
 void
     Server::m_process_join_command(Client& client, Message& msg)
 {
-    if (msg.get_params().empty())
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().empty(), client,
+                    msg.err_need_more_params()))
         return;
-    }
 
     std::vector<const std::string> channel_list;
 
@@ -222,8 +214,7 @@ void
 
     for (std::vector<const std::string>::iterator channel_it =
              channel_list.begin();
-         channel_it != channel_list.end();
-         ++channel_it) // 채널과 키쌍을 순회하면서 확인
+         channel_it != channel_list.end(); ++channel_it)
     {
         Channel*           channel      = NULL;
         const std::string& channel_name = *channel_it;
@@ -231,23 +222,16 @@ void
         if (m_channel_map.count(channel_name))
             channel = m_channel_map[channel_name];
 
-        if (!utils::is_channel_prefix(channel_name) ||
-            !utils::is_channel_name_valid(channel_name))
-        // 채널이름 앞에 #, & 있는지, 이름이 유효한지
-        {
-            utils::push_message(client, msg.err_no_such_channel(channel_name));
+        if (check_error((!utils::is_channel_prefix(channel_name) ||
+                         !utils::is_channel_name_valid(channel_name)),
+                        client, msg.err_no_such_channel(channel_name)))
             continue;
-        }
 
-        else if (!channel) // join할 채널이 없는 경우(새로 만듦)
+        else if (!channel)
         {
-            if (!client.is_join_available()) // join할 클라이언트가 이미 참여할
-                                             // 수 있는 채널 갯수에 도달했을때
-            {
-                utils::push_message(client,
-                                    msg.err_too_many_channels(channel_name));
+            if (check_error(!client.is_join_available(), client,
+                            msg.err_too_many_channels(channel_name)))
                 continue;
-            }
             channel = new Channel(channel_name);
             m_channel_map.insert(std::make_pair(channel_name, channel));
             channel->add_user(client);
@@ -258,13 +242,9 @@ void
         {
             if (client.is_already_joined(channel)) // 이미 join된 경우
                 continue;
-            if (channel->is_full()) // 현재 채널이 포함할 수 있는 최대 유저 수에
-                                    // 도달했을 때
-            {
-                utils::push_message(client,
-                                    msg.err_channel_is_full(channel_name));
+            if (check_error(channel->is_full(), client,
+                            msg.err_channel_is_full(channel_name)))
                 continue;
-            }
             channel->add_user(client);
             client.insert_channel(channel);
         }
@@ -282,22 +262,16 @@ void
                                            Message&           msg,
                                            const std::string& channel_name)
 {
-    if (!m_channel_map.count(channel_name))
-    {
-        utils::push_message(client, msg.err_no_such_channel(channel_name));
+    if (check_error(!m_channel_map.count(channel_name), client,
+                    msg.err_no_such_channel(channel_name)))
         return;
-    }
     Channel* channel = m_channel_map.at(channel_name);
-    if (msg.get_params().size() == 1)
-    {
-        utils::push_message(client, msg.rpl_channel_mode_is(channel_name));
+    if (check_error(msg.get_params().size() == 1, client,
+                    msg.rpl_channel_mode_is(channel_name)))
         return;
-    }
-    if (!channel->is_operator(client))
-    {
-        utils::push_message(client, msg.err_chanoprivs_needed(channel_name));
+    if (check_error(!channel->is_operator(client), client,
+                    msg.err_chanoprivs_needed(channel_name)))
         return;
-    }
 
     utils::push_message(client, msg.err_unknown_mode(msg.get_params()[1]));
 }
@@ -307,26 +281,18 @@ void
                                         Message&           msg,
                                         const std::string& nickname)
 {
-    if (!m_client_map.count(nickname))
-    {
-        utils::push_message(client, msg.err_no_such_nick(nickname));
+    if (check_error(!m_client_map.count(nickname), client,
+                    msg.err_no_such_nick(nickname)))
         return;
-    }
 
-    if (nickname != client.get_nickname())
-    {
-        if (msg.get_params().size() == 1)
-            utils::push_message(client, msg.err_users_dont_match("view"));
-        else
-            utils::push_message(client, msg.err_users_dont_match("change"));
+    if (check_error(nickname != client.get_nickname(), client,
+                    msg.err_users_dont_match(
+                        msg.get_params().size() == 1 ? "view" : "change")))
         return;
-    }
 
-    if (msg.get_params().size() == 1)
-    {
-        utils::push_message(client, msg.rpl_user_mode_is());
+    if (check_error(msg.get_params().size() == 1, client,
+                    msg.rpl_user_mode_is()))
         return;
-    }
 
     utils::push_message(client, msg.err_u_mode_unknown_flag());
 }
@@ -334,11 +300,9 @@ void
 void
     Server::m_process_mode_command(Client& client, Message& msg)
 {
-    if (msg.get_params().empty())
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().empty(), client,
+                    msg.err_need_more_params()))
         return;
-    }
 
     const std::string& target = msg.get_params()[0];
 
@@ -351,37 +315,27 @@ void
 void
     Server::m_process_invite_command(Client& client, Message& msg)
 {
-    if (msg.get_params().size() < 2)
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().size() < 2, client,
+                    msg.err_need_more_params()))
         return;
-    }
+
     const std::string& nickname     = msg.get_params()[0];
     const std::string& channel_name = msg.get_params()[1];
 
-    if (!m_client_map.count(nickname))
-    {
-        utils::push_message(client, msg.err_no_such_nick(nickname));
+    if (check_error(!m_client_map.count(nickname), client,
+                    msg.err_no_such_nick(nickname)))
         return;
-    }
     Client* target_client = m_client_map[nickname];
-    if (!m_channel_map.count(channel_name))
-    {
-        utils::push_message(client, msg.err_no_such_channel(channel_name));
+    if (check_error(!m_channel_map.count(channel_name), client,
+                    msg.err_no_such_channel(channel_name)))
         return;
-    }
     Channel* channel = m_channel_map[channel_name];
-    if (!client.is_already_joined(channel))
-    {
-        utils::push_message(client, msg.err_not_on_channel(channel_name));
+    if (check_error(!client.is_already_joined(channel), client,
+                    msg.err_not_on_channel(channel_name)))
         return;
-    }
-    if (target_client->is_already_joined(channel))
-    {
-        utils::push_message(client,
-                            msg.err_user_on_channel(nickname, channel_name));
+    if (check_error(target_client->is_already_joined(channel), client,
+                    msg.err_user_on_channel(nickname, channel_name)))
         return;
-    }
     utils::push_message(client, msg.rpl_inviting(nickname, channel_name));
     m_prepare_to_send(*target_client,
                       msg.build_invite_reply(nickname, channel_name));
@@ -403,12 +357,10 @@ void
     utils::split_by_comma(channel_list, parameter[0]);
     utils::split_by_comma(nick_list, parameter[1]);
 
-    if (!(channel_list.size() == 1 || nick_list.size() == 1) &&
-        channel_list.size() != nick_list.size())
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error((!(channel_list.size() == 1 || nick_list.size() == 1) &&
+                     channel_list.size() != nick_list.size()),
+                    client, msg.err_need_more_params()))
         return;
-    }
 
     Channel* channel;
 
@@ -416,21 +368,16 @@ void
     {
         const std::string& channel_name = channel_list[0];
 
-        if (!utils::is_channel_prefix(channel_name) ||
-            !m_channel_map.count(channel_name))
-        {
-            utils::push_message(client, msg.err_no_such_channel(channel_name));
+        if (check_error((!utils::is_channel_prefix(channel_name) ||
+                         !m_channel_map.count(channel_name)),
+                        client, msg.err_no_such_channel(channel_name)))
             return;
-        }
 
         channel = m_channel_map[channel_name];
 
-        if (!channel->is_operator(client))
-        {
-            utils::push_message(client,
-                                msg.err_chanoprivs_needed(channel_name));
+        if (check_error(!channel->is_operator(client), client,
+                        msg.err_chanoprivs_needed(channel_name)))
             return;
-        }
 
         std::vector<const std::string>::iterator nick_it  = nick_list.begin();
         std::vector<const std::string>::iterator nick_ite = nick_list.end();
@@ -439,19 +386,15 @@ void
         {
             const std::string& nick = *nick_it;
 
-            if (!m_client_map.count(nick))
-            {
-                utils::push_message(client, msg.err_no_such_nick(nick));
+            if (check_error(!m_client_map.count(nick), client,
+                            msg.err_no_such_nick(nick)))
                 continue;
-            }
             Client* target_client = m_client_map[nick];
 
-            if (!channel->is_user_on_channel(target_client))
-            {
-                utils::push_message(
-                    client, msg.err_user_not_in_channel(nick, channel_name));
+            if (check_error(!channel->is_user_on_channel(target_client), client,
+                            msg.err_user_not_in_channel(nick, channel_name)))
                 continue;
-            }
+
             m_send_to_channel(channel,
                               msg.build_kick_reply(channel_name, nick,
                                                    client.get_nickname()));
@@ -463,11 +406,9 @@ void
     {
         const std::string& nick = nick_list[0];
 
-        if (!m_client_map.count(nick))
-        {
-            utils::push_message(client, msg.err_no_such_nick(nick));
+        if (check_error(!m_client_map.count(nick), client,
+                        msg.err_no_such_nick(nick)))
             return;
-        }
         Client* target_client = m_client_map[nick];
         std::vector<const std::string>::iterator channel_it =
             channel_list.begin();
@@ -477,29 +418,21 @@ void
         {
             const std::string& channel_name = *channel_it;
 
-            if (!utils::is_channel_prefix(channel_name) ||
-                !m_channel_map.count(channel_name))
-            {
-                utils::push_message(client,
-                                    msg.err_no_such_channel(channel_name));
+            if (check_error((!utils::is_channel_prefix(channel_name) ||
+                             !m_channel_map.count(channel_name)),
+                            client, msg.err_no_such_channel(channel_name)))
                 continue;
-            }
 
             channel = m_channel_map[channel_name];
 
-            if (!channel->is_operator(client))
-            {
-                utils::push_message(client,
-                                    msg.err_chanoprivs_needed(channel_name));
+            if (check_error(!channel->is_operator(client), client,
+                            msg.err_chanoprivs_needed(channel_name)))
                 continue;
-            }
 
-            if (!channel->is_user_on_channel(target_client))
-            {
-                utils::push_message(
-                    client, msg.err_user_not_in_channel(nick, channel_name));
+            if (check_error(!channel->is_user_on_channel(target_client), client,
+                            msg.err_user_not_in_channel(nick, channel_name)))
                 continue;
-            }
+
             m_send_to_channel(channel,
                               msg.build_kick_reply(channel_name, nick,
                                                    client.get_nickname()));
@@ -519,44 +452,30 @@ void
             const std::string& channel_name = *channel_it;
             const std::string& nick         = *nick_it;
 
-            if (!utils::is_channel_prefix(channel_name) ||
-                !m_channel_map.count(channel_name))
-            {
-                utils::push_message(client,
-                                    msg.err_no_such_channel(channel_name));
+            if (check_error((!utils::is_channel_prefix(channel_name) ||
+                             !m_channel_map.count(channel_name)),
+                            client, msg.err_no_such_channel(channel_name)))
                 continue;
-            }
 
             channel = m_channel_map[channel_name];
 
-            if (!channel->is_user_on_channel(&client))
-            {
-                utils::push_message(client,
-                                    msg.err_not_on_channel(channel_name));
+            if (check_error(!channel->is_user_on_channel(&client), client,
+                            msg.err_not_on_channel(channel_name)))
                 continue;
-            }
 
-            if (!channel->is_operator(client))
-            {
-                utils::push_message(client,
-                                    msg.err_chanoprivs_needed(channel_name));
+            if (check_error(!channel->is_operator(client), client,
+                            msg.err_chanoprivs_needed(channel_name)))
                 continue;
-            }
 
-            if (!m_client_map.count(nick))
-            {
-                utils::push_message(client, msg.err_no_such_nick(nick));
+            if (check_error(!m_client_map.count(nick), client,
+                            msg.err_no_such_nick(nick)))
                 continue;
-            }
 
             Client* target_client = m_client_map[nick];
 
-            if (channel->is_user_on_channel(target_client))
-            {
-                utils::push_message(
-                    client, msg.err_user_not_in_channel(nick, channel_name));
+            if (check_error(channel->is_user_on_channel(target_client), client,
+                            msg.err_user_not_in_channel(nick, channel_name)))
                 continue;
-            }
             m_send_to_channel(channel,
                               msg.build_kick_reply(channel_name, nick,
                                                    client.get_nickname()));
@@ -595,12 +514,9 @@ void
         for (int i = 0, size = channel_list.size(); i < size; ++i)
         {
             // 잘못된 채널일 때
-            if (!m_channel_map.count(channel_list[i]))
-            {
-                utils::push_message(client,
-                                    msg.rpl_endofnames(channel_list[i]));
+            if (check_error(!m_channel_map.count(channel_list[i]), client,
+                            msg.rpl_endofnames(channel_list[i])))
                 continue;
-            }
 
             utils::send_name_reply(m_channel_map[channel_list[i]], client, msg);
         }
@@ -648,11 +564,9 @@ void
 void
     Server::m_process_part_command(Client& client, Message& msg)
 {
-    if (msg.get_params().empty())
-    {
-        utils::push_message(client, msg.err_need_more_params());
+    if (check_error(msg.get_params().empty(), client,
+                    msg.err_need_more_params()))
         return;
-    }
 
     std::vector<const std::string> channel_list;
     utils::split_by_comma(channel_list, msg.get_params()[0]);
@@ -660,17 +574,13 @@ void
     std::vector<const std::string>::iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it)
     {
-        if (!m_channel_map.count(*channel_it))
-        {
-            utils::push_message(client, msg.err_no_such_channel(*channel_it));
+        if (check_error(!m_channel_map.count(*channel_it), client,
+                        msg.err_no_such_channel(*channel_it)))
             continue;
-        }
         Channel* channel = m_channel_map[*channel_it];
-        if (!channel->is_user_on_channel(&client))
-        {
-            utils::push_message(client, msg.err_not_on_channel(*channel_it));
+        if (check_error(!channel->is_user_on_channel(&client), client,
+                        msg.err_not_on_channel(*channel_it)))
             continue;
-        }
         m_send_to_channel(channel, msg.build_part_reply(*channel_it));
         channel->delete_user(client);
         client.erase_channel(channel);
@@ -694,19 +604,15 @@ void
 
     const std::string& channel_name = msg.get_params()[0];
 
-    if (!m_channel_map.count(channel_name))
-    {
-        utils::push_message(client, msg.err_no_such_channel(channel_name));
+    if (check_error(!m_channel_map.count(channel_name), client,
+                    msg.err_no_such_channel(channel_name)))
         return;
-    }
 
     Channel* channel = m_channel_map[channel_name];
 
-    if (!channel->is_user_on_channel(&client))
-    {
-        utils::push_message(client, msg.err_not_on_channel(channel_name));
+    if (check_error(!channel->is_user_on_channel(&client), client,
+                    msg.err_not_on_channel(channel_name)))
         return;
-    }
 
     if (msg.get_params().size() == 1)
     {
@@ -714,11 +620,9 @@ void
         return;
     }
 
-    if (!channel->is_operator(client))
-    {
-        utils::push_message(client, msg.err_chanoprivs_needed(channel_name));
+    if (check_error(!channel->is_operator(client), client,
+                    msg.err_chanoprivs_needed(channel_name)))
         return;
-    }
     channel->set_channel_topic(msg.get_params()[1]);
 
     Logger().trace() << channel_name << " channel topic change to "
@@ -732,16 +636,10 @@ void
 {
     const std::vector<std::string>& parameter = msg.get_params();
 
-    if (parameter.empty())
-    {
-        utils::push_message(client, msg.err_no_recipient());
+    if (check_error(parameter.empty(), client, msg.err_no_recipient()))
         return;
-    }
-    if (parameter.size() == 1)
-    {
-        utils::push_message(client, msg.err_no_text_to_send());
+    if (check_error(parameter.size() == 1, client, msg.err_no_text_to_send()))
         return;
-    }
 
     std::vector<const std::string> target_list;
     utils::split_by_comma(target_list, parameter[0]);
@@ -752,12 +650,9 @@ void
     {
         if (utils::is_channel_prefix(*target_it))
         {
-            if (!m_channel_map.count(*target_it))
-            {
-                utils::push_message(client,
-                                    msg.err_no_such_channel(*target_it));
+            if (check_error(!m_channel_map.count(*target_it), client,
+                            msg.err_no_such_channel(*target_it)))
                 continue;
-            }
             m_send_to_channel(m_channel_map[*target_it],
                               msg.build_message_reply(*target_it), &client);
         }
