@@ -32,7 +32,7 @@ bool
 bool
     is_channel_prefix(const std::string& chan)
 {
-    return std::memchr(CHANNEL_PREFIX, chan[0], 2);
+    return chan[0] == CHANNEL_PREFIX;
 }
 
 bool

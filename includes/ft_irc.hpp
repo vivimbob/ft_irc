@@ -15,7 +15,7 @@
 
 #define NICK_LENGTH_MAX    9
 #define CHANNEL_LENGTH_MAX 50
-#define CHANNEL_PREFIX     "#&"
+#define CHANNEL_PREFIX     '#'
 #define SPECIALCHAR        "[]\\`-^{|}"
 #define CHSTRING           " ,\r\n\7"
 

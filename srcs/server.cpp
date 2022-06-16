@@ -230,7 +230,7 @@ void
 
         if (!utils::is_channel_prefix(channel_name) ||
             !utils::is_channel_name_valid(channel_name))
-        // 채널이름 앞에 #, & 있는지, 이름이 유효한지
+        // 채널이름 앞에 # 있는지, 이름이 유효한지
         {
             utils::push_message(client, msg.err_no_such_channel(channel_name));
             continue;
