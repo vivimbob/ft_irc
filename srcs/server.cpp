@@ -923,8 +923,6 @@ void
             m_handle_messages(client);
             m_update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0, &client);
             m_update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
-            Logger().trace() << client.get_nickname() << " disable read event";
-            Logger().trace() << client.get_nickname() << " enable write event";
         }
     }
     else if (recv_data_len == 0)
@@ -968,8 +966,6 @@ void
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             m_update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
             m_update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
-            Logger().trace() << client.get_nickname() << " enable read event";
-            Logger().trace() << client.get_nickname() << " disable write event";
         }
     }
 }
