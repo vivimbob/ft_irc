@@ -1,5 +1,7 @@
 #include "../includes/membership.hpp"
 
+/* membership class member function begin */
+
 MemberShip::MemberShip() : client(), channel()
 {
 }
@@ -17,3 +19,5 @@ MemberShip::MemberShip(const MemberShip& copy)
 {
     this->mode_operater = copy.mode_operater;
 }
+
+/* membership class member function end */

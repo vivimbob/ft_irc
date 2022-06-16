@@ -2,6 +2,8 @@
 #include "../lib/logger.hpp"
 #include <utility>
 
+/* channel class constructor and destructor begin */
+
 Channel::Channel(const std::string& name) : m_channel_name(name)
 {
 }
@@ -9,6 +11,10 @@ Channel::Channel(const std::string& name) : m_channel_name(name)
 Channel::~Channel()
 {
 }
+
+/* channel class constructor and destructor end */
+
+/* channel class getter begin */
 
 const std::string&
     Channel::get_channel_name() const
@@ -28,6 +34,10 @@ const std::map<Client*, MemberShip>&
     return m_member_list;
 }
 
+/* channel class getter end */
+
+/* channel class setter begin */
+
 void
     Channel::set_channel_name(const std::string& name)
 {
@@ -45,6 +55,10 @@ void
 {
     m_member_list.find(client)->second.mode_operater = toggle;
 }
+
+/* channel class setter end */
+
+/* channel class is_function begin */
 
 bool
     Channel::is_empty()
@@ -71,6 +85,11 @@ bool
 {
     return m_member_list.count(client);
 }
+
+/* channel class is_function end */
+
+/* channel class user function begin */
+
 void
     Channel::add_user(Client& client)
 {
@@ -82,3 +101,5 @@ void
 {
     m_member_list.erase(&client);
 }
+
+/* channel class user function end */

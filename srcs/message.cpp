@@ -2,6 +2,8 @@
 #include "../includes/client.hpp"
 #include "../lib/logger.hpp"
 
+/* message class constructor begin */
+
 Message::Message(Client* client, const std::string& message)
     : m_message(message),
       m_valid_message(true),
@@ -9,6 +11,14 @@ Message::Message(Client* client, const std::string& message)
       m_client(client)
 {
 }
+
+Message::~Message()
+{
+}
+
+/* message class constructor end */
+
+/* message class main function begin */
 
 size_t
     Message::next_position()
@@ -58,6 +68,10 @@ void
     }
 }
 
+/* message class main function end */
+
+/* message class getter begin */
+
 const std::string&
     Message::get_message() const
 {
@@ -82,15 +96,19 @@ const std::vector<std::string>&
     return m_parameters;
 }
 
+/* message class getter end */
+
+/* message class is_function begin */
+
 const bool&
     Message::is_valid_message() const
 {
     return m_valid_message;
 }
 
-Message::~Message()
-{
-}
+/* message class is_function end */
+
+/* message class reply function begin */
 
 std::string
     Message::reply_servername_prefix(std::string numeric_reply)
@@ -581,3 +599,5 @@ std::string
     return reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" +
            m_parameters[1] + "\r\n";
 }
+
+/* message class reply function end */

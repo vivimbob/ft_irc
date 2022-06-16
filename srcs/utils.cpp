@@ -7,12 +7,7 @@
 namespace utils
 {
 
-void
-    push_message(Client& client, std::string msg)
-{
-    client.push_message(msg);
-    Logger().debug() << msg;
-}
+/* utils is_function begin */
 
 static inline bool
     is_special(char c)
@@ -51,6 +46,10 @@ bool
     return true;
 }
 
+/* utils is_function end */
+
+/* utils parse function begin */
+
 void
     split_by_comma(std::vector<const std::string>& splited_params,
                    const std::string&              params)
@@ -60,6 +59,15 @@ void
     std::string elem;
     while (std::getline(iss, elem, ','))
         splited_params.push_back(elem);
+}
+
+static const std::string
+    masked_nick(bool operater, const std::string& nickname, bool on_channel)
+{
+    if (on_channel && operater)
+        return "@" + nickname;
+    else
+        return nickname;
 }
 
 ClientInfo
@@ -113,13 +121,15 @@ ClientInfo
     return client;
 }
 
-static const std::string
-    masked_nick(bool operater, const std::string& nickname, bool on_channel)
+/* utils parse function end */
+
+/* utils message function begin */
+
+void
+    push_message(Client& client, std::string msg)
 {
-    if (on_channel && operater)
-        return "@" + nickname;
-    else
-        return nickname;
+    client.push_message(msg);
+    Logger().debug() << msg;
 }
 
 void
@@ -157,5 +167,7 @@ void
 
     utils::push_message(client, reply_msg);
 }
+
+/* utils message function end */
 
 } // namespace utils
