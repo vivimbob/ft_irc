@@ -217,7 +217,7 @@ void
         if (check_error(!client.is_join_available(), client,
                         msg.err_too_many_channels(channel_name)))
             continue;
-        if (m_channel_map.count(channel_name))
+        if (!m_channel_map.count(channel_name))
             m_channel_map.insert(
                 std::make_pair(channel_name, new Channel(channel_name)));
         Channel* channel = m_channel_map[channel_name];
@@ -228,7 +228,7 @@ void
             continue;
         channel->add_user(client);
         client.insert_channel(channel);
-        if (channel->is_empty())
+        if (channel->get_user_list().size() == 1)
             channel->set_operator_flag(true, &client);
         Logger().info() << "Create new channel :" << channel_name << " : @"
                         << client.get_nickname();
@@ -340,123 +340,45 @@ void
                     client, msg.err_need_more_params()))
         return;
 
+    ConstStringVector::iterator channel_name = channel_list.begin();
+    ConstStringVector::iterator nick_name    = nick_list.begin();
+
     Channel* channel;
+    Client*  target_client;
 
-    if (channel_list.size() == 1)
+    for (int i = 0, max_size = std::max(channel_list.size(), nick_list.size());
+         i < max_size; ++i)
     {
-        const std::string& channel_name = channel_list[0];
-
-        if (check_error((!utils::is_channel_prefix(channel_name) ||
-                         !m_channel_map.count(channel_name)),
-                        client, msg.err_no_such_channel(channel_name)))
-            return;
-
-        channel = m_channel_map[channel_name];
-
+        if (check_error((!utils::is_channel_prefix(*channel_name) ||
+                         !m_channel_map.count(*channel_name)),
+                        client, msg.err_no_such_channel(*channel_name)))
+			goto next;
+        channel = m_channel_map[*channel_name];
         if (check_error(!channel->is_operator(client), client,
-                        msg.err_chanoprivs_needed(channel_name)))
-            return;
-
-        ConstStringVector::iterator nick_it  = nick_list.begin();
-        ConstStringVector::iterator nick_ite = nick_list.end();
-
-        for (; nick_it != nick_ite; ++nick_it)
-        {
-            const std::string& nick = *nick_it;
-
-            if (check_error(!m_client_map.count(nick), client,
-                            msg.err_no_such_nick(nick)))
-                continue;
-            Client* target_client = m_client_map[nick];
-
-            if (check_error(!channel->is_user_on_channel(target_client), client,
-                            msg.err_user_not_in_channel(nick, channel_name)))
-                continue;
-
-            m_send_to_channel(channel,
-                              msg.build_kick_reply(channel_name, nick,
-                                                   client.get_nickname()));
-            channel->delete_user(*target_client);
-            target_client->erase_channel(channel);
-        }
-    }
-    else if (nick_list.size() == 1)
-    {
-        const std::string& nick = nick_list[0];
-
-        if (check_error(!m_client_map.count(nick), client,
-                        msg.err_no_such_nick(nick)))
-            return;
-        Client*                     target_client = m_client_map[nick];
-        ConstStringVector::iterator channel_it    = channel_list.begin();
-        ConstStringVector::iterator channel_ite   = channel_list.end();
-        for (; channel_it != channel_ite; ++channel_it)
-        {
-            const std::string& channel_name = *channel_it;
-
-            if (check_error((!utils::is_channel_prefix(channel_name) ||
-                             !m_channel_map.count(channel_name)),
-                            client, msg.err_no_such_channel(channel_name)))
-                continue;
-
-            channel = m_channel_map[channel_name];
-
-            if (check_error(!channel->is_operator(client), client,
-                            msg.err_chanoprivs_needed(channel_name)))
-                continue;
-
-            if (check_error(!channel->is_user_on_channel(target_client), client,
-                            msg.err_user_not_in_channel(nick, channel_name)))
-                continue;
-
-            m_send_to_channel(channel,
-                              msg.build_kick_reply(channel_name, nick,
-                                                   client.get_nickname()));
-            channel->delete_user(*target_client);
-            target_client->erase_channel(channel);
-        }
-    }
-    else
-    {
-        ConstStringVector::iterator nick_it    = nick_list.begin();
-        ConstStringVector::iterator nick_ite   = nick_list.end();
-        ConstStringVector::iterator channel_it = channel_list.begin();
-
-        for (; nick_it != nick_ite; ++nick_it, ++channel_it)
-        {
-            const std::string& channel_name = *channel_it;
-            const std::string& nick         = *nick_it;
-
-            if (check_error((!utils::is_channel_prefix(channel_name) ||
-                             !m_channel_map.count(channel_name)),
-                            client, msg.err_no_such_channel(channel_name)))
-                continue;
-
-            channel = m_channel_map[channel_name];
-
-            if (check_error(!channel->is_user_on_channel(&client), client,
-                            msg.err_not_on_channel(channel_name)))
-                continue;
-
-            if (check_error(!channel->is_operator(client), client,
-                            msg.err_chanoprivs_needed(channel_name)))
-                continue;
-
-            if (check_error(!m_client_map.count(nick), client,
-                            msg.err_no_such_nick(nick)))
-                continue;
-
-            Client* target_client = m_client_map[nick];
-
-            if (check_error(channel->is_user_on_channel(target_client), client,
-                            msg.err_user_not_in_channel(nick, channel_name)))
-                continue;
-            m_send_to_channel(channel,
-                              msg.build_kick_reply(channel_name, nick,
-                                                   client.get_nickname()));
-            channel->delete_user(*target_client);
-            target_client->erase_channel(channel);
-        }
+                        msg.err_chanoprivs_needed(*channel_name)))
+			goto next;
+        if (check_error(!m_client_map.count(*nick_name), client,
+                        msg.err_no_such_nick(*nick_name)))
+			goto next;
+        target_client = m_client_map[*nick_name];
+        if (check_error(!channel->is_user_on_channel(target_client), client,
+                        msg.err_user_not_in_channel(*nick_name, *channel_name)))
+			goto next;
+        m_send_to_channel(channel,
+                          msg.build_kick_reply(*channel_name, *nick_name,
+                                               client.get_nickname()));
+        channel->delete_user(*target_client);
+        target_client->erase_channel(channel);
+        if (channel->is_empty())
+		{
+            m_channel_map.erase(*channel_name);
+        	delete channel;
+		}
+next:
+        if (channel_list.size() != 1)
+            ++channel_name;
+        if (nick_list.size() != 1)
+            ++nick_name;
     }
 }
 
@@ -549,8 +471,10 @@ void
         channel->delete_user(client);
         client.erase_channel(channel);
         if (channel->is_empty())
+		{
             m_channel_map.erase(channel->get_channel_name());
-        delete channel;
+        	delete channel;
+		}
         Logger().debug() << "Remove [" << client.get_nickname()
                          << "] client from [" << channel->get_channel_name()
                          << "] channel";
