@@ -1,17 +1,17 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "sendbuffer.hpp"
 #include "channel.hpp"
 #include "client.hpp"
 #include "ft_irc.hpp"
+#include "sendbuffer.hpp"
 #include "utils.hpp"
-#include <netinet/in.h>
-#include <sys/event.h>
 #include <arpa/inet.h>
-#include <string>
-#include <vector>
 #include <map>
+#include <netinet/in.h>
+#include <string>
+#include <sys/event.h>
+#include <vector>
 
 class Server
 {
