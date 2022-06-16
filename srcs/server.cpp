@@ -469,13 +469,10 @@ void
         ChannelMap::const_iterator channel_it = m_channel_map.begin();
         for (; channel_it != m_channel_map.end(); ++channel_it)
             utils::send_name_reply(channel_it->second, client, msg);
-
-        // 클라이언트가 어느 채널에도 속하지 않을 때
         ClientMap::const_iterator client_it = m_client_map.begin();
         for (; client_it != m_client_map.end(); ++client_it)
             if (client_it->second->get_channel_list().empty())
                 nick_queue.push(client_it->first);
-
         if (nick_queue.size())
             utils::push_message(client, msg.rpl_namreply("*", nick_queue));
         utils::push_message(client, msg.rpl_endofnames("*"));
@@ -485,14 +482,11 @@ void
     {
         ConstStringVector channel_list;
         utils::split_by_comma(channel_list, msg.get_params()[0]);
-
         for (int i = 0, size = channel_list.size(); i < size; ++i)
         {
-            // 잘못된 채널일 때
             if (check_error(!m_channel_map.count(channel_list[i]), client,
                             msg.rpl_endofnames(channel_list[i])))
                 continue;
-
             utils::send_name_reply(m_channel_map[channel_list[i]], client, msg);
         }
     }
@@ -539,10 +533,8 @@ void
     if (check_error(msg.get_params().empty(), client,
                     msg.err_need_more_params()))
         return;
-
     ConstStringVector channel_list;
     utils::split_by_comma(channel_list, msg.get_params()[0]);
-
     ConstStringVector::iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it)
     {
@@ -568,7 +560,8 @@ void
 void
     Server::m_process_topic_command(Client& client, Message& msg)
 {
-    if (check_error(msg.get_params().empty(), client, msg.err_need_more_params()))
+    if (check_error(msg.get_params().empty(), client,
+                    msg.err_need_more_params()))
         return;
     const std::string& channel_name = msg.get_params()[0];
     if (check_error(!m_channel_map.count(channel_name), client,
