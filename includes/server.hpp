@@ -22,13 +22,13 @@ class Server
         CommandMap;
 
   private:
-    int               m_kq;
-    int               m_listen_fd;
+    int               m_kqueue;
+    int               m_server_fd;
     int               m_port;
     std::string       m_password;
     sockaddr_in       m_sockaddr;
     char              m_read_buffer[IPV4_MTU_MAX];
-    struct kevent     m_event_list[QUEUE_SIZE];
+    struct kevent     m_events[EVENTS_MAX];
     ClientMap         m_client_map;
     ChannelMap        m_channel_map;
     static CommandMap m_channel_command_map;
@@ -73,15 +73,15 @@ class Server
                         int     data,
                         void*   udata);
     void m_create_kqueue();
-    void m_accept_client();
+    void m_server_accept();
 
     void m_handle_messages(Client& client);
 
     void m_disconnect_client(Client& client, std::string reason = "");
     void m_register_client(Client& client, Message& msg);
 
-    void m_receive_client_msg(Client& client, int bytes);
-    void m_send_client_msg(Client& client, int bytes);
+    void m_server_receive(struct kevent& event);
+    void m_server_send(Client& client, int bytes);
     void m_prepare_to_send(Client& client, const std::string& str_msg);
     void m_send_to_channel(Channel*           channel,
                            const std::string& msg,

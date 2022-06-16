@@ -8,7 +8,7 @@
 #define HOSTNAME   "localhost"
 #define SERVERNAME "ft_irc"
 
-#define QUEUE_SIZE 1024
+#define EVENTS_MAX 1024
 
 #define IPV4_MTU_MAX 65535
 #define IPV4_MTU_MIN 68
