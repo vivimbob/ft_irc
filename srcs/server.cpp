@@ -34,8 +34,6 @@ void
     utils::push_message(client, str_msg);
     m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
     m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
-    Logger().trace() << client.get_nickname() << " disable read event";
-    Logger().trace() << client.get_nickname() << " enable write event";
 }
 
 void
