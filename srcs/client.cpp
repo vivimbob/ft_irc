@@ -2,6 +2,8 @@
 #include "../includes/channel.hpp"
 #include "../includes/ft_irc.hpp"
 
+/* client class constructor and destructor begin */
+
 Client::Client(sockaddr_in client_addr, int client_fd)
     : m_client_addr(client_addr),
       m_client_fd(client_fd),
@@ -21,6 +23,10 @@ Client::~Client()
         m_commands.pop();
     }
 }
+
+/* client class constructor and destructor end */
+
+/* client class getter begin */
 
 sockaddr_in
     Client::get_client_addr()
@@ -82,6 +88,10 @@ const std::set<Channel*>&
     return m_channel_list;
 }
 
+/* client class getter end */
+
+/* client class setter begin */
+
 void
     Client::set_nickname(const std::string& nickname)
 {
@@ -107,6 +117,10 @@ void
 {
     m_pass_registered = true;
 }
+
+/* client class setter end */
+
+/* client class is_function begin */
 
 bool
     Client::is_registered() const
@@ -159,6 +173,10 @@ bool
     return true;
 }
 
+/* client class is_function end */
+
+/* client class other function begin */
+
 void
     Client::push_message(const std::string& message)
 {
@@ -182,3 +200,5 @@ void
 {
     m_channel_list.erase(channel);
 }
+
+/* client class other function end */

@@ -1,5 +1,7 @@
 #include "../includes/sendbuffer.hpp"
 
+/* sendbuffer class member function begin */
+
 SendBuffer::SendBuffer() : m_offset(0)
 {
 }
@@ -26,3 +28,5 @@ void
 {
     m_offset = offset;
 }
+
+/* sendbuffer class member function end */
