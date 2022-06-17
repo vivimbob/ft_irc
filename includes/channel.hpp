@@ -1,9 +1,9 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "ft_ircd.hpp"
 #include "membership.hpp"
 #include "message.hpp"
+#include "resources.hpp"
 #include <ctime>
 #include <map>
 #include <set>

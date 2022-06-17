@@ -1,40 +1,36 @@
 #include "../includes/server.hpp"
-#include "../includes/client.hpp"
-#include "../lib/logger.hpp"
-#include <arpa/inet.h>
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
-#include <fcntl.h>
-#include <iostream>
-#include <string>
-#include <sys/event.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 /* utility start */
 
 void
-    Server::m_update_event(int     identity,
-                           short   filter,
-                           u_short flags,
-                           u_int   fflags,
-                           int     data,
-                           void*   udata)
+    Server::m_set_event(int     identity,
+                        short   filter,
+                        u_short flags,
+                        u_int   fflags,
+                        int     data,
+                        void*   udata)
 {
     struct kevent kev;
     EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-    kevent(m_kqueue, &kev, 1, NULL, 0, NULL);
+    kevent(_kqueue, &kev, 1, NULL, 0, NULL);
+}
+
+void
+    Server::m_toggle_event(Client& client, int EVFILT_TYPE)
+{
+    int ident = client.get_socket();
+
+    m_set_event(ident, EVFILT_TYPE, EV_DISABLE, 0, 0, &client);
+    m_set_event(ident,
+                (EVFILT_TYPE == EVFILT_READ ? EVFILT_WRITE : EVFILT_READ),
+                EV_ENABLE, 0, 0, &client);
 }
 
 void
     Server::m_prepare_to_send(Client& client, const std::string& str_msg)
 {
-    utils::push_message(client, str_msg);
-    m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
-    m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+    client.push_message(str_msg);
+    m_toggle_event(client, EVFILT_READ);
 }
 
 void
@@ -120,7 +116,7 @@ void
                      msg.err_need_more_params())) ||
         (check_error(client.is_registered(), client,
                      msg.err_already_registred())) ||
-        (check_error(msg.get_params()[0] != m_password, client,
+        (check_error(msg.get_params()[0] != _password, client,
                      msg.err_passwd_mismatch())))
         return;
     client.set_password_flag();
@@ -645,80 +641,6 @@ void
 
 /* initailize server start */
 
-void
-    Server::m_create_socket()
-{
-    Server::m_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (Server::m_fd == -1)
-    {
-        Logger().error() << "Failed to create socket. errno " << errno << ":"
-                         << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Create socket " << Server::m_fd;
-    int toggle = 1;
-    setsockopt(Server::m_fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
-               sizeof(toggle));
-}
-
-void
-    Server::m_bind_socket()
-{
-    memset(&m_sockaddr, 0, sizeof(sockaddr_in));
-    m_sockaddr.sin_family      = AF_INET;
-    m_sockaddr.sin_addr.s_addr = INADDR_ANY;
-    m_sockaddr.sin_port        = htons(m_port);
-
-    if (bind(Server::m_fd, (struct sockaddr*)&m_sockaddr,
-             sizeof(sockaddr_in)) == -1)
-    {
-        Logger().error() << "Failed to bind to port and address" << m_port
-                         << ". errno: " << errno << ":" << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Bind Port :" << m_port
-                    << " IP :" << inet_ntoa(m_sockaddr.sin_addr);
-}
-
-void
-    Server::m_listen_socket()
-{
-    if (listen(Server::m_fd, SOMAXCONN) == -1)
-    {
-        Logger().error() << "Failed to listen on socket. errno: " << errno
-                         << ":" << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Listen on socket";
-    fcntl(Server::m_fd, F_SETFL, O_NONBLOCK);
-    Logger().info() << "Socket set nonblock";
-}
-
-void
-    Server::m_create_kqueue()
-{
-    m_kqueue = kqueue();
-    if (m_kqueue == -1)
-    {
-        Logger().error() << "Failed to allocate kqueue. errno: " << errno << ":"
-                         << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Allocate kqueue " << m_kqueue;
-    m_update_event(Server::m_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    Logger().info() << "Listen socket(" << Server::m_fd
-                    << ") assign read event to kqueue";
-}
-
-void
-    Server::m_initialize_server()
-{
-    m_create_socket();
-    m_bind_socket();
-    m_listen_socket();
-    m_create_kqueue();
-}
-
 /* initailize server end */
 
 /* server run start */
@@ -726,41 +648,36 @@ void
 void
     Server::m_accept()
 {
-    sockaddr_in client_addr;
-    int         client_addr_len = sizeof(client_addr);
-    int         client_fd       = -1;
+    sockaddr_in addr;
+    int         fd = accept(Server::_fd, (sockaddr*)(&addr), &_socklen);
 
-    client_fd = accept(Server::m_fd, (sockaddr*)(&client_addr),
-                       (socklen_t*)(&client_addr_len));
-    if (client_fd == -1)
+    if (fd == -1)
     {
-        Logger().error() << "Failed to accept client. errno: " << errno << ":"
+        Logger().error() << "Failed to accept client errno: " << errno << ":"
                          << strerror(errno);
-        exit(EXIT_FAILURE);
+        return;
     }
 
-    fcntl(client_fd, F_SETFL, O_NONBLOCK);
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+    Client* client = new Client(addr, fd);
 
-    Client* client_info = new Client(client_addr, client_fd);
+    m_set_event(fd, EVFILT_READ, EV_ADD, 0, 0, client);
+    m_set_event(fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
 
-    m_update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, client_info);
-    m_update_event(client_fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0,
-                   client_info);
-
-    Logger().info() << "Accept client [address:"
-                    << inet_ntoa(client_addr.sin_addr) << ":"
-                    << client_addr.sin_port << "fd:" << client_fd << ']';
+    Logger().info() << "Accept client [address:" << inet_ntoa(addr.sin_addr)
+                    << ":" << addr.sin_port << "fd:" << fd << ']';
 }
 
 void
-    Server::m_handle_messages(Client& client)
+    Server::m_requests_handler(std::queue<Message*>& requests)
 {
-    while (client.get_commands().size())
+    Client&  client = requests.front()->get_from();
+    Message* message;
+
+    while (requests.size())
     {
-        Message* message = client.get_commands().front();
-        Logger().debug() << client.get_names().nick << " send ["
-                         << message->get_message() << ']';
-        client.get_commands().pop();
+        message = requests.front();
+        requests.pop();
         message->parse_message();
         const std::string& command = message->get_command();
 
@@ -788,8 +705,8 @@ void
     Logger().info() << "Client disconnect [address :" << client.get_IP() << ':'
                     << client.get_addr().sin_port << " FD :" << clientfd << ']';
 
-    m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-    m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    m_set_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+    m_set_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
     std::set<Client*>            client_check_list;
     std::set<Channel*>::iterator it = client.get_joined_list().begin();
@@ -835,41 +752,29 @@ void
 void
     Server::m_receive(struct kevent& event)
 {
-    Client& client        = (Client&)event.udata;
-    char*   buffer        = m_read_buffer;
-    ssize_t recv_data_len = recv(event.ident, buffer, event.data, 0);
+    Client& client = (Client&)event.udata;
+    ssize_t length = recv(event.ident, _buffer, event.data, 0);
 
-    if (recv_data_len > 0)
+    if (length > 0)
     {
-        std::string& recv_buffer = client.get_recv_buffer();
-        recv_buffer.append(buffer, recv_data_len);
+        int                  offset;
+        std::queue<Message*> requests;
 
-        size_t position = recv_buffer.find_first_of("\r\n", 0);
-        while (position != static_cast<size_t>(std::string::npos))
+        Client::t_buffers& buffers = client.get_buffers();
+        buffers.request.append(_buffer, length);
+        while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
+               std::string::npos)
         {
-            client.get_commands().push(new Message(
-                &client, std::string(recv_buffer.begin(),
-                                     recv_buffer.begin() + position)));
-            recv_buffer.erase(0, position + 2);
-            position = recv_buffer.find_first_of("\r\n", 0);
+            requests.push(
+                new Message(&client, buffers.request.substr(0, offset)));
+            buffers.request.erase(0, offset + 2);
         }
-
-        Logger().info() << "Receive Message(" << client.get_commands().size()
-                        << ") from " << client.get_names().nick;
-
-        if (client.get_commands().size())
-        {
-            m_handle_messages(client);
-            if (client.get_send_buffer().size())
-            {
-                m_update_event(event.ident, EVFILT_READ, EV_DISABLE, 0, 0,
-                               &client);
-                m_update_event(event.ident, EVFILT_WRITE, EV_ENABLE, 0, 0,
-                               &client);
-            }
-        }
+        if (requests.size())
+            m_requests_handler(requests);
+        if (buffers.to_client.size())
+            m_toggle_event(client, EVFILT_READ);
     }
-    else if (recv_data_len == 0)
+    else if (length == 0)
         m_disconnect_client(client, "connection closed");
 }
 
@@ -896,29 +801,16 @@ void
             if (send_buffer.size())
                 send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
-            m_update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
-            m_update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
+            m_set_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
+            m_set_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
         }
     }
 }
 
-Server::~Server()
+Server::Server(int port, char* password) : _password(password)
 {
-}
-
-Server::Server(int argc, char** argv) : m_kqueue(-1), m_fd(-1), m_port(-1)
-{
-    if (argc != 3)
-    {
-        Logger().error() << "Usage :" << argv[0] << " <port> <password>";
-        exit(EXIT_FAILURE);
-    }
-    m_port = atoi(argv[1]);
-    if (m_port < 0 || m_port > PORT_MAX)
-        Logger().error() << m_port << "is out of Port range (0 ~ 65535)";
-    m_password = argv[2];
-    Logger().info() << "Server start";
-    m_initialize_server();
+    Socket::m_initialize(port);
+    Event::m_create_kqueue(_fd);
 }
 
 // struct kevent {
@@ -939,16 +831,16 @@ void
     Logger().info() << "[Server is running]";
     while (true)
     {
-        count = kevent(m_kqueue, NULL, 0, m_events, EVENTS_MAX, NULL);
+        count = kevent(_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
         Logger().trace() << count << " new kevent";
         for (index = 0; index < count; ++index)
         {
-            if (m_events[index].ident == (unsigned)Server::m_fd)
+            if (_events[index].ident == (unsigned)Server::_fd)
                 Server::m_accept();
-            else if (m_events[index].filter == EVFILT_READ)
-                Server::m_receive(m_events[index]);
-            else if (m_events[index].filter == EVFILT_WRITE)
-                Server::m_send(m_events[index]);
+            else if (_events[index].filter == EVFILT_READ)
+                Server::m_receive(_events[index]);
+            else if (_events[index].filter == EVFILT_WRITE)
+                Server::m_send(_events[index]);
         }
     }
 }

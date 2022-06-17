@@ -72,6 +72,12 @@ void
 
 /* message class getter begin */
 
+Client&
+    Message::get_from()
+{
+    return *_from;
+}
+
 const std::string&
     Message::get_message() const
 {

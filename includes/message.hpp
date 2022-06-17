@@ -36,6 +36,7 @@ class Message
     const std::string&              get_command() const;
     const std::vector<std::string>& get_params() const;
     const bool&                     is_valid_message() const;
+    Client&                         get_from();
 
     std::string err_no_such_nick(const std::string& nickname);
     std::string err_no_such_channel(const std::string& channel_name);

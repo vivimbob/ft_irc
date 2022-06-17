@@ -31,12 +31,12 @@ int           len;
 timespec      timer = {2, 0};
 
 void
-    m_update_event(int     identity,
-                   short   filter,
-                   u_short flags,
-                   u_int   fflags,
-                   int     data,
-                   void*   udata)
+    m_set_event(int     identity,
+                short   filter,
+                u_short flags,
+                u_int   fflags,
+                int     data,
+                void*   udata)
 {
     struct kevent kev;
     EV_SET(&kev, identity, filter, flags, fflags, data, udata);
@@ -70,7 +70,7 @@ int
     }
     std::cerr << "connect with 127.0.0.1:" << sock.sin_port << "success"
               << std::endl;
-    m_update_event(fd, EVFILT_READ, EV_ADD, 0, 0, 0);
+    m_set_event(fd, EVFILT_READ, EV_ADD, 0, 0, 0);
     server_buffers.insert(std::make_pair(fd, ""));
     return (fd);
 }

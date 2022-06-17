@@ -1,24 +1,15 @@
-#ifndef ft_ircd_HPP
-#define ft_ircd_HPP
+#ifndef FT_IRCD_HPP
+#define FT_IRCD_HPP
 
-#define CHANNEL_USER_LIMIT 42
+#include "server.hpp"
+#include "socket.hpp"
 
-#define CLIENT_CAHNNEL_LIMIT 10
+class FT_IRCD : public
+{
+    int  _kqueue;
+    void m_create_kqueue();
 
-#define HOSTNAME   "localhost"
-#define SERVERNAME "ft_ircd"
+    Server server(int kqueue);
+};
 
-#define EVENTS_MAX 1024
-
-#define IPV4_MTU_MAX 65535
-#define IPV4_MTU_MIN 68
-
-#define NICK_LENGTH_MAX    9
-#define CHANNEL_LENGTH_MAX 50
-#define CHANNEL_PREFIX     '#'
-#define SPECIALCHAR        "[]\\`-^{|}"
-#define CHSTRING           " ,\r\n\7"
-
-#define PORT_MAX 65535
-
-#endif /* ft_ircd_HPP */
+#endif /* FT_IRCD_HPP */

@@ -1,9 +1,9 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "ft_ircd.hpp"
+#include "buffer.hpp"
 #include "message.hpp"
-#include "sendbuffer.hpp"
+#include "resources.hpp"
 #include "utils.hpp"
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -26,19 +26,17 @@ class Client
 
     typedef struct s_buffers
     {
-        Buffer request;
-        Buffer response;
+        std::string request;
+        Buffer      to_client;
     } t_buffers;
 
   private:
     sockaddr_in          _addr;
     int                  _fd;
-    Buffer               m_send_buffer;
-    std::string          m_recv_buffer;
     t_names              _names;
     t_buffers            _buffers;
-    std::queue<Message*> m_commands;
-    std::set<Channel*>   m_channel_list;
+    std::queue<Message*> _commands;
+    std::set<Channel*>   _joined_list;
 
     bool m_pass_registered;
     bool m_nick_registered;
@@ -52,7 +50,8 @@ class Client
     char*                     get_IP();
     const t_names&            get_names() const;
     std::queue<Message*>&     get_commands();
-    std::string&              get_recv_buffer();
+    t_buffers&                get_buffers();
+    std::string&              get_request_buffer();
     Buffer&                   get_send_buffer();
     const std::set<Channel*>& get_joined_list() const;
 

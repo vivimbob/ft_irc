@@ -92,7 +92,7 @@ void
 
     for (; user_it != user_ite; ++user_it)
         nick_queue.push(masked_nick(channel->is_operator(*user_it->first),
-                                    user_it->first->get_nickname(),
+                                    user_it->first->get_names().nick,
                                     client.is_already_joined(channel)));
 
     if (nick_queue.size())

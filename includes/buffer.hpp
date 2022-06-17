@@ -1,5 +1,5 @@
-#ifndef SENDBUFFER_HPP
-#define SENDBUFFER_HPP
+#ifndef BUFFER_HPP
+#define BUFFER_HPP
 
 #include <string>
 
@@ -15,9 +15,9 @@ class Buffer : public std::string
     Buffer();
     ~Buffer();
 
-    void         clear();
     unsigned int get_offset() const;
     void         set_offset(unsigned int offset);
+    void         clear();
 };
 
-#endif /* SENDBUFFER_HPP */
+#endif /* BUFFER_HPP */

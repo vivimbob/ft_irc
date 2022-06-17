@@ -1,6 +1,6 @@
-#include "../includes/sendbuffer.hpp"
+#include "../includes/buffer.hpp"
 
-/* sendbuffer class member function begin */
+/* buffer class member function begin */
 
 Buffer::Buffer() : _offset(0)
 {
@@ -29,4 +29,4 @@ void
     _offset = offset;
 }
 
-/* sendbuffer class member function end */
+/* buffer class member function end */

@@ -4,9 +4,9 @@
 
 /* client class constructor and destructor begin */
 
-Client::Client(sockaddr_in client_addr, int client_fd)
-    : _addr(client_addr),
-      _fd(client_fd),
+Client::Client(sockaddr_in addr, int fd)
+    : _addr(addr),
+      _fd(fd),
       m_pass_registered(false),
       m_nick_registered(false),
       m_user_registered(false)
@@ -15,10 +15,10 @@ Client::Client(sockaddr_in client_addr, int client_fd)
 
 Client::~Client()
 {
-    while (m_commands.size())
+    while (_commands.size())
     {
-        delete m_commands.front();
-        m_commands.pop();
+        delete _commands.front();
+        _commands.pop();
     }
 }
 
@@ -53,25 +53,31 @@ const Client::t_names&
 std::queue<Message*>&
     Client::get_commands()
 {
-    return m_commands;
+    return _commands;
 }
 
 std::string&
-    Client::get_recv_buffer()
+    Client::get_request_buffer()
 {
-    return m_recv_buffer;
+    return _buffers.request;
+}
+
+Client::t_buffers&
+    Client::get_buffers()
+{
+    return _buffers;
 }
 
 Buffer&
     Client::get_send_buffer()
 {
-    return m_send_buffer;
+    return _buffers.to_client;
 }
 
 const std::set<Channel*>&
     Client::get_joined_list() const
 {
-    return m_channel_list;
+    return _joined_list;
 }
 
 /* client class getter end */
@@ -135,13 +141,13 @@ bool
 bool
     Client::is_join_available() const
 {
-    return m_channel_list.size() < CHANNEL_USER_LIMIT;
+    return _joined_list.size() < CHANNEL_USER_LIMIT;
 }
 
 bool
     Client::is_already_joined(Channel* channel)
 {
-    return m_channel_list.count(channel);
+    return _joined_list.count(channel);
 }
 
 /* client class is_function end */
@@ -151,7 +157,7 @@ bool
 void
     Client::push_message(const std::string& message)
 {
-    m_send_buffer.append(message);
+    _buffers.to_client.append(message);
 }
 
 std::string
@@ -163,13 +169,13 @@ std::string
 void
     Client::insert_channel(Channel* channel)
 {
-    m_channel_list.insert(channel);
+    _joined_list.insert(channel);
 }
 
 void
     Client::erase_channel(Channel* channel)
 {
-    m_channel_list.erase(channel);
+    _joined_list.erase(channel);
 }
 
 /* client class other function end */
