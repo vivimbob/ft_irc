@@ -23,7 +23,7 @@ void
         return;
     client.set_password_flag();
     if (client.is_registered() &&
-        !_ft_ircd->_ft_ircd->_client_map.count(client.get_names().nick))
+        !_ft_ircd->_ft_ircd->_map.client.count(client.get_names().nick))
         _ft_ircd->m_regist(client, msg);
 }
 
@@ -42,7 +42,7 @@ void
                     msg.err_erroneus_nickname(nickname)))
         return;
 
-    if (_ft_ircd->_client_map.count(nickname))
+    if (_ft_ircd->_map.client.count(nickname))
     {
         if (nickname != client.get_names().nick)
             utils::push_message(client, msg.err_nickname_in_use(nickname));
@@ -54,10 +54,10 @@ void
         _ft_ircd->m_send_to_channel(client, msg.build_nick_reply(nickname),
                                     &client);
         utils::push_message(client, msg.build_nick_reply(nickname));
-        if (_ft_ircd->_client_map.count(client.get_names().nick))
+        if (_ft_ircd->_map.client.count(client.get_names().nick))
         {
-            _ft_ircd->_client_map.erase(client.get_names().nick);
-            _ft_ircd->_client_map[nickname] = &client;
+            _ft_ircd->_map.client.erase(client.get_names().nick);
+            _ft_ircd->_map.client[nickname] = &client;
         }
     }
 
@@ -65,7 +65,7 @@ void
     client.set_nickname(nickname);
 
     if (client.is_registered() &&
-        !_ft_ircd->_client_map.count(client.get_names().nick))
+        !_ft_ircd->_map.client.count(client.get_names().nick))
         _ft_ircd->m_regist(client, msg);
 }
 
@@ -85,7 +85,7 @@ void
     client.set_username(msg.get_params()[0]);
     client.set_realname(msg.get_params()[3]);
     if (client.is_registered() &&
-        !_ft_ircd->_client_map.count(client.get_names().nick))
+        !_ft_ircd->_map.client.count(client.get_names().nick))
         _ft_ircd->m_regist(client, msg);
 }
 
@@ -123,10 +123,10 @@ void
         if (check_error(!client.is_join_available(), client,
                         msg.err_too_many_channels(channel_name)))
             continue;
-        if (!_ft_ircd->_channel_map.count(channel_name))
-            _ft_ircd->_channel_map.insert(
+        if (!_ft_ircd->_map.channel.count(channel_name))
+            _ft_ircd->_map.channel.insert(
                 std::make_pair(channel_name, new Channel(channel_name)));
-        Channel* channel = _ft_ircd->_channel_map[channel_name];
+        Channel* channel = _ft_ircd->_map.channel[channel_name];
         if (client.is_already_joined(channel))
             continue;
         else if (check_error(channel->is_full(), client,
@@ -150,10 +150,10 @@ void
 {
     Client& client = msg.get_from();
 
-    if (check_error(!_ft_ircd->_channel_map.count(channel_name), client,
+    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
                     msg.err_no_such_channel(channel_name)))
         return;
-    Channel* channel = _ft_ircd->_channel_map.at(channel_name);
+    Channel* channel = _ft_ircd->_map.channel.at(channel_name);
     if (check_error(msg.get_params().size() == 1, client,
                     msg.rpl_channel_mode_is(channel_name)))
         return;
@@ -169,7 +169,7 @@ void
 {
     Client& client = msg.get_from();
 
-    if (check_error(!_ft_ircd->_client_map.count(nickname), client,
+    if (check_error(!_ft_ircd->_map.client.count(nickname), client,
                     msg.err_no_such_nick(nickname)))
         return;
 
@@ -214,14 +214,14 @@ void
     const std::string& nickname     = msg.get_params()[0];
     const std::string& channel_name = msg.get_params()[1];
 
-    if (check_error(!_ft_ircd->_client_map.count(nickname), client,
+    if (check_error(!_ft_ircd->_map.client.count(nickname), client,
                     msg.err_no_such_nick(nickname)))
         return;
-    Client* target_client = _ft_ircd->_client_map[nickname];
-    if (check_error(!_ft_ircd->_channel_map.count(channel_name), client,
+    Client* target_client = _ft_ircd->_map.client[nickname];
+    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
                     msg.err_no_such_channel(channel_name)))
         return;
-    Channel* channel = _ft_ircd->_channel_map[channel_name];
+    Channel* channel = _ft_ircd->_map.channel[channel_name];
     if (check_error(!client.is_already_joined(channel), client,
                     msg.err_not_on_channel(channel_name)))
         return;
@@ -263,17 +263,17 @@ void
          i < max_size; ++i)
     {
         if (check_error((!utils::is_channel_prefix(*channel_name) ||
-                         !_ft_ircd->_channel_map.count(*channel_name)),
+                         !_ft_ircd->_map.channel.count(*channel_name)),
                         client, msg.err_no_such_channel(*channel_name)))
             goto next;
-        channel = _ft_ircd->_channel_map[*channel_name];
+        channel = _ft_ircd->_map.channel[*channel_name];
         if (check_error(!channel->is_operator(client), client,
                         msg.err_chanoprivs_needed(*channel_name)))
             goto next;
-        if (check_error(!_ft_ircd->_client_map.count(*nick_name), client,
+        if (check_error(!_ft_ircd->_map.client.count(*nick_name), client,
                         msg.err_no_such_nick(*nick_name)))
             goto next;
-        target_client = _ft_ircd->_client_map[*nick_name];
+        target_client = _ft_ircd->_map.client[*nick_name];
         if (check_error(!channel->is_joined(target_client), client,
                         msg.err_user_not_in_channel(*nick_name, *channel_name)))
             goto next;
@@ -284,7 +284,7 @@ void
         target_client->erase_channel(channel);
         if (channel->is_empty())
         {
-            _ft_ircd->_channel_map.erase(*channel_name);
+            _ft_ircd->_map.channel.erase(*channel_name);
             delete channel;
         }
     next:
@@ -304,12 +304,12 @@ void
     if (msg.get_params().empty())
     {
         FT_IRCD::ChannelMap::const_iterator channel_it =
-            _ft_ircd->_channel_map.begin();
-        for (; channel_it != _ft_ircd->_channel_map.end(); ++channel_it)
+            _ft_ircd->_map.channel.begin();
+        for (; channel_it != _ft_ircd->_map.channel.end(); ++channel_it)
             utils::send_name_reply(channel_it->second, client, msg);
         FT_IRCD::ClientMap::const_iterator client_it =
-            _ft_ircd->_client_map.begin();
-        for (; client_it != _ft_ircd->_client_map.end(); ++client_it)
+            _ft_ircd->_map.client.begin();
+        for (; client_it != _ft_ircd->_map.client.end(); ++client_it)
             if (client_it->second->get_joined_list().empty())
                 nick_queue.push(client_it->first);
         if (nick_queue.size())
@@ -323,10 +323,10 @@ void
         utils::split_by_comma(channel_list, msg.get_params()[0]);
         for (int i = 0, size = channel_list.size(); i < size; ++i)
         {
-            if (check_error(!_ft_ircd->_channel_map.count(channel_list[i]),
+            if (check_error(!_ft_ircd->_map.channel.count(channel_list[i]),
                             client, msg.rpl_endofnames(channel_list[i])))
                 continue;
-            utils::send_name_reply(_ft_ircd->_channel_map[channel_list[i]],
+            utils::send_name_reply(_ft_ircd->_map.channel[channel_list[i]],
                                    client, msg);
         }
     }
@@ -349,8 +349,8 @@ void
     if (msg.get_params().empty())
     {
         FT_IRCD::ChannelMap::const_iterator channel_it =
-            _ft_ircd->_channel_map.begin();
-        for (; channel_it != _ft_ircd->_channel_map.end(); ++channel_it)
+            _ft_ircd->_map.channel.begin();
+        for (; channel_it != _ft_ircd->_map.channel.end(); ++channel_it)
             send_list_to_client(channel_it->second, client, msg);
     }
 
@@ -361,8 +361,8 @@ void
 
         ConstStringVector::iterator channel_it = channel_list.begin();
         for (; channel_it != channel_list.end(); ++channel_it)
-            if (_ft_ircd->_channel_map.count(*channel_it))
-                send_list_to_client(_ft_ircd->_channel_map[*channel_it], client,
+            if (_ft_ircd->_map.channel.count(*channel_it))
+                send_list_to_client(_ft_ircd->_map.channel[*channel_it], client,
                                     msg);
             else
                 utils::push_message(client,
@@ -384,10 +384,10 @@ void
     ConstStringVector::iterator channel_it = channel_list.begin();
     for (; channel_it != channel_list.end(); ++channel_it)
     {
-        if (check_error(!_ft_ircd->_channel_map.count(*channel_it), client,
+        if (check_error(!_ft_ircd->_map.channel.count(*channel_it), client,
                         msg.err_no_such_channel(*channel_it)))
             continue;
-        Channel* channel = _ft_ircd->_channel_map[*channel_it];
+        Channel* channel = _ft_ircd->_map.channel[*channel_it];
         if (check_error(!channel->is_joined(&client), client,
                         msg.err_not_on_channel(*channel_it)))
             continue;
@@ -396,7 +396,7 @@ void
         client.erase_channel(channel);
         if (channel->is_empty())
         {
-            _ft_ircd->_channel_map.erase(channel->get_name());
+            _ft_ircd->_map.channel.erase(channel->get_name());
             delete channel;
         }
         Logger().debug() << "Remove [" << client.get_names().nick
@@ -414,10 +414,10 @@ void
                     msg.err_need_more_params()))
         return;
     const std::string& channel_name = msg.get_params()[0];
-    if (check_error(!_ft_ircd->_channel_map.count(channel_name), client,
+    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
                     msg.err_no_such_channel(channel_name)))
         return;
-    Channel* channel = _ft_ircd->_channel_map[channel_name];
+    Channel* channel = _ft_ircd->_map.channel[channel_name];
     if (check_error(!channel->is_joined(&client), client,
                     msg.err_not_on_channel(channel_name)))
         return;
@@ -456,15 +456,15 @@ void
     {
         if (utils::is_channel_prefix(*target_it))
         {
-            if (check_error(!_ft_ircd->_channel_map.count(*target_it), client,
+            if (check_error(!_ft_ircd->_map.channel.count(*target_it), client,
                             msg.err_no_such_channel(*target_it)))
                 continue;
-            _ft_ircd->m_send_to_channel(_ft_ircd->_channel_map[*target_it],
+            _ft_ircd->m_send_to_channel(_ft_ircd->_map.channel[*target_it],
                                         msg.build_message_reply(*target_it),
                                         &client);
         }
-        else if (_ft_ircd->_client_map.count(*target_it))
-            _ft_ircd->m_prepare_to_send(*_ft_ircd->_client_map[*target_it],
+        else if (_ft_ircd->_map.client.count(*target_it))
+            _ft_ircd->m_prepare_to_send(*_ft_ircd->_map.client[*target_it],
                                         msg.build_message_reply(*target_it));
         else if (msg.get_command() != "NOTICE")
             utils::push_message(client, msg.err_no_such_nick(*target_it));
