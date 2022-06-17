@@ -16,7 +16,7 @@ class Message
     std::vector<std::string> m_parameters;
     bool                     m_valid_message;
     size_t                   m_position;
-    Client*                  m_client;
+    Client*                  _from;
 
     Message();
     Message(const Message& copy);

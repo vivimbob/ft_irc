@@ -3,17 +3,17 @@
 
 #include <string>
 
-class SendBuffer : public std::string
+class Buffer : public std::string
 {
   private:
-    unsigned int m_offset;
+    unsigned int _offset;
 
-    SendBuffer(const SendBuffer& copy);
-    SendBuffer& operator=(const SendBuffer& copy);
+    Buffer(const Buffer& copy);
+    Buffer& operator=(const Buffer& copy);
 
   public:
-    SendBuffer();
-    ~SendBuffer();
+    Buffer();
+    ~Buffer();
 
     void         clear();
     unsigned int get_offset() const;

@@ -2,31 +2,31 @@
 
 /* sendbuffer class member function begin */
 
-SendBuffer::SendBuffer() : m_offset(0)
+Buffer::Buffer() : _offset(0)
 {
 }
 
-SendBuffer::~SendBuffer()
+Buffer::~Buffer()
 {
 }
 
 void
-    SendBuffer::clear()
+    Buffer::clear()
 {
     this->std::string::clear();
-    m_offset = 0;
+    _offset = 0;
 }
 
 unsigned int
-    SendBuffer::get_offset() const
+    Buffer::get_offset() const
 {
-    return m_offset;
+    return _offset;
 }
 
 void
-    SendBuffer::set_offset(unsigned int offset)
+    Buffer::set_offset(unsigned int offset)
 {
-    m_offset = offset;
+    _offset = offset;
 }
 
 /* sendbuffer class member function end */

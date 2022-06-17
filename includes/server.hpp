@@ -3,7 +3,7 @@
 
 #include "channel.hpp"
 #include "client.hpp"
-#include "ft_irc.hpp"
+#include "ft_ircd.hpp"
 #include "sendbuffer.hpp"
 #include "utils.hpp"
 #include <arpa/inet.h>

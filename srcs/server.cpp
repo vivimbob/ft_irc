@@ -45,8 +45,7 @@ void
     const Channel::MemberMap&          user_list = channel->get_user_list();
     Channel::MemberMap::const_iterator user      = user_list.begin();
 
-    Logger().trace() << "send message to channel :"
-                     << channel->get_channel_name();
+    Logger().trace() << "send message to channel :" << channel->get_name();
     for (; user != user_list.end(); ++user)
         if (user->first != exclusion)
             m_prepare_to_send(*user->first, msg);
@@ -57,8 +56,8 @@ void
                               const std::string& msg,
                               Client*            exclusion)
 {
-    std::set<Channel*>::iterator it = client.get_channel_list().begin();
-    for (; it != client.get_channel_list().end(); ++it)
+    std::set<Channel*>::iterator it = client.get_joined_list().begin();
+    for (; it != client.get_joined_list().end(); ++it)
         m_send_to_channel(*it, msg, exclusion);
 }
 
@@ -125,7 +124,7 @@ void
                      msg.err_passwd_mismatch())))
         return;
     client.set_password_flag();
-    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_names().nick))
         m_register_client(client, msg);
 }
 
@@ -145,7 +144,7 @@ void
 
     if (m_client_map.count(nickname))
     {
-        if (nickname != client.get_nickname())
+        if (nickname != client.get_names().nick)
             utils::push_message(client, msg.err_nickname_in_use(nickname));
         return;
     }
@@ -154,18 +153,17 @@ void
     {
         m_send_to_channel(client, msg.build_nick_reply(nickname), &client);
         utils::push_message(client, msg.build_nick_reply(nickname));
-        if (m_client_map.count(client.get_nickname()))
+        if (m_client_map.count(client.get_names().nick))
         {
-            m_client_map.erase(client.get_nickname());
+            m_client_map.erase(client.get_names().nick);
             m_client_map[nickname] = &client;
         }
     }
 
-    Logger().debug() << client.get_client_IP() << " change nick to "
-                     << nickname;
+    Logger().debug() << client.get_IP() << " change nick to " << nickname;
     client.set_nickname(nickname);
 
-    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_names().nick))
         m_register_client(client, msg);
 }
 
@@ -182,7 +180,7 @@ void
 
     client.set_username(msg.get_params()[0]);
     client.set_realname(msg.get_params()[3]);
-    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_names().nick))
         m_register_client(client, msg);
 }
 
@@ -230,7 +228,7 @@ void
         if (channel->is_empty())
             channel->set_operator_flag(true, &client);
         Logger().info() << "Create new channel :" << channel_name << " : @"
-                        << client.get_nickname();
+                        << client.get_names().nick;
         m_send_to_channel(channel, msg.build_join_reply(channel_name));
         utils::send_topic_reply(channel, client, msg);
         utils::send_name_reply(channel, client, msg);
@@ -265,7 +263,7 @@ void
                     msg.err_no_such_nick(nickname)))
         return;
 
-    if (check_error(nickname != client.get_nickname(), client,
+    if (check_error(nickname != client.get_names().nick, client,
                     msg.err_users_dont_match(
                         msg.get_params().size() == 1 ? "view" : "change")))
         return;
@@ -374,7 +372,7 @@ void
 
             m_send_to_channel(channel,
                               msg.build_kick_reply(channel_name, nick,
-                                                   client.get_nickname()));
+                                                   client.get_names().nick));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }
@@ -410,7 +408,7 @@ void
 
             m_send_to_channel(channel,
                               msg.build_kick_reply(channel_name, nick,
-                                                   client.get_nickname()));
+                                                   client.get_names().nick));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }
@@ -452,7 +450,7 @@ void
                 continue;
             m_send_to_channel(channel,
                               msg.build_kick_reply(channel_name, nick,
-                                                   client.get_nickname()));
+                                                   client.get_names().nick));
             channel->delete_user(*target_client);
             target_client->erase_channel(channel);
         }
@@ -472,7 +470,7 @@ void
         // 클라이언트가 어느 채널에도 속하지 않을 때
         ClientMap::const_iterator client_it = m_client_map.begin();
         for (; client_it != m_client_map.end(); ++client_it)
-            if (client_it->second->get_channel_list().empty())
+            if (client_it->second->get_joined_list().empty())
                 nick_queue.push(client_it->first);
 
         if (nick_queue.size())
@@ -501,9 +499,9 @@ void
     send_list_to_client(Channel* channel, Client& client, Message& msg)
 {
     utils::push_message(
-        client, msg.rpl_list(channel->get_channel_name(),
+        client, msg.rpl_list(channel->get_name(),
                              std::to_string(channel->get_user_list().size()),
-                             channel->get_channel_topic()));
+                             channel->get_topic()));
 }
 
 void
@@ -558,10 +556,10 @@ void
         channel->delete_user(client);
         client.erase_channel(channel);
         if (channel->is_empty())
-            m_channel_map.erase(channel->get_channel_name());
+            m_channel_map.erase(channel->get_name());
         delete channel;
-        Logger().debug() << "Remove [" << client.get_nickname()
-                         << "] client from [" << channel->get_channel_name()
+        Logger().debug() << "Remove [" << client.get_names().nick
+                         << "] client from [" << channel->get_name()
                          << "] channel";
     }
 }
@@ -596,10 +594,10 @@ void
     if (check_error(!channel->is_operator(client), client,
                     msg.err_chanoprivs_needed(channel_name)))
         return;
-    channel->set_channel_topic(msg.get_params()[1]);
+    channel->set_topic(msg.get_params()[1]);
 
     Logger().trace() << channel_name << " channel topic change to "
-                     << channel->get_channel_topic();
+                     << channel->get_topic();
 
     m_send_to_channel(channel, msg.build_topic_reply());
 }
@@ -760,7 +758,7 @@ void
     while (client.get_commands().size())
     {
         Message* message = client.get_commands().front();
-        Logger().debug() << client.get_nickname() << " send ["
+        Logger().debug() << client.get_names().nick << " send ["
                          << message->get_message() << ']';
         client.get_commands().pop();
         message->parse_message();
@@ -787,16 +785,15 @@ void
 {
     const unsigned int& clientfd = client.get_socket();
 
-    Logger().info() << "Client disconnect [address :" << client.get_client_IP()
-                    << ':' << client.get_client_addr().sin_port
-                    << " FD :" << clientfd << ']';
+    Logger().info() << "Client disconnect [address :" << client.get_IP() << ':'
+                    << client.get_addr().sin_port << " FD :" << clientfd << ']';
 
     m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
     std::set<Client*>            client_check_list;
-    std::set<Channel*>::iterator it = client.get_channel_list().begin();
-    for (; it != client.get_channel_list().end(); ++it)
+    std::set<Channel*>::iterator it = client.get_joined_list().begin();
+    for (; it != client.get_joined_list().end(); ++it)
     {
         const Channel::MemberMap&          user_list = (*it)->get_user_list();
         Channel::MemberMap::const_iterator user      = user_list.begin();
@@ -810,19 +807,19 @@ void
                     Message(&client, "QUIT").build_quit_reply(reason));
             }
     }
-    std::set<Channel*>::iterator channel_it = client.get_channel_list().begin();
-    std::set<Channel*>::iterator channel_ite = client.get_channel_list().end();
+    std::set<Channel*>::iterator channel_it  = client.get_joined_list().begin();
+    std::set<Channel*>::iterator channel_ite = client.get_joined_list().end();
 
     for (; channel_it != channel_ite; ++channel_it)
     {
         (*channel_it)->delete_user(client);
         if ((*channel_it)->is_empty())
         {
-            m_channel_map.erase((*channel_it)->get_channel_name());
+            m_channel_map.erase((*channel_it)->get_name());
             delete (*channel_it);
         }
     }
-    m_client_map.erase(client.get_nickname());
+    m_client_map.erase(client.get_names().nick);
     delete &client;
     close(clientfd);
 }
@@ -830,9 +827,9 @@ void
 void
     Server::m_register_client(Client& client, Message& msg)
 {
-    m_client_map[client.get_nickname()] = &client;
+    m_client_map[client.get_names().nick] = &client;
     utils::push_message(client, msg.rpl_welcome());
-    Logger().info() << client.get_nickname() << " is registered to server";
+    Logger().info() << client.get_names().nick << " is registered to server";
 }
 
 void
@@ -858,7 +855,7 @@ void
         }
 
         Logger().info() << "Receive Message(" << client.get_commands().size()
-                        << ") from " << client.get_nickname();
+                        << ") from " << client.get_names().nick;
 
         if (client.get_commands().size())
         {
@@ -879,15 +876,10 @@ void
 void
     Server::m_send(struct kevent& event)
 {
-    Client&     client          = (Client&)event.udata;
-    SendBuffer& send_buffer     = client.get_send_buffer();
-    int         remain_data_len = send_buffer.size() - send_buffer.get_offset();
+    Client& client          = (Client&)event.udata;
+    Buffer& send_buffer     = client.get_send_buffer();
+    int     remain_data_len = send_buffer.size() - send_buffer.get_offset();
     const unsigned int& clientfd = client.get_socket();
-
-    if (event.data > IPV4_MTU_MAX)
-        event.data = IPV4_MTU_MAX;
-    else if (event.data == 0)
-        event.data = IPV4_MTU_MIN;
 
     ssize_t send_data_len =
         send(clientfd, send_buffer.data() + send_buffer.get_offset(),
@@ -895,7 +887,7 @@ void
 
     if (send_data_len >= 0)
     {
-        Logger().info() << "Server send to " << client.get_nickname();
+        Logger().info() << "Server send to " << client.get_names().nick;
         send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
         Logger().trace() << "Send " << send_data_len << " bytes from ["
                          << clientfd << "] client";

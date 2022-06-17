@@ -8,7 +8,7 @@ Message::Message(Client* client, const std::string& message)
     : m_message(message),
       m_valid_message(true),
       m_position(0),
-      m_client(client)
+      _from(client)
 {
 }
 
@@ -113,18 +113,16 @@ const bool&
 std::string
     Message::reply_servername_prefix(std::string numeric_reply)
 {
-    std::string msg;
-    msg = msg + ":ft_irc " + numeric_reply + " " + m_client->get_nickname();
-    if (m_client->get_nickname().empty())
-        msg += "*";
-    return msg;
+    std::string nick = _from->get_names().nick;
+
+    return (":ft_ircd " + numeric_reply + " " + (nick.empty() ? "*" : nick));
 }
 
 std::string
     Message::reply_nickmask_prefix(std::string command)
 {
     std::string msg;
-    msg = msg + ":" + m_client->make_nickmask() + " " + command;
+    msg = msg + ":" + _from->make_nickmask() + " " + command;
     return msg;
 }
 
@@ -359,7 +357,7 @@ std::string
     Message::rpl_welcome()
 {
     return reply_servername_prefix("001") +
-           " Welcome to Internet Relay Network\n" + m_client->make_nickmask() +
+           " Welcome to Internet Relay Network\n" + _from->make_nickmask() +
            "\r\n";
 }
 
@@ -377,7 +375,7 @@ std::string
     if (m_parameters.size() == 2)
         param = m_parameters[1];
     else
-        param = m_client->get_nickname();
+        param = _from->get_names().nick;
     return reply_nickmask_prefix(m_command) + " " + channel + " :" + param +
            "\r\n";
 }

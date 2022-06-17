@@ -19,7 +19,7 @@
 int                        kq;
 std::map<int, std::string> server_buffers;
 #define SIZE_EVENTS 1024
-std::string   server_names[3] = {" ft_irc", " miniircd", " ergo"};
+std::string   server_names[3] = {" ft_ircd", " miniircd", " ergo"};
 std::string   server_trims[3];
 struct kevent events[SIZE_EVENTS];
 std::string   buffer;

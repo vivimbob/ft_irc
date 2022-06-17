@@ -1,14 +1,12 @@
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
-#include "../includes/ft_irc.hpp"
+#include "../includes/ft_ircd.hpp"
 
 /* client class constructor and destructor begin */
 
 Client::Client(sockaddr_in client_addr, int client_fd)
-    : m_client_addr(client_addr),
-      m_client_fd(client_fd),
-      m_hostname(HOSTNAME),
-      m_servername(SERVERNAME),
+    : _addr(client_addr),
+      _fd(client_fd),
       m_pass_registered(false),
       m_nick_registered(false),
       m_user_registered(false)
@@ -29,39 +27,27 @@ Client::~Client()
 /* client class getter begin */
 
 sockaddr_in
-    Client::get_client_addr()
+    Client::get_addr()
 {
-    return m_client_addr;
+    return _addr;
 }
 
 int
     Client::get_socket()
 {
-    return m_client_fd;
+    return _fd;
 }
 
 char*
-    Client::get_client_IP()
+    Client::get_IP()
 {
-    return inet_ntoa(m_client_addr.sin_addr);
+    return inet_ntoa(_addr.sin_addr);
 }
 
-const std::string&
-    Client::get_nickname() const
+const Client::t_names&
+    Client::get_names() const
 {
-    return m_nickname;
-}
-
-const std::string&
-    Client::get_username() const
-{
-    return m_username;
-}
-
-const std::string&
-    Client::get_hostname() const
-{
-    return m_hostname;
+    return _names;
 }
 
 std::queue<Message*>&
@@ -76,14 +62,14 @@ std::string&
     return m_recv_buffer;
 }
 
-SendBuffer&
+Buffer&
     Client::get_send_buffer()
 {
     return m_send_buffer;
 }
 
 const std::set<Channel*>&
-    Client::get_channel_list() const
+    Client::get_joined_list() const
 {
     return m_channel_list;
 }
@@ -95,21 +81,21 @@ const std::set<Channel*>&
 void
     Client::set_nickname(const std::string& nickname)
 {
-    m_nickname        = nickname;
+    _names.nick       = nickname;
     m_nick_registered = true;
 }
 
 void
     Client::set_username(const std::string& username)
 {
-    m_username        = username;
+    _names.user       = username;
     m_user_registered = true;
 }
 
 void
     Client::set_realname(const std::string& realname)
 {
-    m_realname = realname;
+    _names.real = realname;
 }
 
 void
@@ -171,7 +157,7 @@ void
 std::string
     Client::make_nickmask()
 {
-    return m_nickname + '!' + m_username + '@' + m_hostname;
+    return _names.nick + '!' + _names.user + '@' + _names.host;
 }
 
 void

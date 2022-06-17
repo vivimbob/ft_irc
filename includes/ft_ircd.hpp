@@ -1,12 +1,12 @@
-#ifndef FT_IRC_HPP
-#define FT_IRC_HPP
+#ifndef ft_ircd_HPP
+#define ft_ircd_HPP
 
 #define CHANNEL_USER_LIMIT 42
 
 #define CLIENT_CAHNNEL_LIMIT 10
 
 #define HOSTNAME   "localhost"
-#define SERVERNAME "ft_irc"
+#define SERVERNAME "ft_ircd"
 
 #define EVENTS_MAX 1024
 
@@ -21,4 +21,4 @@
 
 #define PORT_MAX 65535
 
-#endif /* FT_IRC_HPP */
+#endif /* ft_ircd_HPP */

@@ -1,12 +1,12 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "sendbuffer.hpp"
+#include "ft_ircd.hpp"
 #include "message.hpp"
-#include "ft_irc.hpp"
+#include "sendbuffer.hpp"
 #include "utils.hpp"
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <queue>
 #include <set>
 
@@ -14,16 +14,29 @@ class Channel;
 
 class Client
 {
+  public:
+    typedef struct s_names
+    {
+        std::string nick;
+        std::string user;
+        std::string host;
+        std::string server;
+        std::string real;
+    } t_names;
+
+    typedef struct s_buffers
+    {
+        Buffer request;
+        Buffer response;
+    } t_buffers;
+
   private:
-    sockaddr_in          m_client_addr;
-    int                  m_client_fd;
-    SendBuffer           m_send_buffer;
+    sockaddr_in          _addr;
+    int                  _fd;
+    Buffer               m_send_buffer;
     std::string          m_recv_buffer;
-    std::string          m_nickname;
-    std::string          m_username;
-    const std::string    m_hostname;
-    const std::string    m_servername;
-    std::string          m_realname;
+    t_names              _names;
+    t_buffers            _buffers;
     std::queue<Message*> m_commands;
     std::set<Channel*>   m_channel_list;
 
@@ -34,17 +47,14 @@ class Client
   public:
     Client(sockaddr_in client_addr, int client_fd);
     ~Client();
-    sockaddr_in               get_client_addr();
+    sockaddr_in               get_addr();
     int                       get_socket();
-    char*                     get_client_IP();
-    const std::string&        get_nickname() const;
-    const std::string&        get_username() const;
-    const std::string&        get_hostname() const;
-    const std::string&        get_realname() const;
+    char*                     get_IP();
+    const t_names&            get_names() const;
     std::queue<Message*>&     get_commands();
     std::string&              get_recv_buffer();
-    SendBuffer&               get_send_buffer();
-    const std::set<Channel*>& get_channel_list() const;
+    Buffer&                   get_send_buffer();
+    const std::set<Channel*>& get_joined_list() const;
 
     void set_nickname(const std::string& nickname);
     void set_username(const std::string& username);

@@ -1,9 +1,9 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
+#include "ft_ircd.hpp"
 #include "membership.hpp"
 #include "message.hpp"
-#include "ft_irc.hpp"
 #include <ctime>
 #include <map>
 #include <set>
@@ -18,9 +18,9 @@ class Channel
     typedef std::map<Client*, MemberShip> MemberMap;
 
   private:
-    std::string         m_channel_name;
-    MemberMap           m_member_list;
-    std::string         m_channel_topic;
+    std::string _name;
+    std::string _topic;
+    MemberMap   _member_list;
 
     Channel();
     Channel(const Channel& cp);
@@ -30,12 +30,12 @@ class Channel
     Channel(const std::string& name);
     ~Channel();
 
-    const std::string& get_channel_name() const;
-    const std::string& get_channel_topic() const;
+    const std::string& get_name() const;
+    const std::string& get_topic() const;
     const MemberMap&   get_user_list();
 
-    void set_channel_name(const std::string& name);
-    void set_channel_topic(const std::string& topic);
+    void set_name(const std::string& name);
+    void set_topic(const std::string& topic);
     void set_operator_flag(bool toggle, Client* client);
 
     bool is_empty();
