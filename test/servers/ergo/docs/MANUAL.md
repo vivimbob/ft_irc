@@ -1,8 +1,8 @@
-         __ __  ______ ___  ______ ___ 
+         __ __  ______ ___  ______ ___
       __/ // /_/ ____/ __ \/ ____/ __ \
      /_  // __/ __/ / /_/ / / __/ / / /
-    /_  // __/ /___/ _, _/ /_/ / /_/ / 
-     /_//_/ /_____/_/ |_|\____/\____/  
+    /_  // __/ /___/ _, _/ /_/ / /_/ /
+     /_//_/ /_____/_/ |_|\____/\____/
 
              Ergo IRCd Manual
             https://ergo.chat/
@@ -464,7 +464,7 @@ Ergo shares some server operator moderation tools with other ircds. In particula
 1. `/SAMODE` can be used to grant or remove channel privileges. For example, to create an operator in a channel that has no operators: `/SAMODE #channel +o nickname`
 2. `/SAJOIN` lets operators join channels despite restrictions, or forcibly join another user to a channel. For example, `/SAJOIN #channel` or `/SAJOIN nickname #channel`.
 
-However, Ergo's multiclient and always-on features mean that abuse prevention (at the server operator level) requires different techniques than a traditional IRC network. Server operators have two principal tools for abuse prevention:
+However, Ergo's multiclient and always-on features mean that abuse prevention (at the server operator level) requires different techniques than a traditional IRC network. FT_IRC operators have two principal tools for abuse prevention:
 
 1. `/UBAN`, which can disable user accounts and/or ban offending IPs and networks
 2. `/DEFCON`, which can impose emergency restrictions on user activity in response to attacks
@@ -621,7 +621,7 @@ Client certificates are not supported over websockets due to a [Chrome bug](http
 
 ## SNI
 
-Ergo supports [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication); this is useful if you have multiple domain names for your server, with different certificates covering different domain names. Configure your TLS listener like this:
+Ergo supports [SNI](https://en.wikipedia.org/wiki/FT_IRC_Name_Indication); this is useful if you have multiple domain names for your server, with different certificates covering different domain names. Configure your TLS listener like this:
 
 ```yaml
         ":6697":
@@ -674,7 +674,7 @@ To unset this mode and let anyone speak to you:
 
     /mode dan -R
 
-### +s - Server Notice Masks ("snomasks")
+### +s - FT_IRC Notice Masks ("snomasks")
 
 This is a special 'list mode'. If you're an IRC operator, this mode lets you see special server notices that get sent out. See `/helpop snomasks` (as an operator) for more information on this mode.
 
@@ -1089,7 +1089,7 @@ HiddenServicePort 6667 unix:/hidden_service_sockets/ergo_tor_sock
 
 Instructions on how client software should connect to an .onion address are outside the scope of this manual. However:
 
-1. [Hexchat](https://hexchat.github.io/) is known to support .onion addresses, once it has been configured to use a local Tor daemon as a SOCKS proxy (Settings -> Preferences -> Network Setup -> Proxy Server).
+1. [Hexchat](https://hexchat.github.io/) is known to support .onion addresses, once it has been configured to use a local Tor daemon as a SOCKS proxy (Settings -> Preferences -> Network Setup -> Proxy FT_IRC).
 1. Pidgin should work with [torsocks](https://trac.torproject.org/projects/tor/wiki/doc/torsocks).
 
 
@@ -1097,7 +1097,7 @@ Instructions on how client software should connect to an .onion address are outs
 
 ZNC 1.6.x (still pretty common in distros that package old versions of IRC software) has a [bug](https://github.com/znc/znc/issues/1212) where it fails to recognize certain SASL messages. Ergo supports a compatibility mode that works around this to let ZNC complete the SASL handshake: this can be enabled with `server.compatibility.send-unprefixed-sasl`.
 
-Ergo can emulate certain capabilities of the ZNC bouncer for the benefit of clients, in particular the third-party [playback](https://wiki.znc.in/Playback) module. This enables clients with specific support for ZNC to receive selective history playback automatically. To configure this in [Textual](https://www.codeux.com/textual/), go to "Server properties", select "Vendor specific", uncheck "Do not automatically join channels on connect", and check "Only play back messages you missed". Other clients with support are listed on ZNC's wiki page.
+Ergo can emulate certain capabilities of the ZNC bouncer for the benefit of clients, in particular the third-party [playback](https://wiki.znc.in/Playback) module. This enables clients with specific support for ZNC to receive selective history playback automatically. To configure this in [Textual](https://www.codeux.com/textual/), go to "FT_IRC properties", select "Vendor specific", uncheck "Do not automatically join channels on connect", and check "Only play back messages you missed". Other clients with support are listed on ZNC's wiki page.
 
 ## External authentication systems
 

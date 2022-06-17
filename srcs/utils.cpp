@@ -85,10 +85,8 @@ void
 {
     std::queue<const std::string> nick_queue;
 
-    Channel::MemberMap::const_iterator user_it =
-        channel->get_user_list().begin();
-    Channel::MemberMap::const_iterator user_ite =
-        channel->get_user_list().end();
+    Channel::MemberMap::const_iterator user_it  = channel->get_users().begin();
+    Channel::MemberMap::const_iterator user_ite = channel->get_users().end();
 
     for (; user_it != user_ite; ++user_it)
         nick_queue.push(masked_nick(channel->is_operator(*user_it->first),
