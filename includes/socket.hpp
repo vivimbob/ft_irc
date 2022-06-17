@@ -9,6 +9,14 @@
 
 class Socket
 {
+  public:
+    typedef struct s_socket
+    {
+        int         fd;
+        sockaddr_in addr;
+        socklen_t   len;
+    } t_socket;
+
   private:
     void m_create();
     void m_bind(int port);
@@ -17,12 +25,10 @@ class Socket
     Socket& operator=(const Socket& copy);
 
   protected:
+    t_socket _socket;
     Socket();
     ~Socket();
-    void        m_initialize(int port);
-    int         _fd;
-    sockaddr_in _sockaddr;
-    socklen_t   _socklen;
+    void m_initialize(int port);
 };
 
 #endif /* SOCKET_HPP */
