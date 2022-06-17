@@ -28,6 +28,7 @@ class Message
 
   public:
     Message(const std::string& message);
+    Message(Client *client, const std::string& message);
     ~Message();
 
     void                            parse_message();

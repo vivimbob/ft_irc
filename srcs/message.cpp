@@ -12,6 +12,13 @@ Message::Message(Client* client, const std::string& message)
 {
 }
 
+Message::Message(const std::string& message)
+    : m_message(message),
+      m_valid_message(true),
+      m_position(0)
+{
+}
+
 Message::~Message()
 {
 }
