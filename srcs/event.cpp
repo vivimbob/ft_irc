@@ -38,3 +38,11 @@ void
     Logger().info() << "Listen socket(" << socket_fd
                     << ") assign read event to kqueue";
 }
+
+Event::Event()
+{
+}
+
+Event::~Event()
+{
+}

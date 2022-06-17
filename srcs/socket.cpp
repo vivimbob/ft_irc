@@ -1,6 +1,10 @@
 #include "../includes/socket.hpp"
 
-Socket::Socket() : _socklen(sizeof(sockaddr_in)), _fd(-1)
+Socket::Socket() : _fd(-1), _socklen(sizeof(sockaddr_in))
+{
+}
+
+Socket::~Socket()
 {
 }
 
