@@ -608,7 +608,7 @@ oper-classes:
     # channel registrations
     "server-admin":
         # title shown in WHOIS
-        title: FT_IRC Admin
+        title: Server Admin
 
         # oper class this extends from
         extends: "chat-moderator"

@@ -3,7 +3,7 @@
 #include "../includes/utils.hpp"
 #include <string>
 
-class FT_IRC;
+class Daemon;
 class Message;
 
 class Commands

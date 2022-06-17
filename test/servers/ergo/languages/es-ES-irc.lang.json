@@ -138,7 +138,7 @@
   "SASL authentication failed: Passphrase too long": "La autenticación SASL falló, frase de contraseña demasiado larga",
   "SASL authentication failed: authcid and authzid should be the same": "La autenticación SASL falló: authcid y authzid deberían ser iguales",
   "SASL message too long": "Mensaje SASL demasiado largo",
-  "FT_IRC notice masks": "Máscaras de aviso del servidor",
+  "Server notice masks": "Máscaras de aviso del servidor",
   "Successfully changed your account settings": "Cambió con éxito la configuración de su cuenta",
   "Successfully cleared vhost": "Vhost borrado con éxito",
   "Successfully disabled your vhost": "Desactivado con éxito tu vhost",

@@ -83,7 +83,7 @@
   "SASL authentication failed: Passphrase too long": "SASL godkjenning mislyktes: Adgangsfrasen er for lang",
   "SASL authentication failed: authcid and authzid should be the same": "SASL godkjenning mislyktes: authcid og authzid skal være den samme",
   "SASL message too long": "SASL melding er for lang",
-  "FT_IRC notice masks": "FT_IRC varsel masker",
+  "Server notice masks": "Server varsel masker",
   "Successfully grouped nick %s with your account": "Vellykket gruppering av kallenavnet %s til din konto",
   "Successfully ungrouped nick %s with your account": "Vellykket fjerning av gruppert kallenavn %s fra din konto",
   "Successfully unregistered account %s": "Vellykket avregistrering av konto %s",

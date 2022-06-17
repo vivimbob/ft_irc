@@ -1,13 +1,13 @@
-#ifndef Server_HPP
-#define Server_HPP
+#ifndef FT_IRCD_HPP
+#define FT_IRCD_HPP
 
 #include "../lib/logger.hpp"
 #include "buffer.hpp"
 #include "channel.hpp"
 #include "client.hpp"
 #include "commands.hpp"
+#include "daemon.hpp"
 #include "event.hpp"
-#include "ft_irc.hpp"
 #include "resources.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
@@ -29,28 +29,32 @@
 #include <unistd.h>
 #include <vector>
 
-class Server : public Socket, public Event, public FT_IRC
+class FT_IRCD : public Socket, public Event, public Daemon
 {
   public:
-    friend class FT_IRC;
+    friend class Daemon;
+    typedef std::map<std::string, Client*>  ClientMap;
+    typedef std::map<std::string, Channel*> ChannelMap;
 
   private:
     char          _buffer[IPV4_MTU_MAX];
     struct kevent _events[EVENTS_MAX];
+    ClientMap     _client_map;
+    ChannelMap    _channel_map;
+    std::string   _password;
 
   private:
-    Server();
-    Server(const Server& Server);
-    Server& operator=(const Server& Server);
+    FT_IRCD();
+    FT_IRCD(const FT_IRCD& FT_IRCD);
+    FT_IRCD& operator=(const FT_IRCD& FT_IRCD);
 
     void m_accept();
     void m_receive(struct kevent& event);
     void m_send(struct kevent& event);
 
     void m_requests_handler(Client& client, std::queue<std::string>& requests);
-    void m_disconnect_client(Client& client, std::string reason = "");
-
-    void m_register_client(Client& client, Message& msg);
+    void m_disconnect(Client& client, std::string reason = "");
+    void m_regist(Client& client, Message& msg);
 
     void m_prepare_to_send(Client& client, const std::string& str_msg);
     void m_send_to_channel(Channel*           channel,
@@ -61,8 +65,8 @@ class Server : public Socket, public Event, public FT_IRC
                            Client*            exclusion = nullptr);
 
   public:
-    ~Server();
-    Server(int port, char* password);
+    ~FT_IRCD();
+    FT_IRCD(int port, char* password);
     void run();
 };
-#endif /* Server_HPP */
+#endif /* FT_IRCD_HPP */

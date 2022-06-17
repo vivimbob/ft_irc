@@ -83,7 +83,7 @@
   "SASL authentication failed: Passphrase too long": "SASL 身份验证失败: 密码过长",
   "SASL authentication failed: authcid and authzid should be the same": "SASL认证失败：authcid和authzid应一致",
   "SASL message too long": "SASL消息过长",
-  "FT_IRC notice masks": "服务器消息过滤",
+  "Server notice masks": "服务器消息过滤",
   "Successfully grouped nick %s with your account": "成功绑定昵称%s到您的用户",
   "Successfully ungrouped nick %s with your account": "成功从你的账户解绑昵称%s",
   "Successfully unregistered account %s": "成功删除账户%s",

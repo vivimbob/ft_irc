@@ -22,7 +22,7 @@ void
         return;
     client.set_password_flag();
     if (client.is_registered() && !_client_map.count(client.get_names().nick))
-        m_register_client(client, msg);
+        m_regist(client, msg);
 }
 
 void
@@ -61,7 +61,7 @@ void
     client.set_nickname(nickname);
 
     if (client.is_registered() && !_client_map.count(client.get_names().nick))
-        m_register_client(client, msg);
+        m_regist(client, msg);
 }
 
 void
@@ -78,7 +78,7 @@ void
     client.set_username(msg.get_params()[0]);
     client.set_realname(msg.get_params()[3]);
     if (client.is_registered() && !_client_map.count(client.get_names().nick))
-        m_register_client(client, msg);
+        m_regist(client, msg);
 }
 
 void
@@ -87,7 +87,7 @@ void
     std::string message = "Quit";
     if (msg.get_params().size())
         message += " :" + msg.get_params()[0];
-    m_disconnect_client(client, message);
+    m_disconnect(client, message);
 }
 
 void
@@ -122,7 +122,7 @@ void
             continue;
         channel->join(client);
         client.insert_channel(channel);
-        if (channel->get_users().size() == 1)
+        if (channel->get_members().size() == 1)
             channel->set_operator(&client);
         Logger().info() << "Create new channel :" << channel_name << " : @"
                         << client.get_names().nick;

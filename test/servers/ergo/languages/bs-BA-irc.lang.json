@@ -131,7 +131,7 @@
   "SASL authentication failed: Passphrase too long": "SASL provjera autentičnosti nije uspjela: fraza preduga",
   "SASL authentication failed: authcid and authzid should be the same": "SASL provjera autentičnosti nije uspjela: authcid i authzid trebali bi biti isti",
   "SASL message too long": "SASL poruka preduga",
-  "FT_IRC notice masks": "Maske za obavijesti poslužitelja",
+  "Server notice masks": "Maske za obavijesti poslužitelja",
   "Successfully cleared vhost": "Uspješno izbrisan vhost",
   "Successfully disabled your vhost": "Vaš vhost je uspješno onemogućen",
   "Successfully enabled your vhost": "Vaš vhost je uspješno omogućen",
