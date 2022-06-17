@@ -1,19 +1,32 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "../lib/logger.hpp"
+#include "buffer.hpp"
 #include "channel.hpp"
 #include "client.hpp"
-#include "ft_irc.hpp"
-#include "sendbuffer.hpp"
+#include "event.hpp"
+#include "resources.hpp"
+#include "socket.hpp"
 #include "utils.hpp"
 #include <arpa/inet.h>
+#include <cerrno>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
+#include <iostream>
 #include <map>
 #include <netinet/in.h>
 #include <string>
 #include <sys/event.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <vector>
 
-class Server
+class Server : public Socket, public Event
 {
   public:
     typedef std::map<std::string, Client*>  ClientMap;
@@ -22,13 +35,11 @@ class Server
         CommandMap;
 
   private:
-    int               m_kq;
-    int               m_listen_fd;
-    int               m_port;
-    std::string       m_password;
-    sockaddr_in       m_sockaddr;
-    char              m_read_buffer[IPV4_MTU_MAX];
-    struct kevent     m_event_list[QUEUE_SIZE];
+    int               _kqueue;
+    int               _fd;
+    std::string       _password;
+    char              _buffer[IPV4_MTU_MAX];
+    struct kevent     _events[EVENTS_MAX];
     ClientMap         m_client_map;
     ChannelMap        m_channel_map;
     static CommandMap m_channel_command_map;
@@ -63,25 +74,15 @@ class Server
     void m_process_notice_command(Client& client, Message& msg);
     void m_process_kick_command(Client& client, Message& msg);
 
-    void m_create_socket();
-    void m_bind_socket();
-    void m_listen_socket();
-    void m_update_event(int     identity,
-                        short   filter,
-                        u_short flags,
-                        u_int   fflags,
-                        int     data,
-                        void*   udata);
-    void m_create_kqueue();
-    void m_accept_client();
+    void m_accept();
+    void m_receive(struct kevent& event);
+    void m_send(struct kevent& event);
 
-    void m_handle_messages(Client& client);
-
+    void m_requests_handler(Client& client, std::queue<std::string>& requests);
     void m_disconnect_client(Client& client, std::string reason = "");
+
     void m_register_client(Client& client, Message& msg);
 
-    void m_receive_client_msg(Client& client, int bytes);
-    void m_send_client_msg(Client& client, int bytes);
     void m_prepare_to_send(Client& client, const std::string& str_msg);
     void m_send_to_channel(Channel*           channel,
                            const std::string& msg,
@@ -90,11 +91,9 @@ class Server
                            const std::string& msg,
                            Client*            exclusion = nullptr);
 
-    void m_initialize_server();
-
   public:
     ~Server();
-    Server(int argc, char** argv);
+    Server(int port, char* password);
     void run();
 };
 

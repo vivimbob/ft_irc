@@ -33,11 +33,10 @@ void
     if (stream)
     {
         *stream << m_oss.str();
+        if (m_active_level == Error)
+            *stream << " [" << errno << "] [" << strerror(errno) << "]";
 
-		if (m_active_level == Error)
-			*stream << " [" << errno << "] [" << strerror(errno) << "]";
-
-		*stream << "\033[0m" << std::endl;
+        *stream << "\033[0m" << std::endl;
         stream->flush();
     }
 }

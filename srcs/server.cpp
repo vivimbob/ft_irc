@@ -1,40 +1,12 @@
 #include "../includes/server.hpp"
-#include "../includes/client.hpp"
-#include "../lib/logger.hpp"
-#include <arpa/inet.h>
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
-#include <fcntl.h>
-#include <iostream>
-#include <string>
-#include <sys/event.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 /* utility start */
 
 void
-    Server::m_update_event(int     identity,
-                           short   filter,
-                           u_short flags,
-                           u_int   fflags,
-                           int     data,
-                           void*   udata)
-{
-    struct kevent kev;
-    EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-    kevent(m_kq, &kev, 1, NULL, 0, NULL);
-}
-
-void
     Server::m_prepare_to_send(Client& client, const std::string& str_msg)
 {
-    utils::push_message(client, str_msg);
-    m_update_event(client.get_socket(), EVFILT_READ, EV_DISABLE, 0, 0, &client);
-    m_update_event(client.get_socket(), EVFILT_WRITE, EV_ENABLE, 0, 0, &client);
+    client.push_message(str_msg);
+    Event::toggle(client, EVFILT_READ);
 }
 
 void
@@ -45,8 +17,7 @@ void
     const Channel::MemberMap&          user_list = channel->get_user_list();
     Channel::MemberMap::const_iterator user      = user_list.begin();
 
-    Logger().trace() << "send message to channel :"
-                     << channel->get_channel_name();
+    Logger().trace() << "send message to channel :" << channel->get_name();
     for (; user != user_list.end(); ++user)
         if (user->first != exclusion)
             m_prepare_to_send(*user->first, msg);
@@ -57,8 +28,8 @@ void
                               const std::string& msg,
                               Client*            exclusion)
 {
-    std::set<Channel*>::iterator it = client.get_channel_list().begin();
-    for (; it != client.get_channel_list().end(); ++it)
+    std::set<Channel*>::iterator it = client.get_joined_list().begin();
+    for (; it != client.get_joined_list().end(); ++it)
         m_send_to_channel(*it, msg, exclusion);
 }
 
@@ -117,23 +88,22 @@ Server::CommandMap
 void
     Server::m_process_pass_command(Client& client, Message& msg)
 {
-    if (check_error(msg.get_params().empty(), client,
-                    msg.err_need_more_params()))
-        return;
-    if (check_error(client.is_registered(), client,
-                    msg.err_already_registred()))
-        return;
-    if (check_error(msg.get_params()[0] != m_password, client,
-                    msg.err_passwd_mismatch()))
+    if ((check_error(msg.get_params().empty(), client,
+                     msg.err_need_more_params())) ||
+        (check_error(client.is_registered(), client,
+                     msg.err_already_registred())) ||
+        (check_error(msg.get_params()[0] != _password, client,
+                     msg.err_passwd_mismatch())))
         return;
     client.set_password_flag();
-    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_names().nick))
         m_register_client(client, msg);
 }
 
 void
     Server::m_process_nick_command(Client& client, Message& msg)
 {
+
     if (check_error(msg.get_params().empty(), client,
                     msg.err_no_nickname_given()))
         return;
@@ -146,7 +116,7 @@ void
 
     if (m_client_map.count(nickname))
     {
-        if (nickname != client.get_nickname())
+        if (nickname != client.get_names().nick)
             utils::push_message(client, msg.err_nickname_in_use(nickname));
         return;
     }
@@ -155,18 +125,17 @@ void
     {
         m_send_to_channel(client, msg.build_nick_reply(nickname), &client);
         utils::push_message(client, msg.build_nick_reply(nickname));
-        if (m_client_map.count(client.get_nickname()))
+        if (m_client_map.count(client.get_names().nick))
         {
-            m_client_map.erase(client.get_nickname());
+            m_client_map.erase(client.get_names().nick);
             m_client_map[nickname] = &client;
         }
     }
 
-    Logger().debug() << client.get_client_IP() << " change nick to "
-                     << nickname;
+    Logger().debug() << client.get_IP() << " change nick to " << nickname;
     client.set_nickname(nickname);
 
-    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_names().nick))
         m_register_client(client, msg);
 }
 
@@ -183,7 +152,7 @@ void
 
     client.set_username(msg.get_params()[0]);
     client.set_realname(msg.get_params()[3]);
-    if (client.is_registered() && !m_client_map.count(client.get_nickname()))
+    if (client.is_registered() && !m_client_map.count(client.get_names().nick))
         m_register_client(client, msg);
 }
 
@@ -231,7 +200,7 @@ void
         if (channel->get_user_list().size() == 1)
             channel->set_operator_flag(true, &client);
         Logger().info() << "Create new channel :" << channel_name << " : @"
-                        << client.get_nickname();
+                        << client.get_names().nick;
         m_send_to_channel(channel, msg.build_join_reply(channel_name));
         utils::send_topic_reply(channel, client, msg);
         utils::send_name_reply(channel, client, msg);
@@ -266,7 +235,7 @@ void
                     msg.err_no_such_nick(nickname)))
         return;
 
-    if (check_error(nickname != client.get_nickname(), client,
+    if (check_error(nickname != client.get_names().nick, client,
                     msg.err_users_dont_match(
                         msg.get_params().size() == 1 ? "view" : "change")))
         return;
@@ -366,7 +335,7 @@ void
 			goto next;
         m_send_to_channel(channel,
                           msg.build_kick_reply(*channel_name, *nick_name,
-                                               client.get_nickname()));
+                                               client.get_names().nick));
         channel->delete_user(*target_client);
         target_client->erase_channel(channel);
         if (channel->is_empty())
@@ -393,7 +362,7 @@ void
             utils::send_name_reply(channel_it->second, client, msg);
         ClientMap::const_iterator client_it = m_client_map.begin();
         for (; client_it != m_client_map.end(); ++client_it)
-            if (client_it->second->get_channel_list().empty())
+            if (client_it->second->get_joined_list().empty())
                 nick_queue.push(client_it->first);
         if (nick_queue.size())
             utils::push_message(client, msg.rpl_namreply("*", nick_queue));
@@ -418,9 +387,9 @@ static void
     send_list_to_client(Channel* channel, Client& client, Message& msg)
 {
     utils::push_message(
-        client, msg.rpl_list(channel->get_channel_name(),
+        client, msg.rpl_list(channel->get_name(),
                              std::to_string(channel->get_user_list().size()),
-                             channel->get_channel_topic()));
+                             channel->get_topic()));
 }
 
 void
@@ -471,12 +440,14 @@ void
         channel->delete_user(client);
         client.erase_channel(channel);
         if (channel->is_empty())
+        Logger().debug() << "Remove [" << client.get_names().nick
+                         << "] client from [" << channel->get_name()
 		{
             m_channel_map.erase(channel->get_channel_name());
         	delete channel;
 		}
-        Logger().debug() << "Remove [" << client.get_nickname()
-                         << "] client from [" << channel->get_channel_name()
+        Logger().debug() << "Remove [" << client.get_names().nick
+                         << "] client from [" << channel->get_name()
                          << "] channel";
     }
 }
@@ -503,9 +474,10 @@ void
     if (check_error(!channel->is_operator(client), client,
                     msg.err_chanoprivs_needed(channel_name)))
         return;
-    channel->set_channel_topic(msg.get_params()[1]);
+    channel->set_topic(msg.get_params()[1]);
+
     Logger().trace() << channel_name << " channel topic change to "
-                     << channel->get_channel_topic();
+                     << channel->get_topic();
     m_send_to_channel(channel, msg.build_topic_reply());
 }
 
@@ -550,140 +522,31 @@ void
 
 /* process command end */
 
-/* initailize server start */
-
-void
-    Server::m_create_socket()
-{
-    m_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (m_listen_fd == -1)
-    {
-        Logger().error() << "Failed to create socket. errno " << errno << ":"
-                         << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Create socket " << m_listen_fd;
-    int toggle = 1;
-    setsockopt(m_listen_fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
-               sizeof(toggle));
-}
-
-void
-    Server::m_bind_socket()
-{
-    memset(&m_sockaddr, 0, sizeof(sockaddr_in));
-    m_sockaddr.sin_family      = AF_INET;
-    m_sockaddr.sin_addr.s_addr = INADDR_ANY;
-    m_sockaddr.sin_port        = htons(m_port);
-
-    if (bind(m_listen_fd, (struct sockaddr*)&m_sockaddr, sizeof(sockaddr_in)) ==
-        -1)
-    {
-        Logger().error() << "Failed to bind to port and address" << m_port
-                         << ". errno: " << errno << ":" << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Bind Port :" << m_port
-                    << " IP :" << inet_ntoa(m_sockaddr.sin_addr);
-}
-
-void
-    Server::m_listen_socket()
-{
-    if (listen(m_listen_fd, SOMAXCONN) == -1)
-    {
-        Logger().error() << "Failed to listen on socket. errno: " << errno
-                         << ":" << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Listen on socket";
-    fcntl(m_listen_fd, F_SETFL, O_NONBLOCK);
-    Logger().info() << "Socket set nonblock";
-}
-
-void
-    Server::m_create_kqueue()
-{
-    m_kq = kqueue();
-    if (m_kq == -1)
-    {
-        Logger().error() << "Failed to allocate kqueue. errno: " << errno << ":"
-                         << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-    Logger().info() << "Allocate kqueue " << m_kq;
-    m_update_event(m_listen_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    Logger().info() << "Listen socket(" << m_listen_fd
-                    << ") assign read event to kqueue";
-}
-
-void
-    Server::m_initialize_server()
-{
-    m_create_socket();
-    m_bind_socket();
-    m_listen_socket();
-    m_create_kqueue();
-}
-
-/* initailize server end */
-
 /* server run start */
 
 void
-    Server::m_accept_client()
+    Server::m_requests_handler(Client&                  client,
+                               std::queue<std::string>& requests)
 {
-    sockaddr_in client_addr;
-    int         client_addr_len = sizeof(client_addr);
-    int         client_fd       = -1;
-
-    client_fd = accept(m_listen_fd, (sockaddr*)(&client_addr),
-                       (socklen_t*)(&client_addr_len));
-    if (client_fd == -1)
+    while (requests.size())
     {
-        Logger().error() << "Failed to accept client. errno: " << errno << ":"
-                         << strerror(errno);
-        exit(EXIT_FAILURE);
-    }
-
-    fcntl(client_fd, F_SETFL, O_NONBLOCK);
-
-    Client* client_info = new Client(client_addr, client_fd);
-
-    m_update_event(client_fd, EVFILT_READ, EV_ADD, 0, 0, client_info);
-    m_update_event(client_fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0,
-                   client_info);
-
-    Logger().info() << "Accept client [address:"
-                    << inet_ntoa(client_addr.sin_addr) << ":"
-                    << client_addr.sin_port << "fd:" << client_fd << ']';
-}
-
-void
-    Server::m_handle_messages(Client& client)
-{
-    while (client.get_commands().size())
-    {
-        Message* message = client.get_commands().front();
-        Logger().debug() << client.get_nickname() << " send ["
-                         << message->get_message() << ']';
-        client.get_commands().pop();
-        message->parse_message();
-        const std::string& command = message->get_command();
+        Message message(requests.front());
+        requests.pop();
+        message.parse_message();
+        const std::string& command = message.get_command();
 
         if (m_register_command_map.count(command))
-            (this->*m_register_command_map[command])(client, *message);
+            (this->*m_register_command_map[command])(client, message);
         else if (m_channel_command_map.count(command))
         {
             if (client.is_registered())
-                (this->*m_channel_command_map[message->get_command()])(
-                    client, *message);
+                (this->*m_channel_command_map[message.get_command()])(client,
+                                                                      message);
             else
-                utils::push_message(client, message->err_not_registered());
+                utils::push_message(client, message.err_not_registered());
         }
         else if (!command.empty())
-            utils::push_message(client, message->err_unknown_command());
-        delete message;
+            utils::push_message(client, message.err_unknown_command());
     }
 }
 
@@ -692,16 +555,15 @@ void
 {
     const unsigned int& clientfd = client.get_socket();
 
-    Logger().info() << "Client disconnect [address :" << client.get_client_IP()
-                    << ':' << client.get_client_addr().sin_port
-                    << " FD :" << clientfd << ']';
+    Logger().info() << "Client disconnect [address :" << client.get_IP() << ':'
+                    << client.get_addr().sin_port << " FD :" << clientfd << ']';
 
-    m_update_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-    m_update_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    Event::set(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+    Event::set(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
     std::set<Client*>            client_check_list;
-    std::set<Channel*>::iterator it = client.get_channel_list().begin();
-    for (; it != client.get_channel_list().end(); ++it)
+    std::set<Channel*>::iterator it = client.get_joined_list().begin();
+    for (; it != client.get_joined_list().end(); ++it)
     {
         const Channel::MemberMap&          user_list = (*it)->get_user_list();
         Channel::MemberMap::const_iterator user      = user_list.begin();
@@ -710,24 +572,23 @@ void
             if (!client_check_list.count(user->first) && user->first != &client)
             {
                 client_check_list.insert(user->first);
-                m_prepare_to_send(
-                    *user->first,
-                    Message(&client, "QUIT").build_quit_reply(reason));
+                m_prepare_to_send(*user->first,
+                                  Message("QUIT").build_quit_reply(reason));
             }
     }
-    std::set<Channel*>::iterator channel_it = client.get_channel_list().begin();
-    std::set<Channel*>::iterator channel_ite = client.get_channel_list().end();
+    std::set<Channel*>::iterator channel_it  = client.get_joined_list().begin();
+    std::set<Channel*>::iterator channel_ite = client.get_joined_list().end();
 
     for (; channel_it != channel_ite; ++channel_it)
     {
         (*channel_it)->delete_user(client);
         if ((*channel_it)->is_empty())
         {
-            m_channel_map.erase((*channel_it)->get_channel_name());
+            m_channel_map.erase((*channel_it)->get_name());
             delete (*channel_it);
         }
     }
-    m_client_map.erase(client.get_nickname());
+    m_client_map.erase(client.get_names().nick);
     delete &client;
     close(clientfd);
 }
@@ -735,80 +596,26 @@ void
 void
     Server::m_register_client(Client& client, Message& msg)
 {
-    m_client_map[client.get_nickname()] = &client;
+    m_client_map[client.get_names().nick] = &client;
     utils::push_message(client, msg.rpl_welcome());
-    Logger().info() << client.get_nickname() << " is registered to server";
+    Logger().info() << client.get_names().nick << " is registered to server";
 }
 
 void
-    Server::m_receive_client_msg(Client& client, int data_len)
+    Server::m_send(struct kevent& event)
 {
+    Client& client          = (Client&)event.udata;
+    Buffer& send_buffer     = client.get_send_buffer();
+    int     remain_data_len = send_buffer.size() - send_buffer.get_offset();
     const unsigned int& clientfd = client.get_socket();
-
-    char*   buffer        = m_read_buffer;
-    ssize_t recv_data_len = recv(clientfd, buffer, data_len, 0);
-
-    if (recv_data_len > 0)
-    {
-        std::string& recv_buffer = client.get_recv_buffer();
-        recv_buffer.append(buffer, recv_data_len);
-
-        size_t position = recv_buffer.find_first_of("\r\n", 0);
-        while (position != static_cast<size_t>(std::string::npos))
-        {
-            client.get_commands().push(new Message(
-                &client, std::string(recv_buffer.begin(),
-                                     recv_buffer.begin() + position)));
-            recv_buffer.erase(0, position + 2);
-            position = recv_buffer.find_first_of("\r\n", 0);
-        }
-
-        Logger().info() << "Receive Message(" << client.get_commands().size()
-                        << ") from " << client.get_nickname();
-
-        if (client.get_commands().size())
-        {
-            m_handle_messages(client);
-            if (client.get_send_buffer().size())
-            {
-                m_update_event(clientfd, EVFILT_READ, EV_DISABLE, 0, 0,
-                               &client);
-                m_update_event(clientfd, EVFILT_WRITE, EV_ENABLE, 0, 0,
-                               &client);
-            }
-        }
-    }
-    else if (recv_data_len == 0)
-        m_disconnect_client(client, "connection closed");
-}
-
-void
-    Server::m_send_client_msg(Client& client, int available_bytes)
-{
-    SendBuffer&         send_buffer      = client.get_send_buffer();
-    int                 remain_data_len  = 0;
-    int                 attempt_data_len = 0;
-    const unsigned int& clientfd         = client.get_socket();
-
-    if (available_bytes > IPV4_MTU_MAX)
-        available_bytes = IPV4_MTU_MAX;
-    else if (available_bytes == 0)
-        available_bytes = IPV4_MTU_MIN;
-
-    remain_data_len = send_buffer.size() - send_buffer.get_offset();
-
-    if (available_bytes >= remain_data_len)
-        attempt_data_len = remain_data_len;
-    else
-        attempt_data_len = available_bytes;
 
     ssize_t send_data_len =
         send(clientfd, send_buffer.data() + send_buffer.get_offset(),
-             attempt_data_len, 0);
+             event.data < remain_data_len ? event.data : remain_data_len, 0);
 
     if (send_data_len >= 0)
     {
-        Logger().info() << "Server send to " << client.get_nickname();
+        Logger().info() << "Server send to " << client.get_names().nick;
         send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
         Logger().trace() << "Send " << send_data_len << " bytes from ["
                          << clientfd << "] client";
@@ -817,52 +624,96 @@ void
             if (send_buffer.size())
                 send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
-            m_update_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
-            m_update_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
+            Event::set(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
+            Event::set(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
         }
     }
 }
 
-Server::~Server()
+void
+    Server::m_receive(struct kevent& event)
 {
+    Client& client = (Client&)event.udata;
+    ssize_t length = recv(event.ident, _buffer, event.data, 0);
+
+    if (length > 0)
+    {
+        int                     offset;
+        std::queue<std::string> requests;
+
+        Client::t_buffers& buffers = client.get_buffers();
+        buffers.request.append(_buffer, length);
+        while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
+               std::string::npos)
+        {
+            requests.push(buffers.request.substr(0, offset));
+            buffers.request.erase(0, offset + 2);
+        }
+        if (requests.size())
+            m_requests_handler(client, requests);
+        if (buffers.to_client.size())
+            Event::toggle(client, EVFILT_READ);
+    }
+    else if (length == 0)
+        m_disconnect_client(client, "connection closed");
 }
 
-Server::Server(int argc, char** argv) : m_kq(-1), m_listen_fd(-1), m_port(-1)
+void
+    Server::m_accept()
 {
-    if (argc != 3)
+    sockaddr_in addr;
+    int         fd = accept(Server::_fd, (sockaddr*)(&addr), &_socklen);
+
+    if (fd == -1)
     {
-        Logger().error() << "Usage :" << argv[0] << " <port> <password>";
-        exit(EXIT_FAILURE);
+        Logger().error() << "Failed to accept client errno: ";
+        return;
     }
-    m_port = atoi(argv[1]);
-    if (m_port < 0 || m_port > PORT_MAX)
-        Logger().error() << m_port << "is out of Port range (0 ~ 65535)";
-    m_password = argv[2];
-    Logger().info() << "Server start";
-    m_initialize_server();
+
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+    Client* client = new Client(addr, fd);
+
+    Event::set(fd, EVFILT_READ, EV_ADD, 0, 0, client);
+    Event::set(fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
+
+    Logger().info() << "Accept client [address:" << inet_ntoa(addr.sin_addr)
+                    << ":" << addr.sin_port << "fd:" << fd << ']';
 }
+
+// struct kevent {
+//	uintptr_t       ident;  /* identifier for this event */
+//	int16_t         filter; /* filter for event */
+//	uint16_t        flags;  /* general flags */
+//	uint32_t        fflags; /* filter-specific flags */
+//	intptr_t        data;   /* filter-specific data */
+//	void            *udata; /* opaque user data identifier */
+// };
 
 void
     Server::run()
 {
-    int event_count = 0;
+    register int count;
+    register int index;
 
-    Logger().info() << "[Server running]";
+    Logger().info() << "[Server is running]";
     while (true)
     {
-        event_count = kevent(m_kq, NULL, 0, m_event_list, QUEUE_SIZE, NULL);
-        Logger().trace() << event_count << " new kevent";
-        for (int i = 0; i < event_count; ++i)
+        count = kevent(_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
+        Logger().trace() << count << " new kevent";
+        for (index = 0; index < count; ++index)
         {
-            struct kevent& event = m_event_list[i];
-            if (event.ident == (unsigned int)m_listen_fd)
-                m_accept_client();
-            else if (event.filter == EVFILT_READ)
-                m_receive_client_msg(*(Client*)event.udata, event.data);
-            else if (event.filter == EVFILT_WRITE)
-                m_send_client_msg(*(Client*)event.udata, event.data);
+            if (_events[index].ident == (unsigned)Server::_fd)
+                Server::m_accept();
+            else if (_events[index].filter == EVFILT_READ)
+                Server::m_receive(_events[index]);
+            else if (_events[index].filter == EVFILT_WRITE)
+                Server::m_send(_events[index]);
         }
     }
 }
 
-/* server run end */
+Server::Server(int port, char* password) : _password(password)
+{
+    Socket::m_initialize(port);
+    Event::m_create_kqueue(_fd);
+}
