@@ -42,3 +42,7 @@ void
 Event::Event()
 {
 }
+
+Event::~Event()
+{
+}

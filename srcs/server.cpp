@@ -440,8 +440,6 @@ void
         channel->delete_user(client);
         client.erase_channel(channel);
         if (channel->is_empty())
-            Logger().debug() << "Remove [" << client.get_names().nick
-                             << "] client from [" << channel->get_name();
         {
             m_channel_map.erase(channel->get_name());
             delete channel;
@@ -644,7 +642,7 @@ void
         Client::t_buffers& buffers = client.get_buffers();
         buffers.request.append(_buffer, length);
         while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
-               std::string::npos)
+               (int)std::string::npos)
         {
             requests.push(buffers.request.substr(0, offset));
             buffers.request.erase(0, offset + 2);
@@ -688,6 +686,10 @@ void
 //	intptr_t        data;   /* filter-specific data */
 //	void            *udata; /* opaque user data identifier */
 // };
+
+Server::~Server()
+{
+}
 
 void
     Server::run()
