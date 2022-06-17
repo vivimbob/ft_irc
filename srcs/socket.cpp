@@ -1,5 +1,9 @@
 #include "../includes/socket.hpp"
 
+Socket::~Socket()
+{
+}
+
 void
     Socket::m_create()
 {
