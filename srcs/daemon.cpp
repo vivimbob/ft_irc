@@ -477,6 +477,10 @@ void
     m_privmsg(msg);
 }
 
+Daemon::~Daemon()
+{
+}
+
 Daemon::Daemon()
 {
     _register_cmd_map.insert(std::make_pair("PASS", &Daemon::m_pass));

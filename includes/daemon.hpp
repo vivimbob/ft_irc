@@ -1,5 +1,5 @@
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#ifndef DAEMON_HPP 
+#define DAEMON_HPP 
 
 #include "../includes/message.hpp"
 #include "../includes/utils.hpp"
@@ -10,7 +10,7 @@ class FT_IRCD;
 class Daemon
 {
   public:
-    typedef std::map<std::string, void (Daemon::*)(Client&, Message&)>
+    typedef std::map<std::string, void (Daemon::*)(Message&)>
         CommandMap;
 
   private:
@@ -21,8 +21,8 @@ class Daemon
     void m_mode_user(Message& message, const std::string& nickname);
 
   protected:
-    static CommandMap _command_map;
-    static CommandMap _register_cmd_map;
+    CommandMap _command_map;
+    CommandMap _register_cmd_map;
 
     FT_IRCD* _ft_ircd;
     void     m_pass(Message& message);
@@ -43,4 +43,4 @@ class Daemon
     ~Daemon();
 };
 
-#endif /* SERVER_HPP */
+#endif /* DAEMON_HPP */

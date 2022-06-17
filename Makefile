@@ -9,10 +9,11 @@ srcs		= ft_ircd.cpp\
 			  buffer.cpp\
 			  channel.cpp\
 			  client.cpp\
+			  daemon.cpp\
 			  event.cpp\
+			  ft_ircd.cpp\
 			  membership.cpp\
 			  message.cpp\
-			  server.cpp\
 			  socket.cpp\
 			  utils.cpp
 

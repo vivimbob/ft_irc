@@ -31,13 +31,29 @@ void
         m_send_to_channel(*it, msg, exclusion);
 }
 
-static void
-    send_list_to_client(Channel* channel, Client& client, Message& msg)
+void
+    FT_IRCD::m_requests_handler(Client&                  client,
+                               std::queue<std::string>& requests)
 {
-    utils::push_message(
-        client, msg.rpl_list(channel->get_name(),
-                             std::to_string(channel->get_members().size()),
-                             channel->get_topic()));
+    while (requests.size())
+    {
+        Message message(requests.front());
+        requests.pop();
+        message.parse_message();
+        const std::string& command = message.get_command();
+
+        if (_register_cmd_map.count(command))
+            (this->*_register_cmd_map[command])(message);
+        else if (_command_map.count(command))
+        {
+            if (client.is_registered())
+                (this->*_command_map[command])(message);
+            else
+                utils::push_message(client, message.err_not_registered());
+        }
+        else if (!command.empty())
+            utils::push_message(client, message.err_unknown_command());
+    }
 }
 
 void
@@ -130,7 +146,7 @@ void
         Client::t_buffers& buffers = client.get_buffers();
         buffers.request.append(_buffer, length);
         while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
-               std::string::npos)
+               (int)std::string::npos)
         {
             requests.push(buffers.request.substr(0, offset));
             buffers.request.erase(0, offset + 2);
@@ -198,7 +214,11 @@ void
     }
 }
 
-FT_IRCD::FT_IRCD(int port, char* password)
+FT_IRCD::~FT_IRCD()
+{
+}
+
+FT_IRCD::FT_IRCD(int port, char* password) : _password(password)
 {
     Socket::m_initialize(port);
     Event::m_create_kqueue(_socket.fd);
