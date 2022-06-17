@@ -35,8 +35,6 @@ class Server : public Socket, public Event
         CommandMap;
 
   private:
-    int               _kqueue;
-    int               _fd;
     std::string       _password;
     char              _buffer[IPV4_MTU_MAX];
     struct kevent     _events[EVENTS_MAX];

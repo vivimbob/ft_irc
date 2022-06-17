@@ -321,29 +321,29 @@ void
         if (check_error((!utils::is_channel_prefix(*channel_name) ||
                          !m_channel_map.count(*channel_name)),
                         client, msg.err_no_such_channel(*channel_name)))
-			goto next;
+            goto next;
         channel = m_channel_map[*channel_name];
         if (check_error(!channel->is_operator(client), client,
                         msg.err_chanoprivs_needed(*channel_name)))
-			goto next;
+            goto next;
         if (check_error(!m_client_map.count(*nick_name), client,
                         msg.err_no_such_nick(*nick_name)))
-			goto next;
+            goto next;
         target_client = m_client_map[*nick_name];
         if (check_error(!channel->is_user_on_channel(target_client), client,
                         msg.err_user_not_in_channel(*nick_name, *channel_name)))
-			goto next;
+            goto next;
         m_send_to_channel(channel,
                           msg.build_kick_reply(*channel_name, *nick_name,
                                                client.get_names().nick));
         channel->delete_user(*target_client);
         target_client->erase_channel(channel);
         if (channel->is_empty())
-		{
+        {
             m_channel_map.erase(*channel_name);
-        	delete channel;
-		}
-next:
+            delete channel;
+        }
+    next:
         if (channel_list.size() != 1)
             ++channel_name;
         if (nick_list.size() != 1)
@@ -440,12 +440,12 @@ void
         channel->delete_user(client);
         client.erase_channel(channel);
         if (channel->is_empty())
-        Logger().debug() << "Remove [" << client.get_names().nick
-                         << "] client from [" << channel->get_name()
-		{
-            m_channel_map.erase(channel->get_channel_name());
-        	delete channel;
-		}
+            Logger().debug() << "Remove [" << client.get_names().nick
+                             << "] client from [" << channel->get_name();
+        {
+            m_channel_map.erase(channel->get_name());
+            delete channel;
+        }
         Logger().debug() << "Remove [" << client.get_names().nick
                          << "] client from [" << channel->get_name()
                          << "] channel";
@@ -604,25 +604,25 @@ void
 void
     Server::m_send(struct kevent& event)
 {
-    Client& client          = (Client&)event.udata;
-    Buffer& send_buffer     = client.get_send_buffer();
-    int     remain_data_len = send_buffer.size() - send_buffer.get_offset();
-    const unsigned int& clientfd = client.get_socket();
+    Client&             client          = (Client&)event.udata;
+    Buffer&             buffer          = client.get_buffers().to_client;
+    int                 remain_data_len = buffer.size() - buffer.get_offset();
+    const unsigned int& clientfd        = client.get_socket();
 
     ssize_t send_data_len =
-        send(clientfd, send_buffer.data() + send_buffer.get_offset(),
+        send(clientfd, buffer.data() + buffer.get_offset(),
              event.data < remain_data_len ? event.data : remain_data_len, 0);
 
     if (send_data_len >= 0)
     {
         Logger().info() << "Server send to " << client.get_names().nick;
-        send_buffer.set_offset(send_buffer.get_offset() + send_data_len);
+        buffer.set_offset(buffer.get_offset() + send_data_len);
         Logger().trace() << "Send " << send_data_len << " bytes from ["
                          << clientfd << "] client";
-        if (send_buffer.size() <= send_buffer.get_offset())
+        if (buffer.size() <= buffer.get_offset())
         {
-            if (send_buffer.size())
-                send_buffer.clear();
+            if (buffer.size())
+                buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
             Event::set(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
             Event::set(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
@@ -662,7 +662,7 @@ void
     Server::m_accept()
 {
     sockaddr_in addr;
-    int         fd = accept(Server::_fd, (sockaddr*)(&addr), &_socklen);
+    int         fd = accept(_socket.fd, (sockaddr*)(&addr), &_socket.len);
 
     if (fd == -1)
     {
@@ -698,11 +698,11 @@ void
     Logger().info() << "[Server is running]";
     while (true)
     {
-        count = kevent(_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
+        count = kevent(Event::_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
         Logger().trace() << count << " new kevent";
         for (index = 0; index < count; ++index)
         {
-            if (_events[index].ident == (unsigned)Server::_fd)
+            if (_events[index].ident == (unsigned)_socket.fd)
                 Server::m_accept();
             else if (_events[index].filter == EVFILT_READ)
                 Server::m_receive(_events[index]);
@@ -715,5 +715,5 @@ void
 Server::Server(int port, char* password) : _password(password)
 {
     Socket::m_initialize(port);
-    Event::m_create_kqueue(_fd);
+    Event::m_create_kqueue(_socket.fd);
 }
