@@ -33,7 +33,6 @@ void
     if (stream)
     {
         *stream << m_oss.str();
-
         if (m_active_level == Error)
             *stream << " [" << errno << "] [" << strerror(errno) << "]";
 
