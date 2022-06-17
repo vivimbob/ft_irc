@@ -14,9 +14,6 @@ class Daemon
         CommandMap;
 
   private:
-    CommandMap m_initial_command_map();
-    CommandMap m_initial_register_cmd_map();
-
     void m_mode_channel(Message& message, const std::string& channel_name);
     void m_mode_user(Message& message, const std::string& nickname);
 

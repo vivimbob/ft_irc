@@ -11,7 +11,6 @@ srcs		= ft_ircd.cpp\
 			  client.cpp\
 			  daemon.cpp\
 			  event.cpp\
-			  ft_ircd.cpp\
 			  membership.cpp\
 			  message.cpp\
 			  socket.cpp\

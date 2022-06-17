@@ -1,3 +1,4 @@
+#pragma once
 #ifndef FT_IRCD_HPP
 #define FT_IRCD_HPP
 

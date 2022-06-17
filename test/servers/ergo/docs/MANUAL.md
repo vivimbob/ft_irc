@@ -1,8 +1,8 @@
-         __ __  ______ ___  ______ ___
+         __ __  ______ ___  ______ ___ 
       __/ // /_/ ____/ __ \/ ____/ __ \
      /_  // __/ __/ / /_/ / / __/ / / /
-    /_  // __/ /___/ _, _/ /_/ / /_/ /
-     /_//_/ /_____/_/ |_|\____/\____/
+    /_  // __/ /___/ _, _/ /_/ / /_/ / 
+     /_//_/ /_____/_/ |_|\____/\____/  
 
              Ergo IRCd Manual
             https://ergo.chat/
@@ -621,7 +621,7 @@ Client certificates are not supported over websockets due to a [Chrome bug](http
 
 ## SNI
 
-Ergo supports [SNI](https://en.wikipedia.org/wiki/FT_IRC_Name_Indication); this is useful if you have multiple domain names for your server, with different certificates covering different domain names. Configure your TLS listener like this:
+Ergo supports [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication); this is useful if you have multiple domain names for your server, with different certificates covering different domain names. Configure your TLS listener like this:
 
 ```yaml
         ":6697":

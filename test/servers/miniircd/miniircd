@@ -164,7 +164,7 @@ class Client:
                 # Not registered.
                 self.disconnect("ping timeout")
 
-    def write_EVENTS_MAX(self) -> int:
+    def write_queue_size(self) -> int:
         return len(self.__writebuffer)
 
     def __parse_read_buffer(self) -> None:
@@ -1009,7 +1009,7 @@ class Server:
                 [
                     x.socket
                     for x in self.clients.values()
-                    if x.write_EVENTS_MAX() > 0
+                    if x.write_queue_size() > 0
                 ],
                 [],
                 10,

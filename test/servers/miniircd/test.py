@@ -14,7 +14,7 @@ from typing import Dict, IO, Optional
 SERVER_PORT = 16667
 
 
-class FT_IRCFixture:
+class ServerFixture:
     state_dir: Optional[str]
 
     def setUp(
@@ -95,7 +95,7 @@ class FT_IRCFixture:
         assert_true(m, f"Regexp {regexp!r} didn't match {line!r}")
 
 
-class TwoClientsTwoChannelsFixture(FT_IRCFixture):
+class TwoClientsTwoChannelsFixture(ServerFixture):
     def setUp(
         self, persistent: bool = False, password: Optional[str] = None
     ) -> None:
@@ -130,7 +130,7 @@ class TwoClientsTwoChannelsFixture(FT_IRCFixture):
             raise
 
 
-class TestBasicStuff(FT_IRCFixture):
+class TestBasicStuff(ServerFixture):
     def test_registration(self) -> None:
         self.connect("apa")
 
@@ -488,7 +488,7 @@ class TestTwoChannelsStuff(TwoClientsTwoChannelsFixture):
         self.expect("apa", r":local\S+ 318 apa apa :End of WHOIS list")
 
 
-class TestPersistentState(FT_IRCFixture):
+class TestPersistentState(ServerFixture):
     def setUp(
         self, persistent: bool = True, password: Optional[str] = None
     ) -> None:
@@ -528,7 +528,7 @@ class TestPersistentState(FT_IRCFixture):
         self.expect("apa", r":local\S+ 324 apa #fisk \+k skunk")
 
 
-class TestPassword(FT_IRCFixture):
+class TestPassword(ServerFixture):
     def setUp(
         self, persistent: bool = False, password: Optional[str] = None
     ) -> None:

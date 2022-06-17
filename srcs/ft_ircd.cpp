@@ -37,7 +37,7 @@ void
 {
     while (requests.size())
     {
-        Message message(requests.front());
+        Message message(&client, requests.front());
         requests.pop();
         message.parse_message();
         const std::string& command = message.get_command();
