@@ -1172,7 +1172,7 @@ I'd like to thank @slingamn for really contributing a lot in this release! He's 
 * Ident (looking up usernames) now times out a whole lot quicker, meaning you connect to the server more quickly.
 * IRCv3 capability `draft/sts` has been renamed to `sts`, since it's now been ratified.
 * Rehashing is now safer.
-* FT_IRC opers could always speak on channels, even when they shouldn't be able to. Now they aren't above the law.
+* Server opers could always speak on channels, even when they shouldn't be able to. Now they aren't above the law.
 
 ### Removed
 * Removed the `draft/message-ids` cap since... it doesn't actually exist. The feature is now enabled by default when clients request the `draft/message-tags-0.2` capability, as written in the [Message IDs spec](http://ircv3.net/specs/extensions/message-ids.html).
@@ -1441,7 +1441,7 @@ The `REHASH` changes are fairly extensive here, but should now be stable (this a
 * Added support for IRCv3 capabilities [`cap-notify`](http://ircv3.net/specs/extensions/cap-notify-3.2.html) and [`echo-message`](http://ircv3.net/specs/extensions/echo-message-3.2.html).
 
 ### Changed
-* FT_IRC operators no longer have permissions to do everything in channels.
+* Server operators no longer have permissions to do everything in channels.
 
 ### Fixed
 * MODE: Fixed issue where channel privelege changes returned incorrectly.

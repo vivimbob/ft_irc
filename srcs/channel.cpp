@@ -29,7 +29,7 @@ const std::string&
 }
 
 const std::map<Client*, MemberShip>&
-    Channel::get_users()
+    Channel::get_members()
 {
     return _members;
 }

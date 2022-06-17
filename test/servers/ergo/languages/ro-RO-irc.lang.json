@@ -254,7 +254,7 @@
   "SASL authentication failed: authcid and authzid should be the same": "Autentificare SASL eșuată: authcid și authzid ar trebui să fie similare",
   "SASL message too long": "Mesaj SASL prea lung",
   "SUMMON has been disabled": "Comanda SUMMON a fost dezactivată",
-  "FT_IRC notice masks": "Măști de anunț de server",
+  "Server notice masks": "Măști de anunț de server",
   "Started exporting data for account %[1]s to file %[2]s": "A pornit exportul de date pentru contul %[1]s în fișierul %[2]s",
   "Successfully accepted ownership of channel %s": "Ai acceptat rolul de fondator al canalului %s",
   "Successfully added UBAN for %s": "Am adăugat, cu succes, UBAN pentru %s",

@@ -32,7 +32,7 @@ class Channel
 
     const std::string& get_name() const;
     const std::string& get_topic() const;
-    const MemberMap&   get_users();
+    const MemberMap&   get_members();
 
     void set_name(const std::string& name);
     void set_topic(const std::string& topic);

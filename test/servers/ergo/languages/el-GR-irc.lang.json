@@ -83,7 +83,7 @@
   "SASL authentication failed: Passphrase too long": "Αποτυχία ελέγχου ταυτότητας SASL: Η φράση πρόσβασης είναι πολύ μεγάλη",
   "SASL authentication failed: authcid and authzid should be the same": "Αποτυχία ελέγχου ταυτότητας SASL: authcid και authzid θα πρέπει να είναι τα ίδια",
   "SASL message too long": "Το μήνυμα SASL είναι πολύ μεγάλο",
-  "FT_IRC notice masks": "Μάσκες ειδοποίησης διακομιστή",
+  "Server notice masks": "Μάσκες ειδοποίησης διακομιστή",
   "Successfully grouped nick %s with your account": "Επιτυχής ομαδοποίησης ψευδώνυμου %s με τον λογαριασμό σας",
   "Successfully ungrouped nick %s with your account": "Επιτυχής ομαδοποίηση ψευδώνυμου %s με τον λογαριασμό σας",
   "Successfully unregistered account %s": "Επιτυχής μη καταχωρισμένος λογαριασμός %s",
