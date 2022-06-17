@@ -280,7 +280,7 @@
   "SASL authentication failed: authcid and authzid should be the same": "Authentification SASL échouée : authcid et authzid devraient être identiques",
   "SASL message too long": "Message SASL trop long",
   "SUMMON has been disabled": "Cette commande a été désactivée",
-  "Server notice masks": "Masques de notification du serveur",
+  "FT_IRC notice masks": "Masques de notification du serveur",
   "Some IPs may also be prevented from connecting by the connection limiter and/or throttler": "Certaines adresses peuvent aussi être bloquées par les limites de connexions",
   "Specified client ID does not exist": "L’identifiant logiciel indiqué n’existe pas",
   "Started exporting data for account %[1]s to file %[2]s": "Début de l’export des données du compte %[1]s vers le fichier %[2]s",

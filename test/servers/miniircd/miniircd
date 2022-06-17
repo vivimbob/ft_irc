@@ -45,7 +45,7 @@ def create_directory(path: str) -> None:
 
 
 class Channel:
-    def __init__(self, server: "Server", name: bytes) -> None:
+    def __init__(self, server: "FT_IRC", name: bytes) -> None:
         self.server = server
         self.name = name
         self.members: Set["Client"] = set()
@@ -121,7 +121,7 @@ class Client:
         rb"^[&#+!][^\x00\x07\x0a\x0d ,:]{0,50}$"
     )
 
-    def __init__(self, server: "Server", socket: Socket) -> None:
+    def __init__(self, server: "FT_IRC", socket: Socket) -> None:
         self.server = server
         self.socket = socket
         # irc_lower(Channel name) --> Channel
@@ -785,7 +785,7 @@ class Client:
             self.reply(b"422 %s :MOTD File is missing" % self.nickname)
 
 
-class Server:
+class FT_IRC:
     def __init__(self, args: Namespace) -> None:
         self.ports = args.ports
         self.password: str = args.password
@@ -1230,7 +1230,7 @@ def main() -> None:
         except ValueError:
             ap.error("bad port: %r" % port)
     args.ports = ports
-    server = Server(args)
+    server = FT_IRC(args)
     if args.pid_file:
         args.pid_file = os.path.abspath(args.pid_file)
     if args.daemon:

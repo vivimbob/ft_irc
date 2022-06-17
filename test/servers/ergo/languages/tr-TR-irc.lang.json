@@ -71,7 +71,7 @@
   "SASL authentication failed: Passphrase too long": "SASL doğrulaması başarısız oldu: Parola çok uzun",
   "SASL authentication failed: authcid and authzid should be the same": "SASL doğrulaması başarısız oldu: authcid ve authzid aynı olmalı",
   "SASL message too long": "SASL mesajı çok uzun",
-  "Server notice masks": "Sunucu uyarı maskeleri",
+  "FT_IRC notice masks": "Sunucu uyarı maskeleri",
   "There are %[1]d users and %[2]d invisible on %[3]d server(s)": "%[3]d sunucu(lar) da %[1]d kullanıcı ve %[2]d görünmez var",
   "There was no such nickname": "Böyle takma ad yoktu",
   "They aren't on that channel": "Onlar bu kanalda değil",

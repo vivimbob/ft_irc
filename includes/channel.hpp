@@ -20,7 +20,7 @@ class Channel
   private:
     std::string _name;
     std::string _topic;
-    MemberMap   _member_list;
+    MemberMap   _members;
 
     Channel();
     Channel(const Channel& cp);
@@ -32,19 +32,19 @@ class Channel
 
     const std::string& get_name() const;
     const std::string& get_topic() const;
-    const MemberMap&   get_user_list();
+    const MemberMap&   get_users();
 
     void set_name(const std::string& name);
     void set_topic(const std::string& topic);
-    void set_operator_flag(bool toggle, Client* client);
+    void set_operator(Client* client);
 
     bool is_empty();
     bool is_full();
     bool is_operator(Client& client);
-    bool is_user_on_channel(Client* client);
+    bool is_joined(Client* client);
 
-    void add_user(Client& client);
-    void delete_user(Client& client);
+    void join(Client& client);
+    void part(Client& client);
 };
 
 #endif /* CHANNEL_HPP */

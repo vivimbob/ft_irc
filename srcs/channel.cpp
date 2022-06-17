@@ -29,9 +29,9 @@ const std::string&
 }
 
 const std::map<Client*, MemberShip>&
-    Channel::get_user_list()
+    Channel::get_users()
 {
-    return _member_list;
+    return _members;
 }
 
 /* channel class getter end */
@@ -51,9 +51,9 @@ void
 }
 
 void
-    Channel::set_operator_flag(bool toggle, Client* client)
+    Channel::set_operator(Client* client)
 {
-    _member_list.find(client)->second.mode_operater = toggle;
+    _members.find(client)->second.mode_operater = true;
 }
 
 /* channel class setter end */
@@ -63,27 +63,27 @@ void
 bool
     Channel::is_empty()
 {
-    return _member_list.empty();
+    return _members.empty();
 }
 
 bool
     Channel::is_full()
 {
-    return _member_list.size() >= CHANNEL_USER_LIMIT;
+    return _members.size() >= CHANNEL_USER_LIMIT;
 }
 
 bool
     Channel::is_operator(Client& client)
 {
-    if (_member_list.find(&client) == _member_list.end())
+    if (_members.find(&client) == _members.end())
         return false;
-    return _member_list.find(&client)->second.mode_operater;
+    return _members.find(&client)->second.mode_operater;
 }
 
 bool
-    Channel::is_user_on_channel(Client* client)
+    Channel::is_joined(Client* client)
 {
-    return _member_list.count(client);
+    return _members.count(client);
 }
 
 /* channel class is_function end */
@@ -91,15 +91,15 @@ bool
 /* channel class user function begin */
 
 void
-    Channel::add_user(Client& client)
+    Channel::join(Client& client)
 {
-    _member_list.insert(std::make_pair(&client, MemberShip(&client, this)));
+    _members.insert(std::make_pair(&client, MemberShip(&client, this)));
 }
 
 void
-    Channel::delete_user(Client& client)
+    Channel::part(Client& client)
 {
-    _member_list.erase(&client);
+    _members.erase(&client);
 }
 
 /* channel class user function end */

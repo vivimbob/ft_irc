@@ -1172,7 +1172,7 @@ I'd like to thank @slingamn for really contributing a lot in this release! He's 
 * Ident (looking up usernames) now times out a whole lot quicker, meaning you connect to the server more quickly.
 * IRCv3 capability `draft/sts` has been renamed to `sts`, since it's now been ratified.
 * Rehashing is now safer.
-* Server opers could always speak on channels, even when they shouldn't be able to. Now they aren't above the law.
+* FT_IRC opers could always speak on channels, even when they shouldn't be able to. Now they aren't above the law.
 
 ### Removed
 * Removed the `draft/message-ids` cap since... it doesn't actually exist. The feature is now enabled by default when clients request the `draft/message-tags-0.2` capability, as written in the [Message IDs spec](http://ircv3.net/specs/extensions/message-ids.html).
@@ -1301,10 +1301,10 @@ This release isn't too exciting, but packs large improvements to how we handle f
 
 ## [0.7.2] - 2017-04-17
 This is a patch release of Oragono to fix discovered bugs and crashes. I'll also be implementing some more stringent checks before pushing releases after this, to ensure these same sort of bugs don't happen again.
- 
+
 ### Security
 * Fixed a bug where any user joining an unregistered channel was given chanop status (thanks @vegax87).
- 
+
 ### Fixed
 * Fixed a number of various crashes and races.
 
@@ -1314,7 +1314,7 @@ This is a quick patch release of Oragono to work around a discovered bug.
 
 ### Security
 * Fixed a bug where non-logged in users could register channels. Bleh.
- 
+
 
 ## [0.7.0] - 2017-03-27
 This release brings channel registration with ChanServ, logging improvements, and a whole host of improvements across the board.
@@ -1322,7 +1322,7 @@ This release brings channel registration with ChanServ, logging improvements, an
 Thanks to a suggestion by `dp-` on our channel (`#oragono` on Freenode), the socket handling code has been overhauled to allow for a larger number of more stable connections. As well, improved testing has brought with it a bunch of strange hang and crash fixes, which means that Oragono should be more stable than ever.
 
 Channel registration is really cool. Essentially, you register the channel with `/CS REGISTER` as you would on any network, and then all topic changes, the `+b/+e/+I` lists, and your founder status, are all remembered and re-applied when the server's restarted.
- 
+
 ### Config Changes
 * `channels` section added to control channel registration.
 * `logging` key under `server` removed, replaced with `logging` section.
@@ -1336,7 +1336,7 @@ Channel registration is really cool. Essentially, you register the channel with 
 * Added `USERHOST` command (thanks @vegax87).
 * Added `SAMODE` command.
 * Added draft IRCv3 capability [draft/sts](http://ircv3.net/specs/core/sts-3.3.html).
- 
+
 ### Changed
 * `DLINE` and `KLINE` now let you specify years, months and days (e.g. `1y12m30d`) in durations.
 * Logging is now much more useful, displays colours and can log to disk.
@@ -1441,7 +1441,7 @@ The `REHASH` changes are fairly extensive here, but should now be stable (this a
 * Added support for IRCv3 capabilities [`cap-notify`](http://ircv3.net/specs/extensions/cap-notify-3.2.html) and [`echo-message`](http://ircv3.net/specs/extensions/echo-message-3.2.html).
 
 ### Changed
-* Server operators no longer have permissions to do everything in channels.
+* FT_IRC operators no longer have permissions to do everything in channels.
 
 ### Fixed
 * MODE: Fixed issue where channel privelege changes returned incorrectly.
