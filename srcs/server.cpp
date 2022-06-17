@@ -3,34 +3,10 @@
 /* utility start */
 
 void
-    Server::m_set_event(int     identity,
-                        short   filter,
-                        u_short flags,
-                        u_int   fflags,
-                        int     data,
-                        void*   udata)
-{
-    struct kevent kev;
-    EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-    kevent(_kqueue, &kev, 1, NULL, 0, NULL);
-}
-
-void
-    Server::m_toggle_event(Client& client, int EVFILT_TYPE)
-{
-    int ident = client.get_socket();
-
-    m_set_event(ident, EVFILT_TYPE, EV_DISABLE, 0, 0, &client);
-    m_set_event(ident,
-                (EVFILT_TYPE == EVFILT_READ ? EVFILT_WRITE : EVFILT_READ),
-                EV_ENABLE, 0, 0, &client);
-}
-
-void
     Server::m_prepare_to_send(Client& client, const std::string& str_msg)
 {
     client.push_message(str_msg);
-    m_toggle_event(client, EVFILT_READ);
+    Event::toggle(client, EVFILT_READ);
 }
 
 void
@@ -639,61 +615,31 @@ void
 
 /* process command end */
 
-/* initailize server start */
-
-/* initailize server end */
-
 /* server run start */
 
 void
-    Server::m_accept()
+    Server::m_requests_handler(Client&                  client,
+                               std::queue<std::string>& requests)
 {
-    sockaddr_in addr;
-    int         fd = accept(Server::_fd, (sockaddr*)(&addr), &_socklen);
-
-    if (fd == -1)
-    {
-        Logger().error() << "Failed to accept client errno: " << errno << ":"
-                         << strerror(errno);
-        return;
-    }
-
-    fcntl(fd, F_SETFL, O_NONBLOCK);
-    Client* client = new Client(addr, fd);
-
-    m_set_event(fd, EVFILT_READ, EV_ADD, 0, 0, client);
-    m_set_event(fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
-
-    Logger().info() << "Accept client [address:" << inet_ntoa(addr.sin_addr)
-                    << ":" << addr.sin_port << "fd:" << fd << ']';
-}
-
-void
-    Server::m_requests_handler(std::queue<Message*>& requests)
-{
-    Client&  client = requests.front()->get_from();
-    Message* message;
-
     while (requests.size())
     {
-        message = requests.front();
+        Message message(requests.front());
         requests.pop();
-        message->parse_message();
-        const std::string& command = message->get_command();
+        message.parse_message();
+        const std::string& command = message.get_command();
 
         if (m_register_command_map.count(command))
-            (this->*m_register_command_map[command])(client, *message);
+            (this->*m_register_command_map[command])(client, message);
         else if (m_channel_command_map.count(command))
         {
             if (client.is_registered())
-                (this->*m_channel_command_map[message->get_command()])(
-                    client, *message);
+                (this->*m_channel_command_map[message.get_command()])(client,
+                                                                      message);
             else
-                utils::push_message(client, message->err_not_registered());
+                utils::push_message(client, message.err_not_registered());
         }
         else if (!command.empty())
-            utils::push_message(client, message->err_unknown_command());
-        delete message;
+            utils::push_message(client, message.err_unknown_command());
     }
 }
 
@@ -705,8 +651,8 @@ void
     Logger().info() << "Client disconnect [address :" << client.get_IP() << ':'
                     << client.get_addr().sin_port << " FD :" << clientfd << ']';
 
-    m_set_event(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-    m_set_event(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    Event::set(clientfd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+    Event::set(clientfd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 
     std::set<Client*>            client_check_list;
     std::set<Channel*>::iterator it = client.get_joined_list().begin();
@@ -719,9 +665,8 @@ void
             if (!client_check_list.count(user->first) && user->first != &client)
             {
                 client_check_list.insert(user->first);
-                m_prepare_to_send(
-                    *user->first,
-                    Message(&client, "QUIT").build_quit_reply(reason));
+                m_prepare_to_send(*user->first,
+                                  Message("QUIT").build_quit_reply(reason));
             }
     }
     std::set<Channel*>::iterator channel_it  = client.get_joined_list().begin();
@@ -750,35 +695,6 @@ void
 }
 
 void
-    Server::m_receive(struct kevent& event)
-{
-    Client& client = (Client&)event.udata;
-    ssize_t length = recv(event.ident, _buffer, event.data, 0);
-
-    if (length > 0)
-    {
-        int                  offset;
-        std::queue<Message*> requests;
-
-        Client::t_buffers& buffers = client.get_buffers();
-        buffers.request.append(_buffer, length);
-        while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
-               std::string::npos)
-        {
-            requests.push(
-                new Message(&client, buffers.request.substr(0, offset)));
-            buffers.request.erase(0, offset + 2);
-        }
-        if (requests.size())
-            m_requests_handler(requests);
-        if (buffers.to_client.size())
-            m_toggle_event(client, EVFILT_READ);
-    }
-    else if (length == 0)
-        m_disconnect_client(client, "connection closed");
-}
-
-void
     Server::m_send(struct kevent& event)
 {
     Client& client          = (Client&)event.udata;
@@ -801,16 +717,60 @@ void
             if (send_buffer.size())
                 send_buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
-            m_set_event(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
-            m_set_event(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
+            Event::set(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
+            Event::set(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
         }
     }
 }
 
-Server::Server(int port, char* password) : _password(password)
+void
+    Server::m_receive(struct kevent& event)
 {
-    Socket::m_initialize(port);
-    Event::m_create_kqueue(_fd);
+    Client& client = (Client&)event.udata;
+    ssize_t length = recv(event.ident, _buffer, event.data, 0);
+
+    if (length > 0)
+    {
+        int                     offset;
+        std::queue<std::string> requests;
+
+        Client::t_buffers& buffers = client.get_buffers();
+        buffers.request.append(_buffer, length);
+        while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
+               std::string::npos)
+        {
+            requests.push(buffers.request.substr(0, offset));
+            buffers.request.erase(0, offset + 2);
+        }
+        if (requests.size())
+            m_requests_handler(client, requests);
+        if (buffers.to_client.size())
+            Event::toggle(client, EVFILT_READ);
+    }
+    else if (length == 0)
+        m_disconnect_client(client, "connection closed");
+}
+
+void
+    Server::m_accept()
+{
+    sockaddr_in addr;
+    int         fd = accept(Server::_fd, (sockaddr*)(&addr), &_socklen);
+
+    if (fd == -1)
+    {
+        Logger().error() << "Failed to accept client errno: ";
+        return;
+    }
+
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+    Client* client = new Client(addr, fd);
+
+    Event::set(fd, EVFILT_READ, EV_ADD, 0, 0, client);
+    Event::set(fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
+
+    Logger().info() << "Accept client [address:" << inet_ntoa(addr.sin_addr)
+                    << ":" << addr.sin_port << "fd:" << fd << ']';
 }
 
 // struct kevent {
@@ -845,4 +805,8 @@ void
     }
 }
 
-/* server run end */
+Server::Server(int port, char* password) : _password(password)
+{
+    Socket::m_initialize(port);
+    Event::m_create_kqueue(_fd);
+}

@@ -1,4 +1,5 @@
 #include "../lib/logger.hpp"
+#include "client.hpp"
 #include <sys/event.h>
 #include <sys/time.h>
 #include <sys/types.h>

@@ -53,7 +53,7 @@ void
 }
 
 void
-    Socket::initialize(int port)
+    Socket::m_initialize(int port)
 {
     m_create();
     m_bind(port);

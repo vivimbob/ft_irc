@@ -74,18 +74,11 @@ class Server : public Socket, public Event
     void m_process_notice_command(Client& client, Message& msg);
     void m_process_kick_command(Client& client, Message& msg);
 
-    void m_set_event(int     identity,
-                     short   filter,
-                     u_short flags,
-                     u_int   fflags,
-                     int     data,
-                     void*   udata);
-    void m_toggle_event(Client& client, int EVFILT_TYPE);
     void m_accept();
     void m_receive(struct kevent& event);
     void m_send(struct kevent& event);
 
-    void m_requests_handler(std::queue<Message*>& requests);
+    void m_requests_handler(Client& client, std::queue<std::string>& requests);
     void m_disconnect_client(Client& client, std::string reason = "");
 
     void m_register_client(Client& client, Message& msg);

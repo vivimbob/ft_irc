@@ -27,7 +27,7 @@ class Message
     std::string reply_nickmask_prefix(std::string command);
 
   public:
-    Message(Client* client, const std::string& message);
+    Message(const std::string& message);
     ~Message();
 
     void                            parse_message();

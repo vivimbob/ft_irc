@@ -1,4 +1,15 @@
 #include "../includes/event.hpp"
+
+void
+    Event::toggle(Client& client, int EVFILT_TYPE)
+{
+    int ident = client.get_socket();
+
+    Event::set(ident, EVFILT_TYPE, EV_DISABLE, 0, 0, &client);
+    Event::set(ident, (EVFILT_TYPE == EVFILT_READ ? EVFILT_WRITE : EVFILT_READ),
+               EV_ENABLE, 0, 0, &client);
+}
+
 void
     Event::set(int     identity,
                short   filter,

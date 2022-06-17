@@ -32,7 +32,12 @@ void
     std::ostream* stream = _Impl::m_streams[m_active_level].second;
     if (stream)
     {
-        *stream << m_oss.str() << "\033[0m" << std::endl;
+        *stream << m_oss.str();
+
+        if (m_active_level == Error)
+            *stream << " [" << errno << "] [" << strerror(errno) << "]";
+
+        *stream << "\033[0m" << std::endl;
         stream->flush();
     }
 }

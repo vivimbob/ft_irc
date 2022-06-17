@@ -19,9 +19,10 @@ class Socket
   protected:
     Socket();
     ~Socket();
-    void      m_initialize(int port);
-    int       _fd;
-    socklen_t _socklen;
+    void        m_initialize(int port);
+    int         _fd;
+    sockaddr_in _sockaddr;
+    socklen_t   _socklen;
 };
 
 #endif /* SOCKET_HPP */
