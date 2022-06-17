@@ -71,18 +71,18 @@ void
         (*it)->part(client);
         if ((*it)->is_empty())
         {
-            _channel_map.erase((*it)->get_name());
+            _map.channel.erase((*it)->get_name());
             delete (*it);
         }
     }
-    _client_map.erase(client.get_names().nick);
+    _map.client.erase(client.get_names().nick);
     delete &client;
 }
 
 void
     FT_IRCD::m_regist(Client& client, Message& msg)
 {
-    _client_map[client.get_names().nick] = &client;
+    _map.client[client.get_names().nick] = &client;
     utils::push_message(client, msg.rpl_welcome());
     Logger().info() << client.get_names().nick << " is registered to server";
 }

@@ -5,7 +5,6 @@
 #include "buffer.hpp"
 #include "channel.hpp"
 #include "client.hpp"
-#include "commands.hpp"
 #include "daemon.hpp"
 #include "event.hpp"
 #include "resources.hpp"
@@ -35,13 +34,17 @@ class FT_IRCD : public Socket, public Event, public Daemon
     friend class Daemon;
     typedef std::map<std::string, Client*>  ClientMap;
     typedef std::map<std::string, Channel*> ChannelMap;
+    typedef struct s_map
+    {
+        ClientMap  client;
+        ChannelMap channel;
+    } t_map;
 
   private:
     char          _buffer[IPV4_MTU_MAX];
     struct kevent _events[EVENTS_MAX];
-    ClientMap     _client_map;
-    ChannelMap    _channel_map;
     std::string   _password;
+    t_map         _map;
 
   private:
     FT_IRCD();
