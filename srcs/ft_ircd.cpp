@@ -41,35 +41,44 @@ void
     }
     if (request.command.size())
     {
-        int offset;
-        int fixed;
+        int         offset;
+        int         fixed;
+        std::string buffer;
 
         for (offset = 0; (request.command[offset] != ' ' &&
                           request.command[offset] != '\0');
              ++offset)
             if ((unsigned)request.command[offset] - 'a' < 26)
                 request.command[offset] ^= 0b100000;
-        request.type = Daemon::get_type(request.command.substr(0, offset));
+        request.type = IRC::get_type(request.command.substr(0, offset));
         if (request.command[offset] != '\0')
-            request.parameter.push_back(request.command.substr(offset));
+            buffer = request.command.substr(offset);
         request.command.erase(offset);
-        std::vector<std::string>::iterator iter = request.parameter.begin();
-        offset                                  = 0;
-        while ((iter != request.parameter.end()) && (offset < iter->size()))
+
+        offset = 0;
+        for (int index = 0;
+             buffer.size() && offset != std::string::npos &&
+             (fixed = buffer.find_first_not_of(' ')) != std::string::npos;
+             ++index)
         {
-            if (iter->c_str()[offset] == ':')
-                iter->erase(0, offset + 1);
+            if (buffer[fixed] != ':')
+            {
+                offset = buffer.find_first_of(' ', fixed);
+                if (offset != std::string::npos)
+                    request.parameter.push_back(buffer.substr(fixed, offset));
+                else
+                {
+                    request.parameter.push_back(buffer.substr(fixed));
+                    break;
+                }
+                buffer.erase(0, offset);
+            }
             else
             {
-                offset = iter->find_first_of(' ', offset);
-                fixed  = offset;
-                offset = iter->find_first_not_of(' ', offset);
-                if (iter->c_str()[offset] != '\0')
-                    request.parameter.push_back(iter->substr(fixed, offset));
-                iter->erase(fixed);
+                request.parameter.push_back(buffer.substr(fixed + 1));
+                break;
             }
-            offset = 0;
-            ++iter;
+            ++index;
         }
     }
 }
@@ -77,27 +86,30 @@ void
 void
     FT_IRCD::m_handler(Client::t_requests& requests)
 {
+    IRC::_requests = &requests;
+    IRC::_client   = requests.from;
     while (requests.queue.size())
     {
-        Client::t_request& request = requests.queue.front();
-        m_handler(request);
+        IRC::_request = &requests.queue.front();
+        m_handler(*IRC::_request);
 
-        if (request.type != EMPTY && request.type != UNKNOWN)
+        if (IRC::_request->type != EMPTY && IRC::_request->type != UNKNOWN)
         {
-            if ((((unsigned)request.type) - 1) < CONNECTION)
-                (this->*Command::_handler[request.type])(requests);
+            if ((((unsigned)IRC::_request->type) - 1) < CONNECTION)
+                (this->*IRC::_commands[IRC::_request->type])();
             else
             {
-                if (requests.from->is_registered())
-                    (this->*Command::_handler[request.type])(requests);
+                if (IRC::_client->is_registered())
+                    (this->*IRC::_commands[IRC::_request->type])();
                 else
-                    Command::m_unregistered();
+                    (this->*IRC::_commands[UNREGISTERED])();
             }
         }
         else
-            (this->*Command::_handler[request.type])(requests);
-        requests.queue.pop();
+            (this->*IRC::_commands[IRC::_request->type])();
+        IRC::_requests->queue.pop();
     }
+    IRC::_requests = nullptr;
 }
 
 void
@@ -161,7 +173,7 @@ void
 
     if (send_data_len >= 0)
     {
-        Logger().info() << "Daemon send to " << client.get_names().nick;
+        Logger().info() << "IRC send to " << client.get_names().nick;
         buffer.set_offset(buffer.get_offset() + send_data_len);
         Logger().trace() << "Send " << send_data_len << " bytes from ["
                          << clientfd << "] client";
@@ -238,7 +250,7 @@ void
     register int count;
     register int index;
 
-    Logger().info() << "[Daemon is running]";
+    Logger().info() << "[IRC is running]";
     while (true)
     {
         count = kevent(Event::_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
@@ -263,7 +275,7 @@ FT_IRCD::FT_IRCD(int port, char* password) : _password(password)
 {
     Socket::m_initialize(port);
     Event::m_create_kqueue(_socket.fd);
-    Daemon::_ft_ircd = this;
+    IRC::_ft_ircd = this;
 }
 
 int

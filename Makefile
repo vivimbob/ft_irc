@@ -1,6 +1,6 @@
 NAME    	= ircserv
 CC      	= c++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
+CXXFLAGS	= #-Wall -Wextra -Werror -std=c++98
 LIBFLAGS	= -L lib -l logger
 LIBRARY		= lib/liblogger.a
 # CXXFLAGS  = -std=c++98
@@ -9,12 +9,13 @@ srcs		= ft_ircd.cpp\
 			  buffer.cpp\
 			  channel.cpp\
 			  client.cpp\
-			  daemon.cpp\
 			  event.cpp\
 			  membership.cpp\
 			  message.cpp\
 			  socket.cpp\
-			  utils.cpp
+			  utils.cpp\
+			  irc.cpp
+#			  stringbuilder.cpp
 
 lib		= logger.cpp
 

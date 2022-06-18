@@ -6,8 +6,8 @@
 #include "buffer.hpp"
 #include "channel.hpp"
 #include "client.hpp"
-#include "daemon.hpp"
 #include "event.hpp"
+#include "irc.hpp"
 #include "resources.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
@@ -29,11 +29,10 @@
 #include <unistd.h>
 #include <vector>
 
-class FT_IRCD : public Socket, public Event, public Daemon
+class FT_IRCD : public Socket, public Event, public IRC
 {
   public:
-    friend class Daemon;
-    friend class Command;
+    friend class IRC;
     typedef std::map<std::string, Client*>  ClientMap;
     typedef std::map<std::string, Channel*> ChannelMap;
     typedef struct s_map
