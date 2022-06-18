@@ -42,6 +42,7 @@ void
     if (request.line.size())
     {
         int offset;
+        int fixed;
 
         for (offset = 0;
              (request.line[offset] != ' ' && request.line[offset] != '\0');
@@ -49,6 +50,32 @@ void
             if ((unsigned)request.line[offset] - 'a' < 26)
                 request.line[offset] ^= 0b100000;
         request.type = Daemon::get_type(request.line.substr(0, offset));
+        fixed        = offset;
+        while (request.line[offset] == ' ')
+            ++offset;
+        if (request.line[offset] != '\0')
+            request.parameter.push_back(request.line.substr(offset));
+        request.line.erase(fixed);
+
+        std::vector<std::string>::iterator iter = request.parameter.begin();
+        offset                                  = 0;
+
+        while ((iter != request.parameter.end()) && (offset < iter->size()))
+        {
+            if (iter->c_str()[offset] == ':')
+                iter->erase(0, offset + 1);
+            else
+            {
+                offset = iter->find_first_of(' ', offset);
+                fixed  = offset;
+                offset = iter->find_first_not_of(' ', offset);
+                if (iter->c_str()[offset] != '\0')
+                    request.parameter.push_back(iter->substr(fixed, offset));
+                iter->erase(fixed);
+            }
+            offset = 0;
+            ++iter;
+        }
     }
 }
 
@@ -60,15 +87,21 @@ void
         Client::t_request& request = requests.queue.front();
         m_handler(request);
 
-        if (Daemon::_type_to_command.count(request.type))
-            Daemon::_cmd_connection[];
-        else if (_command_map.count(request.type))
+        // switch?
+        // ERROR, EMPTY는 default나 다음으로 직행
+        // PASS~QUIT이면 실행
+        // JOIN~NOTICE면 등록됐을 경우 실행
+        //	안됐으면 에러메시지
+        // UNKNOWN이면 에러메시지
+        if (request.type >= PASS && request.type <= QUIT)
+            Daemon::_command[request.type](request);
+        else if (request.type >= JOIN && request.type <= NOTICE)
         {
             if (requests.from->is_registered())
-                (this->*_command_map[command])(message);
+                ; //    (this->*_command_map[command])(message);
             else
-                utils::push_message(*requests.from,
-                                    message.err_not_registered());
+                ; //  utils::push_message(*requests.from,
+            //                    message.err_not_registered());
         }
         else if (!command.empty())
             utils::push_message(*requests.from, message.err_unknown_command());

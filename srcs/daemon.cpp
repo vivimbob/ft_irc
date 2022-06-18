@@ -28,6 +28,12 @@ static bool
 }
 
 void
+    Daemon::m_void(Message& msg)
+{
+    (void)msg;
+}
+
+void
     Daemon::m_pass(Message& msg)
 {
     Client& client = msg.get_from();
@@ -501,19 +507,4 @@ Daemon::~Daemon()
 
 Daemon::Daemon()
 {
-    _cmd_connection.insert(std::make_pair("PASS", &Daemon::m_pass));
-    _cmd_connection.insert(std::make_pair("NICK", &Daemon::m_nick));
-    _cmd_connection.insert(std::make_pair("USER", &Daemon::m_user));
-    _cmd_connection.insert(std::make_pair("QUIT", &Daemon::m_quit));
-
-    _command_map.insert(std::make_pair("JOIN", &Daemon::m_join));
-    _command_map.insert(std::make_pair("MODE", &Daemon::m_mode));
-    _command_map.insert(std::make_pair("TOPIC", &Daemon::m_topic));
-    _command_map.insert(std::make_pair("PART", &Daemon::m_part));
-    _command_map.insert(std::make_pair("NAMES", &Daemon::m_names));
-    _command_map.insert(std::make_pair("LIST", &Daemon::m_list));
-    _command_map.insert(std::make_pair("INVITE", &Daemon::m_invite));
-    _command_map.insert(std::make_pair("PRIVMSG", &Daemon::m_privmsg));
-    _command_map.insert(std::make_pair("NOTICE", &Daemon::m_notice));
-    _command_map.insert(std::make_pair("KICK", &Daemon::m_kick));
 }

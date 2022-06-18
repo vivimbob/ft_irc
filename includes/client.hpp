@@ -2,7 +2,6 @@
 #define CLIENT_HPP
 
 #include "buffer.hpp"
-#include "daemon.hpp"
 #include "message.hpp"
 #include "resources.hpp"
 #include "utils.hpp"
@@ -27,27 +26,14 @@ class Client
 
     typedef struct s_request
     {
-        std::string line;
-        TYPE        type;
-        s_request(std::string line, TYPE type) : line(line), type(type)
+        union
         {
-
-            if (line.size() && (line[0] == ':'))
-            {
-                line.erase(0, line.find_first_of(' '));
-                line.erase(0, line.find_first_not_of(' '));
-            }
-            if (line.size())
-            {
-                int offset;
-
-                for (offset = 0; (line[offset] != ' ' && line[offset] != '\0');
-                     ++offset)
-                    if ((unsigned)line[offset] - 'a' < 26)
-                        line[offset] ^= 0b100000;
-                type = ((Daemon*)this)->get_type(line.substr(0, offset));
-            }
-        }
+            std::string line;
+            std::string command;
+        };
+        std::vector<std::string> parameter;
+        TYPE                     type;
+        s_request(std::string line, TYPE type) : line(line), type(type){};
     } t_request;
 
     typedef struct s_requests
