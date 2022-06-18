@@ -33,7 +33,7 @@ void
 
 void
     FT_IRCD::m_requests_handler(Client&                  client,
-                               std::queue<std::string>& requests)
+                                std::queue<std::string>& requests)
 {
     while (requests.size())
     {
@@ -106,7 +106,7 @@ void
 void
     FT_IRCD::m_send(struct kevent& event)
 {
-    Client&             client          = (Client&)event.udata;
+    Client&             client          = *(Client*)event.udata;
     Buffer&             buffer          = client.get_buffers().to_client;
     int                 remain_data_len = buffer.size() - buffer.get_offset();
     const unsigned int& clientfd        = client.get_socket();
@@ -126,8 +126,7 @@ void
             if (buffer.size())
                 buffer.clear();
             Logger().trace() << "Empty buffer from [" << clientfd << "] client";
-            Event::set(clientfd, EVFILT_READ, EV_ENABLE, 0, 0, &client);
-            Event::set(clientfd, EVFILT_WRITE, EV_DISABLE, 0, 0, &client);
+            Event::toggle(client, EVFILT_WRITE);
         }
     }
 }
