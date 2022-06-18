@@ -2,6 +2,7 @@
 #define CLIENT_HPP
 
 #include "buffer.hpp"
+#include "daemon.hpp"
 #include "message.hpp"
 #include "resources.hpp"
 #include "utils.hpp"
@@ -24,9 +25,48 @@ class Client
         std::string real;
     } t_names;
 
+    typedef struct s_request
+    {
+        std::string line;
+        TYPE        type;
+        s_request(std::string line, TYPE type) : line(line), type(type)
+        {
+
+            if (line.size() && (line[0] == ':'))
+            {
+                line.erase(0, line.find_first_of(' '));
+                line.erase(0, line.find_first_not_of(' '));
+            }
+            if (line.size())
+            {
+                int offset;
+
+                for (offset = 0; (line[offset] != ' ' && line[offset] != '\0');
+                     ++offset)
+                    if ((unsigned)line[offset] - 'a' < 26)
+                        line[offset] ^= 0b100000;
+                type = ((Daemon*)this)->get_type(line.substr(0, offset));
+            }
+        }
+    } t_request;
+
+    typedef struct s_requests
+    {
+        Client*                       from;
+        std::queue<Client::t_request> queue;
+    } t_requests;
+
+    typedef struct s_to_client
+    {
+        int                     offset;
+        std::queue<std::string> queue;
+    } t_to_client;
+
     typedef struct s_buffers
     {
-        std::string request;
+        int         offset;
+        std::string buffer;
+        t_requests  requests;
         Buffer      to_client;
     } t_buffers;
 
@@ -51,8 +91,6 @@ class Client
     const t_names&            get_names() const;
     std::queue<Message*>&     get_commands();
     t_buffers&                get_buffers();
-    std::string&              get_request_buffer();
-    Buffer&                   get_send_buffer();
     const std::set<Channel*>& get_joined_list() const;
 
     void set_nickname(const std::string& nickname);

@@ -56,7 +56,9 @@ class FT_IRCD : public Socket, public Event, public Daemon
     void m_receive(struct kevent& event);
     void m_send(struct kevent& event);
 
-    void m_requests_handler(Client& client, std::queue<std::string>& requests);
+    void m_handler(Client::t_requests& requests);
+    void m_handler(Client::t_request& request);
+
     void m_disconnect(Client& client, std::string reason = "");
     void m_regist(Client& client, Message& msg);
 

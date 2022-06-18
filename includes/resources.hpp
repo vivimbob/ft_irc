@@ -1,6 +1,7 @@
 #ifndef RESOURCES_HPP
 #define RESOURCES_HPP
 
+#include <sys/socket.h>
 #define CHANNEL_USER_LIMIT 42
 
 #define CLIENT_CAHNNEL_LIMIT 10
@@ -18,7 +19,27 @@
 #define CHANNEL_PREFIX     '#'
 #define SPECIALCHAR        "[]\\`-^{|}"
 #define CHSTRING           " ,\r\n\7"
-#define ERROR              -1
+
+enum TYPE
+{
+    ERROR = -1,
+    EMPTY,
+    PASS,
+    NICK,
+    USER,
+    QUIT,
+    JOIN,
+    PART,
+    TOPIC,
+    NAMES,
+    LIST,
+    INVITE,
+    KICK,
+    MODE,
+    PRIVMSG,
+    NOTICE,
+    UNKNOWN
+};
 
 #define PORT_MAX 65535
 

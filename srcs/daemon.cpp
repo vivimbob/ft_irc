@@ -1,5 +1,23 @@
 #include "../includes/daemon.hpp"
 #include "../includes/ft_ircd.hpp"
+#include <cstddef>
+#include <string>
+
+TYPE
+    Daemon::get_type(std::string command)
+{
+    if (_command_to_type.count(command))
+        return _command_to_type[command];
+    return UNKNOWN;
+}
+
+std::string
+    Daemon::get_command(TYPE type)
+{
+    if (_type_to_command.count(type))
+        return _type_to_command[type];
+    return "꺼져";
+}
 
 static bool
     check_error(bool error_check, Client& client, std::string message)
@@ -483,10 +501,10 @@ Daemon::~Daemon()
 
 Daemon::Daemon()
 {
-    _register_cmd_map.insert(std::make_pair("PASS", &Daemon::m_pass));
-    _register_cmd_map.insert(std::make_pair("NICK", &Daemon::m_nick));
-    _register_cmd_map.insert(std::make_pair("USER", &Daemon::m_user));
-    _register_cmd_map.insert(std::make_pair("QUIT", &Daemon::m_quit));
+    _cmd_connection.insert(std::make_pair("PASS", &Daemon::m_pass));
+    _cmd_connection.insert(std::make_pair("NICK", &Daemon::m_nick));
+    _cmd_connection.insert(std::make_pair("USER", &Daemon::m_user));
+    _cmd_connection.insert(std::make_pair("QUIT", &Daemon::m_quit));
 
     _command_map.insert(std::make_pair("JOIN", &Daemon::m_join));
     _command_map.insert(std::make_pair("MODE", &Daemon::m_mode));

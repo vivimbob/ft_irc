@@ -32,27 +32,47 @@ void
 }
 
 void
-    FT_IRCD::m_requests_handler(Client&                  client,
-                                std::queue<std::string>& requests)
+    FT_IRCD::m_handler(Client::t_request& request)
 {
-    while (requests.size())
+    if (request.line.size() && (request.line[0] == ':'))
     {
-        Message message(&client, requests.front());
-        requests.pop();
-        message.parse_message();
-        const std::string& command = message.get_command();
+        request.line.erase(0, request.line.find_first_of(' '));
+        request.line.erase(0, request.line.find_first_not_of(' '));
+    }
+    if (request.line.size())
+    {
+        int offset;
 
-        if (_register_cmd_map.count(command))
-            (this->*_register_cmd_map[command])(message);
-        else if (_command_map.count(command))
+        for (offset = 0;
+             (request.line[offset] != ' ' && request.line[offset] != '\0');
+             ++offset)
+            if ((unsigned)request.line[offset] - 'a' < 26)
+                request.line[offset] ^= 0b100000;
+        request.type = Daemon::get_type(request.line.substr(0, offset));
+    }
+}
+
+void
+    FT_IRCD::m_handler(Client::t_requests& requests)
+{
+    while (requests.queue.size())
+    {
+        Client::t_request& request = requests.queue.front();
+        m_handler(request);
+
+        if (Daemon::_type_to_command.count(request.type))
+            Daemon::_cmd_connection[];
+        else if (_command_map.count(request.type))
         {
-            if (client.is_registered())
+            if (requests.from->is_registered())
                 (this->*_command_map[command])(message);
             else
-                utils::push_message(client, message.err_not_registered());
+                utils::push_message(*requests.from,
+                                    message.err_not_registered());
         }
         else if (!command.empty())
-            utils::push_message(client, message.err_unknown_command());
+            utils::push_message(*requests.from, message.err_unknown_command());
+        requests.queue.pop();
     }
 }
 
@@ -139,19 +159,17 @@ void
 
     if (length > 0)
     {
-        int                     offset;
-        std::queue<std::string> requests;
-
         Client::t_buffers& buffers = client.get_buffers();
-        buffers.request.append(_buffer, length);
-        while ((offset = buffers.request.find_first_of("\r\n", 0)) !=
+        buffers.buffer.append(_buffer, length);
+        while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0)) !=
                (int)std::string::npos)
         {
-            requests.push(buffers.request.substr(0, offset));
-            buffers.request.erase(0, offset + 2);
+            buffers.requests.queue.push(Client::s_request(
+                buffers.buffer.substr(0, buffers.offset), UNKNOWN));
+            buffers.buffer.erase(0, buffers.offset + 2);
         }
-        if (requests.size())
-            m_requests_handler(client, requests);
+        if (buffers.requests.queue.size())
+            m_handler(buffers.requests);
         if (buffers.to_client.size())
             Event::toggle(client, EVFILT_READ);
     }

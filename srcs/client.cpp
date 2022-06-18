@@ -11,6 +11,7 @@ Client::Client(sockaddr_in addr, int fd)
       m_nick_registered(false),
       m_user_registered(false)
 {
+    _buffers.requests.from = this;
 }
 
 Client::~Client()
@@ -56,22 +57,10 @@ std::queue<Message*>&
     return _commands;
 }
 
-std::string&
-    Client::get_request_buffer()
-{
-    return _buffers.request;
-}
-
 Client::t_buffers&
     Client::get_buffers()
 {
     return _buffers;
-}
-
-Buffer&
-    Client::get_send_buffer()
-{
-    return _buffers.to_client;
 }
 
 const std::set<Channel*>&
