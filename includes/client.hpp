@@ -2,7 +2,7 @@
 #define CLIENT_HPP
 
 #include "buffer.hpp"
-#include "message.hpp"
+#include "stringbuilder.hpp"
 #include "resources.hpp"
 #include "utils.hpp"
 #include <arpa/inet.h>

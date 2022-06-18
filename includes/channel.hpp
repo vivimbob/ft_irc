@@ -2,7 +2,7 @@
 #define CHANNEL_HPP
 
 #include "membership.hpp"
-#include "message.hpp"
+#include "stringbuilder.hpp"
 #include "resources.hpp"
 #include <ctime>
 #include <map>

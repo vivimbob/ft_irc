@@ -137,8 +137,9 @@ void
             if (!check.count(user->first) && user->first != &client)
             {
                 check.insert(user->first);
-                m_prepare_to_send(*user->first,
-                                  Message("QUIT").build_quit_reply(reason));
+                m_prepare_to_send(
+                    *user->first,
+                    StringBuilder("QUIT").build_quit_reply(reason));
             }
         (*it)->part(client);
         if ((*it)->is_empty())
@@ -152,7 +153,7 @@ void
 }
 
 void
-    FT_IRCD::m_regist(Client& client, Message& msg)
+    FT_IRCD::m_regist(Client& client, StringBuilder& msg)
 {
     _map.client[client.get_names().nick] = &client;
     utils::push_message(client, msg.rpl_welcome());

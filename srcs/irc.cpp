@@ -9,6 +9,55 @@ TYPE
     return UNKNOWN;
 }
 
+static bool
+    check_error(bool error_check, Client& client, std::string message)
+{
+    if (error_check)
+        utils::push_message(client, message);
+    return error_check;
+}
+
+bool
+    IRC::m_pass()
+{
+    if (request.parameter.empty())
+        return true; //        msg.err_need_more_params()));
+    if (client.is_registered())
+        return true; //           msg.err_already_registred()))
+    if (request.parameter[0] != _ft_ircd->_password)
+        return true; //            msg.err_passwd_mismatch())))
+    return false;
+}
+
+bool
+    IRC::m_nick()
+{
+    if (request.parameter.empty())
+        return true; // msg.err_no_nickname_given()))
+    const std::string& nickname = request.parameter[0];
+
+    if (!utils::is_nickname_valid(nickname))
+        return true; // msg.err_erroneus_nickname(nickname)))
+    if (_ft_ircd->_map.client.count(nickname))
+    {
+        //        if (nickname != client.get_names().nick)
+        //            utils::push_message(client,
+        //            msg.err_nickname_in_use(nickname));
+        return true;
+    }
+    return false;
+}
+
+bool
+    IRC::m_user()
+{
+    if (request.parameter.size() < 4)
+        return true; //           msg.err_need_more_params()))
+    if (client.is_registered())
+        return true; // msg.err_already_registred()))
+    return;
+}
+
 bool
     IRC::m_checker()
 {
@@ -84,14 +133,6 @@ static void
     std::string elem;
     while (std::getline(iss, elem, ','))
         splited_params.push_back(elem);
-}
-
-static bool
-    check_error(bool error_check, Client& client, std::string message)
-{
-    if (error_check)
-        utils::push_message(client, message);
-    return error_check;
 }
 
 void
@@ -232,8 +273,7 @@ void
 }
 
 void
-    IRC::m_mode_channel(Client::t_requests& requests,
-                        const std::string&  channel_name)
+    IRC::m_mode_channel(const std::string& channel_name)
 {
     //    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
     //                    msg.err_no_such_channel(channel_name)))
@@ -251,7 +291,7 @@ void
 }
 
 void
-    IRC::m_mode_user(Client::t_requests& requests, const std::string& nickname)
+    IRC::m_mode_user(const std::string& nickname)
 {
     //
     //    if (check_error(!_ft_ircd->_map.client.count(nickname), client,

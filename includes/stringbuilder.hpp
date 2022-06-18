@@ -7,7 +7,7 @@
 
 class Client;
 
-class Message
+class StringBuilder
 {
   private:
     std::string              m_message;
@@ -18,18 +18,18 @@ class Message
     size_t                   m_position;
     Client*                  _from;
 
-    Message();
-    Message(const Message& copy);
-    Message& operator=(const Message& other);
+    StringBuilder();
+    StringBuilder(const StringBuilder& copy);
+    StringBuilder& operator=(const StringBuilder& other);
 
     size_t      next_position();
     std::string reply_servername_prefix(std::string numeric_reply);
     std::string reply_nickmask_prefix(std::string command);
 
   public:
-    Message(const std::string& message);
-    Message(Client *client, const std::string& message);
-    ~Message();
+    StringBuilder(const std::string& message);
+    StringBuilder(Client* client, const std::string& message);
+    ~StringBuilder();
 
     void                            parse_message();
     const std::string&              get_message() const;
@@ -92,6 +92,7 @@ class Message
     std::string build_nick_reply(const std::string& nick);
     std::string build_join_reply(const std::string& channel);
     std::string build_topic_reply();
+    bool        m_pass();
 };
 
 #endif /* MESSAGE_HPP */

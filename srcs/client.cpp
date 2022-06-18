@@ -16,11 +16,6 @@ Client::Client(sockaddr_in addr, int fd)
 
 Client::~Client()
 {
-    while (_commands.size())
-    {
-        delete _commands.front();
-        _commands.pop();
-    }
 }
 
 /* client class constructor and destructor end */

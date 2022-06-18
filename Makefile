@@ -11,11 +11,10 @@ srcs		= ft_ircd.cpp\
 			  client.cpp\
 			  event.cpp\
 			  membership.cpp\
-			  message.cpp\
 			  socket.cpp\
 			  utils.cpp\
-			  irc.cpp
-#			  stringbuilder.cpp
+			  irc.cpp\
+			  stringbuilder.cpp
 
 lib		= logger.cpp
 

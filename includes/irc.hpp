@@ -1,13 +1,12 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-#include "../includes/ICommand.hpp"
 #include "../includes/client.hpp"
 #include <vector>
 
 class FT_IRCD;
 
-class IRC : public ICommand
+class IRC
 {
   public:
     typedef struct s_target
@@ -34,12 +33,28 @@ class IRC : public ICommand
     void notice();
     void unknown();
     void unregistered();
-
     bool m_checker();
 
-    void m_mode_channel(Client::t_requests& requests,
-                        const std::string&  channel_name);
-    void m_mode_user(Client::t_requests& requests, const std::string& nickname);
+    bool m_empty();
+    bool m_pass();
+    bool m_nick();
+    bool m_user();
+    bool m_quit();
+    bool m_join();
+    bool m_part();
+    bool m_topic();
+    bool m_names();
+    bool m_list();
+    bool m_invite();
+    bool m_kick();
+    bool m_mode();
+    bool m_privmsg();
+    bool m_notice();
+    bool m_unknown();
+    bool m_unregistered();
+
+    void m_mode_channel(const std::string& channel_name);
+    void m_mode_user(const std::string& nickname);
 
     void m_to_client(Client& client, const std::string& str_msg);
     void m_to_members(Channel*           channel,

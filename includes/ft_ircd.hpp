@@ -60,7 +60,7 @@ class FT_IRCD : public Socket, public Event, public IRC
     void m_handler(Client::t_request& request);
 
     void m_disconnect(Client& client, std::string reason = "");
-    void m_regist(Client& client, Message& msg);
+    void m_regist(Client& client, StringBuilder& msg);
 
     void m_prepare_to_send(Client& client, const std::string& str_msg);
     void m_send_to_channel(Channel*           channel,

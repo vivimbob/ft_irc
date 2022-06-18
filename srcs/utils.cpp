@@ -81,7 +81,7 @@ void
 }
 
 void
-    send_name_reply(Channel* channel, Client& client, Message& msg)
+    send_name_reply(Channel* channel, Client& client, StringBuilder& msg)
 {
     std::queue<const std::string> nick_queue;
 
@@ -100,7 +100,7 @@ void
 }
 
 void
-    send_topic_reply(Channel* channel, Client& client, Message& msg)
+    send_topic_reply(Channel* channel, Client& client, StringBuilder& msg)
 {
     std::string        reply_msg;
     const std::string& channel_topic = channel->get_topic();
