@@ -134,7 +134,7 @@ void
 void
     FT_IRCD::m_receive(struct kevent& event)
 {
-    Client& client = (Client&)event.udata;
+    Client& client = *(Client*)event.udata;
     ssize_t length = recv(event.ident, _buffer, event.data, 0);
 
     if (length > 0)
