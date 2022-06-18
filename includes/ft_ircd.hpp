@@ -33,6 +33,7 @@ class FT_IRCD : public Socket, public Event, public Daemon
 {
   public:
     friend class Daemon;
+    friend class Command;
     typedef std::map<std::string, Client*>  ClientMap;
     typedef std::map<std::string, Channel*> ChannelMap;
     typedef struct s_map

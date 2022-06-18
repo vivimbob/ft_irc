@@ -26,14 +26,10 @@ class Client
 
     typedef struct s_request
     {
-        union
-        {
-            std::string line;
-            std::string command;
-        };
+        std::string              command;
         std::vector<std::string> parameter;
         TYPE                     type;
-        s_request(std::string line, TYPE type) : line(line), type(type){};
+        s_request(std::string line, TYPE type) : command(line), type(type){};
     } t_request;
 
     typedef struct s_requests

@@ -34,32 +34,27 @@ void
 void
     FT_IRCD::m_handler(Client::t_request& request)
 {
-    if (request.line.size() && (request.line[0] == ':'))
+    if (request.command.size() && (request.command[0] == ':'))
     {
-        request.line.erase(0, request.line.find_first_of(' '));
-        request.line.erase(0, request.line.find_first_not_of(' '));
+        request.command.erase(0, request.command.find_first_of(' '));
+        request.command.erase(0, request.command.find_first_not_of(' '));
     }
-    if (request.line.size())
+    if (request.command.size())
     {
         int offset;
         int fixed;
 
-        for (offset = 0;
-             (request.line[offset] != ' ' && request.line[offset] != '\0');
+        for (offset = 0; (request.command[offset] != ' ' &&
+                          request.command[offset] != '\0');
              ++offset)
-            if ((unsigned)request.line[offset] - 'a' < 26)
-                request.line[offset] ^= 0b100000;
-        request.type = Daemon::get_type(request.line.substr(0, offset));
-        fixed        = offset;
-        while (request.line[offset] == ' ')
-            ++offset;
-        if (request.line[offset] != '\0')
-            request.parameter.push_back(request.line.substr(offset));
-        request.line.erase(fixed);
-
+            if ((unsigned)request.command[offset] - 'a' < 26)
+                request.command[offset] ^= 0b100000;
+        request.type = Daemon::get_type(request.command.substr(0, offset));
+        if (request.command[offset] != '\0')
+            request.parameter.push_back(request.command.substr(offset));
+        request.command.erase(offset);
         std::vector<std::string>::iterator iter = request.parameter.begin();
         offset                                  = 0;
-
         while ((iter != request.parameter.end()) && (offset < iter->size()))
         {
             if (iter->c_str()[offset] == ':')
@@ -87,24 +82,20 @@ void
         Client::t_request& request = requests.queue.front();
         m_handler(request);
 
-        // switch?
-        // ERROR, EMPTY는 default나 다음으로 직행
-        // PASS~QUIT이면 실행
-        // JOIN~NOTICE면 등록됐을 경우 실행
-        //	안됐으면 에러메시지
-        // UNKNOWN이면 에러메시지
-        if (request.type >= PASS && request.type <= QUIT)
-            Daemon::_command[request.type](request);
-        else if (request.type >= JOIN && request.type <= NOTICE)
+        if (request.type != EMPTY && request.type != UNKNOWN)
         {
-            if (requests.from->is_registered())
-                ; //    (this->*_command_map[command])(message);
+            if ((((unsigned)request.type) - 1) < CONNECTION)
+                (this->*Command::_handler[request.type])(requests);
             else
-                ; //  utils::push_message(*requests.from,
-            //                    message.err_not_registered());
+            {
+                if (requests.from->is_registered())
+                    (this->*Command::_handler[request.type])(requests);
+                else
+                    Command::m_unregistered();
+            }
         }
-        else if (!command.empty())
-            utils::push_message(*requests.from, message.err_unknown_command());
+        else
+            (this->*Command::_handler[request.type])(requests);
         requests.queue.pop();
     }
 }

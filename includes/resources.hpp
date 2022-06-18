@@ -19,6 +19,7 @@
 #define CHANNEL_PREFIX     '#'
 #define SPECIALCHAR        "[]\\`-^{|}"
 #define CHSTRING           " ,\r\n\7"
+#define CONNECTION         4
 
 enum TYPE
 {
@@ -38,7 +39,8 @@ enum TYPE
     MODE,
     PRIVMSG,
     NOTICE,
-    UNKNOWN
+    UNKNOWN,
+    UNREGISTERED
 };
 
 #define PORT_MAX 65535
