@@ -23,7 +23,7 @@ void split_by_comma(ConstStringVector& splited_params,
                     const std::string& params);
 void send_name_reply(Channel* channel, Client& client, Message& msg);
 void send_topic_reply(Channel* channel, Client& client, Message& msg);
-void push_message(Client& client, std::string msg);
+
 } // namespace utils
 
 namespace event

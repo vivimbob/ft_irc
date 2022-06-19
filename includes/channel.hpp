@@ -2,7 +2,6 @@
 #define CHANNEL_HPP
 
 #include "membership.hpp"
-#include "stringbuilder.hpp"
 #include "resources.hpp"
 #include <ctime>
 #include <map>
@@ -23,8 +22,8 @@ class Channel
     MemberMap   _members;
 
     Channel();
-    Channel(const Channel& cp);
-    Channel& operator=(const Channel& cp);
+    Channel(const Channel&);
+    Channel& operator=(const Channel&);
 
   public:
     Channel(const std::string& name);

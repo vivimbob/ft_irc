@@ -1,13 +1,12 @@
 #pragma once
-#ifndef FT_IRCD_HPP
-#define FT_IRCD_HPP
+#ifndef FT_TEMP_HPP
+#define FT_TEMP_HPP
 
 #include "../lib/logger.hpp"
-#include "buffer.hpp"
 #include "channel.hpp"
 #include "client.hpp"
 #include "event.hpp"
-#include "irc.hpp"
+#include "ircd.hpp"
 #include "resources.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
@@ -29,50 +28,33 @@
 #include <unistd.h>
 #include <vector>
 
-class FT_IRCD : public Socket, public Event, public IRC
+class FT_IRCD : public Socket, public Event, public IRCD
 {
   public:
-    friend class IRC;
-    typedef std::map<std::string, Client*>  ClientMap;
-    typedef std::map<std::string, Channel*> ChannelMap;
-    typedef struct s_map
-    {
-        ClientMap  client;
-        ChannelMap channel;
-    } t_map;
+    friend class IRCD;
 
   private:
     char          _buffer[IPV4_MTU_MAX];
     struct kevent _events[EVENTS_MAX];
-    std::string   _password;
     t_map         _map;
 
   private:
     FT_IRCD();
-    FT_IRCD(const FT_IRCD& FT_IRCD);
-    FT_IRCD& operator=(const FT_IRCD& FT_IRCD);
+    FT_IRCD(const FT_IRCD&);
+    FT_IRCD& operator=(const FT_IRCD&);
 
     void m_accept();
-    void m_receive(struct kevent& event);
-    void m_send(struct kevent& event);
+    void m_receive(struct kevent&);
+    void m_send(struct kevent&);
 
-    void m_handler(Client::t_requests& requests);
-    void m_handler(Client::t_request& request);
+    void m_handler();
+    void m_handler(Client::t_request&);
 
     void m_disconnect(Client& client, std::string reason = "");
-    void m_regist(Client& client, StringBuilder& msg);
-
-    void m_prepare_to_send(Client& client, const std::string& str_msg);
-    void m_send_to_channel(Channel*           channel,
-                           const std::string& msg,
-                           Client*            exclusion = nullptr);
-    void m_send_to_channel(Client&            client,
-                           const std::string& msg,
-                           Client*            exclusion = nullptr);
 
   public:
     ~FT_IRCD();
     FT_IRCD(int port, char* password);
     void run();
 };
-#endif /* FT_IRCD_HPP */
+#endif /* FT_TEMP_HPP */

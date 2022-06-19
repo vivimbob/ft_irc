@@ -11,8 +11,8 @@ class Client;
 class Event
 {
   private:
-    Event(const Event& copy);
-    Event& operator=(const Event& copy);
+    Event(const Event&);
+    Event& operator=(const Event&);
 
   protected:
     int  _kqueue;

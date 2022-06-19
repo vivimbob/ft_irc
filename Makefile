@@ -6,7 +6,6 @@ LIBRARY		= lib/liblogger.a
 # CXXFLAGS  = -std=c++98
 
 srcs		= ft_ircd.cpp\
-			  buffer.cpp\
 			  channel.cpp\
 			  client.cpp\
 			  event.cpp\
@@ -14,7 +13,7 @@ srcs		= ft_ircd.cpp\
 			  socket.cpp\
 			  utils.cpp\
 			  irc.cpp\
-			  stringbuilder.cpp
+			  ircd.cpp
 
 lib		= logger.cpp
 

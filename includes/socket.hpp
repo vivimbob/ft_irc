@@ -21,8 +21,8 @@ class Socket
     void m_create();
     void m_bind(int port);
     void m_listen();
-    Socket(const Socket& copy);
-    Socket& operator=(const Socket& copy);
+    Socket(const Socket&);
+    Socket& operator=(const Socket&);
 
   protected:
     t_socket _socket;

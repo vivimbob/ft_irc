@@ -9,26 +9,6 @@ namespace utils
 
 /* utils is_function begin */
 
-static inline bool
-    is_special(char c)
-{
-    return std::memchr(SPECIALCHAR, c, 8);
-}
-
-bool
-    is_nickname_valid(std::string nick)
-{
-    if (nick.length() > NICK_LENGTH_MAX)
-        return false;
-    if (!std::isalpha(nick[0]))
-        return false;
-    for (size_t index = 1; index < nick.length(); ++index)
-        if (!std::isalpha(nick[index]) && !std::isdigit(nick[index]) &&
-            !is_special(nick[index]))
-            return false;
-    return true;
-}
-
 bool
     is_channel_prefix(const std::string& chan)
 {
@@ -74,14 +54,7 @@ static const std::string
 /* utils message function begin */
 
 void
-    push_message(Client& client, std::string msg)
-{
-    client.push_message(msg);
-    Logger().debug() << msg;
-}
-
-void
-    send_name_reply(Channel* channel, Client& client, StringBuilder& msg)
+    send_name_reply(Channel* channel, Client& client, IRC& msg)
 {
     std::queue<const std::string> nick_queue;
 
@@ -100,7 +73,7 @@ void
 }
 
 void
-    send_topic_reply(Channel* channel, Client& client, StringBuilder& msg)
+    send_topic_reply(Channel* channel, Client& client, IRC& msg)
 {
     std::string        reply_msg;
     const std::string& channel_topic = channel->get_topic();

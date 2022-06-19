@@ -9,7 +9,7 @@ class MemberShip
   public:
     MemberShip();
     MemberShip(Client* client, Channel* channel);
-    MemberShip(const MemberShip& copy);
+    MemberShip(const MemberShip&);
 
     Client* const  client;
     Channel* const channel;

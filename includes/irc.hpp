@@ -1,85 +1,107 @@
-#ifndef COMMAND_HPP
-#define COMMAND_HPP
+#ifndef IRC_HPP
+#define IRC_HPP
 
 #include "../includes/client.hpp"
+#include "resources.hpp"
+#include <queue>
+#include <string>
 #include <vector>
 
 class FT_IRCD;
+class Client;
 
 class IRC
 {
   public:
-    typedef struct s_target
-    {
-        Client*            client;
-        Client::t_request* request;
-    } t_target;
+    typedef std::map<TYPE, std::string>     IRCMap;
+    typedef std::map<std::string, TYPE>     TypeMap;
+    typedef std::map<std::string, Client*>  ClientMap;
+    typedef std::map<std::string, Channel*> ChannelMap;
 
   private:
-    void empty();
-    void pass();
-    void nick();
-    void user();
-    void quit();
-    void join();
-    void part();
-    void topic();
-    void names();
-    void list();
-    void invite();
-    void kick();
-    void mode();
-    void privmsg();
-    void notice();
-    void unknown();
-    void unregistered();
-    bool m_checker();
+    std::string              m_message;
+    std::string              m_prefix;
+    std::string              m_command;
+    std::vector<std::string> m_parameters;
+    bool                     m_valid_message;
 
-    bool m_empty();
-    bool m_pass();
-    bool m_nick();
-    bool m_user();
-    bool m_quit();
-    bool m_join();
-    bool m_part();
-    bool m_topic();
-    bool m_names();
-    bool m_list();
-    bool m_invite();
-    bool m_kick();
-    bool m_mode();
-    bool m_privmsg();
-    bool m_notice();
-    bool m_unknown();
-    bool m_unregistered();
+    IRC(const IRC&);
+    IRC& operator=(const IRC& other);
 
-    void m_mode_channel(const std::string& channel_name);
-    void m_mode_user(const std::string& nickname);
+    std::string reply_servername_prefix(std::string numeric_reply);
+    std::string reply_nickmask_prefix(std::string command);
 
-    void m_to_client(Client& client, const std::string& str_msg);
-    void m_to_members(Channel*           channel,
-                      const std::string& msg,
-                      Client*            exclusion = nullptr);
-    void m_to_members(Client&            client,
-                      const std::string& msg,
-                      Client*            exclusion = nullptr);
-
-  protected:
-    FT_IRCD*                             _ft_ircd;
-    typedef std::map<TYPE, std::string>  IRCMap;
-    typedef std::map<std::string, TYPE>  TypeMap;
-    typedef std::vector<void (IRC::*)()> Command;
-    IRCMap                               _type_to_command;
-    TypeMap                              _command_to_type;
-    Command                              _commands;
-    Client::t_requests*                  _requests;
-    Client*                              _client;
-    Client::t_request*                   _request;
-
+  public:
+    IRC(const std::string& message);
+    IRC(Client* client, const std::string& message);
     IRC();
     ~IRC();
 
-    TYPE get_type(std::string command);
+    std::string err_no_such_nick(const std::string& nickname);
+    std::string err_no_such_channel(const std::string& channel_name);
+    std::string err_too_many_channels(const std::string& channel_name);
+    std::string err_too_many_targets(const std::string& target);
+    std::string err_no_recipient();
+    std::string err_no_text_to_send();
+    std::string err_unknown_command();
+    std::string err_file_error(const std::string& file_op,
+                               const std::string& file);
+    std::string err_no_nickname_given();
+    std::string err_erroneus_nickname(const std::string& nick);
+    std::string err_nickname_in_use(const std::string& nick);
+    std::string err_user_not_in_channel(const std::string& nick,
+                                        const std::string& channel);
+    std::string err_not_on_channel(const std::string& channel);
+    std::string err_user_on_channel(const std::string& user,
+                                    const std::string& channel);
+    std::string err_not_registered();
+    std::string err_need_more_params();
+    std::string err_already_registred();
+    std::string err_passwd_mismatch();
+    std::string err_channel_is_full(const std::string& channel);
+    std::string err_unknown_mode(const std::string& flag);
+    std::string err_chanoprivs_needed(const std::string& channel);
+    std::string err_u_mode_unknown_flag();
+    std::string err_users_dont_match(const std::string& action);
+
+    std::string rpl_list(const std::string  channel,
+                         const std::string& visible,
+                         const std::string  topic);
+    std::string rpl_listend();
+    std::string rpl_channel_mode_is(const std::string& channel);
+    std::string rpl_notopic(const std::string& channel);
+    std::string rpl_topic(const std::string& channel, const std::string& topic);
+    std::string rpl_inviting(const std::string& nick,
+                             const std::string& channel);
+    std::string rpl_namreply(const std::string&             channel,
+                             std::queue<const std::string>& nick);
+    std::string rpl_endofnames(const std::string& channel);
+    std::string rpl_user_mode_is();
+    std::string rpl_welcome();
+
+    std::string build_quit_reply(const std::string& reason);
+    std::string build_part_reply(const std::string& channel);
+    std::string build_message_reply(const std::string& target);
+    std::string build_invite_reply(const std::string& nick,
+                                   const std::string& channel);
+    std::string build_kick_reply(const std::string& channel,
+                                 const std::string& nick,
+                                 const std::string& oper_nick);
+    std::string build_nick_reply(const std::string& nick);
+    std::string build_join_reply(const std::string& channel);
+    std::string build_topic_reply();
+
+  protected:
+    FT_IRCD* _ft_ircd;
+    IRCMap   _type_to_command;
+    TypeMap  _command_to_type;
+
+    Client*              _client;
+    Client::t_requests*  _requests;
+    Client::t_request*   _request;
+    Client::t_to_client* _to_client;
+
+    std::string _password;
 };
 
-#endif /* COMMAND_HPP */
+#endif /* TEMP_HPP */

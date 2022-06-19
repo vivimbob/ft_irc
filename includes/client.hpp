@@ -1,8 +1,6 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "buffer.hpp"
-#include "stringbuilder.hpp"
 #include "resources.hpp"
 #include "utils.hpp"
 #include <arpa/inet.h>
@@ -49,20 +47,27 @@ class Client
         int         offset;
         std::string buffer;
         t_requests  requests;
-        Buffer      to_client;
+        t_to_client to_client;
     } t_buffers;
 
-  private:
-    sockaddr_in          _addr;
-    int                  _fd;
-    t_names              _names;
-    t_buffers            _buffers;
-    std::queue<Message*> _commands;
-    std::set<Channel*>   _joined_list;
+    typedef union
+    {
+        struct
+        {
+            unsigned char pass : 1;
+            unsigned char nick : 1;
+            unsigned char user : 1;
+        };
+        unsigned char registered;
+    } t_status;
 
-    bool m_pass_registered;
-    bool m_nick_registered;
-    bool m_user_registered;
+  private:
+    sockaddr_in        _addr;
+    int                _fd;
+    t_names            _names;
+    t_buffers          _buffers;
+    std::set<Channel*> _channels;
+    t_status           _status;
 
   public:
     Client(sockaddr_in client_addr, int client_fd);
@@ -71,28 +76,20 @@ class Client
     int                       get_socket();
     char*                     get_IP();
     const t_names&            get_names() const;
-    std::queue<Message*>&     get_commands();
     t_buffers&                get_buffers();
-    const std::set<Channel*>& get_joined_list() const;
+    const std::set<Channel*>& get_channels() const;
+    bool                      get_status(TYPE);
 
     void set_nickname(const std::string& nickname);
     void set_username(const std::string& username);
     void set_realname(const std::string& realname);
-    void set_password_flag();
-    void set_invisible_flag(bool toggle);
-    void set_operator_flag(bool toggle);
-    void set_server_notice_flag(bool toggle);
-    void set_wallops_flag(bool toggle);
+    void set_status(TYPE);
 
     bool is_registered() const;
-    bool is_pass_registered() const;
-    bool is_nick_registered() const;
-    bool is_user_registered() const;
-    bool is_join_available() const;
-    bool is_already_joined(Channel* channel);
-    bool is_invisible() const;
-
-    void push_message(const std::string& message);
+    bool has_pass() const;
+    bool has_nick() const;
+    bool has_user() const;
+    bool is_joined(Channel* channel);
 
     std::string make_nickmask();
 

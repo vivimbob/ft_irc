@@ -4,12 +4,7 @@
 
 /* client class constructor and destructor begin */
 
-Client::Client(sockaddr_in addr, int fd)
-    : _addr(addr),
-      _fd(fd),
-      m_pass_registered(false),
-      m_nick_registered(false),
-      m_user_registered(false)
+Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
     _buffers.requests.from = this;
 }
@@ -46,12 +41,6 @@ const Client::t_names&
     return _names;
 }
 
-std::queue<Message*>&
-    Client::get_commands()
-{
-    return _commands;
-}
-
 Client::t_buffers&
     Client::get_buffers()
 {
@@ -59,9 +48,26 @@ Client::t_buffers&
 }
 
 const std::set<Channel*>&
-    Client::get_joined_list() const
+    Client::get_channels() const
 {
-    return _joined_list;
+    return _channels;
+}
+
+bool
+    Client::get_status(TYPE type)
+{
+    switch (type)
+    {
+        case PASS:
+            // return (_status. & PASSWORD);
+        case NICK:
+            // return (_status.registered & NICKNAME);
+        case USER:
+            // return (_status.registered & USERNAME);
+        default:
+            break;
+    }
+    return true;
 }
 
 /* client class getter end */
@@ -71,15 +77,15 @@ const std::set<Channel*>&
 void
     Client::set_nickname(const std::string& nickname)
 {
-    _names.nick       = nickname;
-    m_nick_registered = true;
+    _names.nick  = nickname;
+    _status.nick = 1;
 }
 
 void
     Client::set_username(const std::string& username)
 {
-    _names.user       = username;
-    m_user_registered = true;
+    _names.user  = username;
+    _status.user = 1;
 }
 
 void
@@ -89,9 +95,22 @@ void
 }
 
 void
-    Client::set_password_flag()
+    Client::set_status(TYPE type)
 {
-    m_pass_registered = true;
+    switch (type)
+    {
+        case PASS:
+            _status.pass = 1;
+            break;
+        case NICK:
+            _status.nick = 1;
+            break;
+        case USER:
+            _status.user = 1;
+            break;
+        default:
+            break;
+    }
 }
 
 /* client class setter end */
@@ -101,48 +120,36 @@ void
 bool
     Client::is_registered() const
 {
-    return m_pass_registered & m_nick_registered & m_user_registered;
+    return (_status.registered == REGISTERED);
 }
 
 bool
-    Client::is_pass_registered() const
+    Client::has_pass() const
 {
-    return m_pass_registered;
+    return (_status.pass == PASSWORD);
 }
 
 bool
-    Client::is_nick_registered() const
+    Client::has_nick() const
 {
-    return m_nick_registered;
+    return (_status.nick == NICKNAME);
 }
 
 bool
-    Client::is_user_registered() const
+    Client::has_user() const
 {
-    return m_user_registered;
+    return (_status.user == USERNAME);
 }
 
 bool
-    Client::is_join_available() const
+    Client::is_joined(Channel* channel)
 {
-    return _joined_list.size() < CHANNEL_USER_LIMIT;
-}
-
-bool
-    Client::is_already_joined(Channel* channel)
-{
-    return _joined_list.count(channel);
+    return _channels.count(channel);
 }
 
 /* client class is_function end */
 
 /* client class other function begin */
-
-void
-    Client::push_message(const std::string& message)
-{
-    _buffers.to_client.append(message);
-}
 
 std::string
     Client::make_nickmask()
@@ -153,13 +160,13 @@ std::string
 void
     Client::insert_channel(Channel* channel)
 {
-    _joined_list.insert(channel);
+    _channels.insert(channel);
 }
 
 void
     Client::erase_channel(Channel* channel)
 {
-    _joined_list.erase(channel);
+    _channels.erase(channel);
 }
 
 /* client class other function end */
