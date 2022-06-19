@@ -24,7 +24,8 @@ static bool
 }
 
 static void
-    split_by_comma(ConstStringVector& splited_params, const std::string& params)
+    split_by_comma(std::vector<const std::string>& splited_params,
+                   const std::string&              params)
 {
     std::istringstream iss(params);
 
@@ -125,12 +126,12 @@ IRCD::m_is_valid(TYPE type)
 }
 
 void
-    IRCD::m_to_channel(Channel& channel, const std::string& str)
+    IRCD::m_to_channel(const std::string& str)
 {
-    Channel::MemberMap::const_iterator iter = channel.get_members().begin();
-    Channel::MemberMap::const_iterator end  = channel.get_members().end();
+    Channel::CITER iter = _channel->get_members().begin();
+    Channel::CITER end  = _channel->get_members().end();
 
-    Logger().trace() << "to channel :" << channel.get_name();
+    Logger().trace() << "to channel :" << _channel->get_name();
 
     for (; iter != end; ++iter)
         if (iter->first != _client)
@@ -140,11 +141,11 @@ void
 void
     IRCD::m_to_channels(const std::string& str)
 {
-    std::set<Channel*>::iterator iter = _client->get_channels().begin();
-    std::set<Channel*>::iterator end  = _client->get_channels().end();
+    Client::CITER iter = _client->get_channels().begin();
+    Client::CITER end  = _client->get_channels().end();
 
-    for (; iter != end; ++iter)
-        m_to_channel(**iter, str);
+    for (_channel = *iter; iter != end; _channel = *(++iter))
+        m_to_channel(str);
 }
 
 RESULT
@@ -173,7 +174,7 @@ void
     if (_client->is_registered())
     {
         if (_client->get_channels().size())
-            m_to_channels(build_nick_reply(*_target));
+            m_to_channels(cmd_nick_reply(*_target));
         _ft_ircd->_map.client.erase(_client->get_names().nick);
         _ft_ircd->_map.client[*_target] = _client;
     }
@@ -221,77 +222,97 @@ void
 RESULT
 IRCD::m_join(PHASE phase, Channel* channel)
 {
-    switch (phase)
+    if (phase == ONE)
     {
-        case ONE:
-        {
-            if (_request->parameter.empty())
-                return m_to_client(err_need_more_params());
-            break;
-        }
-        case TWO:
-        {
-            if (!m_is_valid(CHANNEL_PREFIX))
-                return m_to_client(err_no_such_channel(*_target));
-            if (!m_is_valid(CHANNEL_NAME))
-                return m_to_client(err_no_such_channel(*_target));
-            if (CLIENT_CAHNNEL_LIMIT <= _client->get_channels().size())
-                return m_to_client(err_too_many_channels(*_target));
-            break;
-        }
-        case THREE:
-        {
-            if (_client->is_joined(channel))
-                return ERROR;
-            else if (channel->is_full())
-                return m_to_client(err_channel_is_full(*_target));
-            break;
-        }
-        default:
-            break;
+        if (_request->parameter.empty())
+            return m_to_client(err_need_more_params());
+    }
+    else if (phase == TWO)
+    {
+        if (!m_is_valid(CHANNEL_PREFIX))
+            return m_to_client(err_no_such_channel(*_target));
+        if (!m_is_valid(CHANNEL_NAME))
+            return m_to_client(err_no_such_channel(*_target));
+        if (CLIENT_CAHNNEL_LIMIT <= _client->get_channels().size())
+            return m_to_client(err_too_many_channels(*_target));
+    }
+    else if (phase == THREE)
+    {
+        if (_client->is_joined(channel))
+            return ERROR;
+        else if (channel->is_full())
+            return m_to_client(err_channel_is_full(*_target));
     }
     return OK;
 }
+
+std::vector<const std::string>
+    split(const std::string& params, char delimiter)
+{
+    std::vector<const std::string> splited;
+    std::istringstream             iss(params);
+    std::string                    element;
+
+    while (std::getline(iss, element, delimiter))
+        splited.push_back(element);
+    return splited;
+}
+
+// static void
+//     send_name_reply(Channel* channel, Client& client, IRC& msg)
+//{
+//     std::queue<const std::string> nick_queue;
+
+//    Channel::MemberMap::const_iterator user_it =
+//    channel->get_members().begin(); Channel::MemberMap::const_iterator
+//    user_ite = channel->get_members().end();
+
+//    for (; user_it != user_ite; ++user_it)
+//        nick_queue.push(masked_nick(channel->is_operator(*user_it->first),
+//                                    user_it->first->get_names().nick,
+//                                    client.is_already_joined(channel)));
+
+//    if (nick_queue.size())
+//        client.push_message(
+//            msg.rpl_namreply("= " + channel->get_name(), nick_queue));
+//    utils::push_message(client, msg.rpl_endofnames(channel->get_name()));
+//}
 
 void
     IRCD::join()
 {
     if (m_join(ONE) == ERROR)
         return;
-
-    ConstStringVector channel_list;
-
-    utils::split_by_comma(channel_list, _request->parameter[0]);
-    for (ConstStringVector::iterator channel_it = channel_list.begin();
-         channel_it != channel_list.end(); ++channel_it)
+    std::vector<const std::string> channels
+        = split(_request->parameter[0], DELIMITER);
+    IRCD::ITER iter = channels.begin();
+    IRCD::ITER end  = channels.end();
+    for (; iter != end; ++iter)
     {
-        _target = channel_it.base();
-
+        _target = iter.base();
         if (m_join(TWO) == ERROR)
             continue;
-
         if (!_ft_ircd->_map.channel.count(*_target))
             _ft_ircd->_map.channel.insert(
                 std::make_pair(*_target, new Channel(*_target)));
-
-        Channel* channel = _ft_ircd->_map.channel[*_target];
-
-        if (m_join(THREE, channel) == ERROR)
+        _channel = _ft_ircd->_map.channel[*_target];
+        if (m_join(THREE, _channel) == ERROR)
             continue;
-
-        channel->join(*_client);
-        _client->insert_channel(channel);
-        if (channel->get_members().size() == 1)
-            channel->set_operator(_client);
-        Logger().info() << "Create new channel :" << *_target << " : @"
-                        << _client->get_names().nick;
-        m_to_channel(*channel, build_join_reply(*_target));
-        if (channel->get_topic().size())
-            m_to_client(rpl_topic(channel->get_name(), channel->get_topic()));
+        _channel->join(*_client);
+        if (_channel->get_members().size() == 1)
+        {
+            _channel->set_operator(_client);
+            Logger().info() << "Create new channel :" << *_target << " : @"
+                            << _client->get_names().nick;
+        }
+        m_to_channel(cmd_join_reply(*_target));
+        if (_channel->get_topic().size())
+            m_to_client(rpl_topic(_channel->get_name(), _channel->get_topic()));
         else
-            m_to_client(rpl_notopic(channel->get_name()));
+            m_to_client(rpl_notopic(_channel->get_name()));
 
-        utils::send_name_reply(channel, _client, msg);
+        // utils::send_name_reply(channel, _client, msg);
+        m_to_client(rpl_endofnames(_channel->get_name()));
     }
 }
 
@@ -379,7 +400,7 @@ void
     //        return;
     //    utils::push_message(client, msg.rpl_inviting(nickname,
     //    channel_name)); _ft_ircd->m_prepare_to_send(*target_client,
-    //                                msg.build_invite_reply(nickname,
+    //                                msg.cmd_invite_reply(nickname,
     //                                channel_name));
 }
 
@@ -392,8 +413,8 @@ void
     //    msg.err_need_more_params()))
     //        return;
     //
-    //    ConstStringVector channel_list;
-    //    ConstStringVector nick_list;
+    //    std::vector<const std::string> channel_list;
+    //    std::vector<const std::string> nick_list;
     //
     //    utils::split_by_comma(channel_list, parameter[0]);
     //    utils::split_by_comma(nick_list, parameter[1]);
@@ -405,8 +426,9 @@ void
     //                    client, msg.err_need_more_params()))
     //        return;
     //
-    //    ConstStringVector::iterator channel_name = channel_list.begin();
-    //    ConstStringVector::iterator nick_name    = nick_list.begin();
+    //    IRCD::ITER channel_name =
+    //    channel_list.begin(); IRCD::ITER
+    //    nick_name    = nick_list.begin();
     //
     //    Channel* channel;
     //    Client*  target_client;
@@ -451,18 +473,52 @@ void
     //    }
 }
 
+RESULT
+IRCD::m_names()
+{
+    if (_request->parameter.empty())
+    {
+        IRC::CH_CITER ch_iter = _ft_ircd->_map.channel.begin();
+        for (; ch_iter != _ft_ircd->_map.channel.end(); ++ch_iter)
+            ; // utils::send_name_reply(ch_iter->second, client, msg);
+        IRC::CL_CITER cl_iter = _ft_ircd->_map.client.begin();
+        for (; cl_iter != _ft_ircd->_map.client.end(); ++cl_iter)
+            if (cl_iter->second->get_channels().empty())
+                //        nick_queue.push(cl_iter->first);
+                if (nick_queue.size())
+                    utils::push_message(client,
+                                        msg.rpl_namreply("*", nick_queue));
+        utils::push_message(client, msg.rpl_endofnames("*"));
+        return;
+    }
+    else
+    {
+        std::vector<const std::string> channel_list;
+        utils::split_by_comma(channel_list, request.parameter[0]);
+        for (int i = 0, size = channel_list.size(); i < size; ++i)
+        {
+            if (check_error(!_ft_ircd->_map.channel.count(channel_list[i]),
+                            client, msg.rpl_endofnames(channel_list[i])))
+                continue;
+            utils::send_name_reply(_ft_ircd->_map.channel[channel_list[i]],
+                                   client, msg);
+        }
+    }
+    return OK;
+}
+
 void
     IRCD::names()
 {
     //    std::queue<const std::string> nick_queue;
     //    if (request.parameter.empty())
     //    {
-    //        FT_IRCD::ChannelMap::const_iterator channel_it =
+    //        IRC::CH_CITER iter =
     //            _ft_ircd->_map.channel.begin();
     //        for (; channel_it != _ft_ircd->_map.channel.end();
     //        ++channel_it)
     //            utils::send_name_reply(channel_it->second, client, msg);
-    //        FT_IRCD::ClientMap::const_iterator client_it =
+    //        IRC::CL_CITER client_it =
     //            _ft_ircd->_map.client.begin();
     //        for (; client_it != _ft_ircd->_map.client.end(); ++client_it)
     //            if (client_it->second->get_joined_list().empty())
@@ -475,7 +531,7 @@ void
     //    }
     //    else
     //    {
-    //        ConstStringVector channel_list;
+    //        std::vector<const std::string> channel_list;
     //        utils::split_by_comma(channel_list, request.parameter[0]);
     //        for (int i = 0, size = channel_list.size(); i < size; ++i)
     //        {
@@ -505,7 +561,7 @@ void
 {
     //    if (request.parameter.empty())
     //    {
-    //        FT_IRCD::ChannelMap::const_iterator channel_it =
+    //        IRC::CH_CITER channel_it =
     //            _ft_ircd->_map.channel.begin();
     //        for (; channel_it != _ft_ircd->_map.channel.end();
     //        ++channel_it)
@@ -514,11 +570,12 @@ void
     //
     //    else if (request.parameter.size() == 1)
     //    {
-    //        ConstStringVector channel_list;
+    //        std::vector<const std::string> channel_list;
     //        utils::split_by_comma(channel_list, request.parameter[0]);
     //
-    //        ConstStringVector::iterator channel_it = channel_list.begin();
-    //        for (; channel_it != channel_list.end(); ++channel_it)
+    //        IRCD::ITER channel_it =
+    //        channel_list.begin(); for (; channel_it != channel_list.end();
+    //        ++channel_it)
     //            if (_ft_ircd->_map.channel.count(*channel_it))
     //                send_list_to_client(_ft_ircd->_map.channel[*channel_it],
     //                client,
@@ -536,10 +593,11 @@ void
     //    if (check_error(request.parameter.empty(), client,
     //                    msg.err_need_more_params()))
     //        return;
-    //    ConstStringVector channel_list;
+    //    std::vector<const std::string> channel_list;
     //    utils::split_by_comma(channel_list, request.parameter[0]);
-    //    ConstStringVector::iterator channel_it = channel_list.begin();
-    //    for (; channel_it != channel_list.end(); ++channel_it)
+    //    IRCD::ITER channel_it =
+    //    channel_list.begin(); for (; channel_it != channel_list.end();
+    //    ++channel_it)
     //    {
     //        if (check_error(!_ft_ircd->_map.channel.count(*channel_it),
     //        client,
@@ -598,11 +656,11 @@ void
 {
     //    // m_checker(PRIVMSG관련);
     //
-    //    ConstStringVector targets;
+    //    std::vector<const std::string> targets;
     //    split_by_comma(targets, request.parameter.front());
     //
-    //    ConstStringVector::iterator target_it  = targets.begin();
-    //    ConstStringVector::iterator target_ite = targets.end();
+    //    IRCD::ITER target_it  = targets.begin();
+    //    IRCD::ITER target_ite = targets.end();
     //    for (; target_it != target_ite; ++target_it)
     //    {
     //        if (utils::is_channel_prefix(*target_it))

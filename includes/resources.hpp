@@ -21,6 +21,7 @@
 #define SPECIALCHAR        "[]\\`-^{|}"
 #define CHSTRING           " ,\r\n\7"
 #define CONNECTION         4
+#define DELIMITER          ','
 
 enum EXIT
 {

@@ -61,6 +61,8 @@ class Client
         unsigned char registered;
     } t_status;
 
+    typedef std::set<Channel*>::const_iterator CITER;
+
   private:
     sockaddr_in        _addr;
     int                _fd;
@@ -93,8 +95,8 @@ class Client
 
     std::string make_nickmask();
 
-    void insert_channel(Channel* channel);
-    void erase_channel(Channel* channel);
+    void join(Channel* channel);
+    // void erase_channel(Channel* channel);
 };
 
 #endif /* CLIENT_HPP */

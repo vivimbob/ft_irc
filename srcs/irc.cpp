@@ -231,8 +231,8 @@ std::string
 }
 
 std::string
-    IRC::rpl_namreply(const std::string&             channel,
-                      std::queue<const std::string>& nick)
+    IRC::rpl_namereply(const std::string&             channel,
+                       std::queue<const std::string>& nick)
 {
     std::string message = reply_servername_prefix("353") + " " + channel + " :";
 
@@ -268,13 +268,13 @@ std::string
 }
 
 std::string
-    IRC::build_quit_reply(const std::string& reason)
+    IRC::cmd_quit_reply(const std::string& reason)
 {
     return reply_nickmask_prefix("QUIT") + " :" + reason + "\r\n";
 }
 
 std::string
-    IRC::build_part_reply(const std::string& channel)
+    IRC::cmd_part_reply(const std::string& channel)
 {
     std::string param;
 
@@ -287,42 +287,42 @@ std::string
 }
 
 std::string
-    IRC::build_message_reply(const std::string& target)
+    IRC::cmd_message_reply(const std::string& target)
 {
     return reply_nickmask_prefix(_request->command) + " " + target + " :"
            + _request->parameter[1] + "\r\n";
 }
 
 std::string
-    IRC::build_invite_reply(const std::string& nick, const std::string& channel)
+    IRC::cmd_invite_reply(const std::string& nick, const std::string& channel)
 {
     return reply_nickmask_prefix(_request->command) + " " + nick + " " + channel
            + "\r\n";
 }
 
 std::string
-    IRC::build_kick_reply(const std::string& channel,
-                          const std::string& nick,
-                          const std::string& oper_nick)
+    IRC::cmd_kick_reply(const std::string& channel,
+                        const std::string& nick,
+                        const std::string& oper_nick)
 {
     return reply_nickmask_prefix(_request->command) + " " + channel + " " + nick
            + " " + oper_nick + "\r\n";
 }
 
 std::string
-    IRC::build_nick_reply(const std::string& nick)
+    IRC::cmd_nick_reply(const std::string& nick)
 {
     return reply_nickmask_prefix(_request->command) + " " + nick + "\r\n";
 }
 
 std::string
-    IRC::build_join_reply(const std::string& channel)
+    IRC::cmd_join_reply(const std::string& channel)
 {
     return reply_nickmask_prefix(_request->command) + " " + channel + "\r\n";
 }
 
 std::string
-    IRC::build_topic_reply()
+    IRC::cmd_topic_reply()
 {
     return reply_nickmask_prefix(_request->command) + " "
            + _request->parameter[0] + " :" + _request->parameter[1] + "\r\n";

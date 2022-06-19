@@ -30,16 +30,6 @@ bool
 
 /* utils parse function begin */
 
-void
-    split_by_comma(ConstStringVector& splited_params, const std::string& params)
-{
-    std::istringstream iss(params);
-
-    std::string elem;
-    while (std::getline(iss, elem, ','))
-        splited_params.push_back(elem);
-}
-
 static const std::string
     masked_nick(bool operater, const std::string& nickname, bool on_channel)
 {

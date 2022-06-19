@@ -11,14 +11,12 @@ class Channel;
 class Client;
 class Message;
 
-typedef std::vector<const std::string> ConstStringVector;
-
 namespace utils
 {
 
-void
-    split_by_comma(ConstStringVector& splited_params,
-                   const std::string& params);
+// void
+//     split_by_comma(std::vector<const std::string>& splited_params,
+//                    const std::string& params);
 void
     send_name_reply(Channel* channel, Client& client, Message& msg);
 void

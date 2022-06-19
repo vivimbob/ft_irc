@@ -2,6 +2,7 @@
 #define IRC_HPP
 
 #include "../includes/client.hpp"
+#include "channel.hpp"
 #include "resources.hpp"
 #include <queue>
 #include <string>
@@ -16,6 +17,8 @@ class IRC
     typedef std::map<std::string, TYPE>     TypeMap;
     typedef std::map<std::string, Client*>  ClientMap;
     typedef std::map<std::string, Channel*> ChannelMap;
+    typedef ClientMap::const_iterator       CL_CITER;
+    typedef ChannelMap::const_iterator      CH_CITER;
 
   private:
     IRC(const IRC&);
@@ -88,6 +91,7 @@ class IRC
     TypeMap  _command_to_type;
 
     Client*              _client;
+    Channel*             _channel;
     Client::t_requests*  _requests;
     Client::t_request*   _request;
     Client::t_to_client* _to_client;

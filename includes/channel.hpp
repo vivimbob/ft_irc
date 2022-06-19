@@ -15,6 +15,7 @@ class Channel
 {
   public:
     typedef std::map<Client*, MemberShip> MemberMap;
+    typedef MemberMap::const_iterator     CITER;
 
   private:
     std::string _name;

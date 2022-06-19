@@ -12,14 +12,15 @@ class IRCD : public IRC
         ChannelMap channel;
     } t_map;
 
-    typedef std::vector<void (IRCD::*)()> Command;
+    typedef std::vector<void (IRCD::*)()>            Command;
+    typedef std::vector<const std::string>::iterator ITER;
 
   private:
     const std::string* _target;
     void               m_mode_channel(const std::string&);
     void               m_mode_user(const std::string&);
     void               m_to_client(Client&, const std::string&);
-    void               m_to_channel(Channel& channel, const std::string&);
+    void               m_to_channel(const std::string&);
     void               m_to_channels(const std::string&);
 
     RESULT m_is_valid(TYPE);

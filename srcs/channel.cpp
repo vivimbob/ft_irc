@@ -1,4 +1,5 @@
 #include "../includes/channel.hpp"
+#include "../includes/client.hpp"
 #include "../lib/logger.hpp"
 #include <utility>
 
@@ -94,6 +95,7 @@ void
     Channel::join(Client& client)
 {
     _members.insert(std::make_pair(&client, MemberShip(&client, this)));
+    client.join(this);
 }
 
 void
