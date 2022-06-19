@@ -1,6 +1,18 @@
 #include "../includes/ft_ircd.hpp"
 #include "../includes/irc.hpp"
 
+static std::vector<const std::string>
+    split(const std::string& params, char delimiter)
+{
+    std::vector<const std::string> splited;
+    std::istringstream             iss(params);
+    std::string                    element;
+
+    while (std::getline(iss, element, delimiter))
+        splited.push_back(element);
+    return splited;
+}
+
 TYPE
     IRCD::get_type(std::string command)
 {
@@ -246,38 +258,6 @@ IRCD::m_join(PHASE phase, Channel* channel)
     return OK;
 }
 
-std::vector<const std::string>
-    split(const std::string& params, char delimiter)
-{
-    std::vector<const std::string> splited;
-    std::istringstream             iss(params);
-    std::string                    element;
-
-    while (std::getline(iss, element, delimiter))
-        splited.push_back(element);
-    return splited;
-}
-
-// static void
-//     send_name_reply(Channel* channel, Client& client, IRC& msg)
-//{
-//     std::queue<const std::string> nick_queue;
-
-//    Channel::MemberMap::const_iterator user_it =
-//    channel->get_members().begin(); Channel::MemberMap::const_iterator
-//    user_ite = channel->get_members().end();
-
-//    for (; user_it != user_ite; ++user_it)
-//        nick_queue.push(masked_nick(channel->is_operator(*user_it->first),
-//                                    user_it->first->get_names().nick,
-//                                    client.is_already_joined(channel)));
-
-//    if (nick_queue.size())
-//        client.push_message(
-//            msg.rpl_namreply("= " + channel->get_name(), nick_queue));
-//    utils::push_message(client, msg.rpl_endofnames(channel->get_name()));
-//}
-
 void
     IRCD::join()
 {
@@ -310,98 +290,92 @@ void
             m_to_client(rpl_topic(_channel->get_name(), _channel->get_topic()));
         else
             m_to_client(rpl_notopic(_channel->get_name()));
-
-        // utils::send_name_reply(channel, _client, msg);
-        m_to_client(rpl_endofnames(_channel->get_name()));
+        m_names();
     }
 }
 
-void
-    IRCD::m_mode_channel(const std::string& channel_name)
+RESULT
+IRCD::m_mode(PHASE phase)
 {
-    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name),
-    //    client,
-    //                    msg.err_no_such_channel(channel_name)))
-    //        return;
-    //    Channel* channel = _ft_ircd->_map.channel.at(channel_name);
-    //    if (check_error(request.parameter.size() == 1, client,
-    //                    msg.rpl_channel_mode_is(channel_name)))
-    //        return;
-    //    if (check_error(!channel->is_operator(client), client,
-    //                    msg.err_chanoprivs_needed(channel_name)))
-    //        return;
-    //
-    //    utils::push_message(client,
-    //    msg.err_unknown_mode(request.parameter[1]));
-}
-
-void
-    IRCD::m_mode_user(const std::string& nickname)
-{
-    //
-    //    if (check_error(!_ft_ircd->_map.client.count(nickname), client,
-    //                    msg.err_no_such_nick(nickname)))
-    //        return;
-    //
-    //    if (check_error(nickname != client.get_names().nick, client,
-    //                    msg.err_users_dont_match(
-    //                        request.parameter.size() == 1 ? "view" :
-    //                        "change")))
-    //        return;
-    //
-    //    if (check_error(request.parameter.size() == 1, client,
-    //                    msg.rpl_user_mode_is()))
-    //        return;
-    //
-    //    utils::push_message(client, msg.err_u_mode_unknown_flag());
+    if (phase == ONE)
+    {
+        if (_request->parameter.empty())
+            return m_to_client(err_need_more_params());
+    }
+    else if (phase == TWO)
+    {
+        if (!_ft_ircd->_map.channel.count(*_target))
+            return m_to_client(err_no_such_channel(*_target));
+        _channel = _ft_ircd->_map.channel.at(*_target);
+        if ((1 < _request->parameter.size())
+            && !_channel->is_operator(*_client))
+            return m_to_client(err_chanoprivs_needed(*_target));
+    }
+    else if (phase == THREE)
+    {
+        if (!_ft_ircd->_map.client.count(*_target))
+            return m_to_client(err_no_such_nick(*_target));
+        else if (*_target != _client->get_names().nick)
+            return m_to_client(err_users_dont_match(
+                _request->parameter.size() == 1 ? "view" : "change"));
+        else if (_request->parameter.size() != 1)
+            return m_to_client(err_u_mode_unknown_flag());
+    }
+    return OK;
 }
 
 void
     IRCD::mode()
 {
-    //
-    //    if (check_error(request.parameter.empty(), client,
-    //                    msg.err_need_more_params()))
-    //        return;
-    //
-    //    const std::string& target = request.parameter[0];
-    //
-    //    if (utils::is_channel_prefix(target))
-    //        m_mode_channel(msg, target);
-    //    else
-    //        m_mode_user(msg, target);
+    if (m_mode(ONE) == ERROR)
+        return;
+    _target = &_request->parameter[0];
+    if (m_is_valid(CHANNEL_PREFIX))
+    {
+        if (m_mode(TWO) == ERROR)
+            return;
+        else if (_request->parameter.size() == 1)
+            m_to_client(rpl_channel_mode_is(*_target));
+        else
+            m_to_client(err_unknown_mode(_request->parameter[1]));
+    }
+    else
+    {
+        if (m_mode(THREE) == ERROR)
+            return;
+        else if (_request->parameter.size() == 1)
+            m_to_client(rpl_user_mode_is());
+    }
+}
+
+RESULT
+IRCD::m_invite()
+{
+    if (_request->parameter.size() < 2)
+        return m_to_client(err_need_more_params());
+    if (!_ft_ircd->_map.client.count(_request->parameter[0]))
+        return m_to_client(err_no_such_nick(_request->parameter[0]));
+    Client* target_client = _ft_ircd->_map.client[_request->parameter[0]];
+    if (!_ft_ircd->_map.channel.count(_request->parameter[1]))
+        return m_to_client(err_no_such_channel(_request->parameter[1]));
+    _channel = _ft_ircd->_map.channel[_request->parameter[1]];
+    if (!_client->is_joined(_channel))
+        return m_to_client(err_not_on_channel(_request->parameter[1]));
+    if (target_client->is_joined(_channel))
+        return m_to_client(err_user_on_channel(_request->parameter[0],
+                                               _request->parameter[1]));
+    return OK;
 }
 
 void
     IRCD::invite()
 {
-
-    //    if (check_error(request.parameter.size() < 2, client,
-    //                    msg.err_need_more_params()))
-    //        return;
-    //
-    //    const std::string& nickname     = request.parameter[0];
-    //    const std::string& channel_name = request.parameter[1];
-    //
-    //    if (check_error(!_ft_ircd->_map.client.count(nickname), client,
-    //                    msg.err_no_such_nick(nickname)))
-    //        return;
-    //    Client* target_client = _ft_ircd->_map.client[nickname];
-    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name),
-    //    client,
-    //                    msg.err_no_such_channel(channel_name)))
-    //        return;
-    //    Channel* channel = _ft_ircd->_map.channel[channel_name];
-    //    if (check_error(!client.is_already_joined(channel), client,
-    //                    msg.err_not_on_channel(channel_name)))
-    //        return;
-    //    if (check_error(target_client->is_already_joined(channel), client,
-    //                    msg.err_user_on_channel(nickname, channel_name)))
-    //        return;
-    //    utils::push_message(client, msg.rpl_inviting(nickname,
-    //    channel_name)); _ft_ircd->m_prepare_to_send(*target_client,
-    //                                msg.cmd_invite_reply(nickname,
-    //                                channel_name));
+    if (m_invite() == ERROR)
+        return;
+    m_to_client(rpl_inviting(_request->parameter[0], _request->parameter[1]));
+    m_to_client(
+        *_ft_ircd->_map.client[_request->parameter[0]],
+        cmd_invite_reply(_request->parameter[0], _request->parameter[1]));
 }
 
 void
@@ -476,74 +450,53 @@ void
 RESULT
 IRCD::m_names()
 {
-    if (_request->parameter.empty())
-    {
-        IRC::CH_CITER ch_iter = _ft_ircd->_map.channel.begin();
-        for (; ch_iter != _ft_ircd->_map.channel.end(); ++ch_iter)
-            ; // utils::send_name_reply(ch_iter->second, client, msg);
-        IRC::CL_CITER cl_iter = _ft_ircd->_map.client.begin();
-        for (; cl_iter != _ft_ircd->_map.client.end(); ++cl_iter)
-            if (cl_iter->second->get_channels().empty())
-                //        nick_queue.push(cl_iter->first);
-                if (nick_queue.size())
-                    utils::push_message(client,
-                                        msg.rpl_namreply("*", nick_queue));
-        utils::push_message(client, msg.rpl_endofnames("*"));
-        return;
-    }
-    else
-    {
-        std::vector<const std::string> channel_list;
-        utils::split_by_comma(channel_list, request.parameter[0]);
-        for (int i = 0, size = channel_list.size(); i < size; ++i)
-        {
-            if (check_error(!_ft_ircd->_map.channel.count(channel_list[i]),
-                            client, msg.rpl_endofnames(channel_list[i])))
-                continue;
-            utils::send_name_reply(_ft_ircd->_map.channel[channel_list[i]],
-                                   client, msg);
-        }
-    }
+    _channel            = _ft_ircd->_map.channel[*_target];
+    _buffer             = "= " + _channel->get_name() + " :";
+    Channel::CITER iter = _channel->get_members().begin();
+    Channel::CITER end  = _channel->get_members().end();
+    for (; iter != end; ++iter)
+        _buffer.append(_channel->get_prefix(iter->first)
+                       + iter->first->get_names().nick + " ");
+    m_to_client(rpl_namereply(_buffer));
+    m_to_client(rpl_endofnames(_channel->get_name()));
+    _buffer.clear();
     return OK;
 }
 
 void
     IRCD::names()
 {
-    //    std::queue<const std::string> nick_queue;
-    //    if (request.parameter.empty())
-    //    {
-    //        IRC::CH_CITER iter =
-    //            _ft_ircd->_map.channel.begin();
-    //        for (; channel_it != _ft_ircd->_map.channel.end();
-    //        ++channel_it)
-    //            utils::send_name_reply(channel_it->second, client, msg);
-    //        IRC::CL_CITER client_it =
-    //            _ft_ircd->_map.client.begin();
-    //        for (; client_it != _ft_ircd->_map.client.end(); ++client_it)
-    //            if (client_it->second->get_joined_list().empty())
-    //                nick_queue.push(client_it->first);
-    //        if (nick_queue.size())
-    //            utils::push_message(client, msg.rpl_namreply("*",
-    //            nick_queue));
-    //        utils::push_message(client, msg.rpl_endofnames("*"));
-    //        return;
-    //    }
-    //    else
-    //    {
-    //        std::vector<const std::string> channel_list;
-    //        utils::split_by_comma(channel_list, request.parameter[0]);
-    //        for (int i = 0, size = channel_list.size(); i < size; ++i)
-    //        {
-    //            if
-    //            (check_error(!_ft_ircd->_map.channel.count(channel_list[i]),
-    //                            client,
-    //                            msg.rpl_endofnames(channel_list[i])))
-    //                continue;
-    //            utils::send_name_reply(_ft_ircd->_map.channel[channel_list[i]],
-    //                                   client, msg);
-    //        }
-    //    }
+    if (_request->parameter.empty())
+    {
+        IRC::CH_CITER ch_iter = _ft_ircd->_map.channel.begin();
+        for (; ch_iter != _ft_ircd->_map.channel.end(); ++ch_iter)
+        {
+            _target = &ch_iter->first;
+            m_names();
+        }
+        IRC::CL_CITER cl_iter = _ft_ircd->_map.client.begin();
+        for (; cl_iter != _ft_ircd->_map.client.end(); ++cl_iter)
+            if (cl_iter->second->get_channels().empty())
+                _buffer.append(cl_iter->first + " ");
+        if (_buffer.size())
+            m_to_client(rpl_namereply("= * :" + _buffer));
+        m_to_client(rpl_endofnames("*"));
+        _buffer.clear();
+        return;
+    }
+    else
+    {
+        std::vector<const std::string> channels
+            = split(_request->parameter[0], ',');
+        for (int i = 0; i < channels.size(); ++i)
+        {
+            _target = &channels[i];
+            if (_ft_ircd->_map.channel.count(*_target))
+                m_names();
+            else
+                m_to_client(rpl_endofnames(*_target));
+        }
+    }
 }
 
 // static void
@@ -682,7 +635,7 @@ void
 void
     IRCD::notice()
 {
-    //   m_privmsg(msg);
+    //    privmsg();
 }
 
 void

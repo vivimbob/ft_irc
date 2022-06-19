@@ -29,10 +29,16 @@ const std::string&
     return _topic;
 }
 
-const std::map<Client*, MemberShip>&
+const Channel::MemberMap&
     Channel::get_members()
 {
     return _members;
+}
+
+const std::string&
+    Channel::get_prefix(Client* client)
+{
+    return _members[client];
 }
 
 /* channel class getter end */
@@ -54,7 +60,8 @@ void
 void
     Channel::set_operator(Client* client)
 {
-    _members.find(client)->second.mode_operater = true;
+    if (_members.find(client)->second.find('@') != std::string::npos)
+        _members[client].insert(0, "@");
 }
 
 /* channel class setter end */
@@ -78,7 +85,7 @@ bool
 {
     if (_members.find(&client) == _members.end())
         return false;
-    return _members.find(&client)->second.mode_operater;
+    return (_members.find(&client)->second.find('@') != std::string::npos);
 }
 
 bool
@@ -94,7 +101,7 @@ bool
 void
     Channel::join(Client& client)
 {
-    _members.insert(std::make_pair(&client, MemberShip(&client, this)));
+    _members.insert(std::make_pair(&client, t_membership()));
     client.join(this);
 }
 

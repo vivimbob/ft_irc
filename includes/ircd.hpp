@@ -17,8 +17,9 @@ class IRCD : public IRC
 
   private:
     const std::string* _target;
-    void               m_mode_channel(const std::string&);
-    void               m_mode_user(const std::string&);
+    std::string        _buffer;
+    void               m_mode_channel();
+    void               m_mode_user();
     void               m_to_client(Client&, const std::string&);
     void               m_to_channel(const std::string&);
     void               m_to_channels(const std::string&);
@@ -37,7 +38,7 @@ class IRCD : public IRC
     RESULT m_list();
     RESULT m_invite();
     RESULT m_kick();
-    RESULT m_mode();
+    RESULT m_mode(PHASE);
     RESULT m_privmsg();
     RESULT m_notice();
     RESULT m_unknown();

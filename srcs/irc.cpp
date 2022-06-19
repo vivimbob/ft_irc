@@ -8,7 +8,7 @@ IRC::~IRC()
 {
 }
 
-IRC::IRC()
+IRC::IRC() : endl("\r\n")
 {
 }
 
@@ -231,19 +231,9 @@ std::string
 }
 
 std::string
-    IRC::rpl_namereply(const std::string&             channel,
-                       std::queue<const std::string>& nick)
+    IRC::rpl_namereply(const std::string& str)
 {
-    std::string message = reply_servername_prefix("353") + " " + channel + " :";
-
-    while (!nick.empty())
-    {
-        message += nick.front();
-        nick.pop();
-        if (!nick.empty())
-            message += " ";
-    }
-    return message + "\r\n";
+    return reply_servername_prefix("353") + " " + str + "\r\n";
 }
 
 std::string

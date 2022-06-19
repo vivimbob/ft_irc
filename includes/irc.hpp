@@ -24,8 +24,9 @@ class IRC
     IRC(const IRC&);
     IRC& operator=(const IRC& other);
 
-    std::string reply_servername_prefix(std::string numeric_reply);
-    std::string reply_nickmask_prefix(std::string command);
+    std::string       reply_servername_prefix(std::string numeric_reply);
+    std::string       reply_nickmask_prefix(std::string command);
+    const std::string endl;
 
   public:
     IRC();
@@ -67,8 +68,7 @@ class IRC
     std::string rpl_topic(const std::string& channel, const std::string& topic);
     std::string rpl_inviting(const std::string& nick,
                              const std::string& channel);
-    std::string rpl_namereply(const std::string&             channel,
-                              std::queue<const std::string>& nick);
+    std::string rpl_namereply(const std::string& str);
     std::string rpl_endofnames(const std::string& channel);
     std::string rpl_user_mode_is();
     std::string rpl_welcome();
