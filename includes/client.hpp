@@ -95,8 +95,8 @@ class Client
 
     std::string make_nickmask();
 
-    void join(Channel* channel);
-    // void erase_channel(Channel* channel);
+    void joined(Channel* channel);
+    void parted(Channel* channel);
 };
 
 #endif /* CLIENT_HPP */

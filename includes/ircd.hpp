@@ -12,12 +12,14 @@ class IRCD : public IRC
         ChannelMap channel;
     } t_map;
 
-    typedef std::vector<void (IRCD::*)()>            Command;
-    typedef std::vector<const std::string>::iterator ITER;
+    typedef std::vector<void (IRCD::*)()>  Command;
+    typedef std::vector<const std::string> CSTR_VECTOR;
+    typedef CSTR_VECTOR::iterator          ITER;
 
   private:
     const std::string* _target;
     std::string        _buffer;
+    Client*            _fixed;
     void               m_mode_channel();
     void               m_mode_user();
     void               m_to_client(Client&, const std::string&);
@@ -37,7 +39,7 @@ class IRCD : public IRC
     RESULT m_names();
     RESULT m_list();
     RESULT m_invite();
-    RESULT m_kick();
+    RESULT m_kick(PHASE);
     RESULT m_mode(PHASE);
     RESULT m_privmsg();
     RESULT m_notice();

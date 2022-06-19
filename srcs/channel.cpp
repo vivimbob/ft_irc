@@ -102,13 +102,14 @@ void
     Channel::join(Client& client)
 {
     _members.insert(std::make_pair(&client, t_membership()));
-    client.join(this);
+    client.joined(this);
 }
 
 void
     Channel::part(Client& client)
 {
     _members.erase(&client);
+    client.parted(this);
 }
 
 /* channel class user function end */

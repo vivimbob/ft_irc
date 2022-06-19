@@ -158,13 +158,13 @@ std::string
 }
 
 void
-    Client::insert_channel(Channel* channel)
+    Client::joined(Channel* channel)
 {
     _channels.insert(channel);
 }
 
 void
-    Client::erase_channel(Channel* channel)
+    Client::parted(Channel* channel)
 {
     _channels.erase(channel);
 }
