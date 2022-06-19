@@ -18,7 +18,6 @@
 
 #define NICK_LENGTH_MAX    9
 #define CHANNEL_LENGTH_MAX 50
-#define CHANNEL_PREFIX     '#'
 #define SPECIALCHAR        "[]\\`-^{|}"
 #define CHSTRING           " ,\r\n\7"
 #define CONNECTION         4
@@ -56,7 +55,9 @@ enum TYPE
     PRIVMSG,
     NOTICE,
     UNKNOWN,
-    UNREGISTERED
+    UNREGISTERED,
+    CHANNEL_NAME,
+    CHANNEL_PREFIX = '#'
 };
 
 enum STATUS
@@ -65,6 +66,13 @@ enum STATUS
     NICKNAME   = 0b010,
     USERNAME   = 0b100,
     REGISTERED = 0b111
+};
+
+enum PHASE
+{
+    ONE,
+    TWO,
+    THREE
 };
 
 #endif /* RESOURCES_HPP */

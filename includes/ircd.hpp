@@ -29,7 +29,7 @@ class IRCD : public IRC
     RESULT m_nick();
     RESULT m_user();
     RESULT m_quit();
-    RESULT m_join();
+    RESULT m_join(PHASE, Channel* = nullptr);
     RESULT m_part();
     RESULT m_topic();
     RESULT m_names();

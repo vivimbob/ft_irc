@@ -4,17 +4,11 @@
 
 /* message class constructor begin */
 
-IRC::IRC(Client* client, const std::string& message)
-    : m_message(message),
-      m_valid_message(true)
-{
-}
-
-IRC::IRC(const std::string& message) : m_message(message), m_valid_message(true)
-{
-}
-
 IRC::~IRC()
+{
+}
+
+IRC::IRC()
 {
 }
 
@@ -41,36 +35,36 @@ std::string
 std::string
     IRC::err_no_such_nick(const std::string& nickname)
 {
-    return reply_servername_prefix("401") + " " + nickname +
-           " :No such nick/channel\r\n";
+    return reply_servername_prefix("401") + " " + nickname
+           + " :No such nick/channel\r\n";
 }
 
 std::string
     IRC::err_no_such_channel(const std::string& channel_name)
 {
-    return reply_servername_prefix("403") + " " + channel_name +
-           " :No such channel\r\n";
+    return reply_servername_prefix("403") + " " + channel_name
+           + " :No such channel\r\n";
 }
 
 std::string
     IRC::err_too_many_channels(const std::string& channel_name)
 {
-    return reply_servername_prefix("405") + " " + channel_name +
-           " :You have joined too many channels\r\n";
+    return reply_servername_prefix("405") + " " + channel_name
+           + " :You have joined too many channels\r\n";
 }
 
 std::string
     IRC::err_too_many_targets(const std::string& target)
 {
-    return reply_servername_prefix("407") + " " + target +
-           " :Duplicate recipients. No message delivered\r\n";
+    return reply_servername_prefix("407") + " " + target
+           + " :Duplicate recipients. No message delivered\r\n";
 }
 
 std::string
     IRC::err_no_recipient()
 {
-    return reply_servername_prefix("411") + " :No recipient given (" +
-           m_command + ")\r\n";
+    return reply_servername_prefix("411") + " :No recipient given ("
+           + _request->command + ")\r\n";
 }
 
 std::string
@@ -82,15 +76,15 @@ std::string
 std::string
     IRC::err_unknown_command()
 {
-    return reply_servername_prefix("421") + " " + m_command +
-           " :Unknown command\r\n";
+    return reply_servername_prefix("421") + " " + _request->command
+           + " :Unknown command\r\n";
 }
 
 std::string
     IRC::err_file_error(const std::string& file_op, const std::string& file)
 {
-    return reply_servername_prefix("424") + " :File error doing " + file_op +
-           " on " + file + "\r\n";
+    return reply_servername_prefix("424") + " :File error doing " + file_op
+           + " on " + file + "\r\n";
 }
 
 std::string
@@ -102,38 +96,38 @@ std::string
 std::string
     IRC::err_erroneus_nickname(const std::string& nick)
 {
-    return reply_servername_prefix("432") + " " + nick +
-           " :Erroneus nickname\r\n";
+    return reply_servername_prefix("432") + " " + nick
+           + " :Erroneus nickname\r\n";
 }
 
 std::string
     IRC::err_nickname_in_use(const std::string& nick)
 {
-    return reply_servername_prefix("433") + " " + nick +
-           " :Nickname is already in use\r\n";
+    return reply_servername_prefix("433") + " " + nick
+           + " :Nickname is already in use\r\n";
 }
 
 std::string
     IRC::err_user_not_in_channel(const std::string& nick,
                                  const std::string& channel)
 {
-    return reply_servername_prefix("441") + " " + nick + " " + channel +
-           " :They aren't on that channel\r\n";
+    return reply_servername_prefix("441") + " " + nick + " " + channel
+           + " :They aren't on that channel\r\n";
 }
 
 std::string
     IRC::err_not_on_channel(const std::string& channel)
 {
-    return reply_servername_prefix("442") + " " + channel +
-           " :You're not on that channel\r\n";
+    return reply_servername_prefix("442") + " " + channel
+           + " :You're not on that channel\r\n";
 }
 
 std::string
     IRC::err_user_on_channel(const std::string& user,
                              const std::string& channel)
 {
-    return reply_servername_prefix("443") + " " + user + " " + channel +
-           " :is already on channel\r\n";
+    return reply_servername_prefix("443") + " " + user + " " + channel
+           + " :is already on channel\r\n";
 }
 
 std::string
@@ -145,8 +139,8 @@ std::string
 std::string
     IRC::err_need_more_params()
 {
-    return reply_servername_prefix("461") + " " + m_command +
-           " :Not enough parameters\r\n";
+    return reply_servername_prefix("461") + " " + _request->command
+           + " :Not enough parameters\r\n";
 }
 
 std::string
@@ -164,22 +158,22 @@ std::string
 std::string
     IRC::err_channel_is_full(const std::string& channel)
 {
-    return reply_servername_prefix("471") + " " + channel +
-           " :Cannot join channel (+l)\r\n";
+    return reply_servername_prefix("471") + " " + channel
+           + " :Cannot join channel (+l)\r\n";
 }
 
 std::string
     IRC::err_unknown_mode(const std::string& flag)
 {
-    return reply_servername_prefix("472") + " " + flag +
-           " :Unknown MODE flag\r\n";
+    return reply_servername_prefix("472") + " " + flag
+           + " :Unknown MODE flag\r\n";
 }
 
 std::string
     IRC::err_chanoprivs_needed(const std::string& channel)
 {
-    return reply_servername_prefix("482") + " " + channel +
-           " :You're not channel operator\r\n";
+    return reply_servername_prefix("482") + " " + channel
+           + " :You're not channel operator\r\n";
 }
 
 std::string
@@ -191,8 +185,8 @@ std::string
 std::string
     IRC::err_users_dont_match(const std::string& action)
 {
-    return reply_servername_prefix("502") + " :Can't " + action +
-           " modes for other users\r\n";
+    return reply_servername_prefix("502") + " :Can't " + action
+           + " modes for other users\r\n";
 }
 
 std::string
@@ -200,8 +194,8 @@ std::string
                   const std::string& visible,
                   const std::string  topic)
 {
-    return reply_servername_prefix("322") + " " + channel + " " + visible +
-           " :" + topic + "\r\n";
+    return reply_servername_prefix("322") + " " + channel + " " + visible + " :"
+           + topic + "\r\n";
 }
 
 std::string
@@ -219,15 +213,15 @@ std::string
 std::string
     IRC::rpl_notopic(const std::string& channel)
 {
-    return reply_servername_prefix("331") + " " + channel +
-           " :No topic is set\r\n";
+    return reply_servername_prefix("331") + " " + channel
+           + " :No topic is set\r\n";
 }
 
 std::string
     IRC::rpl_topic(const std::string& channel, const std::string& topic)
 {
-    return reply_servername_prefix("332") + " " + channel + " :" + topic +
-           "\r\n";
+    return reply_servername_prefix("332") + " " + channel + " :" + topic
+           + "\r\n";
 }
 
 std::string
@@ -255,8 +249,8 @@ std::string
 std::string
     IRC::rpl_endofnames(const std::string& channel)
 {
-    return reply_servername_prefix("366") + " " + channel +
-           " :End of NAMES list\r\n";
+    return reply_servername_prefix("366") + " " + channel
+           + " :End of NAMES list\r\n";
 }
 
 std::string
@@ -268,9 +262,9 @@ std::string
 std::string
     IRC::rpl_welcome()
 {
-    return reply_servername_prefix("001") +
-           " Welcome to Internet Relay Network\n" + _client->make_nickmask() +
-           "\r\n";
+    return reply_servername_prefix("001")
+           + " Welcome to Internet Relay Network\n" + _client->make_nickmask()
+           + "\r\n";
 }
 
 std::string
@@ -284,26 +278,26 @@ std::string
 {
     std::string param;
 
-    if (m_parameters.size() == 2)
-        param = m_parameters[1];
+    if (_request->parameter.size() == 2)
+        param = _request->parameter[1];
     else
         param = _client->get_names().nick;
-    return reply_nickmask_prefix(m_command) + " " + channel + " :" + param +
-           "\r\n";
+    return reply_nickmask_prefix(_request->command) + " " + channel + " :"
+           + param + "\r\n";
 }
 
 std::string
     IRC::build_message_reply(const std::string& target)
 {
-    return reply_nickmask_prefix(m_command) + " " + target + " :" +
-           m_parameters[1] + "\r\n";
+    return reply_nickmask_prefix(_request->command) + " " + target + " :"
+           + _request->parameter[1] + "\r\n";
 }
 
 std::string
     IRC::build_invite_reply(const std::string& nick, const std::string& channel)
 {
-    return reply_nickmask_prefix(m_command) + " " + nick + " " + channel +
-           "\r\n";
+    return reply_nickmask_prefix(_request->command) + " " + nick + " " + channel
+           + "\r\n";
 }
 
 std::string
@@ -311,27 +305,27 @@ std::string
                           const std::string& nick,
                           const std::string& oper_nick)
 {
-    return reply_nickmask_prefix(m_command) + " " + channel + " " + nick + " " +
-           oper_nick + "\r\n";
+    return reply_nickmask_prefix(_request->command) + " " + channel + " " + nick
+           + " " + oper_nick + "\r\n";
 }
 
 std::string
     IRC::build_nick_reply(const std::string& nick)
 {
-    return reply_nickmask_prefix(m_command) + " " + nick + "\r\n";
+    return reply_nickmask_prefix(_request->command) + " " + nick + "\r\n";
 }
 
 std::string
     IRC::build_join_reply(const std::string& channel)
 {
-    return reply_nickmask_prefix(m_command) + " " + channel + "\r\n";
+    return reply_nickmask_prefix(_request->command) + " " + channel + "\r\n";
 }
 
 std::string
     IRC::build_topic_reply()
 {
-    return reply_nickmask_prefix(m_command) + " " + m_parameters[0] + " :" +
-           m_parameters[1] + "\r\n";
+    return reply_nickmask_prefix(_request->command) + " "
+           + _request->parameter[0] + " :" + _request->parameter[1] + "\r\n";
 }
 
 /* message class reply function end */

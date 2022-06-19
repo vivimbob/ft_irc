@@ -2,19 +2,20 @@
 #include <cstddef>
 
 void
-    FT_IRCD::m_disconnect(Client& client, std::string reason)
+    FT_IRCD::m_disconnect(std::string reason)
 {
-    const int& fd = client.get_socket();
+    const int& fd = _client->get_socket();
 
-    Logger().info() << "Client disconnect [address :" << client.get_IP() << ':'
-                    << client.get_addr().sin_port << " FD :" << fd << ']';
+    Logger().info() << "Client disconnect [address :" << _client->get_IP()
+                    << ':' << _client->get_addr().sin_port << " FD :" << fd
+                    << ']';
 
     Event::set(fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     Event::set(fd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     close(fd);
 
-    std::set<Channel*>::iterator it  = client.get_channels().begin();
-    std::set<Channel*>::iterator ite = client.get_channels().end();
+    std::set<Channel*>::iterator it  = _client->get_channels().begin();
+    std::set<Channel*>::iterator ite = _client->get_channels().end();
     std::set<Client*>            check;
 
     for (; it != ite; ++it)
@@ -23,21 +24,21 @@ void
         Channel::MemberMap::const_iterator user  = users.begin();
 
         for (; user != users.end(); ++user)
-            if (!check.count(user->first) && user->first != &client)
+            if (!check.count(user->first) && user->first != _client)
             {
                 check.insert(user->first);
                 // IRCD::m_to_client(*user->first,
                 //                   IRC("QUIT").build_quit_reply(reason));
             }
-        (*it)->part(client);
+        (*it)->part(*_client);
         if ((*it)->is_empty())
         {
             _map.channel.erase((*it)->get_name());
             delete (*it);
         }
     }
-    _map.client.erase(client.get_names().nick);
-    delete &client;
+    _map.client.erase(_client->get_names().nick);
+    delete _client;
 }
 
 void
@@ -179,7 +180,7 @@ void
             Event::toggle(*_client, EVFILT_READ);
     }
     else if (length == 0)
-        m_disconnect(*_client, "connection closed");
+        m_disconnect("connection closed");
     IRC::_client = nullptr;
 }
 

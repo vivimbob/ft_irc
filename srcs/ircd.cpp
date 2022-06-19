@@ -48,16 +48,6 @@ IRCD::m_to_client(std::string str)
 }
 
 RESULT
-IRCD::m_user()
-{
-    if (_request->parameter.size() < 4)
-        return ERROR; //           msg.err_need_more_params()))
-    if (_client->is_registered())
-        return ERROR; // msg.err_already_registred()))
-    return OK;
-}
-
-RESULT
 IRCD::m_empty()
 {
     return OK;
@@ -98,17 +88,38 @@ static inline bool
 RESULT
 IRCD::m_is_valid(TYPE type)
 {
-    if (type == NICK)
+    switch (type)
     {
-        if (_target->length() > NICK_LENGTH_MAX)
-            return ERROR;
-        if (!std::isalpha((*_target)[0]))
-            return ERROR;
-        for (size_t index = 1; index < _target->length(); ++index)
-            if (!std::isalpha((*_target)[index])
-                && !std::isdigit((*_target)[index])
-                && !is_special((*_target)[index]))
+        case NICK:
+        {
+            if (NICK_LENGTH_MAX < _target->length())
                 return ERROR;
+            if (!std::isalpha((*_target)[0]))
+                return ERROR;
+            for (size_t index = 1; index < _target->length(); ++index)
+                if (!std::isalpha((*_target)[index])
+                    && !std::isdigit((*_target)[index])
+                    && !is_special((*_target)[index]))
+                    return ERROR;
+            break;
+        }
+        case CHANNEL_PREFIX:
+        {
+            if ((*_target)[0] != CHANNEL_PREFIX)
+                return ERROR;
+            break;
+        }
+        case CHANNEL_NAME:
+        {
+            if (CHANNEL_LENGTH_MAX < _target->length())
+                return ERROR;
+            for (size_t index = 0; index < _target->length(); ++index)
+                if (std::memchr(CHSTRING, (*_target)[index], 5))
+                    return ERROR;
+            break;
+        }
+        default:
+            break;
     }
     return OK;
 }
@@ -171,82 +182,124 @@ void
                      << _client->get_names().nick;
 }
 
+RESULT
+IRCD::m_user()
+{
+    if (_request->parameter.size() < 4)
+        return m_to_client(err_need_more_params());
+    if (_client->is_registered())
+        return m_to_client(err_already_registred());
+    return OK;
+}
+
 void
     IRCD::user()
 {
+    if (m_user() == ERROR)
+        return;
 
-    //    if (check_error(request.parameter.size() < 4, client,
-    //                    msg.err_need_more_params()))
-    //        return;
-    //
-    //    if (check_error(client.is_registered(), client,
-    //                    msg.err_already_registred()))
-    //        return;
-    //
-    //    client.set_username(request.parameter[0]);
-    //    client.set_realname(request.parameter[3]);
-    //    if (client.is_registered() &&
-    //        !_ft_ircd->_map.client.count(client.get_names().nick))
-    //        _ft_ircd->m_regist(client, msg);
+    _client->set_username(_request->parameter[0]);
+    _client->set_realname(_request->parameter[3]);
+}
+
+RESULT
+IRCD::m_quit()
+{
+    return OK;
 }
 
 void
     IRCD::quit()
 {
-    //    std::string message = "Quit";
-    //    if (request.parameter.size())
-    //        message += " :" + request.parameter[0];
-    //    _ft_ircd->m_disconnect(client, message);
+    m_quit();
+    std::string message = "Quit";
+    if (_request->parameter.size())
+        message += " :" + _request->parameter[0];
+    _ft_ircd->m_disconnect(message);
+}
+
+RESULT
+IRCD::m_join(PHASE phase, Channel* channel)
+{
+    switch (phase)
+    {
+        case ONE:
+        {
+            if (_request->parameter.empty())
+                return m_to_client(err_need_more_params());
+            break;
+        }
+        case TWO:
+        {
+            if (!m_is_valid(CHANNEL_PREFIX))
+                return m_to_client(err_no_such_channel(*_target));
+            if (!m_is_valid(CHANNEL_NAME))
+                return m_to_client(err_no_such_channel(*_target));
+            if (CLIENT_CAHNNEL_LIMIT <= _client->get_channels().size())
+                return m_to_client(err_too_many_channels(*_target));
+            break;
+        }
+        case THREE:
+        {
+            if (_client->is_joined(channel))
+                return ERROR;
+            else if (channel->is_full())
+                return m_to_client(err_channel_is_full(*_target));
+            break;
+        }
+        default:
+            break;
+    }
+    return OK;
 }
 
 void
     IRCD::join()
 {
-    //    if (check_error(request.parameter.empty(), client,
-    //                    msg.err_need_more_params()))
-    //        return;
-    //    ConstStringVector channel_list;
-    //
-    //    utils::split_by_comma(channel_list, request.parameter[0]);
-    //    for (ConstStringVector::iterator channel_it = channel_list.begin();
-    //         channel_it != channel_list.end(); ++channel_it)
-    //    {
-    //        const std::string& channel_name = *channel_it;
-    //
-    //        if (check_error((!utils::is_channel_prefix(channel_name) ||
-    //                         !utils::is_channel_name_valid(channel_name)),
-    //                        client, msg.err_no_such_channel(channel_name)))
-    //            continue;
-    //        if (check_error(!client.is_join_available(), client,
-    //                        msg.err_too_many_channels(channel_name)))
-    //            continue;
-    //        if (!_ft_ircd->_map.channel.count(channel_name))
-    //            _ft_ircd->_map.channel.insert(
-    //                std::make_pair(channel_name, new Channel(channel_name)));
-    //        Channel* channel = _ft_ircd->_map.channel[channel_name];
-    //        if (client.is_already_joined(channel))
-    //            continue;
-    //        else if (check_error(channel->is_full(), client,
-    //                             msg.err_channel_is_full(channel_name)))
-    //            continue;
-    //        channel->join(client);
-    //        client.insert_channel(channel);
-    //        if (channel->get_members().size() == 1)
-    //            channel->set_operator(&client);
-    //        Logger().info() << "Create new channel :" << channel_name << " :
-    //        @"
-    //                        << client.get_names().nick;
-    //        _ft_ircd->m_send_to_channel(channel,
-    //                                    msg.build_join_reply(channel_name));
-    //        utils::send_topic_reply(channel, client, msg);
-    //        utils::send_name_reply(channel, client, msg);
-    //    }
+    if (m_join(ONE) == ERROR)
+        return;
+
+    ConstStringVector channel_list;
+
+    utils::split_by_comma(channel_list, _request->parameter[0]);
+    for (ConstStringVector::iterator channel_it = channel_list.begin();
+         channel_it != channel_list.end(); ++channel_it)
+    {
+        _target = channel_it.base();
+
+        if (m_join(TWO) == ERROR)
+            continue;
+
+        if (!_ft_ircd->_map.channel.count(*_target))
+            _ft_ircd->_map.channel.insert(
+                std::make_pair(*_target, new Channel(*_target)));
+
+        Channel* channel = _ft_ircd->_map.channel[*_target];
+
+        if (m_join(THREE, channel) == ERROR)
+            continue;
+
+        channel->join(*_client);
+        _client->insert_channel(channel);
+        if (channel->get_members().size() == 1)
+            channel->set_operator(_client);
+        Logger().info() << "Create new channel :" << *_target << " : @"
+                        << _client->get_names().nick;
+        m_to_channel(*channel, build_join_reply(*_target));
+        if (channel->get_topic().size())
+            m_to_client(rpl_topic(channel->get_name(), channel->get_topic()));
+        else
+            m_to_client(rpl_notopic(channel->get_name()));
+
+        utils::send_name_reply(channel, _client, msg);
+    }
 }
 
 void
     IRCD::m_mode_channel(const std::string& channel_name)
 {
-    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
+    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name),
+    //    client,
     //                    msg.err_no_such_channel(channel_name)))
     //        return;
     //    Channel* channel = _ft_ircd->_map.channel.at(channel_name);
@@ -313,7 +366,8 @@ void
     //                    msg.err_no_such_nick(nickname)))
     //        return;
     //    Client* target_client = _ft_ircd->_map.client[nickname];
-    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
+    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name),
+    //    client,
     //                    msg.err_no_such_channel(channel_name)))
     //        return;
     //    Channel* channel = _ft_ircd->_map.channel[channel_name];
@@ -323,8 +377,8 @@ void
     //    if (check_error(target_client->is_already_joined(channel), client,
     //                    msg.err_user_on_channel(nickname, channel_name)))
     //        return;
-    //    utils::push_message(client, msg.rpl_inviting(nickname, channel_name));
-    //    _ft_ircd->m_prepare_to_send(*target_client,
+    //    utils::push_message(client, msg.rpl_inviting(nickname,
+    //    channel_name)); _ft_ircd->m_prepare_to_send(*target_client,
     //                                msg.build_invite_reply(nickname,
     //                                channel_name));
 }
@@ -344,7 +398,8 @@ void
     //    utils::split_by_comma(channel_list, parameter[0]);
     //    utils::split_by_comma(nick_list, parameter[1]);
     //
-    //    if (check_error((!(channel_list.size() == 1 || nick_list.size() == 1)
+    //    if (check_error((!(channel_list.size() == 1 || nick_list.size() ==
+    //    1)
     //    &&
     //                     channel_list.size() != nick_list.size()),
     //                    client, msg.err_need_more_params()))
@@ -362,13 +417,15 @@ void
     //    {
     //        if (check_error((!utils::is_channel_prefix(*channel_name) ||
     //                         !_ft_ircd->_map.channel.count(*channel_name)),
-    //                        client, msg.err_no_such_channel(*channel_name)))
+    //                        client,
+    //                        msg.err_no_such_channel(*channel_name)))
     //            goto next;
     //        channel = _ft_ircd->_map.channel[*channel_name];
     //        if (check_error(!channel->is_operator(client), client,
     //                        msg.err_chanoprivs_needed(*channel_name)))
     //            goto next;
-    //        if (check_error(!_ft_ircd->_map.client.count(*nick_name), client,
+    //        if (check_error(!_ft_ircd->_map.client.count(*nick_name),
+    //        client,
     //                        msg.err_no_such_nick(*nick_name)))
     //            goto next;
     //        target_client = _ft_ircd->_map.client[*nick_name];
@@ -402,7 +459,8 @@ void
     //    {
     //        FT_IRCD::ChannelMap::const_iterator channel_it =
     //            _ft_ircd->_map.channel.begin();
-    //        for (; channel_it != _ft_ircd->_map.channel.end(); ++channel_it)
+    //        for (; channel_it != _ft_ircd->_map.channel.end();
+    //        ++channel_it)
     //            utils::send_name_reply(channel_it->second, client, msg);
     //        FT_IRCD::ClientMap::const_iterator client_it =
     //            _ft_ircd->_map.client.begin();
@@ -423,7 +481,8 @@ void
     //        {
     //            if
     //            (check_error(!_ft_ircd->_map.channel.count(channel_list[i]),
-    //                            client, msg.rpl_endofnames(channel_list[i])))
+    //                            client,
+    //                            msg.rpl_endofnames(channel_list[i])))
     //                continue;
     //            utils::send_name_reply(_ft_ircd->_map.channel[channel_list[i]],
     //                                   client, msg);
@@ -448,7 +507,8 @@ void
     //    {
     //        FT_IRCD::ChannelMap::const_iterator channel_it =
     //            _ft_ircd->_map.channel.begin();
-    //        for (; channel_it != _ft_ircd->_map.channel.end(); ++channel_it)
+    //        for (; channel_it != _ft_ircd->_map.channel.end();
+    //        ++channel_it)
     //            send_list_to_client(channel_it->second, client, msg);
     //    }
     //
@@ -511,7 +571,8 @@ void
     //                    msg.err_need_more_params()))
     //        return;
     //    const std::string& channel_name = request.parameter[0];
-    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name), client,
+    //    if (check_error(!_ft_ircd->_map.channel.count(channel_name),
+    //    client,
     //                    msg.err_no_such_channel(channel_name)))
     //        return;
     //    Channel* channel = _ft_ircd->_map.channel[channel_name];
@@ -548,13 +609,15 @@ void
     //        {
     //            // m_checker(채널있냐?)
     //            m_to_members(_ft_ircd->_map.channel[*target_it],
-    //                         msg.build_message_reply(*target_it), &client);
+    //                         msg.build_message_reply(*target_it),
+    //                         &client);
     //        }
     //        else if (_ft_ircd->_map.client.count(*target_it))
     //            _ft_ircd->m_prepare_to_send(*_ft_ircd->_map.client[*target_it],
     //                                        msg.build_message_reply(*target_it));
     //        else if (msg.get_command() != "NOTICE")
-    //            utils::push_message(client, msg.err_no_such_nick(*target_it));
+    //            utils::push_message(client,
+    //            msg.err_no_such_nick(*target_it));
     //    }
 }
 

@@ -8,7 +8,6 @@
 #include <vector>
 
 class FT_IRCD;
-class Client;
 
 class IRC
 {
@@ -19,12 +18,6 @@ class IRC
     typedef std::map<std::string, Channel*> ChannelMap;
 
   private:
-    std::string              m_message;
-    std::string              m_prefix;
-    std::string              m_command;
-    std::vector<std::string> m_parameters;
-    bool                     m_valid_message;
-
     IRC(const IRC&);
     IRC& operator=(const IRC& other);
 
@@ -32,8 +25,6 @@ class IRC
     std::string reply_nickmask_prefix(std::string command);
 
   public:
-    IRC(const std::string& message);
-    IRC(Client* client, const std::string& message);
     IRC();
     ~IRC();
 
@@ -73,23 +64,23 @@ class IRC
     std::string rpl_topic(const std::string& channel, const std::string& topic);
     std::string rpl_inviting(const std::string& nick,
                              const std::string& channel);
-    std::string rpl_namreply(const std::string&             channel,
-                             std::queue<const std::string>& nick);
+    std::string rpl_namereply(const std::string&             channel,
+                              std::queue<const std::string>& nick);
     std::string rpl_endofnames(const std::string& channel);
     std::string rpl_user_mode_is();
     std::string rpl_welcome();
 
-    std::string build_quit_reply(const std::string& reason);
-    std::string build_part_reply(const std::string& channel);
-    std::string build_message_reply(const std::string& target);
-    std::string build_invite_reply(const std::string& nick,
-                                   const std::string& channel);
-    std::string build_kick_reply(const std::string& channel,
-                                 const std::string& nick,
-                                 const std::string& oper_nick);
-    std::string build_nick_reply(const std::string& nick);
-    std::string build_join_reply(const std::string& channel);
-    std::string build_topic_reply();
+    std::string cmd_quit_reply(const std::string& reason);
+    std::string cmd_part_reply(const std::string& channel);
+    std::string cmd_message_reply(const std::string& target);
+    std::string cmd_invite_reply(const std::string& nick,
+                                 const std::string& channel);
+    std::string cmd_kick_reply(const std::string& channel,
+                               const std::string& nick,
+                               const std::string& oper_nick);
+    std::string cmd_nick_reply(const std::string& nick);
+    std::string cmd_join_reply(const std::string& channel);
+    std::string cmd_topic_reply();
 
   protected:
     FT_IRCD* _ft_ircd;

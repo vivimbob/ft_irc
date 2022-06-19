@@ -50,7 +50,7 @@ class FT_IRCD : public Socket, public Event, public IRCD
     void m_handler();
     void m_handler(Client::t_request&);
 
-    void m_disconnect(Client& client, std::string reason = "");
+    void m_disconnect(std::string reason = "");
 
   public:
     ~FT_IRCD();
