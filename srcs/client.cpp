@@ -55,23 +55,6 @@ const std::set<Channel*>&
     return _channels;
 }
 
-bool
-    Client::get_status(TYPE type)
-{
-    switch (type)
-    {
-        case PASS:
-            // return (_status. & PASSWORD);
-        case NICK:
-            // return (_status.registered & NICKNAME);
-        case USER:
-            // return (_status.registered & USERNAME);
-        default:
-            break;
-    }
-    return true;
-}
-
 /* client class getter end */
 
 /* client class setter begin */
@@ -123,24 +106,6 @@ bool
     Client::is_registered() const
 {
     return (_status.registered == REGISTERED);
-}
-
-bool
-    Client::has_pass() const
-{
-    return (_status.pass == PASSWORD);
-}
-
-bool
-    Client::has_nick() const
-{
-    return (_status.nick == NICKNAME);
-}
-
-bool
-    Client::has_user() const
-{
-    return (_status.user == USERNAME);
 }
 
 bool

@@ -88,9 +88,6 @@ class Client
     void set_status(TYPE);
 
     bool is_registered() const;
-    bool has_pass() const;
-    bool has_nick() const;
-    bool has_user() const;
     bool is_joined(Channel* channel);
 
     std::string make_nickmask();
