@@ -17,31 +17,40 @@ class IRCD : public IRC
     typedef CSTR_VECTOR::iterator          ITER;
 
   private:
-    const std::string* _target;
+    const std::string* _target_0;
+    const std::string* _target_1;
     std::string        _buffer;
     Client*            _fixed;
-    void               m_mode_channel();
-    void               m_mode_user();
-    void               m_to_client(Client&, const std::string&);
-    void               m_to_channel(const std::string&);
-    void               m_to_channels(const std::string&);
+
+	// utility start
+    TYPE get_type(std::string command);
 
     RESULT m_is_valid(TYPE);
+
     RESULT m_to_client(std::string);
+    void   m_to_client(Client&, const std::string&);
+    void   m_to_channel(const std::string&);
+    void   m_to_channels(const std::string&);
+  protected:
+    void registration();
+	//utiluity end
+
+
+  private:
     RESULT m_empty();
     RESULT m_pass();
     RESULT m_nick();
     RESULT m_user();
     RESULT m_quit();
     RESULT m_join(PHASE, Channel* = nullptr);
-    RESULT m_part();
+    RESULT m_part(PHASE);
     RESULT m_topic();
     RESULT m_names();
     RESULT m_list();
     RESULT m_invite();
     RESULT m_kick(PHASE);
     RESULT m_mode(PHASE);
-    RESULT m_privmsg();
+    RESULT m_privmsg(PHASE);
     RESULT m_notice();
     RESULT m_unknown();
     RESULT m_unregistered();
@@ -64,12 +73,10 @@ class IRCD : public IRC
     void notice();
     void unknown();
     void unregistered();
-    void registration();
     IRCD();
     ~IRCD();
     Command _commands;
 
-    TYPE get_type(std::string command);
 };
 
 #endif /* IRCD_HPP */
