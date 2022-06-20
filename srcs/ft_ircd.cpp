@@ -27,8 +27,7 @@ void
             if (!check.count(user->first) && user->first != _client)
             {
                 check.insert(user->first);
-                // IRCD::m_to_client(*user->first,
-                //                   IRC("QUIT").build_quit_reply(reason));
+                IRCD::m_to_client(*user->first, cmd_quit_reply(reason));
             }
         (*it)->part(*_client);
         if ((*it)->is_empty())
@@ -44,30 +43,40 @@ void
 void
     FT_IRCD::m_send(struct kevent& event)
 {
-    // Client&             client          = *(Client*)event.udata;
-    // t_to_client&        buffer          = client.get_buffers().to_client;
-    // int                 remain_data_len = buffer.size() -
-    // buffer.get_offset(); const unsigned int& clientfd        =
-    // client.get_socket();
+    _client = (Client*)event.udata;
 
-    // ssize_t send_data_len =
-    //     send(clientfd, buffer.data() + buffer.get_offset(),
-    //          event.data < remain_data_len ? event.data : remain_data_len, 0);
+    Client::t_to_client& buffer = _client->get_buffers().to_client;
 
-    // if (send_data_len >= 0)
-    //{
-    //     Logger().info() << "IRC send to " << client.get_names().nick;
-    //     buffer.set_offset(buffer.get_offset() + send_data_len);
-    //     Logger().trace() << "Send " << send_data_len << " bytes from ["
-    //                      << clientfd << "] client";
-    //     if (buffer.size() <= buffer.get_offset())
-    //     {
-    //         if (buffer.size())
-    //             buffer.clear();
-    //         Logger().trace() << "Empty buffer from [" << clientfd << "]
-    //         client"; Event::toggle(client, EVFILT_WRITE);
-    //     }
-    // }
+    if (buffer.queue.empty())
+        return;
+
+    int remain_data_len = buffer.queue.front().size() - buffer.offset;
+
+    ssize_t send_data_len
+        = send(event.ident, buffer.queue.front().data() + buffer.offset,
+               event.data < remain_data_len ? event.data : remain_data_len, 0);
+
+    if (send_data_len >= 0)
+    {
+        Logger().info() << "IRC send to " << _client->get_names().nick;
+
+        buffer.offset += send_data_len;
+
+        Logger().trace() << "Send " << send_data_len << " bytes from ["
+                         << event.ident << "] client";
+
+        if (buffer.queue.front().size() <= buffer.offset)
+        {
+            buffer.queue.pop();
+            buffer.offset = 0;
+
+            Logger().trace()
+                << "Empty buffer from [" << event.ident << "] client";
+
+            Event::toggle(*_client, EVFILT_WRITE);
+        }
+    }
+    _client = nullptr;
 }
 
 void
