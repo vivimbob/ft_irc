@@ -57,23 +57,24 @@ void
 ssize_t
     Socket::receive(const struct kevent& event)
 {
-    ssize_t length = recv(event.ident, _buffer, event.data, 0);
+    _fd               = event.ident;
+    ssize_t _received = recv(_fd, _buffer, event.data, 0);
 
-    if (length == 0)
-        close(event.ident);
-    return length;
+    if (_received == 0)
+        close(_fd);
+    return _received;
 }
 
 int
-    Socket::accept(sockaddr* const addr)
+    Socket::accept()
 {
-    int fd = ::accept(_socket.fd, addr, &_socket.len);
+    _fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len);
 
-    if (fd == -1)
+    if (_fd == -1)
         log::print() << "Failed to accept client errno: " << log::endl;
     else
-        fcntl(fd, F_SETFL, O_NONBLOCK);
-    return fd;
+        fcntl(_fd, F_SETFL, O_NONBLOCK);
+    return _fd;
 }
 
 void

@@ -28,14 +28,16 @@ class Socket
     Socket& operator=(const Socket&);
 
   protected:
-    t_socket _socket;
-    ssize_t  _length;
-    char     _buffer[IPV4_MTU_MAX];
+    t_socket    _socket;
+    ssize_t     _received;
+    sockaddr_in _addr;
+    int         _fd;
+    char        _buffer[IPV4_MTU_MAX];
 
     Socket();
     ~Socket();
     ssize_t receive(const struct kevent& event);
-    int     accept(sockaddr* const);
+    int     accept();
     void    initialize(int port);
 };
 

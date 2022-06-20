@@ -3,12 +3,10 @@
 void
     FT_IRCD::m_disconnect(std::string reason)
 {
-    const int& fd = _client->get_fd();
-
     log::print() << "Client disconnect [address :" << _client->get_IP() << ':'
-                 << _client->get_addr().sin_port << " FD :" << fd << ']'
+                 << _client->get_addr().sin_port << " FD :" << _fd << ']'
                  << log::endl;
-    Event::remove(fd);
+    Event::remove(_fd);
 
     IRCD::m_to_channels(cmd_quit_reply(reason));
     std::set<Channel*> copy = _client->get_channels();
@@ -152,10 +150,10 @@ void
 void
     FT_IRCD::m_receive(struct kevent& event)
 {
-    if (0 < (Socket::_length = Socket::receive(event)))
+    if (0 < Socket::receive(event))
     {
         Client::t_buffers& buffers = _client->get_buffers();
-        buffers.buffer.append(Socket::_buffer, Socket::_length);
+        buffers.buffer.append(Socket::_buffer, Socket::_received);
         while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
                != (int)std::string::npos)
         {
@@ -168,21 +166,18 @@ void
         if (buffers.to_client.queue.size())
             Event::toggle(*_client, EVFILT_READ);
     }
-    else if (Socket::_length == 0)
+    else if (Socket::_received == 0)
         m_disconnect("connection closed");
 }
 
 void
     FT_IRCD::m_accept()
 {
-    sockaddr_in addr;
-    int         fd = Socket::accept((sockaddr*)(&addr));
-
-    if (fd == -1)
+    if (Socket::accept() == -1)
         return;
-    Event::add(new Client(addr, fd));
-    log::print() << "Accept client [address:" << inet_ntoa(addr.sin_addr) << ":"
-                 << addr.sin_port << "fd:" << fd << ']' << log::endl;
+    Event::add(new Client(_addr, _fd));
+    log::print() << "Accept client [address:" << inet_ntoa(_addr.sin_addr)
+                 << ":" << _addr.sin_port << "fd:" << _fd << ']' << log::endl;
 }
 
 // struct kevent {
