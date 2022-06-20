@@ -1,0 +1,25 @@
+---
+AccessModifierOffset: '-2'
+AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveMacros: Consecutive
+AllowAllConstructorInitializersOnNextLine: 'false'
+AllowShortBlocksOnASingleLine: 'false'
+AllowShortCaseLabelsOnASingleLine: 'false'
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: 'false'
+AlwaysBreakAfterDefinitionReturnType: TopLevel
+BinPackParameters: 'false'
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: BeforeColon
+ColumnLimit: '80'
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
+IndentWidth: '4'
+IndentWrappedFunctionNames: 'true'
+Language: Cpp
+PointerAlignment: Left
+SpaceBeforeParens: ControlStatements
+Standard: Cpp03
+TabWidth: '4'
+...

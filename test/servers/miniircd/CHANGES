@@ -1,0 +1,102 @@
+Unreleased:
+
+  * Fixed matching of connection password (broken since version 2.0).
+
+2.1 (2021-03-08)
+
+  * Added --ssl-cert-file and --ssl-key-file arguments.
+  * Fixed formatting of default parameter in help messages.
+  * Debug log strings are now only constructed in debug mode.
+  * Added PyPI packaging.
+
+2.0 (2020-07-16)
+
+  * Dropped Python 2 support.
+  * miniircd now requires Python 3.6+.
+  * Channel log files are now named after the lowercase version of the channel
+    name for consistency.
+  * Fixed creation of PID file when using Python 3.
+  * Made sure to remove the PID file on daemon exit.
+  * Fixed creation of PID file with a relative path.
+  * Fixed a bug when using non-ASCII characters in Python 3 mode.
+
+1.3 (2019-03-12)
+
+  * Added IPv6 support.
+  * Made fixes related to running on Windows.
+  * Corrected WHOIS 319 reply according to the IRC standard.
+  * Treat server password as given instead of all-lowercase.
+  * Added options --cloak option to replace all client hostnames with the given
+    string.
+
+1.2.1 (2017-05-25)
+
+  * Fixed Python 3 crash after disconnecting an unresponsive client.
+
+1.2 (2017-05-22)
+
+  * Find certificate specified with relative path when using --daemon.
+  * Handle quickly disconnecting client without crashing.
+  * Import ssl module before entering chroot jail.
+  * Renamed options:
+    * --logdir to --channel-log-dir
+    * --statedir to --state-dir
+  * Added options:
+    * --log-count: number of log files to keep
+    * --log-file: log file path
+    * --log-max-size: maximum size of log file before rotating
+    * --password-file: file from which to read connection password
+    * --pid-file: file to write PID to
+  * Split name listing message into multiple 353 messages when needed.
+  * Made miniircd start correctly on Windows.
+  * Use the same 004 reply syntax as other ircds do.
+  * Fixed wallops command when given no arguments.
+  * Added support for the NAMES command (by Braxton Plaxco).
+  * Added support for Python 3.
+
+1.1 (2015-05-22)
+
+  * Allow dash in nicknames.
+
+1.0 (2015-02-09)
+
+  * Added support for the LUSERS command (by Alex Wright).
+  * Added basic SSL support (by Leandro Lucarella).
+  * Added support for --chroot and -setuid (by Rezrov Frotz).
+  * Added --listen option to set address to bind to (by Martin Maney).
+  * Added support for Python 3 and dropped support for Python 2.5 and older.
+
+0.4 (2012-07-01)
+
+  * Added support for channel keys.
+  * 422 message is now sent after registration when no MOTD is available. This
+    is apparently needed by some clients.
+  * Added support for WALLOPS command.
+  * Added option to store persistent state (currently channel topic and key).
+  * Fixed crash when the write queue for a disconnected client is non-empty.
+
+0.3 (2011-08-25)
+
+  * Added --debug flag.
+  * Added optional logging of channel messages to file.
+  * Send a 251 message upon registration to please Pidgin.
+  * Understand but ignore AWAY messages.
+  * Various code cleanup.
+
+0.2.0 (2003-12-12)
+
+  * Added switch for specifying a MOTD file.
+  * Added WHOIS and MOTD commands.
+
+0.1.1 (2003-12-09)
+
+  * Handle bad port specification nicely.
+  * Minor cleanups.
+
+0.1.0 (2003-12-03)
+
+  * First released version.
+
+0.0.0 (autumn, 2003)
+
+  * [Internal usage.]

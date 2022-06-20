@@ -1,26 +1,32 @@
 #include "../includes/sendbuffer.hpp"
 
-SendBuffer::SendBuffer(void)
-	: m_offset(0)
+/* sendbuffer class member function begin */
+
+SendBuffer::SendBuffer() : m_offset(0)
 {
 }
 
-SendBuffer::~SendBuffer(void)
+SendBuffer::~SendBuffer()
 {
 }
 
-void    SendBuffer::clear()
+void
+    SendBuffer::clear()
 {
-	this->std::string::clear();
-	m_offset = 0;
+    this->std::string::clear();
+    m_offset = 0;
 }
 
-unsigned int SendBuffer::get_offset(void) const
+unsigned int
+    SendBuffer::get_offset() const
 {
-	return m_offset;
+    return m_offset;
 }
 
-void    SendBuffer::set_offset(unsigned int offset)
+void
+    SendBuffer::set_offset(unsigned int offset)
 {
-	m_offset = offset;
+    m_offset = offset;
 }
+
+/* sendbuffer class member function end */
