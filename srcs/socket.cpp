@@ -1,4 +1,5 @@
 #include "../includes/socket.hpp"
+#include <sys/event.h>
 
 Socket::~Socket()
 {
@@ -51,6 +52,16 @@ void
     log::print() << "Listen on socket" << log::endl;
     fcntl(_socket.fd, F_SETFL, O_NONBLOCK);
     log::print() << "Socket set nonblock" << log::endl;
+}
+
+ssize_t
+    Socket::receive(const struct kevent& event)
+{
+    ssize_t length = recv(event.ident, _buffer, event.data, 0);
+
+    if (length == 0)
+        close(event.ident);
+    return length;
 }
 
 int

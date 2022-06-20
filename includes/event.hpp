@@ -19,10 +19,10 @@ class Event
                  u_int   fflags,
                  int     data,
                  void*   udata);
+    int    _kqueue;
 
   protected:
     struct kevent _events[EVENTS_MAX];
-    int           _kqueue;
     void          toggle(Client& client, int EVFILT_TYPE);
     void          initialize(int socket_fd);
     void          remove(int fd);

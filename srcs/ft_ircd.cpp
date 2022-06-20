@@ -8,12 +8,9 @@ void
     log::print() << "Client disconnect [address :" << _client->get_IP() << ':'
                  << _client->get_addr().sin_port << " FD :" << fd << ']'
                  << log::endl;
-
     Event::remove(fd);
-    close(fd);
 
     IRCD::m_to_channels(cmd_quit_reply(reason));
-
     std::set<Channel*> copy = _client->get_channels();
 
     Client::t_citer iter = copy.begin();
@@ -155,12 +152,10 @@ void
 void
     FT_IRCD::m_receive(struct kevent& event)
 {
-    ssize_t length = recv(event.ident, _buffer, event.data, 0);
-
-    if (length > 0)
+    if (0 < (Socket::_length = Socket::receive(event)))
     {
         Client::t_buffers& buffers = _client->get_buffers();
-        buffers.buffer.append(_buffer, length);
+        buffers.buffer.append(Socket::_buffer, Socket::_length);
         while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
                != (int)std::string::npos)
         {
@@ -173,7 +168,7 @@ void
         if (buffers.to_client.queue.size())
             Event::toggle(*_client, EVFILT_READ);
     }
-    else if (length == 0)
+    else if (Socket::_length == 0)
         m_disconnect("connection closed");
 }
 

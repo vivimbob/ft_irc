@@ -15,7 +15,6 @@ class FT_IRCD : public Socket, public Event, public IRCD
     friend class IRCD;
 
   private:
-    char  _buffer[IPV4_MTU_MAX];
     t_map _map;
 
   private:

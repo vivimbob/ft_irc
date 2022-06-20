@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#define IPV4_MTU_MAX 65535
+
 class Socket
 {
   public:
@@ -21,15 +23,20 @@ class Socket
     void m_bind(int port);
     void m_listen();
     void m_accept();
+    void m_disconnect();
     Socket(const Socket&);
     Socket& operator=(const Socket&);
 
   protected:
     t_socket _socket;
+    ssize_t  _length;
+    char     _buffer[IPV4_MTU_MAX];
+
     Socket();
     ~Socket();
-    int  accept(sockaddr* const);
-    void initialize(int port);
+    ssize_t receive(const struct kevent& event);
+    int     accept(sockaddr* const);
+    void    initialize(int port);
 };
 
 #endif /* SOCKET_HPP */
