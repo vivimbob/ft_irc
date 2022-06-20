@@ -9,7 +9,6 @@
 #include "ircd.hpp"
 #include "resources.hpp"
 #include "socket.hpp"
-#include "utils.hpp"
 
 #include <arpa/inet.h>
 #include <cerrno>

@@ -10,7 +10,6 @@ srcs		= ft_ircd.cpp\
 			  client.cpp\
 			  event.cpp\
 			  socket.cpp\
-			  utils.cpp\
 			  irc.cpp\
 			  ircd.cpp
 

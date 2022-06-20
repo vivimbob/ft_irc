@@ -2,7 +2,6 @@
 #define CLIENT_HPP
 
 #include "resources.hpp"
-#include "utils.hpp"
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <queue>
