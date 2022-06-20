@@ -537,6 +537,8 @@ void
                 cmd_kick_reply(*names, *nicks, _client->get_names().nick));
             m_to_client(*_fixed, cmd_kick_reply(*names, *nicks,
                                                 _client->get_names().nick));
+            m_to_client(
+                cmd_kick_reply(*names, *nicks, _client->get_names().nick));
         }
     next:
         if (param_0.size() != 1)
