@@ -31,7 +31,7 @@ IRC::IRC() : endl("\r\n")
 /* message class reply function begin */
 
 std::string
-    IRC::reply_servername_prefix(std::string numeric_reply)
+    IRC::reply_servername_prefix(const std::string& numeric_reply)
 {
     std::string nick = _client->get_names().nick;
 
@@ -39,11 +39,11 @@ std::string
 }
 
 std::string
-    IRC::reply_nickmask_prefix(std::string command)
+    IRC::reply_nickmask_prefix(const std::string& command)
 {
-    std::string msg;
-    msg = msg + ":" + _client->make_nickmask() + " " + command;
-    return msg;
+    std::string str;
+    str = str + ":" + _client->make_nickmask() + " " + command;
+    return str;
 }
 
 std::string
