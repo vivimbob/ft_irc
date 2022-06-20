@@ -12,7 +12,7 @@ class IRCD : public IRC
         t_channelmap channel;
     } t_map;
 
-    typedef std::vector<void (IRCD::*)()>  t_command;
+    typedef std::vector<void (IRCD::*)()>  t_commands;
     typedef std::vector<const std::string> t_cstr_vector;
     typedef t_cstr_vector::iterator        t_iter;
 
@@ -73,7 +73,7 @@ class IRCD : public IRC
     void unregistered();
     IRCD();
     ~IRCD();
-    t_command _commands;
+    t_commands _commands;
 };
 
 #endif /* IRCD_HPP */
