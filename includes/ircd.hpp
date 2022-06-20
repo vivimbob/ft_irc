@@ -22,17 +22,17 @@ class IRCD : public IRC
     std::string        _buffer;
     Client*            _fixed;
 
-	// utility start
+    // utility start
     RESULT m_is_valid(TYPE);
     RESULT m_to_client(std::string);
-    void   m_to_channel(const std::string&);
-    void   m_to_channels(const std::string&);
-  protected:
     void   m_to_client(Client&, const std::string&);
+    void   m_to_channel(const std::string&);
+
+  protected:
+    void m_to_channels(const std::string&);
     TYPE get_type(std::string command);
     void registration();
-	//utiluity end
-
+    // utiluity end
 
   private:
     RESULT m_empty();
@@ -74,7 +74,6 @@ class IRCD : public IRC
     IRCD();
     ~IRCD();
     Command _commands;
-
 };
 
 #endif /* IRCD_HPP */

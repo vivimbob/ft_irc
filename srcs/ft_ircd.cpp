@@ -14,28 +14,21 @@ void
     Event::set(fd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
     close(fd);
 
-    std::set<Channel*>::iterator it  = _client->get_channels().begin();
-    std::set<Channel*>::iterator ite = _client->get_channels().end();
-    std::set<Client*>            check;
+    IRCD::m_to_channels(cmd_quit_reply(reason));
 
-    for (; it != ite; ++it)
+    Client::CITER iter = _client->get_channels().begin();
+    Client::CITER end  = _client->get_channels().end();
+
+    for (_channel = *iter; iter != end; _channel = *(++iter))
     {
-        const Channel::MemberMap&          users = (*it)->get_members();
-        Channel::MemberMap::const_iterator user  = users.begin();
-
-        for (; user != users.end(); ++user)
-            if (!check.count(user->first) && user->first != _client)
-            {
-                check.insert(user->first);
-                IRCD::m_to_client(*user->first, cmd_quit_reply(reason));
-            }
-        (*it)->part(*_client);
-        if ((*it)->is_empty())
+        _channel->part(*_client);
+        if (_channel->is_empty())
         {
-            _map.channel.erase((*it)->get_name());
-            delete (*it);
+            _map.channel.erase(_channel->get_name());
+            delete _channel;
         }
     }
+
     if (_client->is_registered())
         _map.client.erase(_client->get_names().nick);
     delete _client;
