@@ -20,6 +20,7 @@ void
 
     for (; it != ite; ++it)
     {
+        Logger().info() << "hi";
         const Channel::MemberMap&          users = (*it)->get_members();
         Channel::MemberMap::const_iterator user  = users.begin();
 
@@ -36,8 +37,13 @@ void
             delete (*it);
         }
     }
-    _map.client.erase(_client->get_names().nick);
+    Logger().info() << "hihi";
+    if (_client->is_registered())
+        _map.client.erase(_client->get_names().nick);
+    Logger().info() << "hihihi";
     delete _client;
+    Logger().info() << "hihihihi";
+    _client = nullptr;
 }
 
 void
@@ -144,7 +150,7 @@ void
             if ((((unsigned)IRC::_request->type) - 1) < CONNECTION)
             {
                 (this->*IRCD::_commands[IRC::_request->type])();
-                if (_client->is_registered()
+                if (_client && _client->is_registered()
                     && !(_map.client.count(_client->get_names().nick)))
                     IRCD::registration();
             }
@@ -158,7 +164,8 @@ void
         }
         else
             (this->*IRCD::_commands[IRC::_request->type])();
-        IRC::_requests->queue.pop();
+        if (_client)
+            IRC::_requests->queue.pop();
     }
     IRC::_requests  = nullptr;
     IRC::_to_client = nullptr;
