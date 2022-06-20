@@ -29,14 +29,14 @@ void
     _kqueue = kqueue();
     if (_kqueue == -1)
     {
-        Logger().error() << "Failed to allocate kqueue. errno: " << errno << ":"
-                         << strerror(errno);
-        exit(EXIT_FAILURE);
+        log::print() << "Failed to allocate kqueue. errno: " << errno << ":"
+                     << strerror(errno) << log::endl;
+        exit(FAILURE);
     }
-    Logger().info() << "Allocate kqueue " << _kqueue;
+    log::print() << "Allocate kqueue " << _kqueue << log::endl;
     Event::set(socket_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    Logger().info() << "Listen socket(" << socket_fd
-                    << ") assign read event to kqueue";
+    log::print() << "Listen socket(" << socket_fd
+                 << ") assign read event to kqueue" << log::endl;
 }
 
 Event::Event()

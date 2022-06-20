@@ -2,7 +2,6 @@
 #ifndef FT_TEMP_HPP
 #define FT_TEMP_HPP
 
-#include "../lib/logger.hpp"
 #include "channel.hpp"
 #include "client.hpp"
 #include "event.hpp"

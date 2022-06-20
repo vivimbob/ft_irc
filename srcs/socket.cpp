@@ -9,11 +9,11 @@ void
 {
     if ((_socket.fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        Logger().error() << "Failed to create socket. errno " << errno << ":"
-                         << strerror(errno);
+        log::print() << "Failed to create socket. errno " << errno << ":"
+                     << strerror(errno) << log::endl;
         exit(EXIT_FAILURE);
     }
-    Logger().info() << "Create socket " << _socket.fd;
+    log::print() << "Create socket " << _socket.fd << log::endl;
     int toggle = 1;
     setsockopt(_socket.fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
                sizeof(toggle));
@@ -27,15 +27,16 @@ void
     _socket.addr.sin_addr.s_addr = INADDR_ANY;
     _socket.addr.sin_port        = htons(port);
 
-    if (bind(_socket.fd, (struct sockaddr*)&_socket.addr,
-             sizeof(sockaddr_in)) == -1)
+    if (bind(_socket.fd, (struct sockaddr*)&_socket.addr, sizeof(sockaddr_in))
+        == -1)
     {
-        Logger().error() << "Failed to bind to port and address" << port
-                         << ". errno: " << errno << ":" << strerror(errno);
+        log::print() << "Failed to bind to port and address" << port
+                     << ". errno: " << errno << ":" << strerror(errno)
+                     << log::endl;
         exit(EXIT_FAILURE);
     }
-    Logger().info() << "Bind Port :" << port
-                    << " IP :" << inet_ntoa(_socket.addr.sin_addr);
+    log::print() << "Bind Port :" << port
+                 << " IP :" << inet_ntoa(_socket.addr.sin_addr) << log::endl;
 }
 
 void
@@ -43,13 +44,13 @@ void
 {
     if (listen(_socket.fd, SOMAXCONN) == -1)
     {
-        Logger().error() << "Failed to listen on socket. errno: " << errno
-                         << ":" << strerror(errno);
+        log::print() << "Failed to listen on socket. errno: " << errno << ":"
+                     << strerror(errno) << log::endl;
         exit(EXIT_FAILURE);
     }
-    Logger().info() << "Listen on socket";
+    log::print() << "Listen on socket" << log::endl;
     fcntl(_socket.fd, F_SETFL, O_NONBLOCK);
-    Logger().info() << "Socket set nonblock";
+    log::print() << "Socket set nonblock" << log::endl;
 }
 
 void

@@ -3,6 +3,7 @@
 
 #include "../includes/client.hpp"
 #include "channel.hpp"
+#include "log.hpp"
 #include "resources.hpp"
 #include <queue>
 #include <string>

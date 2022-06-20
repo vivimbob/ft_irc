@@ -6,9 +6,9 @@ void
 {
     const int& fd = _client->get_socket();
 
-    Logger().info() << "Client disconnect [address :" << _client->get_IP()
-                    << ':' << _client->get_addr().sin_port << " FD :" << fd
-                    << ']';
+    log::print() << "Client disconnect [address :" << _client->get_IP() << ':'
+                 << _client->get_addr().sin_port << " FD :" << fd << ']'
+                 << log::endl;
 
     Event::set(fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     Event::set(fd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
@@ -51,20 +51,21 @@ void
 
     if (send_data_len >= 0)
     {
-        Logger().info() << "IRC send to " << _client->get_names().nick;
+        log::print() << "IRC send to " << _client->get_names().nick
+                     << log::endl;
 
         buffer.offset += send_data_len;
 
-        Logger().trace() << "Send " << send_data_len << " bytes from ["
-                         << event.ident << "] client";
+        log::print() << "Send " << send_data_len << " bytes from ["
+                     << event.ident << "] client" << log::endl;
 
         if (buffer.queue.front().size() <= buffer.offset)
         {
             buffer.queue.pop();
             buffer.offset = 0;
 
-            Logger().trace()
-                << "Empty buffer from [" << event.ident << "] client";
+            log::print() << "Empty buffer from [" << event.ident << "] client"
+                         << log::endl;
 
             if (buffer.queue.empty())
                 Event::toggle(*_client, EVFILT_WRITE);
@@ -192,7 +193,7 @@ void
 
     if (fd == -1)
     {
-        Logger().error() << "Failed to accept client errno: ";
+        log::print() << "Failed to accept client errno: " << log::endl;
         return;
     }
 
@@ -202,8 +203,8 @@ void
     Event::set(fd, EVFILT_READ, EV_ADD, 0, 0, client);
     Event::set(fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
 
-    Logger().info() << "Accept client [address:" << inet_ntoa(addr.sin_addr)
-                    << ":" << addr.sin_port << "fd:" << fd << ']';
+    log::print() << "Accept client [address:" << inet_ntoa(addr.sin_addr) << ":"
+                 << addr.sin_port << "fd:" << fd << ']' << log::endl;
 }
 
 // struct kevent {
@@ -221,11 +222,11 @@ void
     register int count;
     register int index;
 
-    Logger().info() << "[FT_IRCD is running]";
+    log::print() << "[FT_IRCD is running]" << log::endl;
     while (true)
     {
         count = kevent(Event::_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
-        Logger().trace() << count << " new kevent";
+        log::print() << count << " new kevent" << log::endl;
         for (index = 0; index < count; ++index)
         {
             IRC::_client = (Client*)_events[index].udata;
@@ -259,12 +260,13 @@ int
 
     if (argc != 3)
     {
-        Logger().error() << "Usage :" << argv[0] << " <port> <password>";
+        log::print() << "Usage :" << argv[0] << " <port> <password>"
+                     << log::endl;
         return FAILURE;
     }
     if (PORT_MAX < (unsigned)(port = atoi(argv[1])))
     {
-        Logger().error() << port << "is out of Port range (0 ~ 65535)";
+        log::print() << port << "is out of Port range (0 ~ 65535)" << log::endl;
         return FAILURE;
     }
 

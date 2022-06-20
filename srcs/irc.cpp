@@ -1,6 +1,5 @@
 #include "../includes/client.hpp"
 #include "../includes/ircd.hpp"
-#include "../lib/logger.hpp"
 
 /* message class constructor begin */
 
