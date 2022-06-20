@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LOG_HPP
 #define LOG_HPP
 
@@ -11,34 +12,17 @@ namespace time
 {
 
 #define BUFFER_SIZE 32
-time_t raw;
-char   buffer[BUFFER_SIZE];
+static time_t raw;
+static char   buffer[BUFFER_SIZE];
 
 } // namespace time
 
 void
-    timestamp()
-{
-    std::time(&time::raw);
-    if (std::strftime(time::buffer, BUFFER_SIZE, "%Y-%m-%d %H:%M:%S",
-                      std::localtime(&time::raw)))
-        std::cout << time::buffer << ": ";
-}
-
+    timestamp();
 std::ostream&
-    print()
-{
-    log::timestamp();
-    return std::cout;
-}
-
+    print();
 std::ostream&
-    endl(std::ostream& os)
-{
-    os.put(os.widen('\n'));
-    os.flush();
-    return os;
-}
+    endl(std::ostream&);
 
 } // namespace log
 #endif /* LOG_HPP */
