@@ -38,7 +38,6 @@ const Channel::MemberMap&
 const std::string&
     Channel::get_prefix(Client* client)
 {
-    std::cout << "prefix : " << _members[client] << std::endl;
     return _members[client];
 }
 
