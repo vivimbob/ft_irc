@@ -9,7 +9,6 @@ srcs		= ft_ircd.cpp\
 			  channel.cpp\
 			  client.cpp\
 			  event.cpp\
-			  membership.cpp\
 			  socket.cpp\
 			  utils.cpp\
 			  irc.cpp\

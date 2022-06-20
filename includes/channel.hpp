@@ -1,7 +1,6 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "membership.hpp"
 #include "resources.hpp"
 #include <ctime>
 #include <map>

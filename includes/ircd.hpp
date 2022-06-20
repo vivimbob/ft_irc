@@ -23,15 +23,13 @@ class IRCD : public IRC
     Client*            _fixed;
 
 	// utility start
-    TYPE get_type(std::string command);
-
     RESULT m_is_valid(TYPE);
-
     RESULT m_to_client(std::string);
     void   m_to_client(Client&, const std::string&);
     void   m_to_channel(const std::string&);
     void   m_to_channels(const std::string&);
   protected:
+    TYPE get_type(std::string command);
     void registration();
 	//utiluity end
 
