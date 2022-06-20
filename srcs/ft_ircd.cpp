@@ -3,14 +3,13 @@
 void
     FT_IRCD::m_disconnect(std::string reason)
 {
-    const int& fd = _client->get_socket();
+    const int& fd = _client->get_fd();
 
     log::print() << "Client disconnect [address :" << _client->get_IP() << ':'
                  << _client->get_addr().sin_port << " FD :" << fd << ']'
                  << log::endl;
 
-    Event::set(fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-    Event::set(fd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+    Event::remove(fd);
     close(fd);
 
     IRCD::m_to_channels(cmd_quit_reply(reason));
@@ -182,19 +181,11 @@ void
     FT_IRCD::m_accept()
 {
     sockaddr_in addr;
-    int         fd = accept(_socket.fd, (sockaddr*)(&addr), &_socket.len);
+    int         fd = Socket::accept((sockaddr*)(&addr));
 
     if (fd == -1)
-    {
-        log::print() << "Failed to accept client errno: " << log::endl;
         return;
-    }
-    fcntl(fd, F_SETFL, O_NONBLOCK);
-    Client* client = new Client(addr, fd);
-
-    Event::set(fd, EVFILT_READ, EV_ADD, 0, 0, client);
-    Event::set(fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
-
+    Event::add(new Client(addr, fd));
     log::print() << "Accept client [address:" << inet_ntoa(addr.sin_addr) << ":"
                  << addr.sin_port << "fd:" << fd << ']' << log::endl;
 }

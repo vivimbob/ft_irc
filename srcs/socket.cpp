@@ -53,6 +53,18 @@ void
     log::print() << "Socket set nonblock" << log::endl;
 }
 
+int
+    Socket::accept(sockaddr* const addr)
+{
+    int fd = ::accept(_socket.fd, addr, &_socket.len);
+
+    if (fd == -1)
+        log::print() << "Failed to accept client errno: " << log::endl;
+    else
+        fcntl(fd, F_SETFL, O_NONBLOCK);
+    return fd;
+}
+
 void
     Socket::initialize(int port)
 {

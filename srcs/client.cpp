@@ -26,7 +26,7 @@ sockaddr_in
 }
 
 int
-    Client::get_socket()
+    Client::get_fd()
 {
     return _fd;
 }

@@ -72,7 +72,7 @@ class Client
     Client(sockaddr_in client_addr, int client_fd);
     ~Client();
     sockaddr_in               get_addr();
-    int                       get_socket();
+    int                       get_fd();
     char*                     get_IP();
     const t_names&            get_names() const;
     t_buffers&                get_buffers();

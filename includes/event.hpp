@@ -13,17 +13,20 @@ class Event
   private:
     Event(const Event&);
     Event& operator=(const Event&);
+    void   m_set(int     identity,
+                 short   filter,
+                 u_short flags,
+                 u_int   fflags,
+                 int     data,
+                 void*   udata);
 
   protected:
     int  _kqueue;
-    void set(int     identity,
-             short   filter,
-             u_short flags,
-             u_int   fflags,
-             int     data,
-             void*   udata);
     void toggle(Client& client, int EVFILT_TYPE);
     void initialize(int socket_fd);
+    void remove(int fd);
+    void add(Client*);
+
     Event();
     ~Event();
 };

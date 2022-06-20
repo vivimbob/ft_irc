@@ -78,17 +78,15 @@ class IRC
     std::string cmd_topic_reply();
 
   protected:
-    FT_IRCD*  _ft_ircd;
-    t_ircmap  _type_to_command;
-    t_typemap _command_to_type;
-
+    FT_IRCD*             _ft_ircd;
+    t_ircmap             _type_to_command;
+    t_typemap            _command_to_type;
     Client*              _client;
     Channel*             _channel;
     Client::t_requests*  _requests;
     Client::t_request*   _request;
     Client::t_to_client* _to_client;
-
-    std::string _password;
+    std::string          _password;
 };
 
 #endif /* TEMP_HPP */

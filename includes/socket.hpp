@@ -4,8 +4,6 @@
 #include "log.hpp"
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <unistd.h>
 
 class Socket
@@ -22,6 +20,7 @@ class Socket
     void m_create();
     void m_bind(int port);
     void m_listen();
+    void m_accept();
     Socket(const Socket&);
     Socket& operator=(const Socket&);
 
@@ -29,6 +28,7 @@ class Socket
     t_socket _socket;
     Socket();
     ~Socket();
+    int  accept(sockaddr* const);
     void initialize(int port);
 };
 

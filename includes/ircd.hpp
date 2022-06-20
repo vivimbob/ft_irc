@@ -29,9 +29,10 @@ class IRCD : public IRC
     void   m_to_channel(const std::string&);
 
   protected:
-    void m_to_channels(const std::string&);
-    TYPE get_type(std::string command);
-    void registration();
+    void       m_to_channels(const std::string&);
+    TYPE       get_type(std::string command);
+    void       registration();
+    t_commands _commands;
     // utiluity end
 
   private:
@@ -73,7 +74,6 @@ class IRCD : public IRC
     void unregistered();
     IRCD();
     ~IRCD();
-    t_commands _commands;
 };
 
 #endif /* IRCD_HPP */
