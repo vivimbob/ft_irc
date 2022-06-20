@@ -71,7 +71,8 @@ void
             Logger().trace()
                 << "Empty buffer from [" << event.ident << "] client";
 
-            Event::toggle(*_client, EVFILT_WRITE);
+            if (buffer.queue.empty())
+                Event::toggle(*_client, EVFILT_WRITE);
         }
     }
 }
@@ -110,7 +111,8 @@ void
             {
                 offset = buffer.find_first_of(' ', fixed);
                 if (offset != std::string::npos)
-                    request.parameter.push_back(buffer.substr(fixed, offset));
+                    request.parameter.push_back(
+                        buffer.substr(fixed, offset - fixed));
                 else
                 {
                     request.parameter.push_back(buffer.substr(fixed));
@@ -123,7 +125,6 @@ void
                 request.parameter.push_back(buffer.substr(fixed + 1));
                 break;
             }
-            ++index;
         }
     }
 }
