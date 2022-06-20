@@ -88,11 +88,22 @@ void
 void
     IRCD::m_to_channels(const std::string& str)
 {
-    Client::CITER iter = _client->get_channels().begin();
-    Client::CITER end  = _client->get_channels().end();
+    Client::CITER     iter = _client->get_channels().begin();
+    Client::CITER     end  = _client->get_channels().end();
+    std::set<Client*> check;
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
-        m_to_channel(str);
+    {
+        Channel::CITER users = _channel->get_members().begin();
+        Channel::CITER u_end = _channel->get_members().end();
+
+        for (; users != u_end; ++users)
+            if (!check.count(users->first) && users->first != _client)
+            {
+                check.insert(users->first);
+                IRCD::m_to_client(*users->first, str);
+            }
+    }
 }
 
 void
@@ -166,6 +177,7 @@ void
         _ft_ircd->_map.client[*_target_0] = _client;
     }
     _client->set_nickname(*_target_0);
+    m_to_client(cmd_nick_reply(*_target_0));
     Logger().debug() << _client->get_IP() << " change nick to "
                      << _client->get_names().nick;
 }
