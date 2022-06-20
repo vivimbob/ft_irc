@@ -16,7 +16,7 @@ IRC::IRC() : endl("\r\n")
     _command_to_type.insert(std::make_pair("USER", USER));
     _command_to_type.insert(std::make_pair("QUIT", QUIT));
     _command_to_type.insert(std::make_pair("JOIN", JOIN));
-    _command_to_type.insert(std::make_pair("JOIN", PART));
+    _command_to_type.insert(std::make_pair("PART", PART));
     _command_to_type.insert(std::make_pair("TOPIC", TOPIC));
     _command_to_type.insert(std::make_pair("NAMES", NAMES));
     _command_to_type.insert(std::make_pair("LIST", LIST));
