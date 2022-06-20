@@ -10,7 +10,7 @@ void
 {
     struct kevent kev;
     EV_SET(&kev, identity, filter, flags, fflags, data, udata);
-    kevent(_kqueue, &kev, 1, NULL, 0, NULL);
+    ::kevent(_kqueue, &kev, 1, NULL, 0, NULL);
 }
 
 void
@@ -35,6 +35,12 @@ void
 {
     m_set(client->get_fd(), EVFILT_READ, EV_ADD, 0, 0, client);
     m_set(client->get_fd(), EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, client);
+}
+
+int
+    Event::kevent()
+{
+    return ::kevent(_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
 }
 
 void

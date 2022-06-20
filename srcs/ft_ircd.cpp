@@ -208,7 +208,7 @@ void
     log::print() << "[FT_IRCD is running]" << log::endl;
     while (true)
     {
-        count = kevent(Event::_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
+        count = Event::kevent();
         log::print() << count << " new kevent" << log::endl;
         for (index = 0; index < count; ++index)
         {

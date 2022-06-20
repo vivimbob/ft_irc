@@ -21,11 +21,13 @@ class Event
                  void*   udata);
 
   protected:
-    int  _kqueue;
-    void toggle(Client& client, int EVFILT_TYPE);
-    void initialize(int socket_fd);
-    void remove(int fd);
-    void add(Client*);
+    struct kevent _events[EVENTS_MAX];
+    int           _kqueue;
+    void          toggle(Client& client, int EVFILT_TYPE);
+    void          initialize(int socket_fd);
+    void          remove(int fd);
+    void          add(Client*);
+    int           kevent();
 
     Event();
     ~Event();
