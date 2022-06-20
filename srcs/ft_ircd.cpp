@@ -20,7 +20,6 @@ void
 
     for (; it != ite; ++it)
     {
-        Logger().info() << "hi";
         const Channel::MemberMap&          users = (*it)->get_members();
         Channel::MemberMap::const_iterator user  = users.begin();
 
@@ -37,12 +36,9 @@ void
             delete (*it);
         }
     }
-    Logger().info() << "hihi";
     if (_client->is_registered())
         _map.client.erase(_client->get_names().nick);
-    Logger().info() << "hihihi";
     delete _client;
-    Logger().info() << "hihihihi";
     _client = nullptr;
 }
 
@@ -105,7 +101,6 @@ void
         if (request.command[offset] != '\0')
             buffer = request.command.substr(offset);
         request.command.erase(offset);
-        request.type = get_type(request.command);
 
         offset = 0;
         for (int index = 0;
@@ -133,6 +128,7 @@ void
             }
         }
     }
+    request.type = get_type(request.command);
 }
 
 void
@@ -144,7 +140,6 @@ void
     {
         IRC::_request = &_requests->queue.front();
         m_handler(*IRC::_request);
-
         if (IRC::_request->type != EMPTY && IRC::_request->type != UNKNOWN)
         {
             if ((((unsigned)IRC::_request->type) - 1) < CONNECTION)

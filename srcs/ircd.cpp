@@ -157,7 +157,6 @@ void
 {
     if (m_nick() == ERROR)
         return;
-	Logger().debug() << "ok";
 
     if (_client->is_registered())
     {
