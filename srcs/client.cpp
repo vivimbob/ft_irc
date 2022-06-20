@@ -121,7 +121,11 @@ bool
 std::string
     Client::make_nickmask()
 {
-    return _names.nick + '!' + _names.user + '@' + _names.host;
+	std::string nickmask;
+	nickmask += (_names.nick.empty() ? "*" : _names.nick) + "!";
+	nickmask += (_names.user.empty() ? "*" : _names.user) + "@";
+	nickmask += _names.host.empty() ? "*" : _names.host;
+	return nickmask;
 }
 
 void
