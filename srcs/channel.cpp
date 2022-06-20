@@ -38,6 +38,7 @@ const Channel::MemberMap&
 const std::string&
     Channel::get_prefix(Client* client)
 {
+    std::cout << "prefix : " << _members[client] << std::endl;
     return _members[client];
 }
 
@@ -60,7 +61,7 @@ void
 void
     Channel::set_operator(Client* client)
 {
-    if (_members.find(client)->second.find('@') != std::string::npos)
+    if (_members.find(client)->second.find('@') == std::string::npos)
         _members[client].insert(0, "@");
 }
 
