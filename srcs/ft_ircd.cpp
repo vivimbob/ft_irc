@@ -15,8 +15,10 @@ void
 
     IRCD::m_to_channels(cmd_quit_reply(reason));
 
-    Client::CITER iter = _client->get_channels().begin();
-    Client::CITER end  = _client->get_channels().end();
+    std::set<Channel*> copy = _client->get_channels();
+
+    Client::CITER iter = copy.begin();
+    Client::CITER end  = copy.end();
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
     {
@@ -26,6 +28,7 @@ void
             _map.channel.erase(_channel->get_name());
             delete _channel;
         }
+        _channel = nullptr;
     }
 
     if (_client->is_registered())
@@ -58,7 +61,7 @@ void
         log::print() << "Send " << send_data_len << " bytes from ["
                      << event.ident << "] client" << log::endl;
 
-        if (buffer.queue.front().size() <= buffer.offset)
+        if (buffer.queue.front().size() <= (unsigned)buffer.offset)
         {
             buffer.queue.pop();
             buffer.offset = 0;
@@ -95,15 +98,15 @@ void
             buffer = request.command.substr(offset);
         request.command.erase(offset);
         offset = 0;
-        for (int index = 0;
-             buffer.size() && offset != std::string::npos
-             && (fixed = buffer.find_first_not_of(' ')) != std::string::npos;
+        for (int index = 0; buffer.size() && offset != (int)std::string::npos
+                            && (fixed = buffer.find_first_not_of(' '))
+                                   != (int)std::string::npos;
              ++index)
         {
             if (buffer[fixed] != ':')
             {
                 offset = buffer.find_first_of(' ', fixed);
-                if (offset != std::string::npos)
+                if (offset != (int)std::string::npos)
                     request.parameter.push_back(
                         buffer.substr(fixed, offset - fixed));
                 else

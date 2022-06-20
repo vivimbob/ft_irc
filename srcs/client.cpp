@@ -7,8 +7,8 @@
 Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
     _buffers.requests.from = this;
-	_names.host = HOSTNAME;
-	_names.server= SERVERNAME;
+    _names.host            = HOSTNAME;
+    _names.server          = SERVERNAME;
 }
 
 Client::~Client()

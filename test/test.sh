@@ -2,6 +2,7 @@
 
 function start_server()
 {
+	make re -C .. > /dev/null
 	../ircserv 6667 1234 > /dev/null 2>&1 &
 	./servers/miniircd/miniircd --ports 6668 > /dev/null 2>&1 &
 	cd servers/ergo

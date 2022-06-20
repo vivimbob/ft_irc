@@ -50,7 +50,7 @@ std::string
     IRC::err_no_such_nick(const std::string& nickname)
 {
     return reply_servername_prefix("401") + " " + nickname
-           + " :No such nick/channel" + IRC::endl;
+           + " :No such nick" + IRC::endl;
 }
 
 std::string

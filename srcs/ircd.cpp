@@ -176,9 +176,9 @@ void
             m_to_channels(cmd_nick_reply(*_target_0));
         _ft_ircd->_map.client.erase(_client->get_names().nick);
         _ft_ircd->_map.client[*_target_0] = _client;
+        m_to_client(cmd_nick_reply(*_target_0));
     }
     _client->set_nickname(*_target_0);
-    m_to_client(cmd_nick_reply(*_target_0));
     log::print() << _client->get_IP() << " change nick to "
                  << _client->get_names().nick << log::endl;
 }
@@ -404,7 +404,7 @@ void
     else
     {
         CSTR_VECTOR channels = split(_request->parameter[0], ',');
-        for (int i = 0; i < channels.size(); ++i)
+        for (int i = 0, size = channels.size(); i < size; ++i)
         {
             _target_0 = &channels[i];
             if (_ft_ircd->_map.channel.count(*_target_0))
@@ -538,6 +538,8 @@ void
                 cmd_kick_reply(*names, *nicks, _client->get_names().nick));
             m_to_client(*_fixed, cmd_kick_reply(*names, *nicks,
                                                 _client->get_names().nick));
+            m_to_client(
+                cmd_kick_reply(*names, *nicks, _client->get_names().nick));
         }
     next:
         if (param_0.size() != 1)
