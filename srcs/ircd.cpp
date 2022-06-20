@@ -679,4 +679,5 @@ IRCD::IRCD()
     _commands.push_back(&IRCD::privmsg);
     _commands.push_back(&IRCD::notice);
     _commands.push_back(&IRCD::unknown);
+    _commands.push_back(&IRCD::unregistered);
 }
