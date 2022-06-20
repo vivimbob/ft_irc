@@ -1,10 +1,6 @@
 #ifndef RESOURCES_HPP
 #define RESOURCES_HPP
 
-#include <cstdlib>
-#include <sys/socket.h>
-#include <type_traits>
-
 #define HOSTNAME   "localhost"
 #define SERVERNAME "ft_ircd"
 

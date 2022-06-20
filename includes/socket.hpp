@@ -28,7 +28,7 @@ class Socket
     t_socket _socket;
     Socket();
     ~Socket();
-    void m_initialize(int port);
+    void initialize(int port);
 };
 
 #endif /* SOCKET_HPP */

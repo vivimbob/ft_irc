@@ -54,7 +54,7 @@ void
 }
 
 void
-    Socket::m_initialize(int port)
+    Socket::initialize(int port)
 {
     m_create();
     m_bind(port);

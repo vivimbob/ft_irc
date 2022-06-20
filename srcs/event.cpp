@@ -24,7 +24,7 @@ void
 }
 
 void
-    Event::m_create_kqueue(int socket_fd)
+    Event::initialize(int socket_fd)
 {
     _kqueue = kqueue();
     if (_kqueue == -1)

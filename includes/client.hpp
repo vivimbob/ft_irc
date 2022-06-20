@@ -4,9 +4,9 @@
 #include "resources.hpp"
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <string>
 #include <queue>
 #include <set>
+#include <string>
 
 class Channel;
 
@@ -82,18 +82,18 @@ class Client
     const std::set<Channel*>& get_channels() const;
     bool                      get_status(TYPE);
 
-    void set_nickname(const std::string& nickname);
-    void set_username(const std::string& username);
-    void set_realname(const std::string& realname);
+    void set_nickname(const std::string&);
+    void set_username(const std::string&);
+    void set_realname(const std::string&);
     void set_status(TYPE);
 
     bool is_registered() const;
-    bool is_joined(Channel* channel);
+    bool is_joined(Channel*);
 
     std::string make_nickmask();
 
-    void joined(Channel* channel);
-    void parted(Channel* channel);
+    void joined(Channel*);
+    void parted(Channel*);
 };
 
 #endif /* CLIENT_HPP */

@@ -23,7 +23,7 @@ class Event
              int     data,
              void*   udata);
     void toggle(Client& client, int EVFILT_TYPE);
-    void m_create_kqueue(int socket_fd);
+    void initialize(int socket_fd);
     Event();
     ~Event();
 };

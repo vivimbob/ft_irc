@@ -13,8 +13,7 @@ class Client;
 class Channel
 {
   public:
-    typedef std::string t_membership;
-
+    typedef std::string                     t_membership;
     typedef std::map<Client*, t_membership> MemberMap;
     typedef MemberMap::const_iterator       CITER;
 
@@ -36,17 +35,17 @@ class Channel
     const MemberMap&   get_members();
     const std::string& get_prefix(Client*);
 
-    void set_name(const std::string& name);
-    void set_topic(const std::string& topic);
-    void set_operator(Client* client);
+    void set_name(const std::string&);
+    void set_topic(const std::string&);
+    void set_operator(Client*);
 
     bool is_empty();
     bool is_full();
-    bool is_operator(Client& client);
-    bool is_joined(Client* client);
+    bool is_operator(Client&);
+    bool is_joined(Client*);
 
-    void join(Client& client);
-    void part(Client& client);
+    void join(Client&);
+    void part(Client&);
 };
 
 #endif /* CHANNEL_HPP */

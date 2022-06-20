@@ -95,7 +95,6 @@ void
         if (request.command[offset] != '\0')
             buffer = request.command.substr(offset);
         request.command.erase(offset);
-
         offset = 0;
         for (int index = 0;
              buffer.size() && offset != std::string::npos
@@ -247,8 +246,8 @@ FT_IRCD::~FT_IRCD()
 
 FT_IRCD::FT_IRCD(int port, char* password)
 {
-    Socket::m_initialize(port);
-    Event::m_create_kqueue(_socket.fd);
+    Socket::initialize(port);
+    Event::initialize(_socket.fd);
     IRC::_password = password;
     IRC::_ft_ircd  = this;
 }
