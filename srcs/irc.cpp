@@ -42,15 +42,15 @@ std::string
     IRC::reply_nickmask_prefix(const std::string& command)
 {
     std::string str;
-    str = str + ":" + _client->make_nickmask() + " " + command;
+    str = str + ":" + _client->get_nickmask() + " " + command;
     return str;
 }
 
 std::string
     IRC::err_no_such_nick(const std::string& nickname)
 {
-    return reply_servername_prefix("401") + " " + nickname
-           + " :No such nick" + IRC::endl;
+    return reply_servername_prefix("401") + " " + nickname + " :No such nick"
+           + IRC::endl;
 }
 
 std::string
@@ -270,7 +270,7 @@ std::string
     IRC::rpl_welcome()
 {
     return reply_servername_prefix("001")
-           + " Welcome to Internet Relay Network\n" + _client->make_nickmask()
+           + " Welcome to Internet Relay Network\n" + _client->get_nickmask()
            + IRC::endl;
 }
 

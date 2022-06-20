@@ -87,7 +87,7 @@ class Client
     bool is_registered() const;
     bool is_joined(Channel*);
 
-    std::string make_nickmask();
+    std::string get_nickmask();
 
     void joined(Channel*);
     void parted(Channel*);

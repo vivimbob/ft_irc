@@ -119,13 +119,11 @@ bool
 /* client class other function begin */
 
 std::string
-    Client::make_nickmask()
+    Client::get_nickmask()
 {
-	std::string nickmask;
-	nickmask += (_names.nick.empty() ? "*" : _names.nick) + "!";
-	nickmask += (_names.user.empty() ? "*" : _names.user) + "@";
-	nickmask += _names.host.empty() ? "*" : _names.host;
-	return nickmask;
+    return ((_names.nick.empty() ? "*" : _names.nick) + "!"
+            + (_names.user.empty() ? "*" : _names.user) + "@"
+            + (_names.host.empty() ? "*" : _names.host));
 }
 
 void

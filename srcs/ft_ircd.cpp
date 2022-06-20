@@ -44,31 +44,23 @@ void
 
     if (buffer.queue.empty())
         return;
-
-    int remain_data_len = buffer.queue.front().size() - buffer.offset;
-
+    int     remain_data_len = buffer.queue.front().size() - buffer.offset;
     ssize_t send_data_len
         = send(event.ident, buffer.queue.front().data() + buffer.offset,
                event.data < remain_data_len ? event.data : remain_data_len, 0);
-
     if (send_data_len >= 0)
     {
         log::print() << "IRC send to " << _client->get_names().nick
                      << log::endl;
-
         buffer.offset += send_data_len;
-
         log::print() << "Send " << send_data_len << " bytes from ["
                      << event.ident << "] client" << log::endl;
-
         if (buffer.queue.front().size() <= (unsigned)buffer.offset)
         {
             buffer.queue.pop();
             buffer.offset = 0;
-
             log::print() << "Empty buffer from [" << event.ident << "] client"
                          << log::endl;
-
             if (buffer.queue.empty())
                 Event::toggle(*_client, EVFILT_WRITE);
         }
@@ -197,7 +189,6 @@ void
         log::print() << "Failed to accept client errno: " << log::endl;
         return;
     }
-
     fcntl(fd, F_SETFL, O_NONBLOCK);
     Client* client = new Client(addr, fd);
 
