@@ -346,6 +346,7 @@ void
         _channel->set_topic(_request->parameter[1]);
         Logger().trace() << *_target_0 << " channel topic change to "
                          << _channel->get_topic();
+        m_to_client(cmd_topic_reply());
         m_to_channel(cmd_topic_reply());
     }
 }
