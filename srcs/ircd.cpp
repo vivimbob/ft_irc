@@ -261,6 +261,7 @@ void
                             << _client->get_names().nick;
         }
         m_to_channel(cmd_join_reply(*_target_0));
+        m_to_client(cmd_join_reply(*_target_0));
         if (_channel->get_topic().size())
             m_to_client(rpl_topic(_channel->get_name(), _channel->get_topic()));
         else
