@@ -4,6 +4,7 @@
 #include "resources.hpp"
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <string>
 #include <queue>
 #include <set>
 
