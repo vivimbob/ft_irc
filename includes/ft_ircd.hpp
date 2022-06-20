@@ -9,13 +9,6 @@
 #include "resources.hpp"
 #include "socket.hpp"
 
-#include <cerrno>
-#include <cstddef>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <unistd.h>
-
 class FT_IRCD : public Socket, public Event, public IRCD
 {
   public:
