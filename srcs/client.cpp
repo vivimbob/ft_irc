@@ -1,27 +1,18 @@
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
-#include "../includes/ft_irc.hpp"
+#include "../includes/ft_ircd.hpp"
 
 /* client class constructor and destructor begin */
 
-Client::Client(sockaddr_in client_addr, int client_fd)
-    : m_client_addr(client_addr),
-      m_client_fd(client_fd),
-      m_hostname(HOSTNAME),
-      m_servername(SERVERNAME),
-      m_pass_registered(false),
-      m_nick_registered(false),
-      m_user_registered(false)
+Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
+    _buffers.requests.from = this;
+	_names.host = HOSTNAME;
+	_names.server= SERVERNAME;
 }
 
 Client::~Client()
 {
-    while (m_commands.size())
-    {
-        delete m_commands.front();
-        m_commands.pop();
-    }
 }
 
 /* client class constructor and destructor end */
@@ -29,63 +20,56 @@ Client::~Client()
 /* client class getter begin */
 
 sockaddr_in
-    Client::get_client_addr()
+    Client::get_addr()
 {
-    return m_client_addr;
+    return _addr;
 }
 
 int
     Client::get_socket()
 {
-    return m_client_fd;
+    return _fd;
 }
 
 char*
-    Client::get_client_IP()
+    Client::get_IP()
 {
-    return inet_ntoa(m_client_addr.sin_addr);
+    return inet_ntoa(_addr.sin_addr);
 }
 
-const std::string&
-    Client::get_nickname() const
+const Client::t_names&
+    Client::get_names() const
 {
-    return m_nickname;
+    return _names;
 }
 
-const std::string&
-    Client::get_username() const
+Client::t_buffers&
+    Client::get_buffers()
 {
-    return m_username;
-}
-
-const std::string&
-    Client::get_hostname() const
-{
-    return m_hostname;
-}
-
-std::queue<Message*>&
-    Client::get_commands()
-{
-    return m_commands;
-}
-
-std::string&
-    Client::get_recv_buffer()
-{
-    return m_recv_buffer;
-}
-
-SendBuffer&
-    Client::get_send_buffer()
-{
-    return m_send_buffer;
+    return _buffers;
 }
 
 const std::set<Channel*>&
-    Client::get_channel_list() const
+    Client::get_channels() const
 {
-    return m_channel_list;
+    return _channels;
+}
+
+bool
+    Client::get_status(TYPE type)
+{
+    switch (type)
+    {
+        case PASS:
+            // return (_status. & PASSWORD);
+        case NICK:
+            // return (_status.registered & NICKNAME);
+        case USER:
+            // return (_status.registered & USERNAME);
+        default:
+            break;
+    }
+    return true;
 }
 
 /* client class getter end */
@@ -95,27 +79,40 @@ const std::set<Channel*>&
 void
     Client::set_nickname(const std::string& nickname)
 {
-    m_nickname        = nickname;
-    m_nick_registered = true;
+    _names.nick  = nickname;
+    _status.nick = 1;
 }
 
 void
     Client::set_username(const std::string& username)
 {
-    m_username        = username;
-    m_user_registered = true;
+    _names.user  = username;
+    _status.user = 1;
 }
 
 void
     Client::set_realname(const std::string& realname)
 {
-    m_realname = realname;
+    _names.real = realname;
 }
 
 void
-    Client::set_password_flag()
+    Client::set_status(TYPE type)
 {
-    m_pass_registered = true;
+    switch (type)
+    {
+        case PASS:
+            _status.pass = 1;
+            break;
+        case NICK:
+            _status.nick = 1;
+            break;
+        case USER:
+            _status.user = 1;
+            break;
+        default:
+            break;
+    }
 }
 
 /* client class setter end */
@@ -125,65 +122,53 @@ void
 bool
     Client::is_registered() const
 {
-    return m_pass_registered & m_nick_registered & m_user_registered;
+    return (_status.registered == REGISTERED);
 }
 
 bool
-    Client::is_pass_registered() const
+    Client::has_pass() const
 {
-    return m_pass_registered;
+    return (_status.pass == PASSWORD);
 }
 
 bool
-    Client::is_nick_registered() const
+    Client::has_nick() const
 {
-    return m_nick_registered;
+    return (_status.nick == NICKNAME);
 }
 
 bool
-    Client::is_user_registered() const
+    Client::has_user() const
 {
-    return m_user_registered;
+    return (_status.user == USERNAME);
 }
 
 bool
-    Client::is_join_available() const
+    Client::is_joined(Channel* channel)
 {
-    return m_channel_list.size() < CHANNEL_USER_LIMIT;
-}
-
-bool
-    Client::is_already_joined(Channel* channel)
-{
-    return m_channel_list.count(channel);
+    return _channels.count(channel);
 }
 
 /* client class is_function end */
 
 /* client class other function begin */
 
-void
-    Client::push_message(const std::string& message)
-{
-    m_send_buffer.append(message);
-}
-
 std::string
     Client::make_nickmask()
 {
-    return m_nickname + '!' + m_username + '@' + m_hostname;
+    return _names.nick + '!' + _names.user + '@' + _names.host;
 }
 
 void
-    Client::insert_channel(Channel* channel)
+    Client::joined(Channel* channel)
 {
-    m_channel_list.insert(channel);
+    _channels.insert(channel);
 }
 
 void
-    Client::erase_channel(Channel* channel)
+    Client::parted(Channel* channel)
 {
-    m_channel_list.erase(channel);
+    _channels.erase(channel);
 }
 
 /* client class other function end */

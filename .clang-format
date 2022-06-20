@@ -10,13 +10,16 @@ AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: 'false'
 AlwaysBreakAfterDefinitionReturnType: TopLevel
+AlwaysBreakAfterReturnType: TopLevel
 BinPackParameters: 'false'
 BreakBeforeBraces: Allman
 BreakConstructorInitializers: BeforeColon
+BreakBeforeBinaryOperators: All
 ColumnLimit: '80'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'true'
+IndentCaseLabels: 'true'
 Language: Cpp
 PointerAlignment: Left
 SpaceBeforeParens: ControlStatements

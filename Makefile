@@ -1,18 +1,17 @@
 NAME    	= ircserv
 CC      	= c++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
+CXXFLAGS	= #-Wall -Wextra -Werror -std=c++98
 LIBFLAGS	= -L lib -l logger
 LIBRARY		= lib/liblogger.a
 # CXXFLAGS  = -std=c++98
 
-srcs		= main.cpp\
+srcs		= ft_ircd.cpp\
 			  channel.cpp\
 			  client.cpp\
-			  message.cpp\
-			  server.cpp\
-			  utils.cpp\
-			  sendbuffer.cpp\
-			  membership.cpp
+			  event.cpp\
+			  socket.cpp\
+			  irc.cpp\
+			  ircd.cpp
 
 lib		= logger.cpp
 
@@ -20,7 +19,7 @@ SRCS    	= $(srcs:%=srcs/%)
 
 OBJS		= $(SRCS:srcs/%.cpp=objs/%.o)
 
-all     	: $(LIBRARY) $(NAME) 
+all     	: $(LIBRARY) $(NAME)
 
 objs/%.o   	: srcs/%.cpp
 	@mkdir -p $(dir ./objs/$*)
@@ -32,7 +31,7 @@ $(NAME) 	: $(OBJS)
 $(LIBRARY)	: lib/logger.cpp
 	$(CC) $(CXXFLAGS) -c lib/logger.cpp -o lib/logger.o
 	ar -r $(LIBRARY) lib/logger.o
-	
+
 
 clean   	:
 	rm -rf ./objs ./lib/logger.o

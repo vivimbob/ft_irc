@@ -1,41 +1,36 @@
-#ifndef MESSAGE_HPP
-#define MESSAGE_HPP
+#ifndef IRC_HPP
+#define IRC_HPP
 
+#include "../includes/client.hpp"
+#include "channel.hpp"
+#include "resources.hpp"
 #include <queue>
 #include <string>
 #include <vector>
 
-class Client;
+class FT_IRCD;
 
-class Message
+class IRC
 {
+  public:
+    typedef std::map<TYPE, std::string>     IRCMap;
+    typedef std::map<std::string, TYPE>     TypeMap;
+    typedef std::map<std::string, Client*>  ClientMap;
+    typedef std::map<std::string, Channel*> ChannelMap;
+    typedef ClientMap::const_iterator       CL_CITER;
+    typedef ChannelMap::const_iterator      CH_CITER;
+
   private:
-    std::string              m_message;
-    std::string              m_prefix;
-    std::string              m_command;
-    std::vector<std::string> m_parameters;
-    bool                     m_valid_message;
-    size_t                   m_position;
-    Client*                  m_client;
+    IRC(const IRC&);
+    IRC& operator=(const IRC& other);
 
-    Message();
-    Message(const Message& copy);
-    Message& operator=(const Message& other);
-
-    size_t      next_position();
-    std::string reply_servername_prefix(std::string numeric_reply);
-    std::string reply_nickmask_prefix(std::string command);
+    std::string       reply_servername_prefix(std::string numeric_reply);
+    std::string       reply_nickmask_prefix(std::string command);
+    const std::string endl;
 
   public:
-    Message(Client* client, const std::string& message);
-    ~Message();
-
-    void                            parse_message();
-    const std::string&              get_message() const;
-    const std::string&              get_prefix() const;
-    const std::string&              get_command() const;
-    const std::vector<std::string>& get_params() const;
-    const bool&                     is_valid_message() const;
+    IRC();
+    ~IRC();
 
     std::string err_no_such_nick(const std::string& nickname);
     std::string err_no_such_channel(const std::string& channel_name);
@@ -73,23 +68,35 @@ class Message
     std::string rpl_topic(const std::string& channel, const std::string& topic);
     std::string rpl_inviting(const std::string& nick,
                              const std::string& channel);
-    std::string rpl_namreply(const std::string&             channel,
-                             std::queue<const std::string>& nick);
+    std::string rpl_namereply(const std::string& str);
     std::string rpl_endofnames(const std::string& channel);
     std::string rpl_user_mode_is();
     std::string rpl_welcome();
 
-    std::string build_quit_reply(const std::string& reason);
-    std::string build_part_reply(const std::string& channel);
-    std::string build_message_reply(const std::string& target);
-    std::string build_invite_reply(const std::string& nick,
-                                   const std::string& channel);
-    std::string build_kick_reply(const std::string& channel,
-                                 const std::string& nick,
-                                 const std::string& oper_nick);
-    std::string build_nick_reply(const std::string& nick);
-    std::string build_join_reply(const std::string& channel);
-    std::string build_topic_reply();
+    std::string cmd_quit_reply(const std::string& reason);
+    std::string cmd_part_reply(const std::string& channel);
+    std::string cmd_message_reply(const std::string& target);
+    std::string cmd_invite_reply(const std::string& nick,
+                                 const std::string& channel);
+    std::string cmd_kick_reply(const std::string& channel,
+                               const std::string& nick,
+                               const std::string& oper_nick);
+    std::string cmd_nick_reply(const std::string& nick);
+    std::string cmd_join_reply(const std::string& channel);
+    std::string cmd_topic_reply();
+
+  protected:
+    FT_IRCD* _ft_ircd;
+    IRCMap   _type_to_command;
+    TypeMap  _command_to_type;
+
+    Client*              _client;
+    Channel*             _channel;
+    Client::t_requests*  _requests;
+    Client::t_request*   _request;
+    Client::t_to_client* _to_client;
+
+    std::string _password;
 };
 
-#endif /* MESSAGE_HPP */
+#endif /* TEMP_HPP */
