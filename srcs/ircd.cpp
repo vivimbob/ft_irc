@@ -30,38 +30,30 @@ TYPE
 RESULT
 IRCD::m_is_valid(TYPE type)
 {
-    switch (type)
+    if (type == NICK)
     {
-        case NICK:
-        {
-            if (NICK_LENGTH_MAX < _target_0->length())
+        if (NICK_LENGTH_MAX < _target_0->length())
+            return ERROR;
+        if (!std::isalpha((*_target_0)[0]))
+            return ERROR;
+        for (size_t index = 1; index < _target_0->length(); ++index)
+            if (!std::isalpha((*_target_0)[index])
+                && !std::isdigit((*_target_0)[index])
+                && !is_special((*_target_0)[index]))
                 return ERROR;
-            if (!std::isalpha((*_target_0)[0]))
+    }
+    if (type == CHANNEL_PREFIX)
+    {
+        if ((*_target_0)[0] != CHANNEL_PREFIX)
+            return ERROR;
+    }
+    if (type == CHANNEL_NAME)
+    {
+        if (CHANNEL_LENGTH_MAX < _target_0->length())
+            return ERROR;
+        for (size_t index = 0; index < _target_0->length(); ++index)
+            if (std::memchr(CHSTRING, (*_target_0)[index], 5))
                 return ERROR;
-            for (size_t index = 1; index < _target_0->length(); ++index)
-                if (!std::isalpha((*_target_0)[index])
-                    && !std::isdigit((*_target_0)[index])
-                    && !is_special((*_target_0)[index]))
-                    return ERROR;
-            break;
-        }
-        case CHANNEL_PREFIX:
-        {
-            if ((*_target_0)[0] != CHANNEL_PREFIX)
-                return ERROR;
-            break;
-        }
-        case CHANNEL_NAME:
-        {
-            if (CHANNEL_LENGTH_MAX < _target_0->length())
-                return ERROR;
-            for (size_t index = 0; index < _target_0->length(); ++index)
-                if (std::memchr(CHSTRING, (*_target_0)[index], 5))
-                    return ERROR;
-            break;
-        }
-        default:
-            break;
     }
     return OK;
 }
@@ -79,7 +71,6 @@ void
     client.get_buffers().to_client.queue.push(str);
     _ft_ircd->toggle(client, EVFILT_READ);
 }
-
 
 void
     IRCD::m_to_channel(const std::string& str)
@@ -144,12 +135,12 @@ void
     _client->set_status(PASS);
 }
 
-
 RESULT
 IRCD::m_nick()
 {
     if (_request->parameter.empty())
         return m_to_client(err_no_nickname_given());
+    _target_0 = &_request->parameter[0];
     if (m_is_valid(NICK) == ERROR)
         return m_to_client(err_erroneus_nickname(*_target_0));
     if (_ft_ircd->_map.client.count(*_target_0))
@@ -166,7 +157,7 @@ void
 {
     if (m_nick() == ERROR)
         return;
-    _target_0 = &_request->parameter[0];
+	Logger().debug() << "ok";
 
     if (_client->is_registered())
     {
