@@ -58,7 +58,7 @@ class Client
         unsigned char registered;
     } t_status;
 
-    typedef std::set<Channel*>::const_iterator CITER;
+    typedef std::set<Channel*>::const_iterator t_citer;
 
   private:
     sockaddr_in        _addr;

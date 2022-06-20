@@ -27,7 +27,7 @@ const std::string&
     return _topic;
 }
 
-const Channel::MemberMap&
+const Channel::t_membermap&
     Channel::get_members()
 {
     return _members;

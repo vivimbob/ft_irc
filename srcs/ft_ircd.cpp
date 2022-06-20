@@ -17,8 +17,8 @@ void
 
     std::set<Channel*> copy = _client->get_channels();
 
-    Client::CITER iter = copy.begin();
-    Client::CITER end  = copy.end();
+    Client::t_citer iter = copy.begin();
+    Client::t_citer end  = copy.end();
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
     {

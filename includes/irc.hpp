@@ -11,12 +11,12 @@ class FT_IRCD;
 class IRC
 {
   public:
-    typedef std::map<TYPE, std::string>     IRCMap;
-    typedef std::map<std::string, TYPE>     TypeMap;
-    typedef std::map<std::string, Client*>  ClientMap;
-    typedef std::map<std::string, Channel*> ChannelMap;
-    typedef ClientMap::const_iterator       CL_CITER;
-    typedef ChannelMap::const_iterator      CH_CITER;
+    typedef std::map<TYPE, std::string>     t_ircmap;
+    typedef std::map<std::string, TYPE>     t_typemap;
+    typedef std::map<std::string, Client*>  t_clientmap;
+    typedef std::map<std::string, Channel*> t_channelmap;
+    typedef t_clientmap::const_iterator     t_cl_citer;
+    typedef t_channelmap::const_iterator    t_ch_citer;
 
   private:
     IRC(const IRC&);
@@ -78,9 +78,9 @@ class IRC
     std::string cmd_topic_reply();
 
   protected:
-    FT_IRCD* _ft_ircd;
-    IRCMap   _type_to_command;
-    TypeMap  _command_to_type;
+    FT_IRCD*  _ft_ircd;
+    t_ircmap  _type_to_command;
+    t_typemap _command_to_type;
 
     Client*              _client;
     Channel*             _channel;

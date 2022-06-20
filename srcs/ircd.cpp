@@ -2,12 +2,12 @@
 #include "../includes/irc.hpp"
 #include <sstream>
 
-static IRCD::CSTR_VECTOR
+static IRCD::t_cstr_vector
     split(const std::string& params, char delimiter)
 {
-    IRCD::CSTR_VECTOR  splited;
-    std::istringstream iss(params);
-    std::string        element;
+    IRCD::t_cstr_vector splited;
+    std::istringstream  iss(params);
+    std::string         element;
 
     while (std::getline(iss, element, delimiter))
         splited.push_back(element);
@@ -76,8 +76,8 @@ void
 void
     IRCD::m_to_channel(const std::string& str)
 {
-    Channel::CITER iter = _channel->get_members().begin();
-    Channel::CITER end  = _channel->get_members().end();
+    Channel::t_citer iter = _channel->get_members().begin();
+    Channel::t_citer end  = _channel->get_members().end();
 
     log::print() << "to channel :" << _channel->get_name() << log::endl;
 
@@ -89,14 +89,14 @@ void
 void
     IRCD::m_to_channels(const std::string& str)
 {
-    Client::CITER     iter = _client->get_channels().begin();
-    Client::CITER     end  = _client->get_channels().end();
+    Client::t_citer   iter = _client->get_channels().begin();
+    Client::t_citer   end  = _client->get_channels().end();
     std::set<Client*> check;
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
     {
-        Channel::CITER users = _channel->get_members().begin();
-        Channel::CITER u_end = _channel->get_members().end();
+        Channel::t_citer users = _channel->get_members().begin();
+        Channel::t_citer u_end = _channel->get_members().end();
 
         for (; users != u_end; ++users)
             if (!check.count(users->first) && users->first != _client)
@@ -251,9 +251,9 @@ void
 {
     if (m_join(ONE) == ERROR)
         return;
-    CSTR_VECTOR channels = split(_request->parameter[0], DELIMITER);
-    IRCD::ITER  iter     = channels.begin();
-    IRCD::ITER  end      = channels.end();
+    t_cstr_vector channels = split(_request->parameter[0], DELIMITER);
+    IRCD::t_iter  iter     = channels.begin();
+    IRCD::t_iter  end      = channels.end();
     for (; iter != end; ++iter)
     {
         _target_0 = iter.base();
@@ -306,7 +306,7 @@ void
 {
     if (m_part(ONE) == ERROR)
         return;
-    CSTR_VECTOR channels = split(_request->parameter[0], ',');
+    t_cstr_vector channels = split(_request->parameter[0], ',');
     for (int i = 0, size = channels.size(); i < size; ++i)
     {
         _target_0 = &channels[i];
@@ -367,10 +367,10 @@ void
 RESULT
 IRCD::m_names()
 {
-    _channel            = _ft_ircd->_map.channel[*_target_0];
-    _buffer             = "= " + _channel->get_name() + " :";
-    Channel::CITER iter = _channel->get_members().begin();
-    Channel::CITER end  = _channel->get_members().end();
+    _channel              = _ft_ircd->_map.channel[*_target_0];
+    _buffer               = "= " + _channel->get_name() + " :";
+    Channel::t_citer iter = _channel->get_members().begin();
+    Channel::t_citer end  = _channel->get_members().end();
     for (; iter != end; ++iter)
         _buffer.append(_channel->get_prefix(iter->first)
                        + iter->first->get_names().nick + " ");
@@ -385,13 +385,13 @@ void
 {
     if (_request->parameter.empty())
     {
-        IRC::CH_CITER ch_iter = _ft_ircd->_map.channel.begin();
+        IRC::t_ch_citer ch_iter = _ft_ircd->_map.channel.begin();
         for (; ch_iter != _ft_ircd->_map.channel.end(); ++ch_iter)
         {
             _target_0 = &ch_iter->first;
             m_names();
         }
-        IRC::CL_CITER cl_iter = _ft_ircd->_map.client.begin();
+        IRC::t_cl_citer cl_iter = _ft_ircd->_map.client.begin();
         for (; cl_iter != _ft_ircd->_map.client.end(); ++cl_iter)
             if (cl_iter->second->get_channels().empty())
                 _buffer.append(cl_iter->first + " ");
@@ -403,7 +403,7 @@ void
     }
     else
     {
-        CSTR_VECTOR channels = split(_request->parameter[0], ',');
+        t_cstr_vector channels = split(_request->parameter[0], ',');
         for (int i = 0, size = channels.size(); i < size; ++i)
         {
             _target_0 = &channels[i];
@@ -429,14 +429,14 @@ void
 {
     if (_request->parameter.empty())
     {
-        IRC::CH_CITER iter = _ft_ircd->_map.channel.begin();
+        IRC::t_ch_citer iter = _ft_ircd->_map.channel.begin();
         for (_channel = iter->second; iter != _ft_ircd->_map.channel.end();
              _channel = (++iter)->second)
             m_list();
     }
     else if (_request->parameter.size() == 1)
     {
-        CSTR_VECTOR channels = split(_request->parameter[0], ',');
+        t_cstr_vector channels = split(_request->parameter[0], ',');
         for (int i = 0, size = channels.size(); i < size; ++i)
             if (_ft_ircd->_map.channel.count(channels[i])
                 && (_channel = _ft_ircd->_map.channel[channels[i]]))
@@ -507,16 +507,16 @@ void
 {
     if (m_kick(ONE) == ERROR)
         return;
-    CSTR_VECTOR param_0 = split(_request->parameter[0], ',');
-    CSTR_VECTOR param_1 = split(_request->parameter[1], ',');
+    t_cstr_vector param_0 = split(_request->parameter[0], ',');
+    t_cstr_vector param_1 = split(_request->parameter[1], ',');
     if ((!(param_0.size() == 1 || param_1.size() == 1)
          && param_0.size() != param_1.size()))
     {
         m_to_client(err_need_more_params());
         return;
     }
-    IRCD::ITER names = param_0.begin();
-    IRCD::ITER nicks = param_1.begin();
+    IRCD::t_iter names = param_0.begin();
+    IRCD::t_iter nicks = param_1.begin();
     for (int i = 0, max = std::max(param_0.size(), param_1.size()); i < max;
          ++i)
     {
@@ -621,7 +621,7 @@ void
 {
     if (m_privmsg(ONE) == ERROR)
         return;
-    CSTR_VECTOR targets = split(_request->parameter.front(), ',');
+    t_cstr_vector targets = split(_request->parameter.front(), ',');
     for (int i = 0, size = targets.size(); i < size; ++i)
     {
         _target_0 = &targets[i];

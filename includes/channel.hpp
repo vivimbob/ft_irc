@@ -9,13 +9,13 @@ class Channel
 {
   public:
     typedef std::string                     t_membership;
-    typedef std::map<Client*, t_membership> MemberMap;
-    typedef MemberMap::const_iterator       CITER;
+    typedef std::map<Client*, t_membership> t_membermap;
+    typedef t_membermap::const_iterator     t_citer;
 
   private:
     std::string _name;
     std::string _topic;
-    MemberMap   _members;
+    t_membermap _members;
 
     Channel();
     Channel(const Channel&);
@@ -27,7 +27,7 @@ class Channel
 
     const std::string& get_name() const;
     const std::string& get_topic() const;
-    const MemberMap&   get_members();
+    const t_membermap& get_members();
     const std::string& get_prefix(Client*);
 
     void set_name(const std::string&);
