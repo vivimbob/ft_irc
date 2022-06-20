@@ -9,22 +9,12 @@
 #include "resources.hpp"
 #include "socket.hpp"
 
-#include <arpa/inet.h>
 #include <cerrno>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <fcntl.h>
 #include <iostream>
-#include <map>
-#include <netinet/in.h>
-#include <string>
-#include <sys/event.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <vector>
 
 class FT_IRCD : public Socket, public Event, public IRCD
 {

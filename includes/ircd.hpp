@@ -2,7 +2,6 @@
 #define IRCD_HPP
 
 #include "irc.hpp"
-#include <sstream>
 
 class IRCD : public IRC
 {

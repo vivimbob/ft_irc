@@ -2,11 +2,6 @@
 #define CHANNEL_HPP
 
 #include "resources.hpp"
-#include <ctime>
-#include <map>
-#include <set>
-#include <string>
-#include <vector>
 
 class Client;
 

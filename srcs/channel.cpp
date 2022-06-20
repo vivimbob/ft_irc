@@ -1,6 +1,5 @@
 #include "../includes/channel.hpp"
 #include "../includes/client.hpp"
-#include <utility>
 
 /* channel class constructor and destructor begin */
 

@@ -1,13 +1,10 @@
 #ifndef IRC_HPP
 #define IRC_HPP
 
-#include "../includes/client.hpp"
 #include "channel.hpp"
+#include "client.hpp"
 #include "log.hpp"
 #include "resources.hpp"
-#include <queue>
-#include <string>
-#include <vector>
 
 class FT_IRCD;
 

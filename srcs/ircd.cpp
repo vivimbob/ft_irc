@@ -1,5 +1,6 @@
 #include "../includes/ft_ircd.hpp"
 #include "../includes/irc.hpp"
+#include <sstream>
 
 static IRCD::CSTR_VECTOR
     split(const std::string& params, char delimiter)

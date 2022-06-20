@@ -1,5 +1,4 @@
 #include "../includes/ft_ircd.hpp"
-#include <cstddef>
 
 void
     FT_IRCD::m_disconnect(std::string reason)

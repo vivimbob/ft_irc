@@ -1,9 +1,9 @@
 #ifndef EVENT_HPP
 #define EVENT_HPP
+
 #include "client.hpp"
 #include "log.hpp"
 #include <sys/event.h>
-#include <sys/time.h>
 #include <sys/types.h>
 
 class Client;

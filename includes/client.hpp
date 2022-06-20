@@ -4,9 +4,6 @@
 #include "resources.hpp"
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <queue>
-#include <set>
-#include <string>
 
 class Channel;
 

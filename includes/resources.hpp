@@ -1,6 +1,12 @@
 #ifndef RESOURCES_HPP
 #define RESOURCES_HPP
 
+#include <map>
+#include <queue>
+#include <set>
+#include <string>
+#include <vector>
+
 #define HOSTNAME   "localhost"
 #define SERVERNAME "ft_ircd"
 
