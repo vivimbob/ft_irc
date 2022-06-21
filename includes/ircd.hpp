@@ -17,12 +17,12 @@ class IRCD : public IRC
     typedef t_cstr_vector::iterator        t_iter;
 
   private:
-    const std::string* _target_0;
-    const std::string* _target_1;
+    const std::string* _target;
+    const std::string* _target_sub;
     std::string        _buffer;
     Client*            _fixed;
     int                _offset;
-    int                _pinned;
+    int                _index;
 
     // utility start
     RESULT m_is_valid(TYPE);
@@ -37,6 +37,7 @@ class IRCD : public IRC
     void       parse_command(std::string&);
     void       parse_parameter(std::vector<std::string>&);
     void       parse_request(Client::t_request&);
+    void       parse_flag(const std::string&);
     t_commands _commands;
     // utiluity end
 
