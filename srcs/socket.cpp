@@ -86,6 +86,12 @@ int
 }
 
 void
+    Socket::disconnect(int fd)
+{
+    close(fd);
+}
+
+void
     Socket::initialize(int port)
 {
     m_create();

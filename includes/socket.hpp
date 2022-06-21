@@ -36,6 +36,7 @@ class Socket
     ~Socket();
     ssize_t receive(const struct kevent& event);
     int     accept();
+    void    disconnect(int fd);
     void    initialize(int port);
 };
 

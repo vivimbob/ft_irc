@@ -1,7 +1,7 @@
 #include "../includes/ft_ircd.hpp"
 
 void
-    FT_IRCD::m_disconnect(std::string reason)
+    FT_IRCD::m_disconnected(std::string reason)
 {
     log::print() << "Client disconnect [address :" << _client->get_IP() << ':'
                  << _client->get_addr().sin_port << " FD :" << _fd << ']'
@@ -31,6 +31,12 @@ void
     _client = nullptr;
 }
 
+void
+    FT_IRCD::m_disconnect(std::string reason)
+{
+    Socket::disconnect(_client->get_fd());
+    m_disconnected(reason);
+}
 void
     FT_IRCD::m_send()
 {
@@ -169,7 +175,7 @@ void
             Event::toggle(EVFILT_READ);
     }
     else if (Socket::_received == 0)
-        m_disconnect("connection closed");
+        m_disconnected("connection closed");
 }
 
 void
