@@ -76,7 +76,7 @@ void
     int         fixed;
     std::string buffer;
 
-    if (request.command.size() && (request.command.front() == ':'))
+    if (_request->command.size() && (_request->command.front() == ':'))
 
     {
         _request->command.erase(0, _request->command.find_first_of(' '));
@@ -84,25 +84,25 @@ void
     }
     if (_request->command.size())
     {
-        for (offset = 0; (request.command[offset] != ' '
-                          && request.command[offset] != '\0');
+        for (offset = 0; (_request->command[offset] != ' '
+                          && _request->command[offset] != '\0');
              ++offset)
-            if ((unsigned)request.command[offset] - 'a' < 26)
-                request.command[offset] ^= 0b100000;
-        buffer = request.command.substr(offset);
-        request.command.erase(offset);
+            if ((unsigned)_request->command[offset] - 'a' < 26)
+                _request->command[offset] ^= 0b100000;
+        buffer = _request->command.substr(offset);
+        _request->command.erase(offset);
     }
     for (offset = 0;
          (fixed = buffer.find_first_not_of(' ')) != (int)std::string::npos;)
     {
         offset = buffer.find_first_of(' ', fixed);
         if ((offset != (int)std::string::npos) && buffer[fixed] != ':')
-            request.parameter.push_back(buffer.substr(fixed, offset - fixed));
+            _request->parameter.push_back(buffer.substr(fixed, offset - fixed));
         else
         {
             if (buffer[fixed] == ':')
                 ++fixed;
-            request.parameter.push_back(buffer.substr(fixed));
+            _request->parameter.push_back(buffer.substr(fixed));
             break;
         }
         buffer.erase(0, offset);
