@@ -18,11 +18,11 @@ void
 {
     if ((_socket.fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        log::print() << "Failed to create socket. errno " << errno << ":"
+        log::print() << "socket failed errno " << errno << ":"
                      << strerror(errno) << log::endl;
         exit(EXIT_FAILURE);
     }
-    log::print() << "Create socket " << _socket.fd << log::endl;
+    log::print() << "socket: " << _socket.fd << log::endl;
     int toggle = 1;
     setsockopt(_socket.fd, SOL_SOCKET, SO_REUSEPORT, (const void*)&toggle,
                sizeof(toggle));
@@ -39,13 +39,12 @@ void
     if (bind(_socket.fd, (struct sockaddr*)&_socket.addr, sizeof(sockaddr_in))
         == -1)
     {
-        log::print() << "Failed to bind to port and address" << port
-                     << ". errno: " << errno << ":" << strerror(errno)
-                     << log::endl;
+        log::print() << "bind failed " << port << " port errno: " << errno
+                     << ":" << strerror(errno) << log::endl;
         exit(EXIT_FAILURE);
     }
-    log::print() << "Bind Port :" << port
-                 << " IP :" << inet_ntoa(_socket.addr.sin_addr) << log::endl;
+    log::print() << "bind succeeded port " << port << " ip "
+                 << inet_ntoa(_socket.addr.sin_addr) << log::endl;
 }
 
 void
@@ -53,13 +52,13 @@ void
 {
     if (listen(_socket.fd, SOMAXCONN) == -1)
     {
-        log::print() << "Failed to listen on socket. errno: " << errno << ":"
+        log::print() << "listen failed errno: " << errno << ":"
                      << strerror(errno) << log::endl;
         exit(EXIT_FAILURE);
     }
-    log::print() << "Listen on socket" << log::endl;
+    log::print() << "listen on socket fd " << _socket.fd << log::endl;
     fcntl(_socket.fd, F_SETFL, O_NONBLOCK);
-    log::print() << "Socket set nonblock" << log::endl;
+    log::print() << "socket fd " << _socket.fd << " nonblock" << log::endl;
 }
 
 ssize_t
@@ -79,7 +78,8 @@ int
     _fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len);
 
     if (_fd == -1)
-        log::print() << "Failed to accept client errno: " << log::endl;
+        log::print() << "accept failed errno: " << errno << ":"
+                     << strerror(errno) << log::endl;
     else
         fcntl(_fd, F_SETFL, O_NONBLOCK);
     return _fd;
