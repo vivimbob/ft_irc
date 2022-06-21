@@ -624,7 +624,63 @@ void
         else if (_request->parameter.size() == 1)
             m_to_client(rpl_channel_mode_is(*_target_0));
         else
-            m_to_client(err_unknown_mode(_request->parameter[1]));
+        {
+            _target_0 = &_request->parameter[1];
+            Channel::t_status status;
+            bool              toggle;
+
+            for (int i = 0, size = _target_0->size(); i < size; ++i)
+            {
+                if (std::memchr("+-", (*_target_0)[i], 2))
+                {
+                    toggle = (*_target_0)[i] == '+' ? true : false;
+                    for (int j = i + 1;
+                         j < size && !(std::memchr("+-", (*_target_0)[j], 2));
+                         ++j)
+                    {
+                        //                        if ((*_target_0)[j] == 'i')
+                        //                            status.invite = toggle;
+                        //                        else if ((*_target_0)[j] ==
+                        //                        't')
+                        //                            status.topic = toggle;
+                        //                        else if ((*_target_0)[j] ==
+                        //                        'n')
+                        //                            status.nomsg = toggle;
+                    }
+                }
+                else
+                    _ascii[(*_target_0)[i]] = true;
+            }
+
+            for (int i = 33; i < 127; ++i)
+                if (_ascii[i])
+                {
+                    m_to_client(err_unknown_mode((char)i));
+                    _ascii[i] = false;
+                }
+            // status 구조체 채널에 넘겨 주기
+            //채널에서 변경된 모드에 대한 문자열 받기
+            //	문자열이 비어 있다면 변경된
+        }
+        //기호 찾기
+        //	기호 없음
+        //기호 상관 없이 중복은 처리하지 않음
+        //
+        // mode #abc +qwe
+        //
+        // 지원하는 채널 모드 [i,t,n]
+        // 1)문자열을 돌면서 새로운 문자열을 쓸까?
+        //	1) unknown mode
+        //		처리해야하는 문자가 아닌경우 여기다가 push_back(기호
+        //생략) 	2) 처리해야하는 모드 		1) 처리해야하는 문자인 경우
+        //여기다가 push_back 		2) 기호를 추가해야하는 데 문자열 맨
+        //마지막이 기호인 경우 		마지만 기호를 지우고 업데이트 		3)
+        //맨 마지막 문자가 기호인 경우 기호 제거 2)unknown모드 메시지가
+        // 있다면 보내줌
+        //
+        // 3)처리해야하는 모드를 담은 문자열이 있다면
+        //	1)문자열을 돌면서 플래그 세팅
+        //	2)cmd_mode_reply만들어서 전송
     }
     else
     {

@@ -49,7 +49,7 @@ class IRC
     std::string err_already_registred();
     std::string err_passwd_mismatch();
     std::string err_channel_is_full(const std::string&);
-    std::string err_unknown_mode(const std::string&);
+    std::string err_unknown_mode(char);
     std::string err_chanoprivs_needed(const std::string&);
     std::string err_u_mode_unknown_flag();
     std::string err_users_dont_match(const std::string&);
@@ -87,6 +87,9 @@ class IRC
     Client::t_request*   _request;
     Client::t_to_client* _to_client;
     std::string          _password;
+    bool                 _ascii[127] = {
+                        false,
+    };
 };
 
 #endif /* TEMP_HPP */

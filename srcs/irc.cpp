@@ -179,9 +179,9 @@ std::string
 }
 
 std::string
-    IRC::err_unknown_mode(const std::string& flag)
+    IRC::err_unknown_mode(char mode)
 {
-    return reply_servername_prefix("472") + " " + flag + " :Unknown MODE flag"
+    return reply_servername_prefix("472") + " " + mode + " :Unknown MODE flag"
            + IRC::endl;
 }
 
