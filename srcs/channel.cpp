@@ -87,11 +87,9 @@ void
         _members[client].insert(0, "@");
 }
 
-#include <iostream>
 void
     Channel::set_status(TYPE type, bool state)
 {
-    std::cout << type << ',' << state << std::endl;
     switch (type)
     {
         case INVITE:
@@ -106,6 +104,39 @@ void
         default:
             break;
     }
+}
+
+std::string
+    Channel::set_status(t_status status)
+{
+    std::string on  = "+";
+    std::string off = "-";
+
+    if (_status.invite != status.invite)
+    {
+        _status.invite = status.invite;
+        if (status.invite)
+            on.push_back('i');
+        else
+            off.push_back('i');
+    }
+    if (_status.topic != status.topic)
+    {
+        _status.topic = status.topic;
+        if (status.topic)
+            on.push_back('t');
+        else
+            off.push_back('t');
+    }
+    if (_status.nomsg != status.nomsg)
+    {
+        _status.nomsg = status.nomsg;
+        if (status.nomsg)
+            on.push_back('n');
+        else
+            off.push_back('n');
+    }
+    return (on.size() > 1 ? on : "") + (off.size() > 1 ? off : "");
 }
 
 /* channel class setter end */

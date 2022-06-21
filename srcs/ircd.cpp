@@ -615,93 +615,41 @@ IRCD::m_mode(PHASE phase)
     return OK;
 }
 
-void
+Channel::t_status
     IRCD::parse_flag(const std::string& flag)
 {
-    bool toggle;
+    Channel::t_status status;
+    bool              toggle;
 
-    //반복문이 다음 기호나 \0 전까지 돈다고 가정
-    //반복문 시작이 기호 였을 시 set_status작업
-    //시작 지점 기호가 아닌 첫번째 위치
-    //	시작위치 한 칸 전 기호 체크 있으면 set_status 작업 추가
-    //
-    //
-
-    for (int i = 0; i < 128; ++i)
-        _ascii[i] = false;
+    std::memset((void*)_ascii, 0, sizeof(_ascii));
     for (_index = 0, _offset = 0;
          (_index = flag.find_first_not_of("+-", _offset))
          != (int)std::string::npos;)
     {
-        _offset = flag.find_first_of("+-", _index) == std::string::npos
-                      ?: flag.size();
+        _offset = flag.find_first_of("+-", _index) != std::string::npos
+                      ? flag.find_first_of("+-", _index)
+                      : flag.size();
         for (int i = _index; i < _offset; ++i)
             if ((unsigned)flag[i] < 128)
                 _ascii[(int)flag[i]] = true;
-        std::cout << toggle << std::endl;
-        std::cout << _ascii[105] << ", " << _ascii[116] << ", " << _ascii[110]
-                  << std::endl;
-        if (1 < _index && (flag[_index - 1] == '+' || flag[_index - 1] == '-'))
+        if (0 < _index && (flag[_index - 1] == '+' || flag[_index - 1] == '-'))
         {
             toggle = flag[_index - 1] == '+' ? true : false;
-            std::cout << toggle << std::endl;
-            std::cout << _ascii[105] << ", " << _ascii[116] << ", "
-                      << _ascii[110] << std::endl;
             if (_ascii[(int)'i'])
-            {
-                _channel->set_status(INVITE, toggle);
-                std::cout << "invite flag " << toggle << std::endl;
-            }
+                status.invite = toggle;
             if (_ascii[(int)'t'])
-            {
-                _channel->set_status(TOPIC, toggle);
-                std::cout << "topic flag " << toggle << std::endl;
-            }
+                status.topic = toggle;
             if (_ascii[(int)'n'])
-            {
-                _channel->set_status(NOMSG, toggle);
-                std::cout << "nomessage flag " << toggle << std::endl;
-            }
+                status.nomsg = toggle;
         }
+        _ascii[(int)'i'] = false;
+        _ascii[(int)'t'] = false;
+        _ascii[(int)'n'] = false;
     }
-
-    //    if ((_index = flag.find_first_of("+-")) != (int)std::string::npos)
-    //    {
-    //        //+- 기호 앞에 있던 unknown flag 는 날라감
-    //        for (_offset = 0; _offset < (int)flag.size(); _index = _offset)
-    //        {
-    //            toggle  = (flag[_index] == '+' ? true : false);
-    //            _offset = flag.find_first_of("+-", ++_index) !=
-    //            std::string::npos
-    //                          ?: flag.size();
-    //            for (; _index < _offset; ++_index)
-    //                if ((unsigned)flag[_index] < 128)
-    //                    _ascii[(int)flag[_index]] = true;
-    //            if (_ascii[(int)'i'] && (_ascii[(int)'i'] = false))
-    //                _channel->set_status(INVITE, toggle);
-    //            if (_ascii[(int)'t'] && (_ascii[(int)'t'] = false))
-    //                _channel->set_status(TOPIC, toggle);
-    //            if (_ascii[(int)'n'] && (_ascii[(int)'n'] = false))
-    //                _channel->set_status(NOMSG, toggle);
-    //        }
-    //    }
-    //    else //기호가 안들어왔을 떄
-    //    {
-    //        for (_index = 0; _index < (int)flag.size(); ++_index)
-    //            if ((unsigned)flag[_index] < 128)
-    //                _ascii[(int)flag[_index]] = true;
-    //    }
-    //    for (int i = 33; i < 127; ++i)
-    //    {
-    //        if (_ascii[i] && (i != 'i' && i != 't' && i != 'n'))
-    //            m_to_client(err_unknown_mode((char)i));
-    //        _ascii[i] = false;
-    //    }
-    //    if (flag.find_first_of("itn") != std::string::npos)
-    //        m_to_client(
-    //            rpl_channel_mode_is(_channel->get_name(),
-    //            _channel->get_status()));
-    //    std::cout << _channel->get_status() << std::endl;
+    for (int i = 33; i < 127; ++i)
+        if (_ascii[i])
+            m_to_client(err_unknown_mode((char)i));
+    return status;
 }
 
 void
@@ -717,39 +665,17 @@ void
         else if (_request->parameter.size() == 1)
             m_to_client(rpl_channel_mode_is(*_target, _channel->get_status()));
         else
-            parse_flag(_request->parameter[1]);
+        {
+            _buffer = _channel->set_status(parse_flag(_request->parameter[1]));
+            if (_buffer.size())
+                m_to_client(cmd_mode_reply(_channel->get_name(), _buffer));
+            else if (_request->parameter[1].find_first_of("itn")
+                     != (unsigned)std::string::npos)
+                m_to_client(rpl_channel_mode_is(_channel->get_name(),
+                                                _channel->get_status()));
+        }
     }
-    // status 구조체 채널에 넘겨 주기
-    //채널에서 변경된 모드에 대한 문자열 받기
-    //	문자열이 비어 있다면 변경된
 }
-//기호 찾기
-//	기호 없음
-//기호 상관 없이 중복은 처리하지 않음
-//
-// mode #abc +qwe
-//
-// 지원하는 채널 모드 [i,t,n]
-// 1)문자열을 돌면서 새로운 문자열을 쓸까?
-//	1) unknown mode
-//		처리해야하는 문자가 아닌경우 여기다가 push_back(기호
-//생략) 	2) 처리해야하는 모드 		1) 처리해야하는 문자인 경우
-//여기다가 push_back 		2) 기호를 추가해야하는 데 문자열 맨
-//마지막이 기호인 경우 		마지만 기호를 지우고 업데이트 		3)
-//맨 마지막 문자가 기호인 경우 기호 제거 2)unknown모드 메시지가
-// 있다면 보내줌
-//
-// 3)처리해야하는 모드를 담은 문자열이 있다면
-//	1)문자열을 돌면서 플래그 세팅
-//	2)cmd_mode_reply만들어서 전송
-//}
-// else
-//{
-//    if (m_mode(THREE) == ERROR)
-//        return;
-//    else if (_request->parameter.size() == 1)
-//        m_to_client(rpl_user_mode_is());
-//}
 
 RESULT
 IRCD::m_privmsg(PHASE phase)

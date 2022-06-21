@@ -235,7 +235,8 @@ std::string
 }
 
 std::string
-    IRC::rpl_channel_mode_is(const std::string& channel, const std::string& mode)
+    IRC::rpl_channel_mode_is(const std::string& channel,
+                             const std::string& mode)
 {
     return reply_servername_prefix("324") + " " + channel + " +" + mode
            + IRC::endl;
@@ -341,6 +342,13 @@ std::string
     IRC::cmd_join_reply(const std::string& channel)
 {
     return reply_nickmask_prefix(_request->command) + " " + channel + IRC::endl;
+}
+
+std::string
+    IRC::cmd_mode_reply(const std::string& channel, const std::string& mode)
+{
+    return reply_nickmask_prefix(_request->command) + " " + channel + " " + mode
+           + IRC::endl;
 }
 
 std::string

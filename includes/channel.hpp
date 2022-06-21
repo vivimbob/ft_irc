@@ -42,10 +42,11 @@ class Channel
     bool               get_status(TYPE);
     std::string        get_status();
 
-    void set_name(const std::string&);
-    void set_topic(const std::string&);
-    void set_operator(Client*);
-    void set_status(TYPE, bool);
+    void        set_name(const std::string&);
+    void        set_topic(const std::string&);
+    void        set_operator(Client*);
+    void        set_status(TYPE, bool);
+    std::string set_status(t_status);
 
     bool is_empty();
     bool is_full();

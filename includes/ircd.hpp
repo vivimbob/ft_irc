@@ -31,14 +31,14 @@ class IRCD : public IRC
     void   m_to_channel(const std::string&);
 
   protected:
-    void       m_to_channels(const std::string&);
-    TYPE       get_type(std::string command);
-    void       registration();
-    void       parse_command(std::string&);
-    void       parse_parameter(std::vector<std::string>&);
-    void       parse_request(Client::t_request&);
-    void       parse_flag(const std::string&);
-    t_commands _commands;
+    void              m_to_channels(const std::string&);
+    TYPE              get_type(std::string command);
+    void              registration();
+    void              parse_command(std::string&);
+    void              parse_parameter(std::vector<std::string>&);
+    void              parse_request(Client::t_request&);
+    Channel::t_status parse_flag(const std::string&);
+    t_commands        _commands;
     // utiluity end
 
   private:

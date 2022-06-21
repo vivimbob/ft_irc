@@ -77,6 +77,7 @@ class IRC
                                const std::string&);
     std::string cmd_nick_reply(const std::string&);
     std::string cmd_join_reply(const std::string&);
+    std::string cmd_mode_reply(const std::string&, const std::string&);
     std::string cmd_topic_reply();
 
   protected:
