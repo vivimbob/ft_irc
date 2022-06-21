@@ -27,7 +27,8 @@ class Socket
 
   protected:
     t_socket    _socket;
-    ssize_t     _received;
+    ssize_t     _result;
+    ssize_t     _remain;
     sockaddr_in _addr;
     int         _fd;
     char        _buffer[IPV4_MTU_MAX];
@@ -35,6 +36,7 @@ class Socket
     Socket();
     ~Socket();
     ssize_t receive(const struct kevent& event);
+    ssize_t send(const struct kevent& event);
     int     accept();
     void    disconnect(int fd);
     void    initialize(int port);

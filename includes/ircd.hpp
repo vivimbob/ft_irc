@@ -21,6 +21,8 @@ class IRCD : public IRC
     const std::string* _target_1;
     std::string        _buffer;
     Client*            _fixed;
+    int                _offset;
+    int                _pinned;
 
     // utility start
     RESULT m_is_valid(TYPE);
@@ -32,15 +34,16 @@ class IRCD : public IRC
     void       m_to_channels(const std::string&);
     TYPE       get_type(std::string command);
     void       registration();
+    void       parse_command(std::string&);
+    void       parse_parameter(std::vector<std::string>&);
+    void       parse_request(Client::t_request&);
     t_commands _commands;
     // utiluity end
 
   private:
-    RESULT m_empty();
     RESULT m_pass();
     RESULT m_nick();
     RESULT m_user();
-    RESULT m_quit();
     RESULT m_join(PHASE, Channel* = nullptr);
     RESULT m_part(PHASE);
     RESULT m_topic();
@@ -50,9 +53,6 @@ class IRCD : public IRC
     RESULT m_kick(PHASE);
     RESULT m_mode(PHASE);
     RESULT m_privmsg(PHASE);
-    RESULT m_notice();
-    RESULT m_unknown();
-    RESULT m_unregistered();
 
   protected:
     void empty();
