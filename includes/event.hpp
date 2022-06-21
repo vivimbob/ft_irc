@@ -25,6 +25,7 @@ class Event
     struct kevent _events[EVENTS_MAX];
     int           _index;
     void          toggle(int EVFILT_TYPE);
+    void          toggle(Client&, int EVFILT_TYPE);
     void          initialize(int socket_fd);
     void          remove(int fd);
     void          add(Client*);

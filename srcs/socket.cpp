@@ -65,8 +65,8 @@ void
 ssize_t
     Socket::receive(const struct kevent& event)
 {
-    _fd               = event.ident;
-    ssize_t _received = recv(_fd, _buffer, event.data, 0);
+    _fd       = event.ident;
+    _received = recv(_fd, _buffer, event.data, 0);
 
     if (_received == 0)
         m_disconnect();
