@@ -143,7 +143,6 @@ void
     {
         Client::t_buffers& buffers = _client->get_buffers();
         buffers.buffer.append(Socket::_buffer, Socket::_received);
-
         while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
                != (int)std::string::npos)
         {
