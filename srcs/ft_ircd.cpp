@@ -72,50 +72,40 @@ void
 void
     FT_IRCD::m_request_handler()
 {
-    if (_request->command.size() && (_request->command[0] == ':'))
+    int         offset;
+    int         fixed;
+    std::string buffer;
+
+    if (request.command.size() && (request.command.front() == ':'))
+
     {
         _request->command.erase(0, _request->command.find_first_of(' '));
         _request->command.erase(0, _request->command.find_first_not_of(' '));
     }
     if (_request->command.size())
     {
-        int         offset;
-        int         fixed;
-        std::string buffer;
-
-        for (offset = 0; (_request->command[offset] != ' '
-                          && _request->command[offset] != '\0');
+        for (offset = 0; (request.command[offset] != ' '
+                          && request.command[offset] != '\0');
              ++offset)
-            if ((unsigned)_request->command[offset] - 'a' < 26)
-                _request->command[offset] ^= 0b100000;
-        if (_request->command[offset] != '\0')
-            buffer = _request->command.substr(offset);
-        _request->command.erase(offset);
-        offset = 0;
-        for (int index = 0; buffer.size() && offset != (int)std::string::npos
-                            && (fixed = buffer.find_first_not_of(' '))
-                                   != (int)std::string::npos;
-             ++index)
+            if ((unsigned)request.command[offset] - 'a' < 26)
+                request.command[offset] ^= 0b100000;
+        buffer = request.command.substr(offset);
+        request.command.erase(offset);
+    }
+    for (offset = 0;
+         (fixed = buffer.find_first_not_of(' ')) != (int)std::string::npos;)
+    {
+        offset = buffer.find_first_of(' ', fixed);
+        if ((offset != (int)std::string::npos) && buffer[fixed] != ':')
+            request.parameter.push_back(buffer.substr(fixed, offset - fixed));
+        else
         {
-            if (buffer[fixed] != ':')
-            {
-                offset = buffer.find_first_of(' ', fixed);
-                if (offset != (int)std::string::npos)
-                    _request->parameter.push_back(
-                        buffer.substr(fixed, offset - fixed));
-                else
-                {
-                    _request->parameter.push_back(buffer.substr(fixed));
-                    break;
-                }
-                buffer.erase(0, offset);
-            }
-            else
-            {
-                _request->parameter.push_back(buffer.substr(fixed + 1));
-                break;
-            }
+            if (buffer[fixed] == ':')
+                ++fixed;
+            request.parameter.push_back(buffer.substr(fixed));
+            break;
         }
+        buffer.erase(0, offset);
     }
     _request->type = get_type(_request->command);
 }
