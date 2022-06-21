@@ -274,6 +274,9 @@ IRCD::m_join(PHASE phase, Channel* channel)
             return ERROR;
         else if (channel->is_full())
             return m_to_client(err_channel_is_full(*_target_0));
+        else if ((_channel->get_status(INVITE))
+                 && (_channel->is_invited(_client)))
+            return m_to_client(err_invite_only_channel(_channel->get_name()));
     }
     return OK;
 }
@@ -297,7 +300,7 @@ void
         _channel = _ft_ircd->_map.channel[*_target_0];
         if (m_join(THREE, _channel) == ERROR)
             continue;
-        _channel->join(*_client);
+        _channel->join(_client);
         if (_channel->get_members().size() == 1)
         {
             _channel->set_operator(_client);
@@ -343,7 +346,7 @@ void
         _target_0 = &channels[i];
         if (m_part(TWO) == ERROR)
             return;
-        _channel->part(*_client);
+        _channel->part(_client);
         m_to_channel(cmd_part_reply(*_target_0));
         m_to_client(cmd_part_reply(*_target_0));
         if (_channel->is_empty())
@@ -368,7 +371,8 @@ IRCD::m_topic()
     _channel = _ft_ircd->_map.channel[*_target_0];
     if (!_channel->is_joined(_client))
         return m_to_client(err_not_on_channel(*_target_0));
-    if ((_request->parameter.size() > 1) && (!_channel->is_operator(*_client)))
+    if ((1 < _request->parameter.size()) && (_channel->get_status(TOPIC))
+        && (!_channel->is_operator(_client)))
         return m_to_client(err_chanoprivs_needed(*_target_0));
     return OK;
 }
@@ -486,15 +490,17 @@ IRCD::m_invite()
         return m_to_client(err_need_more_params());
     if (!_ft_ircd->_map.client.count(_request->parameter[0]))
         return m_to_client(err_no_such_nick(_request->parameter[0]));
-    Client* target_client = _ft_ircd->_map.client[_request->parameter[0]];
+    _fixed = _ft_ircd->_map.client[_request->parameter[0]];
     if (!_ft_ircd->_map.channel.count(_request->parameter[1]))
         return m_to_client(err_no_such_channel(_request->parameter[1]));
     _channel = _ft_ircd->_map.channel[_request->parameter[1]];
     if (!_client->is_joined(_channel))
         return m_to_client(err_not_on_channel(_request->parameter[1]));
-    if (target_client->is_joined(_channel))
+    if (_fixed->is_joined(_channel))
         return m_to_client(err_user_on_channel(_request->parameter[0],
                                                _request->parameter[1]));
+    if ((_channel->get_status(INVITE)) && !(_channel->is_operator(_client)))
+        return m_to_client(err_chanoprivs_needed(_channel->get_name()));
     return OK;
 }
 
@@ -503,10 +509,10 @@ void
 {
     if (m_invite() == ERROR)
         return;
+    _channel->invitation(_fixed);
     m_to_client(rpl_inviting(_request->parameter[0], _request->parameter[1]));
-    m_to_client(
-        *_ft_ircd->_map.client[_request->parameter[0]],
-        cmd_invite_reply(_request->parameter[0], _request->parameter[1]));
+    m_to_client(*_fixed, cmd_invite_reply(_request->parameter[0],
+                                          _request->parameter[1]));
 }
 
 RESULT
@@ -523,7 +529,7 @@ IRCD::m_kick(PHASE phase)
              || !_ft_ircd->_map.channel.count(*_target_0)))
             return m_to_client(err_no_such_channel(*_target_0));
         _channel = _ft_ircd->_map.channel[*_target_0];
-        if (!_channel->is_operator(*_client))
+        if (!_channel->is_operator(_client))
             return m_to_client(err_chanoprivs_needed(*_target_0));
         if (!_ft_ircd->_map.client.count(*_target_1))
             return m_to_client(err_no_such_nick(*_target_1));
@@ -556,7 +562,7 @@ void
         _target_1 = nicks.base();
         if (m_kick(TWO) == ERROR)
             goto next;
-        _channel->part(*_fixed);
+        _channel->part(_fixed);
         if (_channel->is_empty())
         {
             _ft_ircd->_map.channel.erase(*names);
@@ -594,8 +600,7 @@ IRCD::m_mode(PHASE phase)
         if (!_ft_ircd->_map.channel.count(*_target_0))
             return m_to_client(err_no_such_channel(*_target_0));
         _channel = _ft_ircd->_map.channel.at(*_target_0);
-        if ((1 < _request->parameter.size())
-            && !_channel->is_operator(*_client))
+        if ((1 < _request->parameter.size()) && !_channel->is_operator(_client))
             return m_to_client(err_chanoprivs_needed(*_target_0));
     }
     else if (phase == THREE)
@@ -701,6 +706,15 @@ IRCD::m_privmsg(PHASE phase)
         if (_request->parameter.size() == 1)
             return m_to_client(err_no_text_to_send());
     }
+    if (phase == TWO)
+    {
+        if (!_ft_ircd->_map.channel.count(*_target_0))
+            return m_to_client(err_no_such_channel(*_target_0));
+        _channel = _ft_ircd->_map.channel[*_target_0];
+        if (_channel->get_status(NOMSG) && !_channel->is_joined(_client)
+            && _request->type == PRIVMSG)
+            m_to_client(err_cannot_send_to_channel(_channel->get_name(), 'n'));
+    }
     return OK;
 }
 
@@ -713,18 +727,12 @@ void
     for (int i = 0, size = targets.size(); i < size; ++i)
     {
         _target_0 = &targets[i];
-        if (m_is_valid(CHANNEL_PREFIX))
-        {
-            if (_ft_ircd->_map.channel.count(*_target_0)
-                && (_channel = _ft_ircd->_map.channel[*_target_0]))
-                m_to_channel(cmd_message_reply(*_target_0));
-            else
-                m_to_client(err_no_such_channel(*_target_0));
-        }
+        if (m_is_valid(CHANNEL_PREFIX) && (m_privmsg(TWO) == OK))
+            m_to_channel(cmd_message_reply(*_target_0));
         else if (_ft_ircd->_map.client.count(*_target_0))
             m_to_client(*_ft_ircd->_map.client[*_target_0],
                         cmd_message_reply(*_target_0));
-        else if (_request->command != "NOTICE")
+        else if (_request->type == PRIVMSG)
             m_to_client(err_no_such_nick(*_target_0));
     }
 }

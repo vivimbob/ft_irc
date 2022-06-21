@@ -10,6 +10,7 @@ class Channel
   public:
     typedef std::string                     t_membership;
     typedef std::map<Client*, t_membership> t_membermap;
+    typedef std::set<Client*>               t_invitation;
     typedef t_membermap::const_iterator     t_citer;
 
     typedef struct s_status
@@ -20,10 +21,11 @@ class Channel
     } t_status;
 
   private:
-    std::string _name;
-    std::string _topic;
-    t_membermap _members;
-    t_status    _status;
+    std::string  _name;
+    std::string  _topic;
+    t_membermap  _members;
+    t_status     _status;
+    t_invitation _invitations;
 
     Channel();
     Channel(const Channel&);
@@ -46,11 +48,13 @@ class Channel
 
     bool is_empty();
     bool is_full();
-    bool is_operator(Client&);
+    bool is_operator(Client*);
     bool is_joined(Client*);
+    bool is_invited(Client*);
 
-    void join(Client&);
-    void part(Client&);
+    void join(Client*);
+    void part(Client*);
+    void invitation(Client*);
 };
 
 #endif /* CHANNEL_HPP */

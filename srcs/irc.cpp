@@ -61,6 +61,13 @@ std::string
 }
 
 std::string
+    IRC::err_cannot_send_to_channel(const std::string& channel_name, char mode)
+{
+    return reply_servername_prefix("404") + " " + channel_name
+           + " :Cannot send to channel (+" + mode + ')' + IRC::endl;
+}
+
+std::string
     IRC::err_too_many_channels(const std::string& channel_name)
 {
     return reply_servername_prefix("405") + " " + channel_name
@@ -183,6 +190,13 @@ std::string
 {
     return reply_servername_prefix("472") + " " + mode + " :Unknown MODE flag"
            + IRC::endl;
+}
+
+std::string
+    IRC::err_invite_only_channel(const std::string& channel)
+{
+    return reply_servername_prefix("473") + " " + channel
+           + " :Cannot join channel (+i)" + IRC::endl;
 }
 
 std::string

@@ -110,11 +110,11 @@ bool
 }
 
 bool
-    Channel::is_operator(Client& client)
+    Channel::is_operator(Client* client)
 {
-    if (_members.find(&client) == _members.end())
+    if (_members.find(client) == _members.end())
         return false;
-    return (_members.find(&client)->second.find('@') != std::string::npos);
+    return (_members.find(client)->second.find('@') != std::string::npos);
 }
 
 bool
@@ -123,22 +123,34 @@ bool
     return _members.count(client);
 }
 
+bool
+    Channel::is_invited(Client* client)
+{
+    return _invitations.count(client);
+}
+
 /* channel class is_function end */
 
 /* channel class user function begin */
 
 void
-    Channel::join(Client& client)
+    Channel::join(Client* client)
 {
-    _members.insert(std::make_pair(&client, t_membership()));
-    client.joined(this);
+    _members.insert(std::make_pair(client, t_membership()));
+    client->joined(this);
+    _invitations.erase(client);
 }
 
 void
-    Channel::part(Client& client)
+    Channel::part(Client* client)
 {
-    _members.erase(&client);
-    client.parted(this);
+    _members.erase(client);
+    client->parted(this);
 }
 
+void
+    Channel::invitation(Client* client)
+{
+    _invitations.insert(client);
+}
 /* channel class user function end */
