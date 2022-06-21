@@ -39,6 +39,18 @@ const std::string&
     return _members[client];
 }
 
+bool
+    Channel::get_status(TYPE type)
+{
+    if (type == INVITE)
+        return _status.invite;
+    else if (type == TOPIC)
+        return _status.topic;
+    else if (type == NOMSG)
+        return _status.nomsg;
+    return false;
+}
+
 /* channel class getter end */
 
 /* channel class setter begin */
@@ -60,6 +72,25 @@ void
 {
     if (_members.find(client)->second.find('@') == std::string::npos)
         _members[client].insert(0, "@");
+}
+
+void
+    Channel::set_status(TYPE type, bool state)
+{
+    switch (type)
+    {
+        case INVITE:
+            _status.invite = state;
+            break;
+        case TOPIC:
+            _status.topic = state;
+            break;
+        case NOMSG:
+            _status.nomsg = state;
+            break;
+        default:
+            break;
+    }
 }
 
 /* channel class setter end */

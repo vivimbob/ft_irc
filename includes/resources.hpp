@@ -60,6 +60,7 @@ enum TYPE
     UNKNOWN,
     UNREGISTERED,
     CHANNEL_NAME,
+    NOMSG,
     CHANNEL_PREFIX = '#'
 };
 
