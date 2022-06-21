@@ -14,7 +14,7 @@ void
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
     {
-        _channel->part(*_client);
+        _channel->part(_client);
         if (_channel->is_empty())
         {
             _map.channel.erase(_channel->get_name());
@@ -42,7 +42,7 @@ void
     IRC::_to_client = &_client->get_buffers().to_client;
     if (IRC::_to_client->queue.empty())
         return;
-    if (0 <= Socket::send(_events[_index]))
+    if (0 <= Socket::send(_events[Event::_index]))
     {
         IRC::_to_client->offset += Socket::_result;
         if (IRC::_to_client->queue.front().size()
@@ -94,7 +94,7 @@ void
 void
     FT_IRCD::m_receive()
 {
-    if (0 < Socket::receive(_events[_index]))
+    if (0 < Socket::receive(_events[Event::_index]))
     {
         Client::t_buffers& buffers = _client->get_buffers();
         buffers.buffer.append(Socket::_buffer, Socket::_result);
@@ -144,12 +144,12 @@ void
         log::print() << count << " new kevent" << log::endl;
         for (Event::_index = 0; Event::_index < count; ++Event::_index)
         {
-            IRC::_client = (Client*)_events[_index].udata;
-            if (_events[_index].ident == (unsigned)_socket.fd)
+            IRC::_client = (Client*)_events[Event::_index].udata;
+            if (_events[Event::_index].ident == (unsigned)_socket.fd)
                 FT_IRCD::m_accept();
-            else if (_events[_index].filter == EVFILT_READ)
+            else if (_events[Event::_index].filter == EVFILT_READ)
                 FT_IRCD::m_receive();
-            else if (_events[_index].filter == EVFILT_WRITE)
+            else if (_events[Event::_index].filter == EVFILT_WRITE)
                 FT_IRCD::m_send();
             IRC::_client = nullptr;
         }

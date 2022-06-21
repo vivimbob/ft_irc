@@ -235,9 +235,10 @@ std::string
 }
 
 std::string
-    IRC::rpl_channel_mode_is(const std::string& channel)
+    IRC::rpl_channel_mode_is(const std::string& channel, const std::string& mode)
 {
-    return reply_servername_prefix("324") + " " + channel + " +" + IRC::endl;
+    return reply_servername_prefix("324") + " " + channel + " +" + mode
+           + IRC::endl;
 }
 
 std::string

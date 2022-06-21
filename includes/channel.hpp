@@ -40,6 +40,7 @@ class Channel
     const t_membermap& get_members();
     const std::string& get_prefix(Client*);
     bool               get_status(TYPE);
+    std::string        get_status();
 
     void set_name(const std::string&);
     void set_topic(const std::string&);

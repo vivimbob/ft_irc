@@ -51,6 +51,19 @@ bool
     return false;
 }
 
+std::string
+    Channel::get_status()
+{
+    std::string str;
+    if (_status.invite)
+        str += 'i';
+    if (_status.topic)
+        str += 't';
+    if (_status.nomsg)
+        str += 'n';
+    return str;
+}
+
 /* channel class getter end */
 
 /* channel class setter begin */
@@ -74,9 +87,11 @@ void
         _members[client].insert(0, "@");
 }
 
+#include <iostream>
 void
     Channel::set_status(TYPE type, bool state)
 {
+    std::cout << type << ',' << state << std::endl;
     switch (type)
     {
         case INVITE:

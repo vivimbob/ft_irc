@@ -59,7 +59,7 @@ class IRC
     std::string
         rpl_list(const std::string, const std::string&, const std::string);
     std::string rpl_listend();
-    std::string rpl_channel_mode_is(const std::string&);
+    std::string rpl_channel_mode_is(const std::string&, const std::string&);
     std::string rpl_notopic(const std::string&);
     std::string rpl_topic(const std::string&, const std::string&);
     std::string rpl_inviting(const std::string&, const std::string&);
@@ -89,9 +89,7 @@ class IRC
     Client::t_request*   _request;
     Client::t_to_client* _to_client;
     std::string          _password;
-    bool                 _ascii[127] = {
-                        false,
-    };
+    bool                 _ascii[127];
 };
 
 #endif /* TEMP_HPP */
