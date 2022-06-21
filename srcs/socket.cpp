@@ -1,7 +1,16 @@
 #include "../includes/socket.hpp"
+#include <fcntl.h>
+#include <sys/event.h>
+#include <unistd.h>
 
 Socket::~Socket()
 {
+}
+
+void
+    Socket::m_disconnect()
+{
+    close(_fd);
 }
 
 void
@@ -51,6 +60,35 @@ void
     log::print() << "Listen on socket" << log::endl;
     fcntl(_socket.fd, F_SETFL, O_NONBLOCK);
     log::print() << "Socket set nonblock" << log::endl;
+}
+
+ssize_t
+    Socket::receive(const struct kevent& event)
+{
+    _fd       = event.ident;
+    _received = recv(_fd, _buffer, event.data, 0);
+
+    if (_received == 0)
+        m_disconnect();
+    return _received;
+}
+
+int
+    Socket::accept()
+{
+    _fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len);
+
+    if (_fd == -1)
+        log::print() << "Failed to accept client errno: " << log::endl;
+    else
+        fcntl(_fd, F_SETFL, O_NONBLOCK);
+    return _fd;
+}
+
+void
+    Socket::disconnect(int fd)
+{
+    close(fd);
 }
 
 void

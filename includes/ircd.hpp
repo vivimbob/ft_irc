@@ -8,13 +8,13 @@ class IRCD : public IRC
   public:
     typedef struct s_map
     {
-        ClientMap  client;
-        ChannelMap channel;
+        t_clientmap  client;
+        t_channelmap channel;
     } t_map;
 
-    typedef std::vector<void (IRCD::*)()>  Command;
-    typedef std::vector<const std::string> CSTR_VECTOR;
-    typedef CSTR_VECTOR::iterator          ITER;
+    typedef std::vector<void (IRCD::*)()>  t_commands;
+    typedef std::vector<const std::string> t_cstr_vector;
+    typedef t_cstr_vector::iterator        t_iter;
 
   private:
     const std::string* _target_0;
@@ -29,9 +29,10 @@ class IRCD : public IRC
     void   m_to_channel(const std::string&);
 
   protected:
-    void m_to_channels(const std::string&);
-    TYPE get_type(std::string command);
-    void registration();
+    void       m_to_channels(const std::string&);
+    TYPE       get_type(std::string command);
+    void       registration();
+    t_commands _commands;
     // utiluity end
 
   private:
@@ -73,7 +74,6 @@ class IRCD : public IRC
     void unregistered();
     IRCD();
     ~IRCD();
-    Command _commands;
 };
 
 #endif /* IRCD_HPP */

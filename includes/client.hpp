@@ -58,7 +58,7 @@ class Client
         unsigned char registered;
     } t_status;
 
-    typedef std::set<Channel*>::const_iterator CITER;
+    typedef std::set<Channel*>::const_iterator t_citer;
 
   private:
     sockaddr_in        _addr;
@@ -72,7 +72,7 @@ class Client
     Client(sockaddr_in client_addr, int client_fd);
     ~Client();
     sockaddr_in               get_addr();
-    int                       get_socket();
+    int                       get_fd();
     char*                     get_IP();
     const t_names&            get_names() const;
     t_buffers&                get_buffers();
@@ -87,7 +87,7 @@ class Client
     bool is_registered() const;
     bool is_joined(Channel*);
 
-    std::string make_nickmask();
+    std::string get_nickmask();
 
     void joined(Channel*);
     void parted(Channel*);

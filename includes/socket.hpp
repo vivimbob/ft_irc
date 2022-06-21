@@ -3,10 +3,8 @@
 
 #include "log.hpp"
 #include <arpa/inet.h>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
+
+#define IPV4_MTU_MAX 65535
 
 class Socket
 {
@@ -22,14 +20,24 @@ class Socket
     void m_create();
     void m_bind(int port);
     void m_listen();
+    void m_accept();
+    void m_disconnect();
     Socket(const Socket&);
     Socket& operator=(const Socket&);
 
   protected:
-    t_socket _socket;
+    t_socket    _socket;
+    ssize_t     _received;
+    sockaddr_in _addr;
+    int         _fd;
+    char        _buffer[IPV4_MTU_MAX];
+
     Socket();
     ~Socket();
-    void initialize(int port);
+    ssize_t receive(const struct kevent& event);
+    int     accept();
+    void    disconnect(int fd);
+    void    initialize(int port);
 };
 
 #endif /* SOCKET_HPP */

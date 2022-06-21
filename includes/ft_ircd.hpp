@@ -15,9 +15,7 @@ class FT_IRCD : public Socket, public Event, public IRCD
     friend class IRCD;
 
   private:
-    char          _buffer[IPV4_MTU_MAX];
-    struct kevent _events[EVENTS_MAX];
-    t_map         _map;
+    t_map _map;
 
   private:
     FT_IRCD();
@@ -25,15 +23,16 @@ class FT_IRCD : public Socket, public Event, public IRCD
     FT_IRCD& operator=(const FT_IRCD&);
 
     void m_accept();
-    void m_receive(struct kevent&);
-    void m_send(struct kevent&);
-    void m_handler();
-    void m_handler(Client::t_request&);
+    void m_receive();
+    void m_requests_handler();
+    void m_request_handler();
+    void m_disconnected(std::string reason = "");
     void m_disconnect(std::string reason = "");
+    void m_send();
 
   public:
-    ~FT_IRCD();
     FT_IRCD(int port, char* password);
+    ~FT_IRCD();
     void run();
 };
 #endif /* FT_TEMP_HPP */

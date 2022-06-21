@@ -7,8 +7,8 @@
 Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
     _buffers.requests.from = this;
-	_names.host = HOSTNAME;
-	_names.server= SERVERNAME;
+    _names.host            = HOSTNAME;
+    _names.server          = SERVERNAME;
 }
 
 Client::~Client()
@@ -26,7 +26,7 @@ sockaddr_in
 }
 
 int
-    Client::get_socket()
+    Client::get_fd()
 {
     return _fd;
 }
@@ -119,9 +119,11 @@ bool
 /* client class other function begin */
 
 std::string
-    Client::make_nickmask()
+    Client::get_nickmask()
 {
-    return _names.nick + '!' + _names.user + '@' + _names.host;
+    return ((_names.nick.empty() ? "*" : _names.nick) + "!"
+            + (_names.user.empty() ? "*" : _names.user) + "@"
+            + (_names.host.empty() ? "*" : _names.host));
 }
 
 void
