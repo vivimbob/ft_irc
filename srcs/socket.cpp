@@ -1,8 +1,16 @@
 #include "../includes/socket.hpp"
+#include <fcntl.h>
 #include <sys/event.h>
+#include <unistd.h>
 
 Socket::~Socket()
 {
+}
+
+void
+    Socket::m_disconnect()
+{
+    close(_fd);
 }
 
 void
@@ -61,7 +69,7 @@ ssize_t
     ssize_t _received = recv(_fd, _buffer, event.data, 0);
 
     if (_received == 0)
-        close(_fd);
+        m_disconnect();
     return _received;
 }
 

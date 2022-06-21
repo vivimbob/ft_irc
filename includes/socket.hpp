@@ -3,8 +3,6 @@
 
 #include "log.hpp"
 #include <arpa/inet.h>
-#include <fcntl.h>
-#include <unistd.h>
 
 #define IPV4_MTU_MAX 65535
 
