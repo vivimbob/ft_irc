@@ -626,43 +626,82 @@ void
     //	시작위치 한 칸 전 기호 체크 있으면 set_status 작업 추가
     //
     //
+
     for (int i = 0; i < 128; ++i)
         _ascii[i] = false;
-    if ((_index = flag.find_first_of("+-")) != (int)std::string::npos)
+    for (_index = 0, _offset = 0;
+         (_index = flag.find_first_not_of("+-", _offset))
+         != (int)std::string::npos;)
     {
-        //+- 기호 앞에 있던 unknown flag 는 날라감
-        for (_offset = 0; _offset < (int)flag.size(); _index = _offset)
+        _offset = flag.find_first_of("+-", _index) == std::string::npos
+                      ?: flag.size();
+        for (int i = _index; i < _offset; ++i)
+            if ((unsigned)flag[i] < 128)
+                _ascii[(int)flag[i]] = true;
+        std::cout << toggle << std::endl;
+        std::cout << _ascii[105] << ", " << _ascii[116] << ", " << _ascii[110]
+                  << std::endl;
+        if (1 < _index && (flag[_index - 1] == '+' || flag[_index - 1] == '-'))
         {
-            toggle  = (flag[_index] == '+' ? true : false);
-            _offset = flag.find_first_of("+-", ++_index) != std::string::npos
-                          ?: flag.size();
-            for (; _index < _offset; ++_index)
-                if ((unsigned)flag[_index] < 128)
-                    _ascii[(int)flag[_index]] = true;
-            if (_ascii[(int)'i'] && (_ascii[(int)'i'] = false))
+            toggle = flag[_index - 1] == '+' ? true : false;
+            std::cout << toggle << std::endl;
+            std::cout << _ascii[105] << ", " << _ascii[116] << ", "
+                      << _ascii[110] << std::endl;
+            if (_ascii[(int)'i'])
+            {
                 _channel->set_status(INVITE, toggle);
-            if (_ascii[(int)'t'] && (_ascii[(int)'t'] = false))
+                std::cout << "invite flag " << toggle << std::endl;
+            }
+            if (_ascii[(int)'t'])
+            {
                 _channel->set_status(TOPIC, toggle);
-            if (_ascii[(int)'n'] && (_ascii[(int)'n'] = false))
+                std::cout << "topic flag " << toggle << std::endl;
+            }
+            if (_ascii[(int)'n'])
+            {
                 _channel->set_status(NOMSG, toggle);
+                std::cout << "nomessage flag " << toggle << std::endl;
+            }
         }
     }
-    else //기호가 안들어왔을 떄
-    {
-        for (_index = 0; _index < (int)flag.size(); ++_index)
-            if ((unsigned)flag[_index] < 128)
-                _ascii[(int)flag[_index]] = true;
-    }
-    for (int i = 33; i < 127; ++i)
-    {
-        if (_ascii[i] && (i != 'i' && i != 't' && i != 'n'))
-            m_to_client(err_unknown_mode((char)i));
-        _ascii[i] = false;
-    }
-    if (flag.find_first_of("itn") != std::string::npos)
-        m_to_client(
-            rpl_channel_mode_is(_channel->get_name(), _channel->get_status()));
-    std::cout << _channel->get_status() << std::endl;
+
+    //    if ((_index = flag.find_first_of("+-")) != (int)std::string::npos)
+    //    {
+    //        //+- 기호 앞에 있던 unknown flag 는 날라감
+    //        for (_offset = 0; _offset < (int)flag.size(); _index = _offset)
+    //        {
+    //            toggle  = (flag[_index] == '+' ? true : false);
+    //            _offset = flag.find_first_of("+-", ++_index) !=
+    //            std::string::npos
+    //                          ?: flag.size();
+    //            for (; _index < _offset; ++_index)
+    //                if ((unsigned)flag[_index] < 128)
+    //                    _ascii[(int)flag[_index]] = true;
+    //            if (_ascii[(int)'i'] && (_ascii[(int)'i'] = false))
+    //                _channel->set_status(INVITE, toggle);
+    //            if (_ascii[(int)'t'] && (_ascii[(int)'t'] = false))
+    //                _channel->set_status(TOPIC, toggle);
+    //            if (_ascii[(int)'n'] && (_ascii[(int)'n'] = false))
+    //                _channel->set_status(NOMSG, toggle);
+    //        }
+    //    }
+    //    else //기호가 안들어왔을 떄
+    //    {
+    //        for (_index = 0; _index < (int)flag.size(); ++_index)
+    //            if ((unsigned)flag[_index] < 128)
+    //                _ascii[(int)flag[_index]] = true;
+    //    }
+    //    for (int i = 33; i < 127; ++i)
+    //    {
+    //        if (_ascii[i] && (i != 'i' && i != 't' && i != 'n'))
+    //            m_to_client(err_unknown_mode((char)i));
+    //        _ascii[i] = false;
+    //    }
+    //    if (flag.find_first_of("itn") != std::string::npos)
+    //        m_to_client(
+    //            rpl_channel_mode_is(_channel->get_name(),
+    //            _channel->get_status()));
+    //    std::cout << _channel->get_status() << std::endl;
 }
 
 void
