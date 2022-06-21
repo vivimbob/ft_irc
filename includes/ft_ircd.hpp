@@ -23,8 +23,8 @@ class FT_IRCD : public Socket, public Event, public IRCD
     FT_IRCD& operator=(const FT_IRCD&);
 
     void m_accept();
-    void m_receive(struct kevent&);
-    void m_send(struct kevent&);
+    void m_receive();
+    void m_send();
     void m_handler();
     void m_handler(Client::t_request&);
     void m_disconnect(std::string reason = "");

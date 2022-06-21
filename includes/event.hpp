@@ -23,7 +23,8 @@ class Event
 
   protected:
     struct kevent _events[EVENTS_MAX];
-    void          toggle(Client& client, int EVFILT_TYPE);
+    int           _index;
+    void          toggle(int EVFILT_TYPE);
     void          initialize(int socket_fd);
     void          remove(int fd);
     void          add(Client*);

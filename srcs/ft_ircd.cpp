@@ -32,31 +32,33 @@ void
 }
 
 void
-    FT_IRCD::m_send(struct kevent& event)
+    FT_IRCD::m_send()
 {
     Client::t_to_client& buffer = _client->get_buffers().to_client;
 
     if (buffer.queue.empty())
         return;
     int     remain_data_len = buffer.queue.front().size() - buffer.offset;
-    ssize_t send_data_len
-        = send(event.ident, buffer.queue.front().data() + buffer.offset,
-               event.data < remain_data_len ? event.data : remain_data_len, 0);
+    ssize_t send_data_len   = send(
+          _events[_index].ident, buffer.queue.front().data() + buffer.offset,
+        _events[_index].data < remain_data_len ? _events[_index].data
+                                                 : remain_data_len,
+          0);
     if (send_data_len >= 0)
     {
         log::print() << "IRC send to " << _client->get_names().nick
                      << log::endl;
         buffer.offset += send_data_len;
         log::print() << "Send " << send_data_len << " bytes from ["
-                     << event.ident << "] client" << log::endl;
+                     << _events[_index].ident << "] client" << log::endl;
         if (buffer.queue.front().size() <= (unsigned)buffer.offset)
         {
             buffer.queue.pop();
             buffer.offset = 0;
-            log::print() << "Empty buffer from [" << event.ident << "] client"
-                         << log::endl;
+            log::print() << "Empty buffer from [" << _events[_index].ident
+                         << "] client" << log::endl;
             if (buffer.queue.empty())
-                Event::toggle(*_client, EVFILT_WRITE);
+                Event::toggle(EVFILT_WRITE);
         }
     }
 }
@@ -148,9 +150,9 @@ void
 }
 
 void
-    FT_IRCD::m_receive(struct kevent& event)
+    FT_IRCD::m_receive()
 {
-    if (0 < Socket::receive(event))
+    if (0 < Socket::receive(_events[_index]))
     {
         Client::t_buffers& buffers = _client->get_buffers();
         buffers.buffer.append(Socket::_buffer, Socket::_received);
@@ -164,7 +166,7 @@ void
         if (buffers.requests.queue.size())
             m_handler();
         if (buffers.to_client.queue.size())
-            Event::toggle(*_client, EVFILT_READ);
+            Event::toggle(EVFILT_READ);
     }
     else if (Socket::_received == 0)
         m_disconnect("connection closed");
@@ -193,22 +195,21 @@ void
     FT_IRCD::run()
 {
     register int count;
-    register int index;
 
     log::print() << "[FT_IRCD is running]" << log::endl;
     while (true)
     {
         count = Event::kevent();
         log::print() << count << " new kevent" << log::endl;
-        for (index = 0; index < count; ++index)
+        for (Event::_index = 0; Event::_index < count; ++Event::_index)
         {
-            IRC::_client = (Client*)_events[index].udata;
-            if (_events[index].ident == (unsigned)_socket.fd)
+            IRC::_client = (Client*)_events[_index].udata;
+            if (_events[_index].ident == (unsigned)_socket.fd)
                 FT_IRCD::m_accept();
-            else if (_events[index].filter == EVFILT_READ)
-                FT_IRCD::m_receive(_events[index]);
-            else if (_events[index].filter == EVFILT_WRITE)
-                FT_IRCD::m_send(_events[index]);
+            else if (_events[_index].filter == EVFILT_READ)
+                FT_IRCD::m_receive();
+            else if (_events[_index].filter == EVFILT_WRITE)
+                FT_IRCD::m_send();
             IRC::_client = nullptr;
         }
     }
