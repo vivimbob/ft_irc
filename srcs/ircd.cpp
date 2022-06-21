@@ -79,8 +79,6 @@ void
     Channel::t_citer iter = _channel->get_members().begin();
     Channel::t_citer end  = _channel->get_members().end();
 
-    log::print() << "to channel :" << _channel->get_name() << log::endl;
-
     for (; iter != end; ++iter)
         if (iter->first != _client)
             m_to_client(*iter->first, str);
@@ -221,8 +219,8 @@ void
         m_to_client(cmd_nick_reply(*_target_0));
     }
     _client->set_nickname(*_target_0);
-    log::print() << _client->get_IP() << " change nick to "
-                 << _client->get_names().nick << log::endl;
+    log::print() << "fd " << _client->get_fd()
+                 << " client nick: " << _client->get_names().nick << log::endl;
 }
 
 RESULT
@@ -303,8 +301,7 @@ void
         if (_channel->get_members().size() == 1)
         {
             _channel->set_operator(_client);
-            log::print() << "Create new channel :" << *_target_0 << " : @"
-                         << _client->get_names().nick << log::endl;
+            log::print() << "new channel: " << *_target_0 << log::endl;
         }
         m_to_channel(cmd_join_reply(*_target_0));
         m_to_client(cmd_join_reply(*_target_0));
@@ -354,8 +351,8 @@ void
             _ft_ircd->_map.channel.erase(_channel->get_name());
             delete _channel;
         }
-        log::print() << "Remove [" << _client->get_names().nick
-                     << "] client from [" << _channel->get_name() << "] channel"
+        log::print() << "remove " << _client->get_names().nick
+                     << " client from " << _channel->get_name() << " channel"
                      << log::endl;
     }
 }
@@ -391,8 +388,9 @@ void
     else
     {
         _channel->set_topic(_request->parameter[1]);
-        log::print() << *_target_0 << " channel topic change to "
-                     << _channel->get_topic() << log::endl;
+        log::print() << *_target_0
+                     << " channel topic: " << _channel->get_topic()
+                     << log::endl;
         m_to_client(cmd_topic_reply());
         m_to_channel(cmd_topic_reply());
     }
