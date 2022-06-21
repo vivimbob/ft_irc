@@ -3,9 +3,7 @@
 void
     FT_IRCD::m_disconnected(std::string reason)
 {
-    log::print() << "Client disconnect [address :" << _client->get_IP() << ':'
-                 << _client->get_addr().sin_port << " FD :" << _fd << ']'
-                 << log::endl;
+    log::print() << "fd " << _fd << " disconnected" << log::endl;
     Event::remove(_fd);
 
     IRCD::m_to_channels(cmd_quit_reply(reason));
@@ -52,17 +50,11 @@ void
           0);
     if (send_data_len >= 0)
     {
-        log::print() << "IRC send to " << _client->get_names().nick
-                     << log::endl;
         buffer.offset += send_data_len;
-        log::print() << "Send " << send_data_len << " bytes from ["
-                     << _events[_index].ident << "] client" << log::endl;
         if (buffer.queue.front().size() <= (unsigned)buffer.offset)
         {
             buffer.queue.pop();
             buffer.offset = 0;
-            log::print() << "Empty buffer from [" << _events[_index].ident
-                         << "] client" << log::endl;
             if (buffer.queue.empty())
                 Event::toggle(EVFILT_WRITE);
         }
@@ -174,8 +166,7 @@ void
     if (Socket::accept() == -1)
         return;
     Event::add(new Client(_addr, _fd));
-    log::print() << "Accept client [address:" << inet_ntoa(_addr.sin_addr)
-                 << ":" << _addr.sin_port << "fd:" << _fd << ']' << log::endl;
+    log::print() << "accept fd " << _fd << log::endl;
 }
 
 // struct kevent {
@@ -192,7 +183,7 @@ void
 {
     register int count;
 
-    log::print() << "[FT_IRCD is running]" << log::endl;
+    log::print() << "FT_IRCD is running" << log::endl;
     while (true)
     {
         count = Event::kevent();
@@ -230,13 +221,13 @@ int
 
     if (argc != 3)
     {
-        log::print() << "Usage :" << argv[0] << " <port> <password>"
+        log::print() << "usage: " << argv[0] << " <port> <password>"
                      << log::endl;
         return FAILURE;
     }
     if (PORT_MAX < (unsigned)(port = atoi(argv[1])))
     {
-        log::print() << port << "is out of Port range (0 ~ 65535)" << log::endl;
+        log::print() << port << "is out of port range (0 ~ 65535)" << log::endl;
         return FAILURE;
     }
 
