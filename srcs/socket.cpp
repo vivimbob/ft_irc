@@ -1,8 +1,16 @@
 #include "../includes/socket.hpp"
+#include <fcntl.h>
 #include <sys/event.h>
+#include <unistd.h>
 
 Socket::~Socket()
 {
+}
+
+void
+    Socket::m_disconnect()
+{
+    close(_fd);
 }
 
 void
@@ -57,11 +65,11 @@ void
 ssize_t
     Socket::receive(const struct kevent& event)
 {
-    _fd               = event.ident;
-    ssize_t _received = recv(_fd, _buffer, event.data, 0);
+    _fd       = event.ident;
+    _received = recv(_fd, _buffer, event.data, 0);
 
     if (_received == 0)
-        close(_fd);
+        m_disconnect();
     return _received;
 }
 
@@ -75,6 +83,12 @@ int
     else
         fcntl(_fd, F_SETFL, O_NONBLOCK);
     return _fd;
+}
+
+void
+    Socket::disconnect(int fd)
+{
+    close(fd);
 }
 
 void
