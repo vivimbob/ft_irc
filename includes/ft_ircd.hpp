@@ -25,7 +25,7 @@ class FT_IRCD : public Socket, public Event, public IRCD
     void m_accept();
     void m_receive();
     void m_requests_handler();
-    void m_request_handler();
+//   void m_request_handler();
     void m_disconnected(std::string reason = "");
     void m_disconnect(std::string reason = "");
     void m_send();

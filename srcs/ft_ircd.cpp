@@ -35,71 +35,25 @@ void
     Socket::disconnect(_client->get_fd());
     m_disconnected(reason);
 }
+
 void
     FT_IRCD::m_send()
 {
-    Client::t_to_client& buffer = _client->get_buffers().to_client;
-
-    if (buffer.queue.empty())
+    IRC::_to_client = &_client->get_buffers().to_client;
+    if (IRC::_to_client->queue.empty())
         return;
-    int     remain_data_len = buffer.queue.front().size() - buffer.offset;
-    ssize_t send_data_len   = send(
-          _events[_index].ident, buffer.queue.front().data() + buffer.offset,
-        _events[_index].data < remain_data_len ? _events[_index].data
-                                                 : remain_data_len,
-          0);
-    if (send_data_len >= 0)
+    if (0 <= Socket::send(_events[_index]))
     {
-        buffer.offset += send_data_len;
-        if (buffer.queue.front().size() <= (unsigned)buffer.offset)
+        IRC::_to_client->offset += Socket::_result;
+        if (IRC::_to_client->queue.front().size()
+            <= (unsigned)IRC::_to_client->offset)
         {
-            buffer.queue.pop();
-            buffer.offset = 0;
-            if (buffer.queue.empty())
+            IRC::_to_client->queue.pop();
+            IRC::_to_client->offset = 0;
+            if (IRC::_to_client->queue.empty())
                 Event::toggle(EVFILT_WRITE);
         }
     }
-}
-
-void
-    FT_IRCD::m_request_handler()
-{
-    int         offset;
-    int         fixed;
-    std::string buffer;
-
-    if (_request->command.size() && (_request->command.front() == ':'))
-
-    {
-        _request->command.erase(0, _request->command.find_first_of(' '));
-        _request->command.erase(0, _request->command.find_first_not_of(' '));
-    }
-    if (_request->command.size())
-    {
-        for (offset = 0; (_request->command[offset] != ' '
-                          && _request->command[offset] != '\0');
-             ++offset)
-            if ((unsigned)_request->command[offset] - 'a' < 26)
-                _request->command[offset] ^= 0b100000;
-        buffer = _request->command.substr(offset);
-        _request->command.erase(offset);
-    }
-    for (offset = 0;
-         (fixed = buffer.find_first_not_of(' ')) != (int)std::string::npos;)
-    {
-        offset = buffer.find_first_of(' ', fixed);
-        if ((offset != (int)std::string::npos) && buffer[fixed] != ':')
-            _request->parameter.push_back(buffer.substr(fixed, offset - fixed));
-        else
-        {
-            if (buffer[fixed] == ':')
-                ++fixed;
-            _request->parameter.push_back(buffer.substr(fixed));
-            break;
-        }
-        buffer.erase(0, offset);
-    }
-    _request->type = get_type(_request->command);
 }
 
 void
@@ -109,8 +63,8 @@ void
     IRC::_to_client = &_client->get_buffers().to_client;
     while (_requests->queue.size())
     {
-        IRC::_request = &_requests->queue.front();
-        m_request_handler();
+        IRCD::parse_request(_requests->queue.front());
+        IRCD::_request->type = get_type(_request->command);
         if (IRC::_request->type != EMPTY && IRC::_request->type != UNKNOWN)
         {
             if ((((unsigned)IRC::_request->type) - 1) < CONNECTION)
@@ -143,7 +97,7 @@ void
     if (0 < Socket::receive(_events[_index]))
     {
         Client::t_buffers& buffers = _client->get_buffers();
-        buffers.buffer.append(Socket::_buffer, Socket::_received);
+        buffers.buffer.append(Socket::_buffer, Socket::_result);
         while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
                != (int)std::string::npos)
         {
@@ -156,7 +110,7 @@ void
         if (buffers.to_client.queue.size())
             Event::toggle(EVFILT_READ);
     }
-    else if (Socket::_received == 0)
+    else if (Socket::_result == 0)
         m_disconnected("connection closed");
 }
 

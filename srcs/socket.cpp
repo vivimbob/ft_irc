@@ -1,4 +1,5 @@
 #include "../includes/socket.hpp"
+#include "../includes/client.hpp"
 #include <fcntl.h>
 #include <sys/event.h>
 #include <unistd.h>
@@ -64,12 +65,24 @@ void
 ssize_t
     Socket::receive(const struct kevent& event)
 {
-    _fd       = event.ident;
-    _received = recv(_fd, _buffer, event.data, 0);
+    _fd     = event.ident;
+    _result = recv(_fd, _buffer, event.data, 0);
 
-    if (_received == 0)
+    if (_result == 0)
         m_disconnect();
-    return _received;
+    return _result;
+}
+
+ssize_t
+    Socket::send(const struct kevent& event)
+{
+    _fd = event.ident;
+    Client::t_to_client& to_client
+        = ((Client*)event.udata)->get_buffers().to_client;
+    _remain = to_client.queue.front().size() - to_client.offset;
+    return (_result
+            = ::send(_fd, to_client.queue.front().data() + to_client.offset,
+                     event.data < _remain ? event.data : _remain, 0));
 }
 
 int

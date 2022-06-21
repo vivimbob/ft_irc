@@ -113,16 +113,58 @@ void
     log::print() << _client->get_names().nick << " is registered" << log::endl;
 }
 
-RESULT
-IRCD::m_empty()
+void
+    IRCD::parse_parameter(std::vector<std::string>& parameter)
 {
-    return OK;
+    for (_offset = 0;
+         (_pinned = _buffer.find_first_not_of(' ')) != (int)std::string::npos;)
+    {
+        _offset = _buffer.find_first_of(' ', _pinned);
+        if ((_offset != (int)std::string::npos) && _buffer[_pinned] != ':')
+            parameter.push_back(_buffer.substr(_pinned, _offset - _pinned));
+        else
+        {
+            if (_buffer[_pinned] == ':')
+                ++_pinned;
+            parameter.push_back(_buffer.substr(_pinned));
+            break;
+        }
+        _buffer.erase(0, _offset);
+    }
+    _buffer.clear();
+}
+
+void
+    IRCD::parse_command(std::string& command)
+{
+    for (_offset = 0; (command[_offset] != ' ' && command[_offset] != '\0');
+         ++_offset)
+        if ((unsigned)command[_offset] - 'a' < 26)
+            command[_offset] ^= 0b100000;
+    _buffer = command.substr(_offset);
+    command.erase(_offset);
+}
+
+void
+    IRCD::parse_request(Client::t_request& request)
+{
+    _request = &request;
+    if (_request->command.size() && (_request->command.front() == ':'))
+    {
+        _request->command.erase(0, _request->command.find_first_of(' '));
+        _request->command.erase(0, _request->command.find_first_not_of(' '));
+    }
+    if (_request->command.size())
+    {
+        parse_command(_request->command);
+        if (_buffer.size())
+            parse_parameter(_request->parameter);
+    }
 }
 
 void
     IRCD::empty()
 {
-    m_empty();
 }
 
 RESULT
@@ -196,21 +238,13 @@ void
 {
     if (m_user() == ERROR)
         return;
-
     _client->set_username(_request->parameter[0]);
     _client->set_realname(_request->parameter[3]);
-}
-
-RESULT
-IRCD::m_quit()
-{
-    return OK;
 }
 
 void
     IRCD::quit()
 {
-    m_quit();
     std::string message = "Quit";
     if (_request->parameter.size())
         message += " :" + _request->parameter[0];
