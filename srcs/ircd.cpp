@@ -33,27 +33,27 @@ IRCD::m_is_valid(TYPE type)
 {
     if (type == NICK)
     {
-        if (NICK_LENGTH_MAX < _target_0->length())
+        if (NICK_LENGTH_MAX < _target->length())
             return ERROR;
-        if (!std::isalpha((*_target_0)[0]))
+        if (!std::isalpha((*_target)[0]))
             return ERROR;
-        for (size_t index = 1; index < _target_0->length(); ++index)
-            if (!std::isalpha((*_target_0)[index])
-                && !std::isdigit((*_target_0)[index])
-                && !is_special((*_target_0)[index]))
+        for (size_t index = 1; index < _target->length(); ++index)
+            if (!std::isalpha((*_target)[index])
+                && !std::isdigit((*_target)[index])
+                && !is_special((*_target)[index]))
                 return ERROR;
     }
     if (type == CHANNEL_PREFIX)
     {
-        if ((*_target_0)[0] != CHANNEL_PREFIX)
+        if ((*_target)[0] != CHANNEL_PREFIX)
             return ERROR;
     }
     if (type == CHANNEL_NAME)
     {
-        if (CHANNEL_LENGTH_MAX < _target_0->length())
+        if (CHANNEL_LENGTH_MAX < _target->length())
             return ERROR;
-        for (size_t index = 0; index < _target_0->length(); ++index)
-            if (std::memchr(CHSTRING, (*_target_0)[index], 5))
+        for (size_t index = 0; index < _target->length(); ++index)
+            if (std::memchr(CHSTRING, (*_target)[index], 5))
                 return ERROR;
     }
     return OK;
@@ -117,16 +117,16 @@ void
     IRCD::parse_parameter(std::vector<std::string>& parameter)
 {
     for (_offset = 0;
-         (_pinned = _buffer.find_first_not_of(' ')) != (int)std::string::npos;)
+         (_index = _buffer.find_first_not_of(' ')) != (int)std::string::npos;)
     {
-        _offset = _buffer.find_first_of(' ', _pinned);
-        if ((_offset != (int)std::string::npos) && _buffer[_pinned] != ':')
-            parameter.push_back(_buffer.substr(_pinned, _offset - _pinned));
+        _offset = _buffer.find_first_of(' ', _index);
+        if ((_offset != (int)std::string::npos) && _buffer[_index] != ':')
+            parameter.push_back(_buffer.substr(_index, _offset - _index));
         else
         {
-            if (_buffer[_pinned] == ':')
-                ++_pinned;
-            parameter.push_back(_buffer.substr(_pinned));
+            if (_buffer[_index] == ':')
+                ++_index;
+            parameter.push_back(_buffer.substr(_index));
             break;
         }
         _buffer.erase(0, _offset);
@@ -192,13 +192,13 @@ IRCD::m_nick()
 {
     if (_request->parameter.empty())
         return m_to_client(err_no_nickname_given());
-    _target_0 = &_request->parameter[0];
+    _target = &_request->parameter[0];
     if (m_is_valid(NICK) == ERROR)
-        return m_to_client(err_erroneus_nickname(*_target_0));
-    if (_ft_ircd->_map.client.count(*_target_0))
+        return m_to_client(err_erroneus_nickname(*_target));
+    if (_ft_ircd->_map.client.count(*_target))
     {
-        if (*_target_0 != _client->get_names().nick)
-            return m_to_client(err_nickname_in_use(*_target_0));
+        if (*_target != _client->get_names().nick)
+            return m_to_client(err_nickname_in_use(*_target));
         return ERROR;
     }
     return OK;
@@ -213,12 +213,12 @@ void
     if (_client->is_registered())
     {
         if (_client->get_channels().size())
-            m_to_channels(cmd_nick_reply(*_target_0));
+            m_to_channels(cmd_nick_reply(*_target));
         _ft_ircd->_map.client.erase(_client->get_names().nick);
-        _ft_ircd->_map.client[*_target_0] = _client;
-        m_to_client(cmd_nick_reply(*_target_0));
+        _ft_ircd->_map.client[*_target] = _client;
+        m_to_client(cmd_nick_reply(*_target));
     }
-    _client->set_nickname(*_target_0);
+    _client->set_nickname(*_target);
     log::print() << "fd " << _client->get_fd()
                  << " client nick: " << _client->get_names().nick << log::endl;
 }
@@ -262,18 +262,18 @@ IRCD::m_join(PHASE phase, Channel* channel)
     else if (phase == TWO)
     {
         if (!m_is_valid(CHANNEL_PREFIX))
-            return m_to_client(err_no_such_channel(*_target_0));
+            return m_to_client(err_no_such_channel(*_target));
         if (!m_is_valid(CHANNEL_NAME))
-            return m_to_client(err_no_such_channel(*_target_0));
+            return m_to_client(err_no_such_channel(*_target));
         if (CLIENT_CAHNNEL_LIMIT <= _client->get_channels().size())
-            return m_to_client(err_too_many_channels(*_target_0));
+            return m_to_client(err_too_many_channels(*_target));
     }
     else if (phase == THREE)
     {
         if (_client->is_joined(channel))
             return ERROR;
         else if (channel->is_full())
-            return m_to_client(err_channel_is_full(*_target_0));
+            return m_to_client(err_channel_is_full(*_target));
     }
     return OK;
 }
@@ -288,23 +288,23 @@ void
     IRCD::t_iter  end      = channels.end();
     for (; iter != end; ++iter)
     {
-        _target_0 = iter.base();
+        _target = iter.base();
         if (m_join(TWO) == ERROR)
             continue;
-        if (!_ft_ircd->_map.channel.count(*_target_0))
+        if (!_ft_ircd->_map.channel.count(*_target))
             _ft_ircd->_map.channel.insert(
-                std::make_pair(*_target_0, new Channel(*_target_0)));
-        _channel = _ft_ircd->_map.channel[*_target_0];
+                std::make_pair(*_target, new Channel(*_target)));
+        _channel = _ft_ircd->_map.channel[*_target];
         if (m_join(THREE, _channel) == ERROR)
             continue;
         _channel->join(*_client);
         if (_channel->get_members().size() == 1)
         {
             _channel->set_operator(_client);
-            log::print() << "new channel: " << *_target_0 << log::endl;
+            log::print() << "new channel: " << *_target << log::endl;
         }
-        m_to_channel(cmd_join_reply(*_target_0));
-        m_to_client(cmd_join_reply(*_target_0));
+        m_to_channel(cmd_join_reply(*_target));
+        m_to_client(cmd_join_reply(*_target));
         if (_channel->get_topic().size())
             m_to_client(rpl_topic(_channel->get_name(), _channel->get_topic()));
         else
@@ -323,11 +323,11 @@ IRCD::m_part(PHASE phase)
     }
     else if (phase == TWO)
     {
-        if (!_ft_ircd->_map.channel.count(*_target_0))
-            return m_to_client(err_no_such_channel(*_target_0));
-        _channel = _ft_ircd->_map.channel[*_target_0];
+        if (!_ft_ircd->_map.channel.count(*_target))
+            return m_to_client(err_no_such_channel(*_target));
+        _channel = _ft_ircd->_map.channel[*_target];
         if (!_channel->is_joined(_client))
-            return m_to_client(err_not_on_channel(*_target_0));
+            return m_to_client(err_not_on_channel(*_target));
     }
     return OK;
 }
@@ -340,12 +340,12 @@ void
     t_cstr_vector channels = split(_request->parameter[0], ',');
     for (int i = 0, size = channels.size(); i < size; ++i)
     {
-        _target_0 = &channels[i];
+        _target = &channels[i];
         if (m_part(TWO) == ERROR)
             return;
         _channel->part(*_client);
-        m_to_channel(cmd_part_reply(*_target_0));
-        m_to_client(cmd_part_reply(*_target_0));
+        m_to_channel(cmd_part_reply(*_target));
+        m_to_client(cmd_part_reply(*_target));
         if (_channel->is_empty())
         {
             _ft_ircd->_map.channel.erase(_channel->get_name());
@@ -362,14 +362,14 @@ IRCD::m_topic()
 {
     if (_request->parameter.empty())
         return m_to_client(err_need_more_params());
-    _target_0 = &_request->parameter[0];
-    if (!_ft_ircd->_map.channel.count(*_target_0))
-        return m_to_client(err_no_such_channel(*_target_0));
-    _channel = _ft_ircd->_map.channel[*_target_0];
+    _target = &_request->parameter[0];
+    if (!_ft_ircd->_map.channel.count(*_target))
+        return m_to_client(err_no_such_channel(*_target));
+    _channel = _ft_ircd->_map.channel[*_target];
     if (!_channel->is_joined(_client))
-        return m_to_client(err_not_on_channel(*_target_0));
+        return m_to_client(err_not_on_channel(*_target));
     if ((_request->parameter.size() > 1) && (!_channel->is_operator(*_client)))
-        return m_to_client(err_chanoprivs_needed(*_target_0));
+        return m_to_client(err_chanoprivs_needed(*_target));
     return OK;
 }
 
@@ -381,15 +381,14 @@ void
     if (_request->parameter.size() == 1)
     {
         if (_channel->get_topic().size())
-            m_to_client(rpl_topic(*_target_0, _channel->get_topic()));
+            m_to_client(rpl_topic(*_target, _channel->get_topic()));
         else
-            m_to_client(rpl_notopic(*_target_0));
+            m_to_client(rpl_notopic(*_target));
     }
     else
     {
         _channel->set_topic(_request->parameter[1]);
-        log::print() << *_target_0
-                     << " channel topic: " << _channel->get_topic()
+        log::print() << *_target << " channel topic: " << _channel->get_topic()
                      << log::endl;
         m_to_client(cmd_topic_reply());
         m_to_channel(cmd_topic_reply());
@@ -399,7 +398,7 @@ void
 RESULT
 IRCD::m_names()
 {
-    _channel              = _ft_ircd->_map.channel[*_target_0];
+    _channel              = _ft_ircd->_map.channel[*_target];
     _buffer               = "= " + _channel->get_name() + " :";
     Channel::t_citer iter = _channel->get_members().begin();
     Channel::t_citer end  = _channel->get_members().end();
@@ -420,7 +419,7 @@ void
         IRC::t_ch_citer ch_iter = _ft_ircd->_map.channel.begin();
         for (; ch_iter != _ft_ircd->_map.channel.end(); ++ch_iter)
         {
-            _target_0 = &ch_iter->first;
+            _target = &ch_iter->first;
             m_names();
         }
         IRC::t_cl_citer cl_iter = _ft_ircd->_map.client.begin();
@@ -438,11 +437,11 @@ void
         t_cstr_vector channels = split(_request->parameter[0], ',');
         for (int i = 0, size = channels.size(); i < size; ++i)
         {
-            _target_0 = &channels[i];
-            if (_ft_ircd->_map.channel.count(*_target_0))
+            _target = &channels[i];
+            if (_ft_ircd->_map.channel.count(*_target))
                 m_names();
             else
-                m_to_client(rpl_endofnames(*_target_0));
+                m_to_client(rpl_endofnames(*_target));
         }
     }
 }
@@ -520,16 +519,16 @@ IRCD::m_kick(PHASE phase)
     else if (phase == TWO)
     {
         if ((!m_is_valid(CHANNEL_PREFIX)
-             || !_ft_ircd->_map.channel.count(*_target_0)))
-            return m_to_client(err_no_such_channel(*_target_0));
-        _channel = _ft_ircd->_map.channel[*_target_0];
+             || !_ft_ircd->_map.channel.count(*_target)))
+            return m_to_client(err_no_such_channel(*_target));
+        _channel = _ft_ircd->_map.channel[*_target];
         if (!_channel->is_operator(*_client))
-            return m_to_client(err_chanoprivs_needed(*_target_0));
-        if (!_ft_ircd->_map.client.count(*_target_1))
-            return m_to_client(err_no_such_nick(*_target_1));
-        _fixed = _ft_ircd->_map.client[*_target_1];
+            return m_to_client(err_chanoprivs_needed(*_target));
+        if (!_ft_ircd->_map.client.count(*_target_sub))
+            return m_to_client(err_no_such_nick(*_target_sub));
+        _fixed = _ft_ircd->_map.client[*_target_sub];
         if (!_channel->is_joined(_fixed))
-            return m_to_client(err_user_not_in_channel(*_target_1, *_target_0));
+            return m_to_client(err_user_not_in_channel(*_target_sub, *_target));
     }
     return OK;
 }
@@ -552,8 +551,8 @@ void
     for (int i = 0, max = std::max(param_0.size(), param_1.size()); i < max;
          ++i)
     {
-        _target_0 = names.base();
-        _target_1 = nicks.base();
+        _target     = names.base();
+        _target_sub = nicks.base();
         if (m_kick(TWO) == ERROR)
             goto next;
         _channel->part(*_fixed);
@@ -591,18 +590,18 @@ IRCD::m_mode(PHASE phase)
     }
     else if (phase == TWO)
     {
-        if (!_ft_ircd->_map.channel.count(*_target_0))
-            return m_to_client(err_no_such_channel(*_target_0));
-        _channel = _ft_ircd->_map.channel.at(*_target_0);
+        if (!_ft_ircd->_map.channel.count(*_target))
+            return m_to_client(err_no_such_channel(*_target));
+        _channel = _ft_ircd->_map.channel.at(*_target);
         if ((1 < _request->parameter.size())
             && !_channel->is_operator(*_client))
-            return m_to_client(err_chanoprivs_needed(*_target_0));
+            return m_to_client(err_chanoprivs_needed(*_target));
     }
     else if (phase == THREE)
     {
-        if (!_ft_ircd->_map.client.count(*_target_0))
-            return m_to_client(err_no_such_nick(*_target_0));
-        else if (*_target_0 != _client->get_names().nick)
+        if (!_ft_ircd->_map.client.count(*_target))
+            return m_to_client(err_no_such_nick(*_target));
+        else if (*_target != _client->get_names().nick)
             return m_to_client(err_users_dont_match(
                 _request->parameter.size() == 1 ? "view" : "change"));
         else if (_request->parameter.size() != 1)
@@ -612,83 +611,76 @@ IRCD::m_mode(PHASE phase)
 }
 
 void
+    IRCD::parse_flag(const std::string& flag)
+{
+    _offset = flag.find_first_of("+-") != std::string::npos ?: flag.size();
+    for (; _index < _offset; ++_index)
+        if ((unsigned)flag.c_str()[_index] < 128)
+            _ascii[*flag.c_str()] = true;
+}
+
+void
     IRCD::mode()
 {
     if (m_mode(ONE) == ERROR)
         return;
-    _target_0 = &_request->parameter[0];
+    _target = &_request->parameter[0];
     if (m_is_valid(CHANNEL_PREFIX))
     {
         if (m_mode(TWO) == ERROR)
             return;
         else if (_request->parameter.size() == 1)
-            m_to_client(rpl_channel_mode_is(*_target_0));
+            m_to_client(rpl_channel_mode_is(*_target));
         else
         {
-            _target_0 = &_request->parameter[1];
-            Channel::t_status status;
-            bool              toggle;
-
-            for (int i = 0, size = _target_0->size(); i < size; ++i)
+            bool toggle;
+            _target = &_request->parameter[1];
+            if ((_index = _target->find_first_of("+-")) != std::string::npos)
             {
-                if (std::memchr("+-", (*_target_0)[i], 2))
-                {
-                    toggle = (*_target_0)[i] == '+' ? true : false;
-                    for (int j = i + 1;
-                         j < size && !(std::memchr("+-", (*_target_0)[j], 2));
-                         ++j)
-                    {
-                        //                        if ((*_target_0)[j] == 'i')
-                        //                            status.invite = toggle;
-                        //                        else if ((*_target_0)[j] ==
-                        //                        't')
-                        //                            status.topic = toggle;
-                        //                        else if ((*_target_0)[j] ==
-                        //                        'n')
-                        //                            status.nomsg = toggle;
-                    }
-                }
-                else
-                    _ascii[(*_target_0)[i]] = true;
+                toggle = (*_target[_index].c_str() == '+' ? true : false);
+                parse_flag(_target[_index]);
             }
-
-            for (int i = 33; i < 127; ++i)
-                if (_ascii[i])
-                {
-                    m_to_client(err_unknown_mode((char)i));
-                    _ascii[i] = false;
-                }
-            // status 구조체 채널에 넘겨 주기
-            //채널에서 변경된 모드에 대한 문자열 받기
-            //	문자열이 비어 있다면 변경된
+            else
+            {
+            }
         }
-        //기호 찾기
-        //	기호 없음
-        //기호 상관 없이 중복은 처리하지 않음
-        //
-        // mode #abc +qwe
-        //
-        // 지원하는 채널 모드 [i,t,n]
-        // 1)문자열을 돌면서 새로운 문자열을 쓸까?
-        //	1) unknown mode
-        //		처리해야하는 문자가 아닌경우 여기다가 push_back(기호
-        //생략) 	2) 처리해야하는 모드 		1) 처리해야하는 문자인 경우
-        //여기다가 push_back 		2) 기호를 추가해야하는 데 문자열 맨
-        //마지막이 기호인 경우 		마지만 기호를 지우고 업데이트 		3)
-        //맨 마지막 문자가 기호인 경우 기호 제거 2)unknown모드 메시지가
-        // 있다면 보내줌
-        //
-        // 3)처리해야하는 모드를 담은 문자열이 있다면
-        //	1)문자열을 돌면서 플래그 세팅
-        //	2)cmd_mode_reply만들어서 전송
+        for (int i = 33; i < 127; ++i)
+            if (_ascii[i])
+            {
+                m_to_client(err_unknown_mode((char)i));
+                _ascii[i] = false;
+            }
+        // status 구조체 채널에 넘겨 주기
+        //채널에서 변경된 모드에 대한 문자열 받기
+        //	문자열이 비어 있다면 변경된
     }
-    else
-    {
-        if (m_mode(THREE) == ERROR)
-            return;
-        else if (_request->parameter.size() == 1)
-            m_to_client(rpl_user_mode_is());
-    }
+    //기호 찾기
+    //	기호 없음
+    //기호 상관 없이 중복은 처리하지 않음
+    //
+    // mode #abc +qwe
+    //
+    // 지원하는 채널 모드 [i,t,n]
+    // 1)문자열을 돌면서 새로운 문자열을 쓸까?
+    //	1) unknown mode
+    //		처리해야하는 문자가 아닌경우 여기다가 push_back(기호
+    //생략) 	2) 처리해야하는 모드 		1) 처리해야하는 문자인 경우
+    //여기다가 push_back 		2) 기호를 추가해야하는 데 문자열 맨
+    //마지막이 기호인 경우 		마지만 기호를 지우고 업데이트 		3)
+    //맨 마지막 문자가 기호인 경우 기호 제거 2)unknown모드 메시지가
+    // 있다면 보내줌
+    //
+    // 3)처리해야하는 모드를 담은 문자열이 있다면
+    //	1)문자열을 돌면서 플래그 세팅
+    //	2)cmd_mode_reply만들어서 전송
+    //}
+    // else
+    //{
+    //    if (m_mode(THREE) == ERROR)
+    //        return;
+    //    else if (_request->parameter.size() == 1)
+    //        m_to_client(rpl_user_mode_is());
+    //}
 }
 
 RESULT
@@ -712,20 +704,20 @@ void
     t_cstr_vector targets = split(_request->parameter.front(), ',');
     for (int i = 0, size = targets.size(); i < size; ++i)
     {
-        _target_0 = &targets[i];
+        _target = &targets[i];
         if (m_is_valid(CHANNEL_PREFIX))
         {
-            if (_ft_ircd->_map.channel.count(*_target_0)
-                && (_channel = _ft_ircd->_map.channel[*_target_0]))
-                m_to_channel(cmd_message_reply(*_target_0));
+            if (_ft_ircd->_map.channel.count(*_target)
+                && (_channel = _ft_ircd->_map.channel[*_target]))
+                m_to_channel(cmd_message_reply(*_target));
             else
-                m_to_client(err_no_such_channel(*_target_0));
+                m_to_client(err_no_such_channel(*_target));
         }
-        else if (_ft_ircd->_map.client.count(*_target_0))
-            m_to_client(*_ft_ircd->_map.client[*_target_0],
-                        cmd_message_reply(*_target_0));
+        else if (_ft_ircd->_map.client.count(*_target))
+            m_to_client(*_ft_ircd->_map.client[*_target],
+                        cmd_message_reply(*_target));
         else if (_request->command != "NOTICE")
-            m_to_client(err_no_such_nick(*_target_0));
+            m_to_client(err_no_such_nick(*_target));
     }
 }
 
