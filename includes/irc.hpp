@@ -33,6 +33,7 @@ class IRC
     std::string err_no_such_nick(const std::string&);
     std::string err_no_such_channel(const std::string&);
     std::string err_too_many_channels(const std::string&);
+    std::string err_cannot_send_to_channel(const std::string&, char);
     std::string err_too_many_targets(const std::string&);
     std::string err_no_recipient();
     std::string err_no_text_to_send();
@@ -50,6 +51,7 @@ class IRC
     std::string err_passwd_mismatch();
     std::string err_channel_is_full(const std::string&);
     std::string err_unknown_mode(char);
+    std::string err_invite_only_channel(const std::string&);
     std::string err_chanoprivs_needed(const std::string&);
     std::string err_u_mode_unknown_flag();
     std::string err_users_dont_match(const std::string&);
