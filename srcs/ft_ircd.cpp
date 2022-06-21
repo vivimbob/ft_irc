@@ -64,27 +64,27 @@ void
 }
 
 void
-    FT_IRCD::m_handler(Client::t_request& request)
+    FT_IRCD::m_request_handler()
 {
-    if (request.command.size() && (request.command[0] == ':'))
+    if (_request->command.size() && (_request->command[0] == ':'))
     {
-        request.command.erase(0, request.command.find_first_of(' '));
-        request.command.erase(0, request.command.find_first_not_of(' '));
+        _request->command.erase(0, _request->command.find_first_of(' '));
+        _request->command.erase(0, _request->command.find_first_not_of(' '));
     }
-    if (request.command.size())
+    if (_request->command.size())
     {
         int         offset;
         int         fixed;
         std::string buffer;
 
-        for (offset = 0; (request.command[offset] != ' '
-                          && request.command[offset] != '\0');
+        for (offset = 0; (_request->command[offset] != ' '
+                          && _request->command[offset] != '\0');
              ++offset)
-            if ((unsigned)request.command[offset] - 'a' < 26)
-                request.command[offset] ^= 0b100000;
-        if (request.command[offset] != '\0')
-            buffer = request.command.substr(offset);
-        request.command.erase(offset);
+            if ((unsigned)_request->command[offset] - 'a' < 26)
+                _request->command[offset] ^= 0b100000;
+        if (_request->command[offset] != '\0')
+            buffer = _request->command.substr(offset);
+        _request->command.erase(offset);
         offset = 0;
         for (int index = 0; buffer.size() && offset != (int)std::string::npos
                             && (fixed = buffer.find_first_not_of(' '))
@@ -95,34 +95,34 @@ void
             {
                 offset = buffer.find_first_of(' ', fixed);
                 if (offset != (int)std::string::npos)
-                    request.parameter.push_back(
+                    _request->parameter.push_back(
                         buffer.substr(fixed, offset - fixed));
                 else
                 {
-                    request.parameter.push_back(buffer.substr(fixed));
+                    _request->parameter.push_back(buffer.substr(fixed));
                     break;
                 }
                 buffer.erase(0, offset);
             }
             else
             {
-                request.parameter.push_back(buffer.substr(fixed + 1));
+                _request->parameter.push_back(buffer.substr(fixed + 1));
                 break;
             }
         }
     }
-    request.type = get_type(request.command);
+    _request->type = get_type(_request->command);
 }
 
 void
-    FT_IRCD::m_handler()
+    FT_IRCD::m_requests_handler()
 {
     IRC::_requests  = &_client->get_buffers().requests;
     IRC::_to_client = &_client->get_buffers().to_client;
     while (_requests->queue.size())
     {
         IRC::_request = &_requests->queue.front();
-        m_handler(*IRC::_request);
+        m_request_handler();
         if (IRC::_request->type != EMPTY && IRC::_request->type != UNKNOWN)
         {
             if ((((unsigned)IRC::_request->type) - 1) < CONNECTION)
@@ -164,7 +164,7 @@ void
             buffers.buffer.erase(0, buffers.offset + 2);
         }
         if (buffers.requests.queue.size())
-            m_handler();
+            m_requests_handler();
         if (buffers.to_client.queue.size())
             Event::toggle(EVFILT_READ);
     }
