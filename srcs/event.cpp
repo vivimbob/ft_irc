@@ -16,11 +16,10 @@ void
 void
     Event::toggle(Client& client, int EVFILT_TYPE)
 {
-    int ident = client.get_fd();
-
-    m_set(ident, EVFILT_TYPE, EV_DISABLE, 0, 0, &client);
-    m_set(ident, (EVFILT_TYPE == EVFILT_READ ? EVFILT_WRITE : EVFILT_READ),
-          EV_ENABLE, 0, 0, &client);
+    m_set(client.get_fd(), EVFILT_TYPE, EV_DISABLE, 0, 0, &client);
+    m_set(client.get_fd(),
+          (EVFILT_TYPE == EVFILT_READ ? EVFILT_WRITE : EVFILT_READ), EV_ENABLE,
+          0, 0, &client);
 }
 
 void
