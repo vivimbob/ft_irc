@@ -62,14 +62,14 @@ IRCD::m_is_valid(TYPE type)
 RESULT
 IRCD::m_to_client(std::string str)
 {
-    _to_client->queue.push(str);
+    _to_client->buffer.append(str);
     return ERROR;
 }
 
 void
     IRCD::m_to_client(Client& client, const std::string& str)
 {
-    client.get_buffers().to_client.queue.push(str);
+    client.get_buffers().to_client.buffer.append(str);
     _ft_ircd->toggle(client, EVFILT_READ);
 }
 

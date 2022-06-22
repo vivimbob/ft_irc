@@ -5,6 +5,7 @@
 
 Channel::Channel(const std::string& name) : _name(name)
 {
+    _status.init = 0;
 }
 
 Channel::~Channel()

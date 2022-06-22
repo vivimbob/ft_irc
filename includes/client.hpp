@@ -36,7 +36,7 @@ class Client
     typedef struct s_to_client
     {
         int                     offset;
-        std::queue<std::string> queue;
+		std::string				buffer;
     } t_to_client;
 
     typedef struct s_buffers

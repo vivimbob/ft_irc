@@ -40,19 +40,14 @@ void
     FT_IRCD::m_send()
 {
     IRC::_to_client = &_client->get_buffers().to_client;
-    if (IRC::_to_client->queue.empty())
+    if (IRC::_to_client->buffer.empty())
         return;
     if (0 <= Socket::send(_events[Event::_index]))
     {
         IRC::_to_client->offset += Socket::_result;
-        if (IRC::_to_client->queue.front().size()
+        if (IRC::_to_client->buffer.size()
             <= (unsigned)IRC::_to_client->offset)
-        {
-            IRC::_to_client->queue.pop();
-            IRC::_to_client->offset = 0;
-            if (IRC::_to_client->queue.empty())
                 Event::toggle(EVFILT_WRITE);
-        }
     }
 }
 
@@ -107,7 +102,7 @@ void
         }
         if (buffers.requests.queue.size())
             m_requests_handler();
-        if (buffers.to_client.queue.size())
+        if (buffers.to_client.buffer.size())
             Event::toggle(EVFILT_READ);
     }
     else if (Socket::_result == 0)

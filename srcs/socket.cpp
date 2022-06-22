@@ -79,9 +79,9 @@ ssize_t
     _fd = event.ident;
     Client::t_to_client& to_client
         = ((Client*)event.udata)->get_buffers().to_client;
-    _remain = to_client.queue.front().size() - to_client.offset;
+    _remain = to_client.buffer.size() - to_client.offset;
     return (_result
-            = ::send(_fd, to_client.queue.front().data() + to_client.offset,
+            = ::send(_fd, to_client.buffer.data() + to_client.offset,
                      event.data < _remain ? event.data : _remain, 0));
 }
 
