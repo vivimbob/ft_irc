@@ -694,7 +694,8 @@ IRCD::m_privmsg(PHASE phase)
         _channel = _ft_ircd->_map.channel[*_target];
         if (_channel->get_status(NOMSG) && !_channel->is_joined(_client)
             && _request->type == PRIVMSG)
-            m_to_client(err_cannot_send_to_channel(_channel->get_name(), 'n'));
+            return m_to_client(
+                err_cannot_send_to_channel(_channel->get_name(), 'n'));
     }
     return OK;
 }
