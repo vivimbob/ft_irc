@@ -275,7 +275,7 @@ IRCD::m_join(PHASE phase, Channel* channel)
         else if (channel->is_full())
             return m_to_client(err_channel_is_full(*_target));
         else if ((_channel->get_status(INVITE))
-                 && (_channel->is_invited(_client)))
+                 && (!_channel->is_invited(_client)))
             return m_to_client(err_invite_only_channel(_channel->get_name()));
     }
     return OK;
