@@ -47,7 +47,11 @@ void
         IRC::_to_client->offset += Socket::_result;
         if (IRC::_to_client->buffer.size()
             <= (unsigned)IRC::_to_client->offset)
-                Event::toggle(EVFILT_WRITE);
+		{
+            Event::toggle(EVFILT_WRITE);
+			IRC::_to_client->buffer.clear();
+			IRC::_to_client->offset = 0;
+		}
     }
 }
 

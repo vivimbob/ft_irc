@@ -95,7 +95,6 @@ void
     {
         Channel::t_citer users = _channel->get_members().begin();
         Channel::t_citer u_end = _channel->get_members().end();
-
         for (; users != u_end; ++users)
             if (!check.count(users->first) && users->first != _client)
             {
@@ -636,20 +635,20 @@ Channel::t_status
         {
             toggle = flag[_index - 1] == '+' ? true : false;
             if (_ascii[(int)'i'])
-			{
+            {
                 status.invite = toggle;
-				status.set_i = true;
-			}
+                status.set_i  = true;
+            }
             if (_ascii[(int)'t'])
-			{
+            {
                 status.topic = toggle;
-				status.set_t = true;
-			}
+                status.set_t = true;
+            }
             if (_ascii[(int)'n'])
-			{
+            {
                 status.nomsg = toggle;
-				status.set_n = true;
-			}
+                status.set_n = true;
+            }
         }
         _ascii[(int)'i'] = false;
         _ascii[(int)'t'] = false;
