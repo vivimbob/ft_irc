@@ -636,11 +636,20 @@ Channel::t_status
         {
             toggle = flag[_index - 1] == '+' ? true : false;
             if (_ascii[(int)'i'])
+			{
                 status.invite = toggle;
+				status.set_i = true;
+			}
             if (_ascii[(int)'t'])
+			{
                 status.topic = toggle;
+				status.set_t = true;
+			}
             if (_ascii[(int)'n'])
+			{
                 status.nomsg = toggle;
+				status.set_n = true;
+			}
         }
         _ascii[(int)'i'] = false;
         _ascii[(int)'t'] = false;

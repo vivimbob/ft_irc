@@ -18,6 +18,9 @@ class Channel
         unsigned char invite : 1;
         unsigned char topic : 1;
         unsigned char nomsg : 1;
+        unsigned char set_i: 1;
+        unsigned char set_t: 1;
+        unsigned char set_n: 1;
     } t_status;
 
   private:

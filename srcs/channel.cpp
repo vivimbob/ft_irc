@@ -112,7 +112,7 @@ std::string
     std::string on  = "+";
     std::string off = "-";
 
-    if (_status.invite != status.invite)
+    if (status.set_i && _status.invite != status.invite)
     {
         _status.invite = status.invite;
         if (status.invite)
@@ -120,7 +120,7 @@ std::string
         else
             off.push_back('i');
     }
-    if (_status.topic != status.topic)
+    if (status.set_t && _status.topic != status.topic)
     {
         _status.topic = status.topic;
         if (status.topic)
@@ -128,7 +128,7 @@ std::string
         else
             off.push_back('t');
     }
-    if (_status.nomsg != status.nomsg)
+    if (status.set_n && _status.nomsg != status.nomsg)
     {
         _status.nomsg = status.nomsg;
         if (status.nomsg)
