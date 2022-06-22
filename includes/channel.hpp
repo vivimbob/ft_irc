@@ -13,14 +13,18 @@ class Channel
     typedef std::set<Client*>               t_invitation;
     typedef t_membermap::const_iterator     t_citer;
 
-    typedef struct s_status
+    typedef union
     {
-        unsigned char invite : 1;
-        unsigned char topic : 1;
-        unsigned char nomsg : 1;
-        unsigned char set_i: 1;
-        unsigned char set_t: 1;
-        unsigned char set_n: 1;
+        struct
+        {
+            unsigned char invite : 1;
+            unsigned char topic : 1;
+            unsigned char nomsg : 1;
+            unsigned char set_i : 1;
+            unsigned char set_t : 1;
+            unsigned char set_n : 1;
+        };
+        unsigned char init;
     } t_status;
 
   private:
