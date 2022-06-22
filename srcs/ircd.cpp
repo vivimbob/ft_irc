@@ -709,8 +709,11 @@ void
     for (int i = 0, size = targets.size(); i < size; ++i)
     {
         _target = &targets[i];
-        if (m_is_valid(CHANNEL_PREFIX) && (m_privmsg(TWO) == OK))
-            m_to_channel(cmd_message_reply(*_target));
+        if (m_is_valid(CHANNEL_PREFIX))
+        {
+            if (m_privmsg(TWO) == OK)
+                m_to_channel(cmd_message_reply(*_target));
+        }
         else if (_ft_ircd->_map.client.count(*_target))
             m_to_client(*_ft_ircd->_map.client[*_target],
                         cmd_message_reply(*_target));
