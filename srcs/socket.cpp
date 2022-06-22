@@ -59,7 +59,6 @@ void
     }
     log::print() << "listen on socket fd " << _socket.fd << log::endl;
     fcntl(_socket.fd, F_SETFL, O_NONBLOCK);
-    log::print() << "socket fd " << _socket.fd << " nonblock" << log::endl;
 }
 
 ssize_t
@@ -76,21 +75,18 @@ ssize_t
 ssize_t
     Socket::send(const struct kevent& event)
 {
-    _fd = event.ident;
     Client::t_to_client& to_client
         = ((Client*)event.udata)->get_buffers().to_client;
     _remain = to_client.buffer.size() - to_client.offset;
     return (_result
-            = ::send(_fd, to_client.buffer.data() + to_client.offset,
+            = ::send(event.ident, to_client.buffer.data() + to_client.offset,
                      event.data < _remain ? event.data : _remain, 0));
 }
 
 int
     Socket::accept()
 {
-    _fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len);
-
-    if (_fd == -1)
+    if ((_fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len)) == -1)
         log::print() << "accept failed errno: " << errno << ":"
                      << strerror(errno) << log::endl;
     else

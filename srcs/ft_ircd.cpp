@@ -140,7 +140,6 @@ void
     while (true)
     {
         count = Event::kevent();
-        log::print() << count << " new kevent" << log::endl;
         for (Event::_index = 0; Event::_index < count; ++Event::_index)
         {
             IRC::_client = (Client*)_events[Event::_index].udata;
@@ -159,7 +158,7 @@ FT_IRCD::~FT_IRCD()
 {
 }
 
-FT_IRCD::FT_IRCD(int port, char* password)
+FT_IRCD::FT_IRCD(int port, const char* const password)
 {
     Socket::initialize(port);
     Event::initialize(_socket.fd);
@@ -180,7 +179,7 @@ int
     }
     if (PORT_MAX < (unsigned)(port = atoi(argv[1])))
     {
-        log::print() << port << "is out of port range (0 ~ 65535)" << log::endl;
+        log::print() << argc << "is out of port range (0 ~ 65535)" << log::endl;
         return FAILURE;
     }
 
