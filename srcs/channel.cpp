@@ -1,11 +1,15 @@
 #include "../includes/channel.hpp"
 #include "../includes/client.hpp"
+#include "../includes/log.hpp"
 
 /* channel class constructor and destructor begin */
 
-Channel::Channel(const std::string& name) : _name(name)
+Channel::Channel(const std::string& name, Client* client) : _name(name)
 {
-    _status.init = 0;
+    _status.state = 0;
+    this->join(client);
+    this->set_operator(client);
+    log::print() << "new channel: " << name << log::endl;
 }
 
 Channel::~Channel()
@@ -65,6 +69,22 @@ std::string
     return str;
 }
 
+bool
+    Channel::is_signed()
+{
+    if (_reserved.sign.state)
+        return true;
+    return false;
+}
+
+bool
+    Channel::is_reserved()
+{
+    if (_reserved.flags.state)
+        return true;
+    return false;
+}
+
 /* channel class getter end */
 
 /* channel class setter begin */
@@ -107,37 +127,62 @@ void
     }
 }
 
-std::string
-    Channel::set_status(t_status status)
+void
+    Channel::set_status(std::string& result)
 {
-    std::string on  = "+";
-    std::string off = "-";
+    bool sign = _reserved.sign.positive ? true : false;
+    sign == true ? result.push_back('+') : result.push_back('-');
 
-    if (status.set_i && _status.invite != status.invite)
+    if (_reserved.flags.invite && (sign != _reserved.flags.invite))
     {
-        _status.invite = status.invite;
-        if (status.invite)
-            on.push_back('i');
-        else
-            off.push_back('i');
+        _status.invite = sign;
+        result.push_back('i');
     }
-    if (status.set_t && _status.topic != status.topic)
+    if (_reserved.flags.nomsg && (sign != _reserved.flags.nomsg))
     {
-        _status.topic = status.topic;
-        if (status.topic)
-            on.push_back('t');
-        else
-            off.push_back('t');
+        _status.nomsg = sign;
+        result.push_back('n');
     }
-    if (status.set_n && _status.nomsg != status.nomsg)
+    if (_reserved.flags.topic && (sign != _reserved.flags.topic))
     {
-        _status.nomsg = status.nomsg;
-        if (status.nomsg)
-            on.push_back('n');
-        else
-            off.push_back('n');
+        _status.topic = sign;
+        result.push_back('t');
     }
-    return (on.size() > 1 ? on : "") + (off.size() > 1 ? off : "");
+}
+
+void
+    Channel::reserve_flags(const char c)
+{
+    switch (c)
+    {
+        case 'i':
+            _reserved.flags.invite = true;
+            break;
+        case 'n':
+            _reserved.flags.nomsg = true;
+            break;
+        case 't':
+            _reserved.flags.topic = true;
+            break;
+        default:
+            break;
+    }
+}
+
+void
+    Channel::reserve_sign(const char c)
+{
+    if (c == '+')
+        _reserved.sign.positive = true;
+    else
+        _reserved.sign.negative = true;
+}
+
+void
+    Channel::reserve_clear()
+{
+    _reserved.sign.state  = 0;
+    _reserved.flags.state = 0;
 }
 
 /* channel class setter end */

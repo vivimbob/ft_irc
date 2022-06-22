@@ -2,6 +2,7 @@
 #define IRCD_HPP
 
 #include "irc.hpp"
+#include "resources.hpp"
 
 class IRCD : public IRC
 {
@@ -24,22 +25,25 @@ class IRCD : public IRC
     int                _offset;
     int                _index;
 
-    // utility start
     RESULT m_is_valid(TYPE);
     RESULT m_to_client(std::string);
     void   m_to_client(Client&, const std::string&);
     void   m_to_channel(const std::string&);
+    void   m_mode_valid(const char);
+    void   m_mode_invalid(const char);
+    void   m_mode_sign(const char);
+    void   m_mode_initialize();
 
   protected:
-    void              m_to_channels(const std::string&);
-    TYPE              get_type(std::string command);
-    void              registration();
-    void              parse_command(std::string&);
-    void              parse_parameter(std::vector<std::string>&);
-    void              parse_request(Client::t_request&);
-    Channel::t_status parse_flag(const std::string&);
-    t_commands        _commands;
-    // utiluity end
+    void       m_to_channels(const std::string&);
+    TYPE       get_type(std::string command);
+    void       registration();
+    void       parse_parameter(std::vector<std::string>&);
+    void       parse_command(std::string&);
+    void       parse_request(Client::t_request&);
+    RESULT     parse_flag(const std::string&);
+    t_commands _commands;
+    void (IRCD::*_modes[128])(const char);
 
   private:
     RESULT m_pass();

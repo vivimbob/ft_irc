@@ -295,16 +295,17 @@ void
         if (m_join(TWO) == ERROR)
             continue;
         if (!_ft_ircd->_map.channel.count(*_target))
-            _ft_ircd->_map.channel.insert(
-                std::make_pair(*_target, new Channel(*_target)));
-        _channel = _ft_ircd->_map.channel[*_target];
-        if (m_join(THREE, _channel) == ERROR)
-            continue;
-        _channel->join(_client);
-        if (_channel->get_members().size() == 1)
         {
-            _channel->set_operator(_client);
-            log::print() << "new channel: " << *_target << log::endl;
+            _ft_ircd->_map.channel.insert(
+                std::make_pair(*_target, new Channel(*_target, _client)));
+            _channel = _ft_ircd->_map.channel[*_target];
+        }
+        else
+        {
+            _channel = _ft_ircd->_map.channel[*_target];
+            if (m_join(THREE, _channel) == ERROR)
+                continue;
+            _channel->join(_client);
         }
         m_to_channel(cmd_join_reply(*_target));
         m_to_client(cmd_join_reply(*_target));
@@ -612,53 +613,40 @@ IRCD::m_mode(PHASE phase)
         else if (_request->parameter.size() != 1)
             return m_to_client(err_u_mode_unknown_flag());
     }
+    else if (phase == FOUR)
+    {
+        for (int i = 0, size = -_request->parameter[1].size(); i < size; ++i)
+            if ((unsigned)_request->parameter[1][i] < 128)
+                (this->*IRCD::_modes[i])(_request->parameter[1][i]);
+        if (!_channel->is_reserved())
+            return ERROR;
+    }
     return OK;
 }
 
-Channel::t_status
-    IRCD::parse_flag(const std::string& flag)
+RESULT
+IRCD::parse_flag(const std::string& flag)
 {
-    Channel::t_status status;
-    bool              toggle;
+    std::string result;
 
-    std::memset((void*)_ascii, 0, sizeof(_ascii));
-    for (_index = 0, _offset = 0;
+    for (_offset = flag.find_first_of("+-");
          (_index = flag.find_first_not_of("+-", _offset))
          != (int)std::string::npos;)
     {
+        _channel->reserve_clear();
+        _channel->reserve_sign(flag[_index - 1]);
         _offset = flag.find_first_of("+-", _index) != std::string::npos
                       ? flag.find_first_of("+-", _index)
                       : flag.size();
         for (int i = _index; i < _offset; ++i)
-            if ((unsigned)flag[i] < 128)
-                _ascii[(int)flag[i]] = true;
-        if (0 < _index && (flag[_index - 1] == '+' || flag[_index - 1] == '-'))
-        {
-            toggle = flag[_index - 1] == '+' ? true : false;
-            if (_ascii[(int)'i'])
-			{
-                status.invite = toggle;
-				status.set_i = true;
-			}
-            if (_ascii[(int)'t'])
-			{
-                status.topic = toggle;
-				status.set_t = true;
-			}
-            if (_ascii[(int)'n'])
-			{
-                status.nomsg = toggle;
-				status.set_n = true;
-			}
-        }
-        _ascii[(int)'i'] = false;
-        _ascii[(int)'t'] = false;
-        _ascii[(int)'n'] = false;
+            if ((unsigned)flag[i] - 105 < 128)
+                _channel->reserve_flags(flag[i]);
+        if (_channel->is_reserved())
+            _channel->set_status(result);
     }
-    for (int i = 33; i < 127; ++i)
-        if (_ascii[i])
-            m_to_client(err_unknown_mode((char)i));
-    return status;
+    if (result.size())
+        return m_to_client(cmd_mode_reply(_channel->get_name(), result));
+    return OK;
 }
 
 void
@@ -673,16 +661,19 @@ void
             return;
         else if (_request->parameter.size() == 1)
             m_to_client(rpl_channel_mode_is(*_target, _channel->get_status()));
-        else
-        {
-            _buffer = _channel->set_status(parse_flag(_request->parameter[1]));
-            if (_buffer.size())
-                m_to_client(cmd_mode_reply(_channel->get_name(), _buffer));
-            else if (_request->parameter[1].find_first_of("itn")
-                     != (unsigned)std::string::npos)
-                m_to_client(rpl_channel_mode_is(_channel->get_name(),
-                                                _channel->get_status()));
-        }
+        else if (m_mode(FOUR) == ERROR)
+            return;
+        else if (!_channel->is_signed()
+                 || (parse_flag(_request->parameter[1]) == ERROR))
+            m_to_client(rpl_channel_mode_is(_channel->get_name(),
+                                            _channel->get_status()));
+    }
+    else
+    {
+        if (m_mode(THREE) == ERROR)
+            return;
+        else if (_request->parameter.size() == 1)
+            m_to_client(rpl_user_mode_is());
     }
 }
 
@@ -749,12 +740,43 @@ void
     m_to_client(err_not_registered());
 }
 
+void
+    IRCD::m_mode_sign(const char c)
+{
+    _channel->reserve_sign(c);
+}
+
+void
+    IRCD::m_mode_valid(const char c)
+{
+    _channel->reserve_flags(c);
+}
+
+void
+    IRCD::m_mode_invalid(const char c)
+{
+    m_to_client(err_unknown_mode(c));
+}
+
+void
+    IRCD::m_mode_initialize()
+{
+    for (int i = 0; i < 127; ++i)
+        _modes[i] = &IRCD::m_mode_invalid;
+    _modes[(int)'+'] = &IRCD::m_mode_sign;
+    _modes[(int)'-'] = &IRCD::m_mode_sign;
+    _modes[(int)'i'] = &IRCD::m_mode_valid;
+    _modes[(int)'n'] = &IRCD::m_mode_valid;
+    _modes[(int)'t'] = &IRCD::m_mode_valid;
+}
+
 IRCD::~IRCD()
 {
 }
 
 IRCD::IRCD()
 {
+    std::memset((void*)_ascii, 0, sizeof(_ascii));
     _commands.push_back(&IRCD::empty);
     _commands.push_back(&IRCD::pass);
     _commands.push_back(&IRCD::nick);
@@ -772,4 +794,5 @@ IRCD::IRCD()
     _commands.push_back(&IRCD::notice);
     _commands.push_back(&IRCD::unknown);
     _commands.push_back(&IRCD::unregistered);
+    m_mode_initialize();
 }

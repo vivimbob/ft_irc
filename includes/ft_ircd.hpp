@@ -15,7 +15,7 @@ class FT_IRCD : public Socket, public Event, public IRCD
     friend class IRCD;
 
   private:
-    t_map _map;
+    IRCD::t_map _map;
 
   private:
     FT_IRCD();

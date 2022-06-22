@@ -76,7 +76,9 @@ enum PHASE
 {
     ONE,
     TWO,
-    THREE
+    THREE,
+    FOUR,
+    FIVE
 };
 
 #endif /* RESOURCES_HPP */
