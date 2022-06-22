@@ -95,7 +95,6 @@ void
     {
         Channel::t_citer users = _channel->get_members().begin();
         Channel::t_citer u_end = _channel->get_members().end();
-
         for (; users != u_end; ++users)
             if (!check.count(users->first) && users->first != _client)
             {
