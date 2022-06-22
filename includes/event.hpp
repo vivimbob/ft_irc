@@ -20,6 +20,7 @@ class Event
                  int     data,
                  void*   udata);
     int    _kqueue;
+    int    _count;
 
   protected:
     struct kevent _events[EVENTS_MAX];

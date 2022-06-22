@@ -49,14 +49,15 @@ void
 int
     Event::kevent()
 {
-    return ::kevent(_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
+    _count = ::kevent(_kqueue, NULL, 0, _events, EVENTS_MAX, NULL);
+    log::print() << _count << " new kevent" << log::endl;
+    return (_count);
 }
 
 void
     Event::initialize(int socket_fd)
 {
-    _kqueue = kqueue();
-    if (_kqueue == -1)
+    if ((_kqueue = ::kqueue()) == -1)
     {
         log::print() << "kqueue failed errno: " << errno << ":"
                      << strerror(errno) << log::endl;
@@ -64,7 +65,6 @@ void
     }
     log::print() << "kqueue: " << _kqueue << log::endl;
     m_set(socket_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    log::print() << "socket fd " << socket_fd << " read event ok" << log::endl;
 }
 
 Event::Event()

@@ -30,7 +30,7 @@ class FT_IRCD : public Socket, public Event, public IRCD
     void m_send();
 
   public:
-    FT_IRCD(int port, char* password);
+    FT_IRCD(int port, const char* const password);
     ~FT_IRCD();
     void run();
 };
