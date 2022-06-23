@@ -1,6 +1,13 @@
 1234
-one,two
-0 join #a
-1 join #a
-0 kick #a
-0 kick two
+one,two,three,four,five,six
+5 join #a,#b,#c,#d,#e,#f
+0 join #a,#b,#c,#d,#e,#f
+1 join #a,#b,#c,#d,#e,#f
+2 join #a,#b,#c,#d,#e,#f
+3 join #a,#b,#c,#d,#e,#f
+4 join #a,#b,#c,#d,#e,#f
+5 kick #a
+5 kick two
+5 kick #a,#b two,three,four,five,six
+5 kick #a,#b,#c,#d,#e,#f two,thre
+
