@@ -32,8 +32,8 @@ const std::string&
     return _topic;
 }
 
-const Channel::t_membermap&
-    Channel::get_members()
+const Channel::t_map_member&
+    Channel::get_map_member()
 {
     return _members;
 }
@@ -222,7 +222,7 @@ bool
 bool
     Channel::is_invited(Client* client)
 {
-    return _invitations.count(client);
+    return _invitees.count(client);
 }
 
 /* channel class is_function end */
@@ -232,9 +232,9 @@ bool
 void
     Channel::join(Client* client)
 {
-    _members.insert(std::make_pair(client, t_membership()));
+    _members.insert(std::make_pair(client, t_str_info()));
     client->joined(this);
-    _invitations.erase(client);
+    _invitees.erase(client);
 }
 
 void
@@ -247,6 +247,6 @@ void
 void
     Channel::invitation(Client* client)
 {
-    _invitations.insert(client);
+    _invitees.insert(client);
 }
 /* channel class user function end */
