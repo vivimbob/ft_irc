@@ -1,0 +1,5 @@
+1234
+one,two
+0 join #channel
+1 join #channel
+1 kick #channel one
