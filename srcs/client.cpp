@@ -6,12 +6,16 @@
 
 Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
-    _buffers.requests.from = this;
-    _names.host            = HOSTNAME;
-    _names.server          = SERVERNAME;
-	_status.registered = 0;
-	_buffers.offset = 0;
-	_buffers.to_client.offset = 0;
+    _buffers.requests.from    = this;
+    _names.host               = HOSTNAME;
+    _names.server             = SERVERNAME;
+    _status.registered        = 0;
+    _buffers.offset           = 0;
+    _buffers.to_client.offset = 0;
+}
+
+Client::Client()
+{
 }
 
 Client::~Client()

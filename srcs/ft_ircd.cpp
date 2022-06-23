@@ -45,13 +45,12 @@ void
     if (0 <= Socket::send(_events[Event::_index]))
     {
         IRC::_to_client->offset += Socket::_result;
-        if (IRC::_to_client->buffer.size()
-            <= (unsigned)IRC::_to_client->offset)
-		{
+        if (IRC::_to_client->buffer.size() <= (unsigned)IRC::_to_client->offset)
+        {
             Event::toggle(EVFILT_WRITE);
-			IRC::_to_client->buffer.clear();
-			IRC::_to_client->offset = 0;
-		}
+            IRC::_to_client->buffer.clear();
+            IRC::_to_client->offset = 0;
+        }
     }
 }
 
@@ -122,6 +121,13 @@ void
     log::print() << "accept fd " << _fd << log::endl;
 }
 
+void
+    FT_IRCD::m_create_bot()
+{
+    Bot* _bot = new Bot(BOTNAME);
+    _map.client.insert(std::make_pair(BOTNAME, _bot));
+}
+
 // struct kevent {
 //	uintptr_t       ident;  /* identifier for this event */
 //	int16_t         filter; /* filter for event */
@@ -137,6 +143,7 @@ void
     register int count;
 
     log::print() << "FT_IRCD is running" << log::endl;
+    m_create_bot();
     while (true)
     {
         count = Event::kevent();
@@ -149,13 +156,15 @@ void
                 FT_IRCD::m_receive();
             else if (_events[Event::_index].filter == EVFILT_WRITE)
                 FT_IRCD::m_send();
-            IRC::_client = nullptr;
+            // IRC::_client = nullptr;
         }
+        _bot->handler(*IRC::_client);
     }
 }
 
 FT_IRCD::~FT_IRCD()
 {
+    delete _bot;
 }
 
 FT_IRCD::FT_IRCD(int port, const char* const password)

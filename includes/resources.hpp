@@ -9,6 +9,7 @@
 
 #define HOSTNAME   "localhost"
 #define SERVERNAME "ft_ircd"
+#define BOTNAME    "BOT"
 
 #define CHANNEL_USER_LIMIT   42
 #define CLIENT_CAHNNEL_LIMIT 10
@@ -62,6 +63,14 @@ enum TYPE
     CHANNEL_NAME,
     NOMSG,
     CHANNEL_PREFIX = '#'
+};
+
+enum BOTTYPE
+{
+    HELP,
+    DATETIME,
+    COIN,
+    NONE
 };
 
 enum STATUS

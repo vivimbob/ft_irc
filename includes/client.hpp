@@ -35,8 +35,8 @@ class Client
 
     typedef struct s_to_client
     {
-        int                     offset;
-		std::string				buffer;
+        int         offset;
+        std::string buffer;
     } t_to_client;
 
     typedef struct s_buffers
@@ -63,13 +63,16 @@ class Client
   private:
     sockaddr_in        _addr;
     int                _fd;
-    t_names            _names;
-    t_buffers          _buffers;
     std::set<Channel*> _channels;
     t_status           _status;
 
+  protected:
+    t_names   _names;
+    t_buffers _buffers;
+
   public:
     Client(sockaddr_in client_addr, int client_fd);
+    Client();
     ~Client();
     sockaddr_in               get_addr();
     int                       get_fd();
