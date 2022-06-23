@@ -1,0 +1,24 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #channel
+:ft_ircd 331 one #channel :No topic is set
+:ft_ircd 353 one = #channel :@one 
+:ft_ircd 366 one #channel :End of NAMES list
+:two!testuser@localhost JOIN #channel
+:two!testuser@localhost QUIT :Quit :i'm a creep
+:observer!testuser@localhost JOIN #channel
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+
+observer
+:ft_ircd 001 observer Welcome to Internet Relay Network
+observer!testuser@localhost
+:observer!testuser@localhost JOIN #channel
+:ft_ircd 331 observer #channel :No topic is set
+:ft_ircd 353 observer = #channel :@one observer 
+:ft_ircd 366 observer #channel :End of NAMES list
+:one!testuser@localhost QUIT :Quit
