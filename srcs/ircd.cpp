@@ -1,5 +1,6 @@
 #include "../includes/ft_ircd.hpp"
 #include "../includes/irc.hpp"
+#include <algorithm>
 #include <sstream>
 
 static IRCD::t_cstr_vector
@@ -587,44 +588,6 @@ void
 }
 
 RESULT
-IRCD::m_mode(PHASE phase)
-{
-    if (phase == ONE)
-    {
-        if (_request->parameter.empty())
-            return m_to_client(err_need_more_params());
-    }
-    else if (phase == TWO)
-    {
-        if (!_ft_ircd->_map.channel.count(*_target))
-            return m_to_client(err_no_such_channel(*_target));
-        _channel = _ft_ircd->_map.channel.at(*_target);
-        if ((1 < _request->parameter.size()) && !_channel->is_operator(_client))
-            return m_to_client(err_chanoprivs_needed(*_target));
-    }
-    else if (phase == THREE)
-    {
-        for (int i = 0, size = _request->parameter[1].size(); i < size; ++i)
-            if ((unsigned)_request->parameter[1][i] - 32 < 127)
-                (this->*IRCD::_modes[(int)_request->parameter[1][i]])(
-                    _request->parameter[1][i]);
-        if (!_channel->is_reserved())
-            return ERROR;
-    }
-    else if (phase == FOUR)
-    {
-        if (!_ft_ircd->_map.client.count(*_target))
-            return m_to_client(err_no_such_nick(*_target));
-        else if (*_target != _client->get_names().nick)
-            return m_to_client(err_users_dont_match(
-                _request->parameter.size() == 1 ? "view" : "change"));
-        else if (_request->parameter.size() != 1)
-            return m_to_client(err_u_mode_unknown_flag());
-    }
-    return OK;
-}
-
-RESULT
 IRCD::parse_flag(const std::string& flag)
 {
     std::string result;
@@ -646,6 +609,45 @@ IRCD::parse_flag(const std::string& flag)
     }
     if (result.size())
         return m_to_client(cmd_mode_reply(_channel->get_name(), result));
+    return OK;
+}
+
+RESULT
+IRCD::m_mode(PHASE phase)
+{
+    if (phase == ONE)
+    {
+        if (_request->parameter.empty())
+            return m_to_client(err_need_more_params());
+    }
+    else if (phase == TWO)
+    {
+        if (!_ft_ircd->_map.channel.count(*_target))
+            return m_to_client(err_no_such_channel(*_target));
+        _channel = _ft_ircd->_map.channel.at(*_target);
+        if ((1 < _request->parameter.size()) && !_channel->is_operator(_client))
+            return m_to_client(err_chanoprivs_needed(*_target));
+    }
+    else if (phase == THREE)
+    {
+        for (int i = 0, size = _request->parameter[1].size(); i < size; ++i)
+            if ((unsigned)_request->parameter[1][i] - 32 < 127)
+                (this->*IRCD::_modes[(int)_request->parameter[1][i]])(
+                    _request->parameter[1][i]);
+        std::memset((void*)_ascii, 0, sizeof(_ascii));
+        if (!_channel->is_reserved())
+            return ERROR;
+    }
+    else if (phase == FOUR)
+    {
+        if (!_ft_ircd->_map.client.count(*_target))
+            return m_to_client(err_no_such_nick(*_target));
+        else if (*_target != _client->get_names().nick)
+            return m_to_client(err_users_dont_match(
+                _request->parameter.size() == 1 ? "view" : "change"));
+        else if (_request->parameter.size() != 1)
+            return m_to_client(err_u_mode_unknown_flag());
+    }
     return OK;
 }
 
@@ -691,7 +693,10 @@ void
 void
     IRCD::m_mode_invalid(const char c)
 {
+    if (_ascii[(int)c])
+        return;
     m_to_client(err_unknown_mode(c));
+    _ascii[(int)c] = true;
 }
 
 void
@@ -704,6 +709,7 @@ void
     _modes[(int)'i'] = &IRCD::m_mode_valid;
     _modes[(int)'n'] = &IRCD::m_mode_valid;
     _modes[(int)'t'] = &IRCD::m_mode_valid;
+    std::memset((void*)_ascii, 0, sizeof(_ascii));
 }
 
 RESULT
@@ -792,6 +798,5 @@ IRCD::IRCD()
     _commands.push_back(&IRCD::notice);
     _commands.push_back(&IRCD::unknown);
     _commands.push_back(&IRCD::unregistered);
-    std::memset((void*)_ascii, 0, sizeof(_ascii));
     m_mode_initialize();
 }
