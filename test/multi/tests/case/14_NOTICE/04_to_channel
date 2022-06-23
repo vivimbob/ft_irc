@@ -1,0 +1,6 @@
+1234
+one,two,three
+0 join #channel
+1 join #channel
+2 join #channel
+0 notice #channel :hello world
