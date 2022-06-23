@@ -421,13 +421,13 @@ void
 {
     if (_request->parameter.empty())
     {
-        IRC::t_ch_citer ch_iter = _ft_ircd->_map.channel.begin();
+        IRC::t_iter_ch ch_iter = _ft_ircd->_map.channel.begin();
         for (; ch_iter != _ft_ircd->_map.channel.end(); ++ch_iter)
         {
             _target = &ch_iter->first;
             m_names();
         }
-        IRC::t_cl_citer cl_iter = _ft_ircd->_map.client.begin();
+        IRC::t_iter_cl cl_iter = _ft_ircd->_map.client.begin();
         for (; cl_iter != _ft_ircd->_map.client.end(); ++cl_iter)
             if (cl_iter->second->get_channels().empty())
                 _buffer.append(cl_iter->first + " ");
@@ -465,7 +465,7 @@ void
 {
     if (_request->parameter.empty())
     {
-        IRC::t_ch_citer iter = _ft_ircd->_map.channel.begin();
+        IRC::t_iter_ch iter = _ft_ircd->_map.channel.begin();
         for (_channel = iter->second; iter != _ft_ircd->_map.channel.end();
              _channel = (++iter)->second)
             m_list();
@@ -775,6 +775,12 @@ void
     m_to_client(err_not_registered());
 }
 
+void
+    IRCD::m_bot_initialize()
+{
+    _map.client.insert(std::make_pair(BOTNAME, _bot));
+}
+
 IRCD::~IRCD()
 {
 }
@@ -799,4 +805,5 @@ IRCD::IRCD()
     _commands.push_back(&IRCD::unknown);
     _commands.push_back(&IRCD::unregistered);
     m_mode_initialize();
+    m_bot_initialize();
 }

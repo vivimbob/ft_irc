@@ -1,8 +1,6 @@
-#pragma once
-#ifndef FT_TEMP_HPP
-#define FT_TEMP_HPP
+#ifndef FT_IRCD_HPP
+#define FT_IRCD_HPP
 
-#include "bot.hpp"
 #include "channel.hpp"
 #include "client.hpp"
 #include "event.hpp"
@@ -18,9 +16,6 @@ class FT_IRCD : public Socket, public Event, public IRCD
     friend class IRCD;
 
   private:
-    IRCD::t_map _map;
-    Bot*        _bot;
-
   private:
     FT_IRCD();
     FT_IRCD(const FT_IRCD&);
@@ -39,4 +34,4 @@ class FT_IRCD : public Socket, public Event, public IRCD
     ~FT_IRCD();
     void run();
 };
-#endif /* FT_TEMP_HPP */
+#endif /* FT_IRCD_HPP */

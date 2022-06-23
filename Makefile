@@ -10,8 +10,8 @@ srcs		= ft_ircd.cpp\
 			  socket.cpp\
 			  irc.cpp\
 			  ircd.cpp\
-			  log.cpp\
-				bot.cpp
+			  ircd_bot.cpp\
+			  log.cpp
 
 SRCS    	= $(srcs:%=srcs/%)
 

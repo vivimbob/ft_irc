@@ -17,14 +17,14 @@ void
         _channel->part(_client);
         if (_channel->is_empty())
         {
-            _map.channel.erase(_channel->get_name());
+            IRCD::_map.channel.erase(_channel->get_name());
             delete _channel;
         }
         _channel = nullptr;
     }
 
     if (_client->is_registered())
-        _map.client.erase(_client->get_names().nick);
+        IRCD::_map.client.erase(_client->get_names().nick);
     delete _client;
     _client = nullptr;
 }
@@ -122,28 +122,11 @@ void
 }
 
 void
-    FT_IRCD::m_create_bot()
-{
-    Bot* _bot = new Bot(BOTNAME);
-    _map.client.insert(std::make_pair(BOTNAME, _bot));
-}
-
-// struct kevent {
-//	uintptr_t       ident;  /* identifier for this event */
-//	int16_t         filter; /* filter for event */
-//	uint16_t        flags;  /* general flags */
-//	uint32_t        fflags; /* filter-specific flags */
-//	intptr_t        data;   /* filter-specific data */
-//	void            *udata; /* opaque user data identifier */
-// };
-
-void
     FT_IRCD::run()
 {
     register int count;
 
     log::print() << "FT_IRCD is running" << log::endl;
-    m_create_bot();
     while (true)
     {
         count = Event::kevent();
@@ -156,15 +139,12 @@ void
                 FT_IRCD::m_receive();
             else if (_events[Event::_index].filter == EVFILT_WRITE)
                 FT_IRCD::m_send();
-            // IRC::_client = nullptr;
         }
-        _bot->handler(*IRC::_client);
     }
 }
 
 FT_IRCD::~FT_IRCD()
 {
-    delete _bot;
 }
 
 FT_IRCD::FT_IRCD(int port, const char* const password)
@@ -180,17 +160,15 @@ int
 {
     int port;
 
-    if (argc != 3)
+    if ((argc != 3) || (PORT_MAX < (unsigned)(port = atoi(argv[1]))))
     {
-        log::print() << "usage: " << argv[0] << " <port> <password>"
-                     << log::endl;
+        if (argc != 3)
+            log::print() << "usage: " << argv[0] << " <port> <password>"
+                         << log::endl;
+        else
+            log::print() << argc << "is out of port range (0 ~ 65535)"
+                         << log::endl;
         return FAILURE;
     }
-    if (PORT_MAX < (unsigned)(port = atoi(argv[1])))
-    {
-        log::print() << argc << "is out of port range (0 ~ 65535)" << log::endl;
-        return FAILURE;
-    }
-
     FT_IRCD(port, argv[2]).run();
 }
