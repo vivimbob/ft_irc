@@ -34,6 +34,7 @@ int
         return 1;
     }
     test_case_name.erase(0, test_case_name.find_first_of('/') + 1);
+    test_case_name.erase(0, test_case_name.find_first_of('/') + 1);
     std::string buffer;
     //연결할 서버 port
     std::getline(test_case, buffer);
@@ -143,7 +144,7 @@ int
         }
     }
     std::fstream std;
-    std.open("std/" + test_case_name, std::fstream::out | std::fstream::trunc);
+    std.open("./tests/std/" + test_case_name, std::fstream::out | std::fstream::trunc);
     if (std.is_open())
     {
         for (int i = 0, size = clients.size(); i < size; ++i)
@@ -156,7 +157,7 @@ int
     for (int i = 0, size = clients.size(); i < size; ++i)
         test += "\r\n" + clients[i]->nick + "\r\n" + clients[i]->buffer;
     buffer.resize(test.size());
-    std.open("std/" + test_case_name, std::fstream::in);
+    std.open("./tests/std/" + test_case_name, std::fstream::in);
     if (std.is_open())
     {
         std.read(buffer.begin().base(), test.size());
