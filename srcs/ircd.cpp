@@ -17,7 +17,7 @@ static IRCD::t_cstr_vector
 static inline bool
     is_special(char c)
 {
-    return std::memchr(SPECIALCHAR, c, 8);
+    return std::memchr(SPECIALCHAR, c, 9);
 }
 
 TYPE
