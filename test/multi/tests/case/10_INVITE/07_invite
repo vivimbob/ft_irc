@@ -1,0 +1,8 @@
+1234
+one,two,three
+0 join #channel
+1 join #channel
+1 invite three #channel
+2 join #channel
+2 part #channel
+2 join #channel
