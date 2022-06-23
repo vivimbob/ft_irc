@@ -132,7 +132,6 @@ void
 {
     std::string changed;
     bool        sign = _reserved.sign.positive ? true : false;
-    sign == true ? changed.push_back('+') : changed.push_back('-');
 
     if (_reserved.flags.invite && (sign != _status.invite))
     {
@@ -149,8 +148,9 @@ void
         _status.topic = sign;
         changed.push_back('t');
     }
-    if (changed.size() == 1)
+    if (!changed.size())
         return;
+    sign == true ? result.push_back('+') : result.push_back('-');
     result.append(changed);
 }
 
