@@ -1,0 +1,8 @@
+1234
+one,two
+0 join #ch1
+1 join #ch1
+1 mode #ch1 +int
+1 mode #ch1 +in
+1 mode #ch1 -n
+1 mode #ch1 -int

@@ -1,0 +1,9 @@
+1234
+one,two,three,four
+0 join #a,#b,#c
+1 join #a,#b
+2 join #a
+0 names #a
+3 names #a
+0 names #a,#b,#c
+3 names #a,#b,#c
