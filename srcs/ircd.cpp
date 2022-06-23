@@ -608,7 +608,6 @@ IRCD::m_mode(PHASE phase)
             if ((unsigned)_request->parameter[1][i] - 32 < 127)
                 (this->*IRCD::_modes[(int)_request->parameter[1][i]])(
                     _request->parameter[1][i]);
-        std::cout << "hey" << std::endl;
         if (!_channel->is_reserved())
             return ERROR;
     }
