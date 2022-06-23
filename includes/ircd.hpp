@@ -9,11 +9,11 @@ class IRCD : public IRC
   public:
     typedef struct s_map
     {
-        t_clientmap  client;
-        t_channelmap channel;
+        t_map_client  client;
+        t_map_channel channel;
     } t_map;
 
-    typedef std::vector<void (IRCD::*)()>  t_commands;
+    typedef std::vector<void (IRCD::*)()>  t_vector_command;
     typedef std::vector<const std::string> t_cstr_vector;
     typedef t_cstr_vector::iterator        t_iter;
 
@@ -35,14 +35,14 @@ class IRCD : public IRC
     void   m_mode_initialize();
 
   protected:
-    void       m_to_channels(const std::string&);
-    TYPE       get_type(std::string command);
-    void       registration();
-    void       parse_parameter(std::vector<std::string>&);
-    void       parse_command(std::string&);
-    void       parse_request(Client::t_request&);
-    RESULT     parse_flag(const std::string&);
-    t_commands _commands;
+    void             m_to_channels(const std::string&);
+    TYPE             get_type(std::string command);
+    void             registration();
+    void             parse_parameter(std::vector<std::string>&);
+    void             parse_command(std::string&);
+    void             parse_request(Client::t_request&);
+    RESULT           parse_flag(const std::string&);
+    t_vector_command _commands;
     void (IRCD::*_modes[128])(const char);
 
   private:

@@ -32,8 +32,8 @@ const std::string&
     return _topic;
 }
 
-const Channel::t_membermap&
-    Channel::get_members()
+const Channel::t_map_member&
+    Channel::get_map_member()
 {
     return _members;
 }
@@ -130,24 +130,28 @@ void
 void
     Channel::set_status(std::string& result)
 {
-    bool sign = _reserved.sign.positive ? true : false;
-    sign == true ? result.push_back('+') : result.push_back('-');
+    std::string changed;
+    bool        sign = _reserved.sign.positive ? true : false;
 
-    if (_reserved.flags.invite && (sign != _reserved.flags.invite))
+    if (_reserved.flags.invite && (sign != _status.invite))
     {
         _status.invite = sign;
-        result.push_back('i');
+        changed.push_back('i');
     }
-    if (_reserved.flags.nomsg && (sign != _reserved.flags.nomsg))
+    if (_reserved.flags.nomsg && (sign != _status.nomsg))
     {
         _status.nomsg = sign;
-        result.push_back('n');
+        changed.push_back('n');
     }
-    if (_reserved.flags.topic && (sign != _reserved.flags.topic))
+    if (_reserved.flags.topic && (sign != _status.topic))
     {
         _status.topic = sign;
-        result.push_back('t');
+        changed.push_back('t');
     }
+    if (!changed.size())
+        return;
+    sign == true ? result.push_back('+') : result.push_back('-');
+    result.append(changed);
 }
 
 void
@@ -218,7 +222,7 @@ bool
 bool
     Channel::is_invited(Client* client)
 {
-    return _invitations.count(client);
+    return _invitees.count(client);
 }
 
 /* channel class is_function end */
@@ -228,9 +232,9 @@ bool
 void
     Channel::join(Client* client)
 {
-    _members.insert(std::make_pair(client, t_membership()));
+    _members.insert(std::make_pair(client, t_str_info()));
     client->joined(this);
-    _invitations.erase(client);
+    _invitees.erase(client);
 }
 
 void
@@ -243,6 +247,6 @@ void
 void
     Channel::invitation(Client* client)
 {
-    _invitations.insert(client);
+    _invitees.insert(client);
 }
 /* channel class user function end */
