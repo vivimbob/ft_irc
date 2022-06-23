@@ -1,0 +1,27 @@
+1234
+test
+0 join #channel
+0 mode #channel +i
+0 mode #channel
+0 mode #channel -i
+0 mode #channel
+0 mode #channel +n
+0 mode #channel
+0 mode #channel -n
+0 mode #channel
+0 mode #channel +t
+0 mode #channel
+0 mode #channel -t
+0 mode #channel
+0 mode #channel +i-i+i-i
+0 mode #channel
+0 mode #channel +int
+0 mode #channel
+0 mode #channel -int
+0 mode #channel
+0 mode #channel +it-nt
+0 mode #channel
+0 mode #channel it
+0 mode #channel
+0 mode #channel --------i++++++++int--------i
+0 mode #channel
