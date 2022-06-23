@@ -604,6 +604,16 @@ IRCD::m_mode(PHASE phase)
     }
     else if (phase == THREE)
     {
+        for (int i = 0, size = _request->parameter[1].size(); i < size; ++i)
+            if ((unsigned)_request->parameter[1][i] - 32 < 127)
+                (this->*IRCD::_modes[(int)_request->parameter[1][i]])(
+                    _request->parameter[1][i]);
+        std::cout << "hey" << std::endl;
+        if (!_channel->is_reserved())
+            return ERROR;
+    }
+    else if (phase == FOUR)
+    {
         if (!_ft_ircd->_map.client.count(*_target))
             return m_to_client(err_no_such_nick(*_target));
         else if (*_target != _client->get_names().nick)
@@ -611,14 +621,6 @@ IRCD::m_mode(PHASE phase)
                 _request->parameter.size() == 1 ? "view" : "change"));
         else if (_request->parameter.size() != 1)
             return m_to_client(err_u_mode_unknown_flag());
-    }
-    else if (phase == FOUR)
-    {
-        for (int i = 0, size = -_request->parameter[1].size(); i < size; ++i)
-            if ((unsigned)_request->parameter[1][i] < 128)
-                (this->*IRCD::_modes[i])(_request->parameter[1][i]);
-        if (!_channel->is_reserved())
-            return ERROR;
     }
     return OK;
 }
@@ -660,20 +662,49 @@ void
             return;
         else if (_request->parameter.size() == 1)
             m_to_client(rpl_channel_mode_is(*_target, _channel->get_status()));
-        else if (m_mode(FOUR) == ERROR)
+        else if (m_mode(THREE) == ERROR)
             return;
-        else if (!_channel->is_signed()
-                 || (parse_flag(_request->parameter[1]) == ERROR))
+        else if (!_channel->is_signed() || parse_flag(_request->parameter[1]))
             m_to_client(rpl_channel_mode_is(_channel->get_name(),
                                             _channel->get_status()));
     }
     else
     {
-        if (m_mode(THREE) == ERROR)
+        if (m_mode(FOUR) == ERROR)
             return;
         else if (_request->parameter.size() == 1)
             m_to_client(rpl_user_mode_is());
     }
+}
+
+void
+    IRCD::m_mode_sign(const char c)
+{
+    _channel->reserve_sign(c);
+}
+
+void
+    IRCD::m_mode_valid(const char c)
+{
+    _channel->reserve_flags(c);
+}
+
+void
+    IRCD::m_mode_invalid(const char c)
+{
+    m_to_client(err_unknown_mode(c));
+}
+
+void
+    IRCD::m_mode_initialize()
+{
+    for (int i = 0; i < 127; ++i)
+        _modes[i] = &IRCD::m_mode_invalid;
+    _modes[(int)'+'] = &IRCD::m_mode_sign;
+    _modes[(int)'-'] = &IRCD::m_mode_sign;
+    _modes[(int)'i'] = &IRCD::m_mode_valid;
+    _modes[(int)'n'] = &IRCD::m_mode_valid;
+    _modes[(int)'t'] = &IRCD::m_mode_valid;
 }
 
 RESULT
@@ -739,43 +770,12 @@ void
     m_to_client(err_not_registered());
 }
 
-void
-    IRCD::m_mode_sign(const char c)
-{
-    _channel->reserve_sign(c);
-}
-
-void
-    IRCD::m_mode_valid(const char c)
-{
-    _channel->reserve_flags(c);
-}
-
-void
-    IRCD::m_mode_invalid(const char c)
-{
-    m_to_client(err_unknown_mode(c));
-}
-
-void
-    IRCD::m_mode_initialize()
-{
-    for (int i = 0; i < 127; ++i)
-        _modes[i] = &IRCD::m_mode_invalid;
-    _modes[(int)'+'] = &IRCD::m_mode_sign;
-    _modes[(int)'-'] = &IRCD::m_mode_sign;
-    _modes[(int)'i'] = &IRCD::m_mode_valid;
-    _modes[(int)'n'] = &IRCD::m_mode_valid;
-    _modes[(int)'t'] = &IRCD::m_mode_valid;
-}
-
 IRCD::~IRCD()
 {
 }
 
 IRCD::IRCD()
 {
-    std::memset((void*)_ascii, 0, sizeof(_ascii));
     _commands.push_back(&IRCD::empty);
     _commands.push_back(&IRCD::pass);
     _commands.push_back(&IRCD::nick);
@@ -793,5 +793,6 @@ IRCD::IRCD()
     _commands.push_back(&IRCD::notice);
     _commands.push_back(&IRCD::unknown);
     _commands.push_back(&IRCD::unregistered);
+    std::memset((void*)_ascii, 0, sizeof(_ascii));
     m_mode_initialize();
 }
