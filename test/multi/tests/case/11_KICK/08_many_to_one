@@ -1,7 +1,0 @@
-1234
-one,two,three
-0 join #a,#b,#c,#d,#e,#f,#g
-1 join #a,#b,#c,#d,#e,#f,#g
-2 join #a,#b,#c,#d,#e,#f,#g
-0 kick #a,#b,#c,#d,#e,#f,#g two
-2 list

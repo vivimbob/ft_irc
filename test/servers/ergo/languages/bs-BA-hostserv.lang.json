@@ -1,7 +1,0 @@
-{
-  "Syntax: $bDEL <user>$b\n\nDEL deletes a user's vhost.": "Sintaksa: $bDEL<user>$b\n\nDEL briše korisnikov vhost.",
-  "Syntax: $bOFF$b\n\nOFF disables your vhost, if you have one approved.": "Sintaksa: $bOFF$b\n\nOFF onemogućuje vaš već odobreni vhost.",
-  "Syntax: $bON$b\n\nON enables your vhost, if you have one approved.": "Sintaksa: $bON$b\n\nON omogućuje vaš vhost, pod uslovom da vam je vhost odobren.",
-  "Syntax: $bSET <user> <vhost>$b\n\nSET sets a user's vhost, bypassing the request system.": "Sintaksa: $bSET<user><vhost>$b\n\nSET postavlja korisnikov vhost, zaobilazeći uobičajenu rutinu sistema zahtjeva.",
-  "Syntax: $bSTATUS [user]$b\n\nSTATUS displays your current vhost, if any, and the status of your most recent\nrequest for a new one. A server operator can view someone else's status.": "Sintaksa: $bSTATUS[user]$b \n\nSTATUS prikazuje vaš trenutni vhost, ako postoji; i status vašeg posljednjeg poslanog zahtjeva za novi vhost. Server operater može vidjeti status drugih korisnika."
-}

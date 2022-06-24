@@ -1,9 +1,0 @@
-
-one
-:ft_ircd 001 one Welcome to Internet Relay Network
-one!testuser@localhost
-:ft_ircd 403 one #channel :No such channel
-
-two
-:ft_ircd 001 two Welcome to Internet Relay Network
-two!testuser@localhost
