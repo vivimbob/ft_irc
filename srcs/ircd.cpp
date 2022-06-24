@@ -77,8 +77,8 @@ void
 void
     IRCD::m_to_channel(const std::string& str)
 {
-    Channel::t_citer iter = _channel->get_members().begin();
-    Channel::t_citer end  = _channel->get_members().end();
+    Channel::t_citer_member iter = _channel->get_map_member().begin();
+    Channel::t_citer_member end  = _channel->get_map_member().end();
 
     for (; iter != end; ++iter)
         if (iter->first != _client)
@@ -94,8 +94,8 @@ void
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
     {
-        Channel::t_citer users = _channel->get_members().begin();
-        Channel::t_citer u_end = _channel->get_members().end();
+        Channel::t_citer_member users = _channel->get_map_member().begin();
+        Channel::t_citer_member u_end = _channel->get_map_member().end();
         for (; users != u_end; ++users)
             if (!check.count(users->first) && users->first != _client)
             {
@@ -162,6 +162,7 @@ void
 
 void
     IRCD::registration()
+
 {
     _map.client[_client->get_names().nick] = _client;
     m_to_client(rpl_welcome());
