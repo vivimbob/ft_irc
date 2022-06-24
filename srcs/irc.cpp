@@ -5,6 +5,7 @@
 
 IRC::~IRC()
 {
+
 }
 
 IRC::IRC() : endl("\r\n")

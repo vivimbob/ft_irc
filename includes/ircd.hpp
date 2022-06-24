@@ -33,6 +33,7 @@ class IRCD : public IRC
         t_vector_str   _parameter;
         e_bot          _type;
         std::string    _endl;
+		void  m_send(const std::string&);
 
         void m_help();
         void m_datetime();
@@ -40,8 +41,6 @@ class IRCD : public IRC
 
         e_bot m_get_type(const std::string&);
         void  m_parse_command(std::string&);
-        void  m_parse_parameter(std::vector<std::string>&);
-        void  m_send(const std::string&);
 
         std::string get_prefix();
 

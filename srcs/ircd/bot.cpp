@@ -66,16 +66,17 @@ e_bot
     return NONE;
 }
 
+// :test!a@localhost PRIVMSG bot :/help
+
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
-    (void)command;
-}
-
-void
-    IRCD::Bot::m_parse_parameter(std::vector<std::string>& parameter)
-{
-    (void)parameter;
+    //for (_offset = 0; (command[_offset] != ' ' && command[_offset] != '\0');
+    //     ++_offset)
+    //    if ((unsigned)command[_offset] - 'a' < 26)
+    //        command[_offset] ^= 0b100000;
+    //_buffer = command.substr(_offset);
+    //command.erase(_offset);
 }
 
 void

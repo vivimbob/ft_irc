@@ -8,25 +8,26 @@ IRCD::t_cstr_vector
     IRCD::t_cstr_vector splited;
     std::istringstream  iss(params);
     std::string         element;
-
+	
     while (std::getline(iss, element, delimiter))
         splited.push_back(element);
     return splited;
 }
 
+e_type
+	IRCD::get_type(const std::string& command)
+{
+	if (_command_to_type.count(command))
+		return _command_to_type[command];
+	return UNKNOWN;
+}
+
 static inline bool
-    is_special(char c)
+    is_special(const char c)
 {
     return std::memchr(SPECIALCHAR, c, 8);
 }
 
-e_type
-    IRCD::get_type(const std::string& command)
-{
-    if (_command_to_type.count(command))
-        return _command_to_type[command];
-    return UNKNOWN;
-}
 
 e_result
     IRCD::m_is_valid(e_type type)
