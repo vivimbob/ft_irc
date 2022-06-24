@@ -52,6 +52,7 @@ class IRCD : public IRC
     };
     const std::string* _target;
     const std::string* _target_sub;
+    std::string        _buffer;
     Client*            _fixed;
     int                _offset;
     int                _index;
