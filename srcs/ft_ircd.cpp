@@ -53,6 +53,8 @@ void
 			IRC::_to_client->offset = 0;
 		}
     }
+	else
+        Event::toggle(EVFILT_WRITE);
 }
 
 void
@@ -164,6 +166,7 @@ FT_IRCD::FT_IRCD(int port, const char* const password)
     Event::initialize(_socket.fd);
     IRC::_password = password;
     IRC::_ft_ircd  = this;
+	signal(SIGPIPE, SIG_IGN);
 }
 
 int
@@ -171,15 +174,15 @@ int
 {
     int port;
 
-    if (argc != 3)
+    if (argc != 3 || (9 < (unsigned)argv[1][0] - '0'))
     {
-        log::print() << "usage: " << argv[0] << " <port> <password>"
-                     << log::endl;
+		std::cerr << "usage: " << argv[0] << " <port> <password>"
+                     << std::endl;
         return FAILURE;
     }
     if (PORT_MAX < (unsigned)(port = atoi(argv[1])))
     {
-        log::print() << argc << "is out of port range (0 ~ 65535)" << log::endl;
+		std::cerr << argv[1] << " is out of port range (0 ~ 65535)" << std::endl;
         return FAILURE;
     }
 

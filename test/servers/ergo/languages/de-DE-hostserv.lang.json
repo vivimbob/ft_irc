@@ -1,7 +1,0 @@
-{
-  "Syntax: $bDEL <user>$b\n\nDEL deletes a user's vhost.": "Syntax: $bDEL <kontoname>$b\n\nDEL löscht den vHost eines Kontos.",
-  "Syntax: $bOFF$b\n\nOFF disables your vhost, if you have one approved.": "Syntax: $bOFF$b\n\nOFF deaktiviert Deinen vHost, wenn Du einen bestätigten hast.",
-  "Syntax: $bON$b\n\nON enables your vhost, if you have one approved.": "Syntax: $bON$b\n\nON aktiviert Deinen vHost, wenn Du einen bestätigten hast.",
-  "Syntax: $bSET <user> <vhost>$b\n\nSET sets a user's vhost, bypassing the request system.": "Syntax: $bSET <kontoname> <vhost>$b\n\nSET erstellt direkt einen vHost für ein Konto ohne das eine Anfrage und Bestätigung\nnotwendig ist.",
-  "Syntax: $bSTATUS [user]$b\n\nSTATUS displays your current vhost, if any, and the status of your most recent\nrequest for a new one. A server operator can view someone else's status.": "Syntax: $bSTATUS [kontoname]$b\n\nSTATUS zeigt Deinen aktuellen vHost an, sofern eingerichtet, und den Status\nDeiner letzten Anfrage nach einem neuen vHost. Ein Server Operator kann sich den\nStatus eines anderen anzeigen lassen."
-}

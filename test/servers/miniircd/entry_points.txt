@@ -1,2 +1,0 @@
-[console_scripts]
-miniircd = miniircd:main
