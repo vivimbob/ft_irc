@@ -25,7 +25,7 @@ e_type
 static inline bool
     is_special(const char c)
 {
-    return std::memchr(SPECIALCHAR, c, 8);
+    return std::memchr(SPECIALCHAR, c, 9);
 }
 
 
