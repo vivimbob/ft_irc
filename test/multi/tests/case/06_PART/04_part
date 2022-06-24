@@ -1,4 +1,5 @@
 1234
-test
+one,two
 0 join #channel
+1 join #channel
 0 part #channel

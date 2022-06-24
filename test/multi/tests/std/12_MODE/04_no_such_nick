@@ -1,0 +1,5 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:ft_ircd 401 one two :No such nick

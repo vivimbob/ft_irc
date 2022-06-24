@@ -4,3 +4,4 @@ one,two,three
 1 join #channel
 2 join #channel
 0 kick #channel two
+2 names #channel

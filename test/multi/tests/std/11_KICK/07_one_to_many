@@ -1,0 +1,83 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #channel
+:ft_ircd 331 one #channel :No topic is set
+:ft_ircd 353 one = #channel :@one 
+:ft_ircd 366 one #channel :End of NAMES list
+:two!testuser@localhost JOIN #channel
+:three!testuser@localhost JOIN #channel
+:four!testuser@localhost JOIN #channel
+:five!testuser@localhost JOIN #channel
+:six!testuser@localhost JOIN #channel
+:one!testuser@localhost KICK #channel two one
+:one!testuser@localhost KICK #channel three one
+:one!testuser@localhost KICK #channel four one
+:one!testuser@localhost KICK #channel five one
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #channel
+:ft_ircd 331 two #channel :No topic is set
+:ft_ircd 353 two = #channel :@one two 
+:ft_ircd 366 two #channel :End of NAMES list
+:three!testuser@localhost JOIN #channel
+:four!testuser@localhost JOIN #channel
+:five!testuser@localhost JOIN #channel
+:six!testuser@localhost JOIN #channel
+:one!testuser@localhost KICK #channel two one
+
+three
+:ft_ircd 001 three Welcome to Internet Relay Network
+three!testuser@localhost
+:three!testuser@localhost JOIN #channel
+:ft_ircd 331 three #channel :No topic is set
+:ft_ircd 353 three = #channel :@one two three 
+:ft_ircd 366 three #channel :End of NAMES list
+:four!testuser@localhost JOIN #channel
+:five!testuser@localhost JOIN #channel
+:six!testuser@localhost JOIN #channel
+:one!testuser@localhost KICK #channel two one
+:one!testuser@localhost KICK #channel three one
+
+four
+:ft_ircd 001 four Welcome to Internet Relay Network
+four!testuser@localhost
+:four!testuser@localhost JOIN #channel
+:ft_ircd 331 four #channel :No topic is set
+:ft_ircd 353 four = #channel :@one two four three 
+:ft_ircd 366 four #channel :End of NAMES list
+:five!testuser@localhost JOIN #channel
+:six!testuser@localhost JOIN #channel
+:one!testuser@localhost KICK #channel two one
+:one!testuser@localhost KICK #channel three one
+:one!testuser@localhost KICK #channel four one
+
+five
+:ft_ircd 001 five Welcome to Internet Relay Network
+five!testuser@localhost
+:five!testuser@localhost JOIN #channel
+:ft_ircd 331 five #channel :No topic is set
+:ft_ircd 353 five = #channel :@one two four three five 
+:ft_ircd 366 five #channel :End of NAMES list
+:six!testuser@localhost JOIN #channel
+:one!testuser@localhost KICK #channel two one
+:one!testuser@localhost KICK #channel three one
+:one!testuser@localhost KICK #channel four one
+:one!testuser@localhost KICK #channel five one
+
+six
+:ft_ircd 001 six Welcome to Internet Relay Network
+six!testuser@localhost
+:six!testuser@localhost JOIN #channel
+:ft_ircd 331 six #channel :No topic is set
+:ft_ircd 353 six = #channel :@one two four six three five 
+:ft_ircd 366 six #channel :End of NAMES list
+:one!testuser@localhost KICK #channel two one
+:one!testuser@localhost KICK #channel three one
+:one!testuser@localhost KICK #channel four one
+:one!testuser@localhost KICK #channel five one
+:ft_ircd 353 six = #channel :@one six 
+:ft_ircd 366 six #channel :End of NAMES list

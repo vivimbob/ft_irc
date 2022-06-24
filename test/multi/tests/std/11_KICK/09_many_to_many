@@ -1,0 +1,98 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #a
+:ft_ircd 331 one #a :No topic is set
+:ft_ircd 353 one = #a :@one 
+:ft_ircd 366 one #a :End of NAMES list
+:one!testuser@localhost JOIN #b
+:ft_ircd 331 one #b :No topic is set
+:ft_ircd 353 one = #b :@one 
+:ft_ircd 366 one #b :End of NAMES list
+:one!testuser@localhost JOIN #c
+:ft_ircd 331 one #c :No topic is set
+:ft_ircd 353 one = #c :@one 
+:ft_ircd 366 one #c :End of NAMES list
+:two!testuser@localhost JOIN #a
+:two!testuser@localhost JOIN #b
+:two!testuser@localhost JOIN #c
+:three!testuser@localhost JOIN #a
+:three!testuser@localhost JOIN #b
+:three!testuser@localhost JOIN #c
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:one!testuser@localhost KICK #a two one
+:one!testuser@localhost KICK #b three one
+:one!testuser@localhost KICK #c four one
+:ft_ircd 322 one #a 3 :
+:ft_ircd 322 one #b 3 :
+:ft_ircd 322 one #c 3 :
+:ft_ircd 323 one :End of LIST
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #a
+:ft_ircd 331 two #a :No topic is set
+:ft_ircd 353 two = #a :two @one 
+:ft_ircd 366 two #a :End of NAMES list
+:two!testuser@localhost JOIN #b
+:ft_ircd 331 two #b :No topic is set
+:ft_ircd 353 two = #b :two @one 
+:ft_ircd 366 two #b :End of NAMES list
+:two!testuser@localhost JOIN #c
+:ft_ircd 331 two #c :No topic is set
+:ft_ircd 353 two = #c :two @one 
+:ft_ircd 366 two #c :End of NAMES list
+:three!testuser@localhost JOIN #a
+:three!testuser@localhost JOIN #b
+:three!testuser@localhost JOIN #c
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:one!testuser@localhost KICK #a two one
+:one!testuser@localhost KICK #b three one
+:one!testuser@localhost KICK #c four one
+
+three
+:ft_ircd 001 three Welcome to Internet Relay Network
+three!testuser@localhost
+:three!testuser@localhost JOIN #a
+:ft_ircd 331 three #a :No topic is set
+:ft_ircd 353 three = #a :two three @one 
+:ft_ircd 366 three #a :End of NAMES list
+:three!testuser@localhost JOIN #b
+:ft_ircd 331 three #b :No topic is set
+:ft_ircd 353 three = #b :two three @one 
+:ft_ircd 366 three #b :End of NAMES list
+:three!testuser@localhost JOIN #c
+:ft_ircd 331 three #c :No topic is set
+:ft_ircd 353 three = #c :two three @one 
+:ft_ircd 366 three #c :End of NAMES list
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:one!testuser@localhost KICK #a two one
+:one!testuser@localhost KICK #b three one
+:one!testuser@localhost KICK #c four one
+
+four
+:ft_ircd 001 four Welcome to Internet Relay Network
+four!testuser@localhost
+:four!testuser@localhost JOIN #a
+:ft_ircd 331 four #a :No topic is set
+:ft_ircd 353 four = #a :two three @one four 
+:ft_ircd 366 four #a :End of NAMES list
+:four!testuser@localhost JOIN #b
+:ft_ircd 331 four #b :No topic is set
+:ft_ircd 353 four = #b :two three @one four 
+:ft_ircd 366 four #b :End of NAMES list
+:four!testuser@localhost JOIN #c
+:ft_ircd 331 four #c :No topic is set
+:ft_ircd 353 four = #c :two three @one four 
+:ft_ircd 366 four #c :End of NAMES list
+:one!testuser@localhost KICK #a two one
+:one!testuser@localhost KICK #b three one
+:one!testuser@localhost KICK #c four one

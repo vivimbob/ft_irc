@@ -1,0 +1,27 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #channel
+:ft_ircd 331 one #channel :No topic is set
+:ft_ircd 353 one = #channel :@one 
+:ft_ircd 366 one #channel :End of NAMES list
+:two!testuser@localhost JOIN #channel
+:ft_ircd 331 one #channel :No topic is set
+:one!testuser@localhost TOPIC #channel :hi~
+:ft_ircd 332 one #channel :hi~
+:two!testuser@localhost TOPIC #channel :hello~
+:ft_ircd 332 one #channel :hello~
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #channel
+:ft_ircd 331 two #channel :No topic is set
+:ft_ircd 353 two = #channel :two @one 
+:ft_ircd 366 two #channel :End of NAMES list
+:ft_ircd 331 two #channel :No topic is set
+:one!testuser@localhost TOPIC #channel :hi~
+:ft_ircd 332 two #channel :hi~
+:two!testuser@localhost TOPIC #channel :hello~
+:ft_ircd 332 two #channel :hello~

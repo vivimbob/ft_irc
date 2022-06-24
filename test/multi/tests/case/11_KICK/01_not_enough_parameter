@@ -9,5 +9,4 @@ one,two,three,four,five,six
 5 kick #a
 5 kick two
 5 kick #a,#b two,three,four,five,six
-5 kick #a,#b,#c,#d,#e,#f two,thre
-
+5 kick #a,#b,#c,#d,#e,#f two,three

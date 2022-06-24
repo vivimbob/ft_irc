@@ -116,6 +116,7 @@ int
                 event.m_set(client->fd, EVFILT_WRITE, EV_DISABLE, 0, 0, client);
                 if (std::getline(test_case, message, ' '))
                 {
+					sleep(1);
                     target = atoi(message.data());
                     event.m_set(clients[target]->fd, EVFILT_WRITE, EV_ENABLE, 0,
                                 0, clients[target]);
@@ -143,14 +144,14 @@ int
             }
         }
     }
-    std::fstream std;
-    std.open("./tests/std/" + test_case_name, std::fstream::out | std::fstream::trunc);
-    if (std.is_open())
-    {
-        for (int i = 0, size = clients.size(); i < size; ++i)
-            std << "\r\n" << clients[i]->nick << "\r\n" << clients[i]->buffer;
-        std.close();
-    }
+//    std::fstream std;
+//    std.open("./tests/std/" + test_case_name, std::fstream::out | std::fstream::trunc);
+//    if (std.is_open())
+//    {
+//        for (int i = 0, size = clients.size(); i < size; ++i)
+//            std << "\r\n" << clients[i]->nick << "\r\n" << clients[i]->buffer;
+//        std.close();
+//    }
 
     // 로그 읽어와서 비교하기
     std::string test;
@@ -166,6 +167,7 @@ int
         else
         {
             std::cout << '\n' << test_case_name << ": ko" << std::endl;
+			//std::fstream test_file;
             // diff 파일 생성
             // diff 파일 출력
         }

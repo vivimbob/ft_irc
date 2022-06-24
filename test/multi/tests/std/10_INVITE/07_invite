@@ -1,0 +1,38 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #channel
+:ft_ircd 331 one #channel :No topic is set
+:ft_ircd 353 one = #channel :@one 
+:ft_ircd 366 one #channel :End of NAMES list
+:two!testuser@localhost JOIN #channel
+:three!testuser@localhost JOIN #channel
+:three!testuser@localhost PART #channel :three
+:three!testuser@localhost JOIN #channel
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #channel
+:ft_ircd 331 two #channel :No topic is set
+:ft_ircd 353 two = #channel :two @one 
+:ft_ircd 366 two #channel :End of NAMES list
+:ft_ircd 341 two three #channel
+:three!testuser@localhost JOIN #channel
+:three!testuser@localhost PART #channel :three
+:three!testuser@localhost JOIN #channel
+
+three
+:ft_ircd 001 three Welcome to Internet Relay Network
+three!testuser@localhost
+:two!testuser@localhost INVITE three #channel
+:three!testuser@localhost JOIN #channel
+:ft_ircd 331 three #channel :No topic is set
+:ft_ircd 353 three = #channel :two @one three 
+:ft_ircd 366 three #channel :End of NAMES list
+:three!testuser@localhost PART #channel :three
+:three!testuser@localhost JOIN #channel
+:ft_ircd 331 three #channel :No topic is set
+:ft_ircd 353 three = #channel :two @one three 
+:ft_ircd 366 three #channel :End of NAMES list

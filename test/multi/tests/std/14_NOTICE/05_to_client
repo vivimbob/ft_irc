@@ -1,0 +1,19 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost NOTICE one :say hello to myself
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:one!testuser@localhost NOTICE two :hi there?
+
+three
+:ft_ircd 001 three Welcome to Internet Relay Network
+three!testuser@localhost
+:three!testuser@localhost JOIN #channel
+:ft_ircd 331 three #channel :No topic is set
+:ft_ircd 353 three = #channel :@three 
+:ft_ircd 366 three #channel :End of NAMES list
+:one!testuser@localhost NOTICE three :hi there?

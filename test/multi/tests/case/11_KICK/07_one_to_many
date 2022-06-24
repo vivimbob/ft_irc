@@ -7,3 +7,4 @@ one,two,three,four,five,six
 4 join #channel
 5 join #channel
 0 kick #channel two,three,four,five
+5 names #channel

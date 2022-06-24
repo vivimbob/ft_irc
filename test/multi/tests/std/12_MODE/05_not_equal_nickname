@@ -1,0 +1,13 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:ft_ircd 502 one :Can't view modes for other users
+:ft_ircd 502 one :Can't change modes for other users
+:ft_ircd 502 one :Can't change modes for other users
+:ft_ircd 502 one :Can't change modes for other users
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:ft_ircd 502 two :Can't change modes for other users

@@ -1,5 +1,6 @@
 1234
 one,two
+0 mode two
 0 mode two +i
 0 mode two +nt
 0 mode two -t

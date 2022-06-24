@@ -1,0 +1,8 @@
+1234
+one,two,three,four
+0 join #a,#b,#c
+1 join #a,#b,#c
+2 join #a,#b,#c
+3 join #a,#b,#c
+0 kick #a,#b,#c two,three,four
+0 list

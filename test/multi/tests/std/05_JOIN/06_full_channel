@@ -1,0 +1,1202 @@
+
+a00
+:ft_ircd 001 a00 Welcome to Internet Relay Network
+a00!testuser@localhost
+:a00!testuser@localhost JOIN #channel
+:ft_ircd 331 a00 #channel :No topic is set
+:ft_ircd 353 a00 = #channel :@a00 
+:ft_ircd 366 a00 #channel :End of NAMES list
+:a01!testuser@localhost JOIN #channel
+:a02!testuser@localhost JOIN #channel
+:a03!testuser@localhost JOIN #channel
+:a04!testuser@localhost JOIN #channel
+:a05!testuser@localhost JOIN #channel
+:a06!testuser@localhost JOIN #channel
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a01
+:ft_ircd 001 a01 Welcome to Internet Relay Network
+a01!testuser@localhost
+:a01!testuser@localhost JOIN #channel
+:ft_ircd 331 a01 #channel :No topic is set
+:ft_ircd 353 a01 = #channel :a01 @a00 
+:ft_ircd 366 a01 #channel :End of NAMES list
+:a02!testuser@localhost JOIN #channel
+:a03!testuser@localhost JOIN #channel
+:a04!testuser@localhost JOIN #channel
+:a05!testuser@localhost JOIN #channel
+:a06!testuser@localhost JOIN #channel
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a02
+:ft_ircd 001 a02 Welcome to Internet Relay Network
+a02!testuser@localhost
+:a02!testuser@localhost JOIN #channel
+:ft_ircd 331 a02 #channel :No topic is set
+:ft_ircd 353 a02 = #channel :a02 a01 @a00 
+:ft_ircd 366 a02 #channel :End of NAMES list
+:a03!testuser@localhost JOIN #channel
+:a04!testuser@localhost JOIN #channel
+:a05!testuser@localhost JOIN #channel
+:a06!testuser@localhost JOIN #channel
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a03
+:ft_ircd 001 a03 Welcome to Internet Relay Network
+a03!testuser@localhost
+:a03!testuser@localhost JOIN #channel
+:ft_ircd 331 a03 #channel :No topic is set
+:ft_ircd 353 a03 = #channel :a02 a01 a03 @a00 
+:ft_ircd 366 a03 #channel :End of NAMES list
+:a04!testuser@localhost JOIN #channel
+:a05!testuser@localhost JOIN #channel
+:a06!testuser@localhost JOIN #channel
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a04
+:ft_ircd 001 a04 Welcome to Internet Relay Network
+a04!testuser@localhost
+:a04!testuser@localhost JOIN #channel
+:ft_ircd 331 a04 #channel :No topic is set
+:ft_ircd 353 a04 = #channel :a02 a04 a01 a03 @a00 
+:ft_ircd 366 a04 #channel :End of NAMES list
+:a05!testuser@localhost JOIN #channel
+:a06!testuser@localhost JOIN #channel
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a05
+:ft_ircd 001 a05 Welcome to Internet Relay Network
+a05!testuser@localhost
+:a05!testuser@localhost JOIN #channel
+:ft_ircd 331 a05 #channel :No topic is set
+:ft_ircd 353 a05 = #channel :a02 a04 a05 a01 a03 @a00 
+:ft_ircd 366 a05 #channel :End of NAMES list
+:a06!testuser@localhost JOIN #channel
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a06
+:ft_ircd 001 a06 Welcome to Internet Relay Network
+a06!testuser@localhost
+:a06!testuser@localhost JOIN #channel
+:ft_ircd 331 a06 #channel :No topic is set
+:ft_ircd 353 a06 = #channel :a06 a02 a04 a05 a01 a03 @a00 
+:ft_ircd 366 a06 #channel :End of NAMES list
+:a07!testuser@localhost JOIN #channel
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a07
+:ft_ircd 001 a07 Welcome to Internet Relay Network
+a07!testuser@localhost
+:a07!testuser@localhost JOIN #channel
+:ft_ircd 331 a07 #channel :No topic is set
+:ft_ircd 353 a07 = #channel :a06 a02 a04 a07 a05 a01 a03 @a00 
+:ft_ircd 366 a07 #channel :End of NAMES list
+:a08!testuser@localhost JOIN #channel
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a08
+:ft_ircd 001 a08 Welcome to Internet Relay Network
+a08!testuser@localhost
+:a08!testuser@localhost JOIN #channel
+:ft_ircd 331 a08 #channel :No topic is set
+:ft_ircd 353 a08 = #channel :a06 a02 a04 a07 a08 a05 a01 a03 @a00 
+:ft_ircd 366 a08 #channel :End of NAMES list
+:a09!testuser@localhost JOIN #channel
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a09
+:ft_ircd 001 a09 Welcome to Internet Relay Network
+a09!testuser@localhost
+:a09!testuser@localhost JOIN #channel
+:ft_ircd 331 a09 #channel :No topic is set
+:ft_ircd 353 a09 = #channel :a06 a02 a04 a07 a08 a05 a09 a01 a03 @a00 
+:ft_ircd 366 a09 #channel :End of NAMES list
+:a10!testuser@localhost JOIN #channel
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a10
+:ft_ircd 001 a10 Welcome to Internet Relay Network
+a10!testuser@localhost
+:a10!testuser@localhost JOIN #channel
+:ft_ircd 331 a10 #channel :No topic is set
+:ft_ircd 353 a10 = #channel :a06 a02 a04 a07 a08 a10 a05 a09 a01 a03 @a00 
+:ft_ircd 366 a10 #channel :End of NAMES list
+:a11!testuser@localhost JOIN #channel
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a11
+:ft_ircd 001 a11 Welcome to Internet Relay Network
+a11!testuser@localhost
+:a11!testuser@localhost JOIN #channel
+:ft_ircd 331 a11 #channel :No topic is set
+:ft_ircd 353 a11 = #channel :a06 a02 a04 a07 a08 a10 a11 a05 a09 a01 a03 @a00 
+:ft_ircd 366 a11 #channel :End of NAMES list
+:a12!testuser@localhost JOIN #channel
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a12
+:ft_ircd 001 a12 Welcome to Internet Relay Network
+a12!testuser@localhost
+:a12!testuser@localhost JOIN #channel
+:ft_ircd 331 a12 #channel :No topic is set
+:ft_ircd 353 a12 = #channel :a06 a02 a04 a07 a08 a10 a11 a05 a09 a01 a03 @a00 a12 
+:ft_ircd 366 a12 #channel :End of NAMES list
+:a13!testuser@localhost JOIN #channel
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a13
+:ft_ircd 001 a13 Welcome to Internet Relay Network
+a13!testuser@localhost
+:a13!testuser@localhost JOIN #channel
+:ft_ircd 331 a13 #channel :No topic is set
+:ft_ircd 353 a13 = #channel :a06 a02 a04 a07 a08 a13 a10 a11 a05 a09 a01 a03 @a00 a12 
+:ft_ircd 366 a13 #channel :End of NAMES list
+:a14!testuser@localhost JOIN #channel
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a14
+:ft_ircd 001 a14 Welcome to Internet Relay Network
+a14!testuser@localhost
+:a14!testuser@localhost JOIN #channel
+:ft_ircd 331 a14 #channel :No topic is set
+:ft_ircd 353 a14 = #channel :a06 a02 a04 a07 a08 a13 a10 a11 a05 a09 a01 a03 @a00 a12 a14 
+:ft_ircd 366 a14 #channel :End of NAMES list
+:a15!testuser@localhost JOIN #channel
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a15
+:ft_ircd 001 a15 Welcome to Internet Relay Network
+a15!testuser@localhost
+:a15!testuser@localhost JOIN #channel
+:ft_ircd 331 a15 #channel :No topic is set
+:ft_ircd 353 a15 = #channel :a06 a02 a04 a07 a08 a13 a15 a10 a11 a05 a09 a01 a03 @a00 a12 a14 
+:ft_ircd 366 a15 #channel :End of NAMES list
+:a16!testuser@localhost JOIN #channel
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a16
+:ft_ircd 001 a16 Welcome to Internet Relay Network
+a16!testuser@localhost
+:a16!testuser@localhost JOIN #channel
+:ft_ircd 331 a16 #channel :No topic is set
+:ft_ircd 353 a16 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a10 a11 a05 a09 a01 a03 @a00 a12 a14 
+:ft_ircd 366 a16 #channel :End of NAMES list
+:a17!testuser@localhost JOIN #channel
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a17
+:ft_ircd 001 a17 Welcome to Internet Relay Network
+a17!testuser@localhost
+:a17!testuser@localhost JOIN #channel
+:ft_ircd 331 a17 #channel :No topic is set
+:ft_ircd 353 a17 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a10 a11 a05 a09 a01 a03 @a00 a12 a14 a17 
+:ft_ircd 366 a17 #channel :End of NAMES list
+:a18!testuser@localhost JOIN #channel
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a18
+:ft_ircd 001 a18 Welcome to Internet Relay Network
+a18!testuser@localhost
+:a18!testuser@localhost JOIN #channel
+:ft_ircd 331 a18 #channel :No topic is set
+:ft_ircd 353 a18 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a10 a11 a05 a09 a01 a03 @a00 a12 a14 a17 
+:ft_ircd 366 a18 #channel :End of NAMES list
+:a19!testuser@localhost JOIN #channel
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a19
+:ft_ircd 001 a19 Welcome to Internet Relay Network
+a19!testuser@localhost
+:a19!testuser@localhost JOIN #channel
+:ft_ircd 331 a19 #channel :No topic is set
+:ft_ircd 353 a19 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a10 a11 a05 a09 a01 a03 @a00 a12 a14 a17 a19 
+:ft_ircd 366 a19 #channel :End of NAMES list
+:a20!testuser@localhost JOIN #channel
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a20
+:ft_ircd 001 a20 Welcome to Internet Relay Network
+a20!testuser@localhost
+:a20!testuser@localhost JOIN #channel
+:ft_ircd 331 a20 #channel :No topic is set
+:ft_ircd 353 a20 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a10 a11 a05 a09 a01 a03 @a00 a12 a14 a17 a19 a20 
+:ft_ircd 366 a20 #channel :End of NAMES list
+:a21!testuser@localhost JOIN #channel
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a21
+:ft_ircd 001 a21 Welcome to Internet Relay Network
+a21!testuser@localhost
+:a21!testuser@localhost JOIN #channel
+:ft_ircd 331 a21 #channel :No topic is set
+:ft_ircd 353 a21 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a05 a09 a01 a03 @a00 a12 a14 a17 a19 a20 
+:ft_ircd 366 a21 #channel :End of NAMES list
+:a22!testuser@localhost JOIN #channel
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a22
+:ft_ircd 001 a22 Welcome to Internet Relay Network
+a22!testuser@localhost
+:a22!testuser@localhost JOIN #channel
+:ft_ircd 331 a22 #channel :No topic is set
+:ft_ircd 353 a22 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a05 a09 a01 a03 @a00 a12 a22 a14 a17 a19 a20 
+:ft_ircd 366 a22 #channel :End of NAMES list
+:a23!testuser@localhost JOIN #channel
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a23
+:ft_ircd 001 a23 Welcome to Internet Relay Network
+a23!testuser@localhost
+:a23!testuser@localhost JOIN #channel
+:ft_ircd 331 a23 #channel :No topic is set
+:ft_ircd 353 a23 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a05 a09 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 
+:ft_ircd 366 a23 #channel :End of NAMES list
+:a24!testuser@localhost JOIN #channel
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a24
+:ft_ircd 001 a24 Welcome to Internet Relay Network
+a24!testuser@localhost
+:a24!testuser@localhost JOIN #channel
+:ft_ircd 331 a24 #channel :No topic is set
+:ft_ircd 353 a24 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a24 a05 a09 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 
+:ft_ircd 366 a24 #channel :End of NAMES list
+:a25!testuser@localhost JOIN #channel
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a25
+:ft_ircd 001 a25 Welcome to Internet Relay Network
+a25!testuser@localhost
+:a25!testuser@localhost JOIN #channel
+:ft_ircd 331 a25 #channel :No topic is set
+:ft_ircd 353 a25 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a24 a25 a05 a09 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 
+:ft_ircd 366 a25 #channel :End of NAMES list
+:a26!testuser@localhost JOIN #channel
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a26
+:ft_ircd 001 a26 Welcome to Internet Relay Network
+a26!testuser@localhost
+:a26!testuser@localhost JOIN #channel
+:ft_ircd 331 a26 #channel :No topic is set
+:ft_ircd 353 a26 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a24 a25 a05 a09 a26 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 
+:ft_ircd 366 a26 #channel :End of NAMES list
+:a27!testuser@localhost JOIN #channel
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a27
+:ft_ircd 001 a27 Welcome to Internet Relay Network
+a27!testuser@localhost
+:a27!testuser@localhost JOIN #channel
+:ft_ircd 331 a27 #channel :No topic is set
+:ft_ircd 353 a27 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a24 a25 a27 a05 a09 a26 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 
+:ft_ircd 366 a27 #channel :End of NAMES list
+:a28!testuser@localhost JOIN #channel
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a28
+:ft_ircd 001 a28 Welcome to Internet Relay Network
+a28!testuser@localhost
+:a28!testuser@localhost JOIN #channel
+:ft_ircd 331 a28 #channel :No topic is set
+:ft_ircd 353 a28 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a10 a11 a24 a25 a27 a05 a09 a26 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 a28 
+:ft_ircd 366 a28 #channel :End of NAMES list
+:a29!testuser@localhost JOIN #channel
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a29
+:ft_ircd 001 a29 Welcome to Internet Relay Network
+a29!testuser@localhost
+:a29!testuser@localhost JOIN #channel
+:ft_ircd 331 a29 #channel :No topic is set
+:ft_ircd 353 a29 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a10 a11 a24 a25 a27 a05 a09 a26 a01 a03 @a00 a12 a22 a14 a17 a19 a20 a23 a28 
+:ft_ircd 366 a29 #channel :End of NAMES list
+:a30!testuser@localhost JOIN #channel
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a30
+:ft_ircd 001 a30 Welcome to Internet Relay Network
+a30!testuser@localhost
+:a30!testuser@localhost JOIN #channel
+:ft_ircd 331 a30 #channel :No topic is set
+:ft_ircd 353 a30 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a10 a11 a24 a25 a27 a05 a09 a26 a01 a03 a30 @a00 a12 a22 a14 a17 a19 a20 a23 a28 
+:ft_ircd 366 a30 #channel :End of NAMES list
+:a31!testuser@localhost JOIN #channel
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a31
+:ft_ircd 001 a31 Welcome to Internet Relay Network
+a31!testuser@localhost
+:a31!testuser@localhost JOIN #channel
+:ft_ircd 331 a31 #channel :No topic is set
+:ft_ircd 353 a31 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a10 a11 a24 a25 a27 a05 a09 a26 a01 a03 a30 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a31 #channel :End of NAMES list
+:a32!testuser@localhost JOIN #channel
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a32
+:ft_ircd 001 a32 Welcome to Internet Relay Network
+a32!testuser@localhost
+:a32!testuser@localhost JOIN #channel
+:ft_ircd 331 a32 #channel :No topic is set
+:ft_ircd 353 a32 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a32 #channel :End of NAMES list
+:a33!testuser@localhost JOIN #channel
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a33
+:ft_ircd 001 a33 Welcome to Internet Relay Network
+a33!testuser@localhost
+:a33!testuser@localhost JOIN #channel
+:ft_ircd 331 a33 #channel :No topic is set
+:ft_ircd 353 a33 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a33 #channel :End of NAMES list
+:a34!testuser@localhost JOIN #channel
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a34
+:ft_ircd 001 a34 Welcome to Internet Relay Network
+a34!testuser@localhost
+:a34!testuser@localhost JOIN #channel
+:ft_ircd 331 a34 #channel :No topic is set
+:ft_ircd 353 a34 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a34 #channel :End of NAMES list
+:a35!testuser@localhost JOIN #channel
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a35
+:ft_ircd 001 a35 Welcome to Internet Relay Network
+a35!testuser@localhost
+:a35!testuser@localhost JOIN #channel
+:ft_ircd 331 a35 #channel :No topic is set
+:ft_ircd 353 a35 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a35 #channel :End of NAMES list
+:a36!testuser@localhost JOIN #channel
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a36
+:ft_ircd 001 a36 Welcome to Internet Relay Network
+a36!testuser@localhost
+:a36!testuser@localhost JOIN #channel
+:ft_ircd 331 a36 #channel :No topic is set
+:ft_ircd 353 a36 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a36 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a36 #channel :End of NAMES list
+:a37!testuser@localhost JOIN #channel
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a37
+:ft_ircd 001 a37 Welcome to Internet Relay Network
+a37!testuser@localhost
+:a37!testuser@localhost JOIN #channel
+:ft_ircd 331 a37 #channel :No topic is set
+:ft_ircd 353 a37 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a36 a37 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 
+:ft_ircd 366 a37 #channel :End of NAMES list
+:a38!testuser@localhost JOIN #channel
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a38
+:ft_ircd 001 a38 Welcome to Internet Relay Network
+a38!testuser@localhost
+:a38!testuser@localhost JOIN #channel
+:ft_ircd 331 a38 #channel :No topic is set
+:ft_ircd 353 a38 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a36 a37 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a14 a17 a19 a20 a23 a28 a31 a38 
+:ft_ircd 366 a38 #channel :End of NAMES list
+:a39!testuser@localhost JOIN #channel
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a39
+:ft_ircd 001 a39 Welcome to Internet Relay Network
+a39!testuser@localhost
+:a39!testuser@localhost JOIN #channel
+:ft_ircd 331 a39 #channel :No topic is set
+:ft_ircd 353 a39 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a36 a37 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a39 a14 a17 a19 a20 a23 a28 a31 a38 
+:ft_ircd 366 a39 #channel :End of NAMES list
+:a40!testuser@localhost JOIN #channel
+:a41!testuser@localhost JOIN #channel
+
+a40
+:ft_ircd 001 a40 Welcome to Internet Relay Network
+a40!testuser@localhost
+:a40!testuser@localhost JOIN #channel
+:ft_ircd 331 a40 #channel :No topic is set
+:ft_ircd 353 a40 = #channel :a06 a16 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a36 a37 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a39 a40 a14 a17 a19 a20 a23 a28 a31 a38 
+:ft_ircd 366 a40 #channel :End of NAMES list
+:a41!testuser@localhost JOIN #channel
+
+a41
+:ft_ircd 001 a41 Welcome to Internet Relay Network
+a41!testuser@localhost
+:a41!testuser@localhost JOIN #channel
+:ft_ircd 331 a41 #channel :No topic is set
+:ft_ircd 353 a41 = #channel :a06 a16 a41 a02 a04 a07 a08 a13 a15 a18 a21 a29 a34 a35 a36 a37 a10 a11 a24 a25 a27 a32 a05 a09 a26 a01 a03 a30 a33 @a00 a12 a22 a39 a40 a14 a17 a19 a20 a23 a28 a31 a38 
+:ft_ircd 366 a41 #channel :End of NAMES list
+
+a42
+:ft_ircd 001 a42 Welcome to Internet Relay Network
+a42!testuser@localhost
+:ft_ircd 471 a42 #channel :Cannot join channel (+l)

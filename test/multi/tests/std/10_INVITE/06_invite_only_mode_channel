@@ -1,0 +1,36 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #channel
+:ft_ircd 331 one #channel :No topic is set
+:ft_ircd 353 one = #channel :@one 
+:ft_ircd 366 one #channel :End of NAMES list
+:two!testuser@localhost JOIN #channel
+:one!testuser@localhost MODE #channel +i
+:ft_ircd 341 one three #channel
+:three!testuser@localhost JOIN #channel
+:three!testuser@localhost PART #channel :three
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #channel
+:ft_ircd 331 two #channel :No topic is set
+:ft_ircd 353 two = #channel :@one two 
+:ft_ircd 366 two #channel :End of NAMES list
+:ft_ircd 482 two #channel :You're not channel operator
+:three!testuser@localhost JOIN #channel
+:three!testuser@localhost PART #channel :three
+
+three
+:ft_ircd 001 three Welcome to Internet Relay Network
+three!testuser@localhost
+:ft_ircd 473 three #channel :Cannot join channel (+i)
+:one!testuser@localhost INVITE three #channel
+:three!testuser@localhost JOIN #channel
+:ft_ircd 331 three #channel :No topic is set
+:ft_ircd 353 three = #channel :@one three two 
+:ft_ircd 366 three #channel :End of NAMES list
+:three!testuser@localhost PART #channel :three
+:ft_ircd 473 three #channel :Cannot join channel (+i)

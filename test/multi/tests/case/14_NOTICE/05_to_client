@@ -1,4 +1,6 @@
 1234
-one,two
+one,two,three
 0 notice one :say hello to myself
 0 notice two :hi there?
+2 join #channel
+0 notice three :hi there?

@@ -1,4 +1,6 @@
 1234
-one,two
+one,two,three
 0 privmsg one :say hello to myself
 0 privmsg two :hi there?
+2 join #channel
+0 privmsg three :hi there?

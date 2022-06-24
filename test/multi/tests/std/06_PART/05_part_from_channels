@@ -1,0 +1,85 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #a
+:ft_ircd 331 one #a :No topic is set
+:ft_ircd 353 one = #a :@one 
+:ft_ircd 366 one #a :End of NAMES list
+:one!testuser@localhost JOIN #b
+:ft_ircd 331 one #b :No topic is set
+:ft_ircd 353 one = #b :@one 
+:ft_ircd 366 one #b :End of NAMES list
+:one!testuser@localhost JOIN #c
+:ft_ircd 331 one #c :No topic is set
+:ft_ircd 353 one = #c :@one 
+:ft_ircd 366 one #c :End of NAMES list
+:one!testuser@localhost JOIN #d
+:ft_ircd 331 one #d :No topic is set
+:ft_ircd 353 one = #d :@one 
+:ft_ircd 366 one #d :End of NAMES list
+:one!testuser@localhost JOIN #e
+:ft_ircd 331 one #e :No topic is set
+:ft_ircd 353 one = #e :@one 
+:ft_ircd 366 one #e :End of NAMES list
+:one!testuser@localhost JOIN #f
+:ft_ircd 331 one #f :No topic is set
+:ft_ircd 353 one = #f :@one 
+:ft_ircd 366 one #f :End of NAMES list
+:one!testuser@localhost JOIN #g
+:ft_ircd 331 one #g :No topic is set
+:ft_ircd 353 one = #g :@one 
+:ft_ircd 366 one #g :End of NAMES list
+:two!testuser@localhost JOIN #a
+:two!testuser@localhost JOIN #b
+:two!testuser@localhost JOIN #c
+:two!testuser@localhost JOIN #d
+:two!testuser@localhost JOIN #e
+:two!testuser@localhost JOIN #f
+:two!testuser@localhost JOIN #g
+:one!testuser@localhost PART #a :one
+:one!testuser@localhost PART #b :one
+:one!testuser@localhost PART #c :one
+:one!testuser@localhost PART #d :one
+:one!testuser@localhost PART #e :one
+:one!testuser@localhost PART #f :one
+:one!testuser@localhost PART #g :one
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #a
+:ft_ircd 331 two #a :No topic is set
+:ft_ircd 353 two = #a :two @one 
+:ft_ircd 366 two #a :End of NAMES list
+:two!testuser@localhost JOIN #b
+:ft_ircd 331 two #b :No topic is set
+:ft_ircd 353 two = #b :two @one 
+:ft_ircd 366 two #b :End of NAMES list
+:two!testuser@localhost JOIN #c
+:ft_ircd 331 two #c :No topic is set
+:ft_ircd 353 two = #c :two @one 
+:ft_ircd 366 two #c :End of NAMES list
+:two!testuser@localhost JOIN #d
+:ft_ircd 331 two #d :No topic is set
+:ft_ircd 353 two = #d :two @one 
+:ft_ircd 366 two #d :End of NAMES list
+:two!testuser@localhost JOIN #e
+:ft_ircd 331 two #e :No topic is set
+:ft_ircd 353 two = #e :two @one 
+:ft_ircd 366 two #e :End of NAMES list
+:two!testuser@localhost JOIN #f
+:ft_ircd 331 two #f :No topic is set
+:ft_ircd 353 two = #f :two @one 
+:ft_ircd 366 two #f :End of NAMES list
+:two!testuser@localhost JOIN #g
+:ft_ircd 331 two #g :No topic is set
+:ft_ircd 353 two = #g :two @one 
+:ft_ircd 366 two #g :End of NAMES list
+:one!testuser@localhost PART #a :one
+:one!testuser@localhost PART #b :one
+:one!testuser@localhost PART #c :one
+:one!testuser@localhost PART #d :one
+:one!testuser@localhost PART #e :one
+:one!testuser@localhost PART #f :one
+:one!testuser@localhost PART #g :one

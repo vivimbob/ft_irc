@@ -1,0 +1,262 @@
+
+one
+:ft_ircd 001 one Welcome to Internet Relay Network
+one!testuser@localhost
+:one!testuser@localhost JOIN #a
+:ft_ircd 331 one #a :No topic is set
+:ft_ircd 353 one = #a :one @six 
+:ft_ircd 366 one #a :End of NAMES list
+:one!testuser@localhost JOIN #b
+:ft_ircd 331 one #b :No topic is set
+:ft_ircd 353 one = #b :one @six 
+:ft_ircd 366 one #b :End of NAMES list
+:one!testuser@localhost JOIN #c
+:ft_ircd 331 one #c :No topic is set
+:ft_ircd 353 one = #c :one @six 
+:ft_ircd 366 one #c :End of NAMES list
+:one!testuser@localhost JOIN #d
+:ft_ircd 331 one #d :No topic is set
+:ft_ircd 353 one = #d :one @six 
+:ft_ircd 366 one #d :End of NAMES list
+:one!testuser@localhost JOIN #e
+:ft_ircd 331 one #e :No topic is set
+:ft_ircd 353 one = #e :one @six 
+:ft_ircd 366 one #e :End of NAMES list
+:one!testuser@localhost JOIN #f
+:ft_ircd 331 one #f :No topic is set
+:ft_ircd 353 one = #f :one @six 
+:ft_ircd 366 one #f :End of NAMES list
+:two!testuser@localhost JOIN #a
+:two!testuser@localhost JOIN #b
+:two!testuser@localhost JOIN #c
+:two!testuser@localhost JOIN #d
+:two!testuser@localhost JOIN #e
+:two!testuser@localhost JOIN #f
+:three!testuser@localhost JOIN #a
+:three!testuser@localhost JOIN #b
+:three!testuser@localhost JOIN #c
+:three!testuser@localhost JOIN #d
+:three!testuser@localhost JOIN #e
+:three!testuser@localhost JOIN #f
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:four!testuser@localhost JOIN #d
+:four!testuser@localhost JOIN #e
+:four!testuser@localhost JOIN #f
+:five!testuser@localhost JOIN #a
+:five!testuser@localhost JOIN #b
+:five!testuser@localhost JOIN #c
+:five!testuser@localhost JOIN #d
+:five!testuser@localhost JOIN #e
+:five!testuser@localhost JOIN #f
+
+two
+:ft_ircd 001 two Welcome to Internet Relay Network
+two!testuser@localhost
+:two!testuser@localhost JOIN #a
+:ft_ircd 331 two #a :No topic is set
+:ft_ircd 353 two = #a :two one @six 
+:ft_ircd 366 two #a :End of NAMES list
+:two!testuser@localhost JOIN #b
+:ft_ircd 331 two #b :No topic is set
+:ft_ircd 353 two = #b :two one @six 
+:ft_ircd 366 two #b :End of NAMES list
+:two!testuser@localhost JOIN #c
+:ft_ircd 331 two #c :No topic is set
+:ft_ircd 353 two = #c :two one @six 
+:ft_ircd 366 two #c :End of NAMES list
+:two!testuser@localhost JOIN #d
+:ft_ircd 331 two #d :No topic is set
+:ft_ircd 353 two = #d :two one @six 
+:ft_ircd 366 two #d :End of NAMES list
+:two!testuser@localhost JOIN #e
+:ft_ircd 331 two #e :No topic is set
+:ft_ircd 353 two = #e :two one @six 
+:ft_ircd 366 two #e :End of NAMES list
+:two!testuser@localhost JOIN #f
+:ft_ircd 331 two #f :No topic is set
+:ft_ircd 353 two = #f :two one @six 
+:ft_ircd 366 two #f :End of NAMES list
+:three!testuser@localhost JOIN #a
+:three!testuser@localhost JOIN #b
+:three!testuser@localhost JOIN #c
+:three!testuser@localhost JOIN #d
+:three!testuser@localhost JOIN #e
+:three!testuser@localhost JOIN #f
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:four!testuser@localhost JOIN #d
+:four!testuser@localhost JOIN #e
+:four!testuser@localhost JOIN #f
+:five!testuser@localhost JOIN #a
+:five!testuser@localhost JOIN #b
+:five!testuser@localhost JOIN #c
+:five!testuser@localhost JOIN #d
+:five!testuser@localhost JOIN #e
+:five!testuser@localhost JOIN #f
+
+three
+:ft_ircd 001 three Welcome to Internet Relay Network
+three!testuser@localhost
+:three!testuser@localhost JOIN #a
+:ft_ircd 331 three #a :No topic is set
+:ft_ircd 353 three = #a :two one three @six 
+:ft_ircd 366 three #a :End of NAMES list
+:three!testuser@localhost JOIN #b
+:ft_ircd 331 three #b :No topic is set
+:ft_ircd 353 three = #b :two one three @six 
+:ft_ircd 366 three #b :End of NAMES list
+:three!testuser@localhost JOIN #c
+:ft_ircd 331 three #c :No topic is set
+:ft_ircd 353 three = #c :two one three @six 
+:ft_ircd 366 three #c :End of NAMES list
+:three!testuser@localhost JOIN #d
+:ft_ircd 331 three #d :No topic is set
+:ft_ircd 353 three = #d :two one three @six 
+:ft_ircd 366 three #d :End of NAMES list
+:three!testuser@localhost JOIN #e
+:ft_ircd 331 three #e :No topic is set
+:ft_ircd 353 three = #e :two one three @six 
+:ft_ircd 366 three #e :End of NAMES list
+:three!testuser@localhost JOIN #f
+:ft_ircd 331 three #f :No topic is set
+:ft_ircd 353 three = #f :two one three @six 
+:ft_ircd 366 three #f :End of NAMES list
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:four!testuser@localhost JOIN #d
+:four!testuser@localhost JOIN #e
+:four!testuser@localhost JOIN #f
+:five!testuser@localhost JOIN #a
+:five!testuser@localhost JOIN #b
+:five!testuser@localhost JOIN #c
+:five!testuser@localhost JOIN #d
+:five!testuser@localhost JOIN #e
+:five!testuser@localhost JOIN #f
+
+four
+:ft_ircd 001 four Welcome to Internet Relay Network
+four!testuser@localhost
+:four!testuser@localhost JOIN #a
+:ft_ircd 331 four #a :No topic is set
+:ft_ircd 353 four = #a :four two one three @six 
+:ft_ircd 366 four #a :End of NAMES list
+:four!testuser@localhost JOIN #b
+:ft_ircd 331 four #b :No topic is set
+:ft_ircd 353 four = #b :four two one three @six 
+:ft_ircd 366 four #b :End of NAMES list
+:four!testuser@localhost JOIN #c
+:ft_ircd 331 four #c :No topic is set
+:ft_ircd 353 four = #c :four two one three @six 
+:ft_ircd 366 four #c :End of NAMES list
+:four!testuser@localhost JOIN #d
+:ft_ircd 331 four #d :No topic is set
+:ft_ircd 353 four = #d :four two one three @six 
+:ft_ircd 366 four #d :End of NAMES list
+:four!testuser@localhost JOIN #e
+:ft_ircd 331 four #e :No topic is set
+:ft_ircd 353 four = #e :four two one three @six 
+:ft_ircd 366 four #e :End of NAMES list
+:four!testuser@localhost JOIN #f
+:ft_ircd 331 four #f :No topic is set
+:ft_ircd 353 four = #f :four two one three @six 
+:ft_ircd 366 four #f :End of NAMES list
+:five!testuser@localhost JOIN #a
+:five!testuser@localhost JOIN #b
+:five!testuser@localhost JOIN #c
+:five!testuser@localhost JOIN #d
+:five!testuser@localhost JOIN #e
+:five!testuser@localhost JOIN #f
+
+five
+:ft_ircd 001 five Welcome to Internet Relay Network
+five!testuser@localhost
+:five!testuser@localhost JOIN #a
+:ft_ircd 331 five #a :No topic is set
+:ft_ircd 353 five = #a :four two one three five @six 
+:ft_ircd 366 five #a :End of NAMES list
+:five!testuser@localhost JOIN #b
+:ft_ircd 331 five #b :No topic is set
+:ft_ircd 353 five = #b :four two one three five @six 
+:ft_ircd 366 five #b :End of NAMES list
+:five!testuser@localhost JOIN #c
+:ft_ircd 331 five #c :No topic is set
+:ft_ircd 353 five = #c :four two one three five @six 
+:ft_ircd 366 five #c :End of NAMES list
+:five!testuser@localhost JOIN #d
+:ft_ircd 331 five #d :No topic is set
+:ft_ircd 353 five = #d :four two one three five @six 
+:ft_ircd 366 five #d :End of NAMES list
+:five!testuser@localhost JOIN #e
+:ft_ircd 331 five #e :No topic is set
+:ft_ircd 353 five = #e :four two one three five @six 
+:ft_ircd 366 five #e :End of NAMES list
+:five!testuser@localhost JOIN #f
+:ft_ircd 331 five #f :No topic is set
+:ft_ircd 353 five = #f :four two one three five @six 
+:ft_ircd 366 five #f :End of NAMES list
+
+six
+:ft_ircd 001 six Welcome to Internet Relay Network
+six!testuser@localhost
+:six!testuser@localhost JOIN #a
+:ft_ircd 331 six #a :No topic is set
+:ft_ircd 353 six = #a :@six 
+:ft_ircd 366 six #a :End of NAMES list
+:six!testuser@localhost JOIN #b
+:ft_ircd 331 six #b :No topic is set
+:ft_ircd 353 six = #b :@six 
+:ft_ircd 366 six #b :End of NAMES list
+:six!testuser@localhost JOIN #c
+:ft_ircd 331 six #c :No topic is set
+:ft_ircd 353 six = #c :@six 
+:ft_ircd 366 six #c :End of NAMES list
+:six!testuser@localhost JOIN #d
+:ft_ircd 331 six #d :No topic is set
+:ft_ircd 353 six = #d :@six 
+:ft_ircd 366 six #d :End of NAMES list
+:six!testuser@localhost JOIN #e
+:ft_ircd 331 six #e :No topic is set
+:ft_ircd 353 six = #e :@six 
+:ft_ircd 366 six #e :End of NAMES list
+:six!testuser@localhost JOIN #f
+:ft_ircd 331 six #f :No topic is set
+:ft_ircd 353 six = #f :@six 
+:ft_ircd 366 six #f :End of NAMES list
+:one!testuser@localhost JOIN #a
+:one!testuser@localhost JOIN #b
+:one!testuser@localhost JOIN #c
+:one!testuser@localhost JOIN #d
+:one!testuser@localhost JOIN #e
+:one!testuser@localhost JOIN #f
+:two!testuser@localhost JOIN #a
+:two!testuser@localhost JOIN #b
+:two!testuser@localhost JOIN #c
+:two!testuser@localhost JOIN #d
+:two!testuser@localhost JOIN #e
+:two!testuser@localhost JOIN #f
+:three!testuser@localhost JOIN #a
+:three!testuser@localhost JOIN #b
+:three!testuser@localhost JOIN #c
+:three!testuser@localhost JOIN #d
+:three!testuser@localhost JOIN #e
+:three!testuser@localhost JOIN #f
+:four!testuser@localhost JOIN #a
+:four!testuser@localhost JOIN #b
+:four!testuser@localhost JOIN #c
+:four!testuser@localhost JOIN #d
+:four!testuser@localhost JOIN #e
+:four!testuser@localhost JOIN #f
+:five!testuser@localhost JOIN #a
+:five!testuser@localhost JOIN #b
+:five!testuser@localhost JOIN #c
+:five!testuser@localhost JOIN #d
+:five!testuser@localhost JOIN #e
+:five!testuser@localhost JOIN #f
+:ft_ircd 461 six KICK :Not enough parameters
+:ft_ircd 461 six KICK :Not enough parameters
+:ft_ircd 461 six KICK :Not enough parameters
+:ft_ircd 461 six KICK :Not enough parameters

@@ -1,0 +1,8 @@
+
+test
+:ft_ircd 001 test Welcome to Internet Relay Network
+test!testuser@localhost
+:test!testuser@localhost JOIN #channel
+:ft_ircd 331 test #channel :No topic is set
+:ft_ircd 353 test = #channel :@test 
+:ft_ircd 366 test #channel :End of NAMES list

@@ -2,12 +2,12 @@
 one,two,three
 0 join #a
 1 join #b
-0 privmsg BOT :!help
-0 privmsg BOT :!datetime
-0 privmsg BOT :!coin
-1 privmsg BOT :!help
-1 privmsg BOT :!datetime
-1 privmsg BOT :!coin
-2 privmsg BOT :!help
-2 privmsg BOT :!datetime
-2 privmsg BOT :!coin
+0 privmsg bot :!help
+0 privmsg bot :!datetime
+0 privmsg bot :!game_coin
+1 privmsg bot :!help
+1 privmsg bot :!datetime
+1 privmsg bot :!game_coin
+2 privmsg bot :!help
+2 privmsg bot :!datetime
+2 privmsg bot :!game_coin
