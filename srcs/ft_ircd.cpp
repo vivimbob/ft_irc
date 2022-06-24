@@ -17,14 +17,14 @@ void
         _channel->part(_client);
         if (_channel->is_empty())
         {
-            _map.channel.erase(_channel->get_name());
+            IRCD::_map.channel.erase(_channel->get_name());
             delete _channel;
         }
         _channel = nullptr;
     }
 
     if (_client->is_registered())
-        _map.client.erase(_client->get_names().nick);
+        IRCD::_map.client.erase(_client->get_names().nick);
     delete _client;
     _client = nullptr;
 }
@@ -45,13 +45,12 @@ void
     if (0 <= Socket::send(_events[Event::_index]))
     {
         IRC::_to_client->offset += Socket::_result;
-        if (IRC::_to_client->buffer.size()
-            <= (unsigned)IRC::_to_client->offset)
-		{
+        if (IRC::_to_client->buffer.size() <= (unsigned)IRC::_to_client->offset)
+        {
             Event::toggle(EVFILT_WRITE);
-			IRC::_to_client->buffer.clear();
-			IRC::_to_client->offset = 0;
-		}
+            IRC::_to_client->buffer.clear();
+            IRC::_to_client->offset = 0;
+        }
     }
 	else
         Event::toggle(EVFILT_WRITE);
@@ -124,15 +123,6 @@ void
     log::print() << "accept fd " << _fd << log::endl;
 }
 
-// struct kevent {
-//	uintptr_t       ident;  /* identifier for this event */
-//	int16_t         filter; /* filter for event */
-//	uint16_t        flags;  /* general flags */
-//	uint32_t        fflags; /* filter-specific flags */
-//	intptr_t        data;   /* filter-specific data */
-//	void            *udata; /* opaque user data identifier */
-// };
-
 void
     FT_IRCD::run()
 {
@@ -151,8 +141,16 @@ void
                 FT_IRCD::m_receive();
             else if (_events[Event::_index].filter == EVFILT_WRITE)
                 FT_IRCD::m_send();
-            IRC::_client = nullptr;
         }
+        if (!_bot.get_buffers().to_client.buffer.empty())
+		{
+            _bot.receive();
+			if (!_bot.get_buffers().buffer.empty())
+			{
+				_client = &_bot;
+				FT_IRCD::m_receive();
+			}
+		}
     }
 }
 
@@ -174,17 +172,15 @@ int
 {
     int port;
 
-    if (argc != 3 || (9 < (unsigned)argv[1][0] - '0'))
+    if ((argc != 3) || (PORT_MAX < (unsigned)(port = atoi(argv[1]))))
     {
-		std::cerr << "usage: " << argv[0] << " <port> <password>"
-                     << std::endl;
+        if (argc != 3)
+            log::print() << "usage: " << argv[0] << " <port> <password>"
+                         << log::endl;
+        else
+            log::print() << argc << "is out of port range (0 ~ 65535)"
+                         << log::endl;
         return FAILURE;
     }
-    if (PORT_MAX < (unsigned)(port = atoi(argv[1])))
-    {
-		std::cerr << argv[1] << " is out of port range (0 ~ 65535)" << std::endl;
-        return FAILURE;
-    }
-
     FT_IRCD(port, argv[2]).run();
 }

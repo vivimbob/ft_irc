@@ -45,7 +45,7 @@ const std::string&
 }
 
 bool
-    Channel::get_status(TYPE type)
+    Channel::get_status(e_type type)
 {
     if (type == INVITE)
         return _status.invite;
@@ -109,7 +109,7 @@ void
 }
 
 void
-    Channel::set_status(TYPE type, bool state)
+    Channel::set_status(e_type type, bool state)
 {
     switch (type)
     {
@@ -202,7 +202,7 @@ bool
 bool
     Channel::is_full()
 {
-    return _members.size() >= CHANNEL_USER_LIMIT;
+    return _members.size() >= CHANNEL_USER_MAX;
 }
 
 bool
