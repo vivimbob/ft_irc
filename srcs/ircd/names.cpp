@@ -5,8 +5,8 @@ e_result
 {
     _channel              = _map.channel[*_target];
     _buffer               = "= " + _channel->get_name() + " :";
-    Channel::t_citer iter = _channel->get_members().begin();
-    Channel::t_citer end  = _channel->get_members().end();
+    Channel::t_citer_member iter = _channel->get_members().begin();
+    Channel::t_citer_member end  = _channel->get_members().end();
     for (; iter != end; ++iter)
         _buffer.append(_channel->get_prefix(iter->first)
                        + iter->first->get_names().nick + " ");

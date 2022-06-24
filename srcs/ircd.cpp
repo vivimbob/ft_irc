@@ -8,7 +8,7 @@ IRCD::t_cstr_vector
     IRCD::t_cstr_vector splited;
     std::istringstream  iss(params);
     std::string         element;
-	
+
     while (std::getline(iss, element, delimiter))
         splited.push_back(element);
     return splited;
@@ -77,8 +77,8 @@ void
 void
     IRCD::m_to_channel(const std::string& str)
 {
-    Channel::t_citer_member iter = _channel->get_map_member().begin();
-    Channel::t_citer_member end  = _channel->get_map_member().end();
+    Channel::t_citer_member iter = _channel->get_members().begin();
+    Channel::t_citer_member end  = _channel->get_members().end();
 
     for (; iter != end; ++iter)
         if (iter->first != _client)
@@ -94,8 +94,8 @@ void
 
     for (_channel = *iter; iter != end; _channel = *(++iter))
     {
-        Channel::t_citer_member users = _channel->get_map_member().begin();
-        Channel::t_citer_member u_end = _channel->get_map_member().end();
+        Channel::t_citer_member users = _channel->get_members().begin();
+        Channel::t_citer_member u_end = _channel->get_members().end();
         for (; users != u_end; ++users)
             if (!check.count(users->first) && users->first != _client)
             {

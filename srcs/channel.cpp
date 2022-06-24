@@ -33,7 +33,7 @@ const std::string&
 }
 
 const Channel::t_map_member&
-    Channel::get_map_member()
+    Channel::get_members()
 {
     return _members;
 }
