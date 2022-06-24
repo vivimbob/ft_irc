@@ -1,6 +1,0 @@
-1234
-one,two
-0 privmsg two :!help
-0 privmsg bot :help
-0 privmsg bot :game_coin
-0 notice bot :!datetime
