@@ -60,13 +60,13 @@ class Channel
     const std::string& get_topic() const;
     const t_membermap& get_members();
     const std::string& get_prefix(Client*);
-    bool               get_status(TYPE);
+    bool               get_status(e_type);
 
     std::string get_status();
     void        set_name(const std::string&);
     void        set_topic(const std::string&);
     void        set_operator(Client*);
-    void        set_status(TYPE, bool);
+    void        set_status(e_type, bool);
     void        set_status(std::string&);
     void        reserve_clear();
     void        reserve_sign(const char);

@@ -7,8 +7,8 @@
 Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
     _buffers.requests.from    = this;
-    _names.host               = HOSTNAME;
-    _names.server             = SERVERNAME;
+    _names.host               = NAME_HOST;
+    _names.server             = NAME_SERVER;
     _status.registered        = 0;
     _buffers.offset           = 0;
     _buffers.to_client.offset = 0;
@@ -87,7 +87,7 @@ void
 }
 
 void
-    Client::set_status(TYPE type)
+    Client::set_status(e_type type)
 {
     switch (type)
     {

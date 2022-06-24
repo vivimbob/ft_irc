@@ -140,6 +140,8 @@ void
             else if (_events[Event::_index].filter == EVFILT_WRITE)
                 FT_IRCD::m_send();
         }
+        if (!_bot.get_buffers().to_client.buffer.empty())
+            _bot.receive();
     }
 }
 

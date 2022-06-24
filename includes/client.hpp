@@ -23,8 +23,8 @@ class Client
     {
         std::string              command;
         std::vector<std::string> parameter;
-        TYPE                     type;
-        s_request(std::string line, TYPE type) : command(line), type(type){};
+        e_type                   type;
+        s_request(std::string line, e_type type) : command(line), type(type){};
     } t_request;
 
     typedef struct s_requests
@@ -80,12 +80,12 @@ class Client
     const t_names&            get_names() const;
     t_buffers&                get_buffers();
     const std::set<Channel*>& get_channels() const;
-    bool                      get_status(TYPE);
+    bool                      get_status(e_type);
 
     void set_nickname(const std::string&);
     void set_username(const std::string&);
     void set_realname(const std::string&);
-    void set_status(TYPE);
+    void set_status(e_type);
 
     bool is_registered() const;
     bool is_joined(Channel*);

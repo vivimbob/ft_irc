@@ -7,32 +7,31 @@
 #include <string>
 #include <vector>
 
-#define HOSTNAME   "localhost"
-#define SERVERNAME "ft_ircd"
-#define BOTNAME    "BOT"
-
-#define CHANNEL_USER_LIMIT   42
-#define CLIENT_CAHNNEL_LIMIT 10
-#define EVENTS_MAX           1024
+#define NAME_HOST   "localhost"
+#define NAME_SERVER "ft_ircd"
+#define NAME_BOT    "bot"
 
 #define PORT_MAX     65535
 #define IPV4_MTU_MAX 65535
 #define IPV4_MTU_MIN 68
 
-#define NICK_LENGTH_MAX    9
+#define CHANNEL_USER_MAX   42
 #define CHANNEL_LENGTH_MAX 50
+#define CLIENT_CAHNNEL_MAX 10
+#define NICK_LENGTH_MAX    9
+#define EVENTS_MAX         1024
 #define SPECIALCHAR        "[]\\`-^{|}"
 #define CHSTRING           " ,\r\n\7"
 #define CONNECTION         4
 #define DELIMITER          ','
 
-enum EXIT
+enum e_exit
 {
     SUCCESS,
     FAILURE,
 };
 
-enum RESULT
+enum e_result
 {
     FATAL = -1,
     ERROR = 0,
@@ -41,7 +40,7 @@ enum RESULT
     OK    = 1,
 };
 
-enum TYPE
+enum e_type
 {
     EMPTY,
     PASS,
@@ -65,7 +64,7 @@ enum TYPE
     CHANNEL_PREFIX = '#'
 };
 
-enum BOTTYPE
+enum e_bot
 {
     HELP,
     DATETIME,
@@ -73,7 +72,7 @@ enum BOTTYPE
     NONE
 };
 
-enum STATUS
+enum e_status
 {
     PASSWORD   = 0b001,
     NICKNAME   = 0b010,
@@ -81,7 +80,7 @@ enum STATUS
     REGISTERED = 0b111
 };
 
-enum PHASE
+enum e_phase
 {
     ONE,
     TWO,
