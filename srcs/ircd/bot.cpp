@@ -71,18 +71,44 @@ e_bot
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
-	(void)command;
-    //for (_offset = 0; (command[_offset] != ' ' && command[_offset] != '\0');
-    //     ++_offset)
-    //    if ((unsigned)command[_offset] - 'a' < 26)
-    //        command[_offset] ^= 0b100000;
-    //_buffer = command.substr(_offset);
-    //command.erase(_offset);
+    int offset;
+
+    command.erase(0, command.find_first_of(' '));
+    command.erase(0, command.find_first_not_of(' '));
+
+    for (offset = 0; (command[offset] != ' ' && command[offset] != '\0');
+         ++offset)
+        if ((unsigned)command[offset] - 'a' < 26)
+            command[offset] ^= 0b100000;
+
+    IRCD::Bot::_command = command.substr(0, offset);
+    offset              = command.find_first_of(' ');
+
+    command.erase(0, offset);
+
+    command.erase(0, command.find_first_not_of(' '));
+    command.erase(0, command.find_first_of(' '));
+
+    command.erase(0, command.find_first_not_of(' '));
+    if (command[0] == ':')
+        offset = command.find_first_not_of(':');
+
+    command.erase(0, offset);
+
+    if ((_type = IRCD::Bot::m_get_type(command)) < NONE)
+    {
+        (this->*IRCD::Bot::_commands[_type])();
+    }
+    log::print() << _type << log::endl;
 }
 
 void
     IRCD::Bot::receive()
 {
     log::print() << _buffers.to_client.buffer << log::endl;
+    std::string buffer = _buffers.to_client.buffer;
+
+    m_parse_command(buffer);
+
     _buffers.to_client.buffer.clear();
 }
