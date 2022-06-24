@@ -71,6 +71,7 @@ e_bot
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
+	(void)command;
     //for (_offset = 0; (command[_offset] != ' ' && command[_offset] != '\0');
     //     ++_offset)
     //    if ((unsigned)command[_offset] - 'a' < 26)
