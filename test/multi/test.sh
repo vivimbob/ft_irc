@@ -1,9 +1,11 @@
 #!/bin/bash
 
-TEST=$(/bin/ls tests/case)
-
-for test in ${TEST[@]}
+CASE=$(/bin/ls tests/case/$1)
+for case in ${CASE[@]}
 do
+	echo $1
+	echo $case
+	./multi tests/case/$1/$case
+	read
 	clear
-	./case.sh $test
 done
