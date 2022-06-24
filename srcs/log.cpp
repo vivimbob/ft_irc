@@ -5,8 +5,8 @@ void
 {
     std::time(&log::time::raw);
     if (std::strftime(time::buffer, BUFFER_SIZE, "%Y-%m-%d %H:%M:%S",
-                      std::localtime(&time::raw)))
-        std::cout << time::buffer << ": ";
+                      std::localtime(&log::time::raw)))
+        std::cout << log::time::buffer << ": ";
 }
 
 std::ostream&
@@ -23,4 +23,3 @@ std::ostream&
     os.flush();
     return os;
 }
-

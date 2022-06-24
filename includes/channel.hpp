@@ -8,10 +8,10 @@ class Client;
 class Channel
 {
   public:
-    typedef std::string                     t_membership;
-    typedef std::map<Client*, t_membership> t_membermap;
-    typedef std::set<Client*>               t_invitation;
-    typedef t_membermap::const_iterator     t_citer;
+    typedef std::string                   t_str_info;
+    typedef std::map<Client*, t_str_info> t_map_member;
+    typedef std::set<Client*>             t_set_invitee;
+    typedef t_map_member::const_iterator  t_citer_member;
 
     typedef union
     {
@@ -41,16 +41,17 @@ class Channel
     } t_reserved;
 
   private:
-    std::string  _name;
-    std::string  _topic;
-    t_membermap  _members;
-    t_status     _status;
-    t_reserved   _reserved;
-    t_invitation _invitations;
+    std::string   _name;
+    std::string   _topic;
+    t_map_member  _members;
+    t_status      _status;
+    t_reserved    _reserved;
+    t_set_invitee _invitees;
 
     Channel();
     Channel(const Channel&);
     Channel& operator=(const Channel&);
+    bool     m_set_status(const bool&, unsigned char&);
 
   public:
     Channel(const std::string& name, Client* client);
