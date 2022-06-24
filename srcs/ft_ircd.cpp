@@ -53,6 +53,8 @@ void
 			IRC::_to_client->offset = 0;
 		}
     }
+	else
+        Event::toggle(EVFILT_WRITE);
 }
 
 void
@@ -164,6 +166,7 @@ FT_IRCD::FT_IRCD(int port, const char* const password)
     Event::initialize(_socket.fd);
     IRC::_password = password;
     IRC::_ft_ircd  = this;
+	signal(SIGPIPE, SIG_IGN);
 }
 
 int
