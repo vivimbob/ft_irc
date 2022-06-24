@@ -3,7 +3,7 @@
 #include <sstream>
 
 IRCD::t_cstr_vector
-    split(const std::string& params, char delimiter)
+    IRCD::split(const std::string& params, char delimiter)
 {
     IRCD::t_cstr_vector splited;
     std::istringstream  iss(params);
@@ -170,7 +170,7 @@ void
 void
     IRCD::m_bot_initialize()
 {
-    _map.client.insert(std::make_pair(NAME_BOT, _bot));
+    _map.client[NAME_BOT] = &_bot;
 }
 
 IRCD::~IRCD()

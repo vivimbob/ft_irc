@@ -33,13 +33,13 @@ void
 }
 
 void
-    IRCD::Bot::m_help(Client& client)
+    IRCD::Bot::m_help()
 {
     m_send(get_prefix() + "command list : [/help, /datetime, /coin]\r\n");
 }
 
 void
-    IRCD::Bot::m_datetime(Client& client)
+    IRCD::Bot::m_datetime()
 {
     time_t m_raw_time;
     char   buffer[50];
@@ -51,7 +51,7 @@ void
 }
 
 void
-    IRCD::Bot::m_game_coin(Client& client)
+    IRCD::Bot::m_game_coin()
 {
     m_send(get_prefix() + "The result of tossing a coin is "
            + std::string(std::rand() % 2 == 0 ? "head" : "tail") + " "
@@ -69,11 +69,13 @@ e_bot
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
+    (void)command;
 }
 
 void
     IRCD::Bot::m_parse_parameter(std::vector<std::string>& parameter)
 {
+    (void)parameter;
 }
 
 void

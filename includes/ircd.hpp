@@ -21,9 +21,9 @@ class IRCD : public IRC
     class Bot : public Client
     {
       public:
-        typedef std::vector<void (Bot::*)(Client&)> t_commands_bot;
-        typedef std::vector<std::string>            t_vector_str;
-        typedef std::map<std::string, e_bot>        t_map_type;
+        typedef std::vector<void (Bot::*)()> t_commands_bot;
+        typedef std::vector<std::string>     t_vector_str;
+        typedef std::map<std::string, e_bot> t_map_type;
 
       private:
         Bot(const std::string&);
@@ -34,9 +34,9 @@ class IRCD : public IRC
         e_bot          _type;
         std::string    _endl;
 
-        void m_help(Client&);
-        void m_datetime(Client&);
-        void m_game_coin(Client&);
+        void m_help();
+        void m_datetime();
+        void m_game_coin();
 
         e_bot m_get_type(const std::string&);
         void  m_parse_command(std::string&);

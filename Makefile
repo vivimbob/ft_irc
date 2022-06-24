@@ -11,6 +11,20 @@ srcs		= ft_ircd.cpp\
 			  irc.cpp\
 			  ircd.cpp\
 			  ircd/bot.cpp\
+			  ircd/invite.cpp\
+			  ircd/join.cpp\
+			  ircd/kick.cpp\
+			  ircd/list.cpp\
+			  ircd/mode.cpp\
+			  ircd/names.cpp\
+			  ircd/nick.cpp\
+			  ircd/notice.cpp\
+			  ircd/part.cpp\
+			  ircd/pass.cpp\
+			  ircd/privmsg.cpp\
+			  ircd/quit.cpp\
+			  ircd/topic.cpp\
+			  ircd/user.cpp\
 			  log.cpp
 
 SRCS    	= $(srcs:%=srcs/%)
