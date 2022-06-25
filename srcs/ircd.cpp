@@ -2,12 +2,12 @@
 #include "../includes/irc.hpp"
 #include <sstream>
 
-IRCD::t_cstr_vector
+std::vector<const std::string>
     IRCD::split(const std::string& params, char delimiter)
 {
-    IRCD::t_cstr_vector splited;
-    std::istringstream  iss(params);
-    std::string         element;
+    std::vector<const std::string> splited;
+    std::istringstream             iss(params);
+    std::string                    element;
 
     while (std::getline(iss, element, delimiter))
         splited.push_back(element);

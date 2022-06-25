@@ -8,8 +8,6 @@
 #include "resources.hpp"
 #include "socket.hpp"
 
-class Bot;
-
 class FT_IRCD : public Socket, public Event, public IRCD
 {
   public:

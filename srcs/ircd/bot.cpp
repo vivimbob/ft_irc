@@ -36,7 +36,7 @@ void
 void
     IRCD::Bot::m_help()
 {
-    m_send(get_prefix() + "command list : [/help, /datetime, /coin]\r\n");
+    m_send(get_prefix() + "command list : [/help, /time, /coin]\r\n");
 }
 
 void
@@ -69,24 +69,12 @@ e_bot
 
 // :test!a@localhost PRIVMSG bot :/help
 
-std::vector<std::string>
-    split(const std::string& params, char delimiter)
-{
-    std::vector<std::string> splited;
-    std::istringstream       iss(params);
-    std::string              element;
-
-    while (std::getline(iss, element, delimiter))
-        splited.push_back(element);
-    return splited;
-}
-
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
-    IRCD::Bot::_parameter = split(command, ' ');
+    std::vector<const std::string> params = IRCD::split(command, ' ');
 
-    if ((_type = IRCD::Bot::m_get_type(IRCD::Bot::_parameter[3])) < NONE)
+    if ((_type = IRCD::Bot::m_get_type(params[3])) < NONE)
         (this->*IRCD::Bot::_commands[_type])();
 }
 
@@ -95,5 +83,5 @@ void
 {
     m_parse_command(_buffers.to_client.buffer);
 
-    _buffers.to_client.buffer.clear();
+    //_buffers.to_client.buffer.clear();
 }
