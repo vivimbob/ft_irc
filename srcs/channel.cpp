@@ -4,11 +4,10 @@
 
 /* channel class constructor and destructor begin */
 
-Channel::Channel(const std::string& name, Client* client) : _name(name)
+Channel::Channel(const std::string& name, Client* client) : _name(name), _operator(client)
 {
     _status.state = 0;
-    this->join(client);
-    this->set_operator(client);
+    _operator->joined(this);
     log::print() << "new channel: " << name << log::endl;
 }
 
@@ -19,6 +18,16 @@ Channel::~Channel()
 /* channel class constructor and destructor end */
 
 /* channel class getter begin */
+
+const Channel::t_citer_member
+    Channel::find(Client* client)
+{
+    t_citer_member iter = _members.begin();
+    t_citer_member end = _members.end();
+    while (iter != end && *iter != client)
+        ++iter;
+    return iter;
+}
 
 const std::string&
     Channel::get_name() const
@@ -32,16 +41,10 @@ const std::string&
     return _topic;
 }
 
-const Channel::t_map_member&
+const Channel::t_vector_member&
     Channel::get_members()
 {
     return _members;
-}
-
-const std::string&
-    Channel::get_prefix(Client* client)
-{
-    return _members[client];
 }
 
 bool
@@ -67,6 +70,12 @@ std::string
     if (_status.nomsg)
         str += 'n';
     return str;
+}
+
+Client*
+    Channel::get_operator()
+{
+    return _operator;
 }
 
 bool
@@ -99,13 +108,6 @@ void
     Channel::set_topic(const std::string& topic)
 {
     this->_topic = topic;
-}
-
-void
-    Channel::set_operator(Client* client)
-{
-    if (_members.find(client)->second.find('@') == std::string::npos)
-        _members[client].insert(0, "@");
 }
 
 void
@@ -196,27 +198,25 @@ void
 bool
     Channel::is_empty()
 {
-    return _members.empty();
+    return _members.empty() && (_operator == nullptr);
 }
 
 bool
     Channel::is_full()
 {
-    return _members.size() >= CHANNEL_USER_MAX;
+    return (_members.size() + (_operator == nullptr ? 0 : 1) >= CHANNEL_USER_MAX);
 }
 
 bool
     Channel::is_operator(Client* client)
 {
-    if (_members.find(client) == _members.end())
-        return false;
-    return (_members.find(client)->second.find('@') != std::string::npos);
+    return (_operator == client);
 }
 
 bool
     Channel::is_joined(Client* client)
 {
-    return _members.count(client);
+    return (is_operator(client) || (find(client) != _members.end()));
 }
 
 bool
@@ -232,7 +232,7 @@ bool
 void
     Channel::join(Client* client)
 {
-    _members.insert(std::make_pair(client, t_str_info()));
+    _members.push_back(client);
     client->joined(this);
     _invitees.erase(client);
 }
@@ -240,7 +240,10 @@ void
 void
     Channel::part(Client* client)
 {
-    _members.erase(client);
+    if (is_operator(client))
+        _operator = nullptr;
+    else if (*find(client) == client)
+        _members.erase(find(client));
     client->parted(this);
 }
 
