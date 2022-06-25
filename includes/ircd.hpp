@@ -42,7 +42,6 @@ class IRCD : public IRC
         e_bot m_get_type(const std::string&);
         void  m_parse_command(std::string&);
 
-        std::string m_get_prefix();
         std::string m_get_client_nick(const std::string&);
 
       public:

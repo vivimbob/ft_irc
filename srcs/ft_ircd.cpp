@@ -148,7 +148,19 @@ void
             if (!_bot.get_buffers().buffer.empty())
             {
                 _client = &_bot;
-                // FT_IRCD::m_receive();
+                while ((_bot.get_buffers().offset
+                        = _bot.get_buffers().buffer.find_first_of("\r\n", 0))
+                       != (int)std::string::npos)
+                {
+                    _bot.get_buffers().requests.queue.push(
+                        Client::s_request(_bot.get_buffers().buffer.substr(
+                                              0, _bot.get_buffers().offset),
+                                          UNKNOWN));
+                    _bot.get_buffers().buffer.erase(0, _bot.get_buffers().offset
+                                                           + 2);
+                }
+                if (_bot.get_buffers().requests.queue.size())
+                    m_requests_handler();
             }
         }
     }

@@ -4,9 +4,11 @@
 
 IRCD::Bot::Bot()
 {
-    _names.nick   = NAME_BOT;
-    _names.host   = NAME_HOST;
-    _names.server = NAME_SERVER;
+    _endl              = "\r\n";
+    _status.registered = REGISTERED;
+    _names.nick        = NAME_BOT;
+    _names.host        = NAME_HOST;
+    _names.server      = NAME_SERVER;
 
     _commands.push_back(&Bot::m_help);
     _commands.push_back(&Bot::m_datetime);
@@ -19,12 +21,6 @@ IRCD::Bot::Bot()
 
 IRCD::Bot::~Bot()
 {
-}
-
-std::string
-    IRCD::Bot::m_get_prefix()
-{
-    return (":" + this->get_nickmask() + " ");
 }
 
 std::string
@@ -42,7 +38,7 @@ void
 void
     IRCD::Bot::m_help(const std::string& prefix)
 {
-    m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
+    m_send("NOTICE " + m_get_client_nick(prefix)
            + " :command list : [/help, /time, /coin]" + IRCD::Bot::_endl);
 }
 
@@ -54,17 +50,17 @@ void
     time(&m_raw_time);
     if (std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
                       std::localtime(&m_raw_time)))
-        m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
-               + " :The current datetime is " + std::string(buffer) + ""
+        m_send("NOTICE " + m_get_client_nick(prefix)
+               + " :The current datetime is " + std::string(buffer)
                + IRCD::Bot::_endl);
 }
 
 void
     IRCD::Bot::m_game_coin(const std::string& prefix)
 {
-    m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
+    m_send("NOTICE " + m_get_client_nick(prefix)
            + " :The result of tossing a coin is "
-           + std::string(std::rand() % 2 == 0 ? "head" : "tail") + " "
+           + std::string(std::rand() % 2 == 0 ? "head" : "tail")
            + IRCD::Bot::_endl);
 }
 
@@ -82,7 +78,6 @@ void
     IRCD::Bot::m_parse_command(std::string& command)
 {
     std::vector<const std::string> params = IRCD::split(command, ' ');
-
     if ((_type = IRCD::Bot::m_get_type(params[3])) < NONE)
         (this->*IRCD::Bot::_commands[_type])(params[0]);
 }
@@ -91,6 +86,5 @@ void
     IRCD::Bot::receive()
 {
     m_parse_command(_buffers.to_client.buffer);
-
-    //_buffers.to_client.buffer.clear();
+    _buffers.to_client.buffer.clear();
 }
