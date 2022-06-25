@@ -79,7 +79,7 @@ void
 {
     Channel::t_citer_member iter = _channel->get_members().begin();
     Channel::t_citer_member end  = _channel->get_members().end();
-    if (_channel->get_operator())
+    if (_channel->get_operator() != _client)
         m_to_client(*_channel->get_operator(), message);
     for (; iter != end; ++iter)
         if (*iter != _client)
