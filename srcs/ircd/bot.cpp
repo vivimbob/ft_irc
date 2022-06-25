@@ -1,5 +1,6 @@
 #include "../../includes/ircd.hpp"
 #include <utility>
+#include <vector>
 
 IRCD::Bot::Bot()
 {
@@ -11,9 +12,9 @@ IRCD::Bot::Bot()
     _commands.push_back(&Bot::m_datetime);
     _commands.push_back(&Bot::m_game_coin);
 
-    _command_to_type.insert(std::make_pair("/help", HELP));
-    _command_to_type.insert(std::make_pair("/time", DATETIME));
-    _command_to_type.insert(std::make_pair("/coin", COIN));
+    _command_to_type.insert(std::make_pair(":/help\r\n", HELP));
+    _command_to_type.insert(std::make_pair(":/time\r\n", DATETIME));
+    _command_to_type.insert(std::make_pair(":/coin\r\n", COIN));
 }
 
 IRCD::Bot::~Bot()
@@ -68,47 +69,31 @@ e_bot
 
 // :test!a@localhost PRIVMSG bot :/help
 
+std::vector<std::string>
+    split(const std::string& params, char delimiter)
+{
+    std::vector<std::string> splited;
+    std::istringstream       iss(params);
+    std::string              element;
+
+    while (std::getline(iss, element, delimiter))
+        splited.push_back(element);
+    return splited;
+}
+
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
-    int offset;
+    IRCD::Bot::_parameter = split(command, ' ');
 
-    command.erase(0, command.find_first_of(' '));
-    command.erase(0, command.find_first_not_of(' '));
-
-    for (offset = 0; (command[offset] != ' ' && command[offset] != '\0');
-         ++offset)
-        if ((unsigned)command[offset] - 'a' < 26)
-            command[offset] ^= 0b100000;
-
-    IRCD::Bot::_command = command.substr(0, offset);
-    offset              = command.find_first_of(' ');
-
-    command.erase(0, offset);
-
-    command.erase(0, command.find_first_not_of(' '));
-    command.erase(0, command.find_first_of(' '));
-
-    command.erase(0, command.find_first_not_of(' '));
-    if (command[0] == ':')
-        offset = command.find_first_not_of(':');
-
-    command.erase(0, offset);
-
-    if ((_type = IRCD::Bot::m_get_type(command)) < NONE)
-    {
+    if ((_type = IRCD::Bot::m_get_type(IRCD::Bot::_parameter[3])) < NONE)
         (this->*IRCD::Bot::_commands[_type])();
-    }
-    log::print() << _type << log::endl;
 }
 
 void
     IRCD::Bot::receive()
 {
-    log::print() << _buffers.to_client.buffer << log::endl;
-    std::string buffer = _buffers.to_client.buffer;
-
-    m_parse_command(buffer);
+    m_parse_command(_buffers.to_client.buffer);
 
     _buffers.to_client.buffer.clear();
 }
