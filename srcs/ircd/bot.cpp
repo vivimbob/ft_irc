@@ -43,7 +43,7 @@ void
     IRCD::Bot::m_help(const std::string& prefix)
 {
     m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
-           + " :command list : [/help, /time, /coin]\r\n");
+           + " :command list : [/help, /time, /coin]" + IRCD::Bot::_endl);
 }
 
 void
