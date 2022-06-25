@@ -22,9 +22,15 @@ IRCD::Bot::~Bot()
 }
 
 std::string
-    IRCD::Bot::get_prefix()
+    IRCD::Bot::m_get_prefix()
 {
     return (":" + this->get_nickmask() + " ");
+}
+
+std::string
+    IRCD::Bot::m_get_client_nick(const std::string& prefix)
+{
+    return (prefix.substr(1, prefix.find_first_of('!') - 1));
 }
 
 void
@@ -34,27 +40,30 @@ void
 }
 
 void
-    IRCD::Bot::m_help()
+    IRCD::Bot::m_help(const std::string& prefix)
 {
-    m_send(get_prefix() + "command list : [/help, /time, /coin]\r\n");
+    m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
+           + " :command list : [/help, /time, /coin]\r\n");
 }
 
 void
-    IRCD::Bot::m_datetime()
+    IRCD::Bot::m_datetime(const std::string& prefix)
 {
     time_t m_raw_time;
     char   buffer[50];
     time(&m_raw_time);
     if (std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
                       std::localtime(&m_raw_time)))
-        m_send(get_prefix() + "The current datetime is " + std::string(buffer)
-               + "" + IRCD::Bot::_endl);
+        m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
+               + " :The current datetime is " + std::string(buffer) + ""
+               + IRCD::Bot::_endl);
 }
 
 void
-    IRCD::Bot::m_game_coin()
+    IRCD::Bot::m_game_coin(const std::string& prefix)
 {
-    m_send(get_prefix() + "The result of tossing a coin is "
+    m_send(m_get_prefix() + "PRIVMSG " + m_get_client_nick(prefix)
+           + " :The result of tossing a coin is "
            + std::string(std::rand() % 2 == 0 ? "head" : "tail") + " "
            + IRCD::Bot::_endl);
 }
@@ -75,7 +84,7 @@ void
     std::vector<const std::string> params = IRCD::split(command, ' ');
 
     if ((_type = IRCD::Bot::m_get_type(params[3])) < NONE)
-        (this->*IRCD::Bot::_commands[_type])();
+        (this->*IRCD::Bot::_commands[_type])(params[0]);
 }
 
 void

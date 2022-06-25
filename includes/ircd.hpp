@@ -4,6 +4,7 @@
 #include "irc.hpp"
 #include "resources.hpp"
 #include <sstream>
+#include <vector>
 
 class IRCD : public IRC
 {
@@ -22,8 +23,8 @@ class IRCD : public IRC
     class Bot : public Client
     {
       public:
-        typedef std::vector<void (Bot::*)()> t_commands_bot;
-        typedef std::map<std::string, e_bot> t_map_type;
+        typedef std::vector<void (Bot::*)(const std::string&)> t_commands_bot;
+        typedef std::map<std::string, e_bot>                   t_map_type;
 
       private:
         Bot(const std::string&);
@@ -34,14 +35,15 @@ class IRCD : public IRC
         std::string    _endl;
         void           m_send(const std::string&);
 
-        void m_help();
-        void m_datetime();
-        void m_game_coin();
+        void m_help(const std::string&);
+        void m_datetime(const std::string&);
+        void m_game_coin(const std::string&);
 
         e_bot m_get_type(const std::string&);
         void  m_parse_command(std::string&);
 
-        std::string get_prefix();
+        std::string m_get_prefix();
+        std::string m_get_client_nick(const std::string&);
 
       public:
         Bot();
