@@ -27,7 +27,7 @@ e_type
 static inline bool
     is_special(const char c)
 {
-    return std::memchr(SPECIALCHAR, c, 8);
+    return std::memchr(SPECIALCHAR, c, 9);
 }
 
 e_result
@@ -66,32 +66,33 @@ e_result
 /* ircd class to_functions begin */
 
 e_result
-    IRCD::m_to_client(std::string str)
+    IRCD::m_to_client(std::string message)
 {
-    _to_client->buffer.append(str);
+    _to_client->buffer.append(message);
     return ERROR;
 }
 
 void
-    IRCD::m_to_client(Client& client, const std::string& str)
+    IRCD::m_to_client(Client& client, const std::string& message)
 {
-    client.get_buffers().to_client.buffer.append(str);
+    client.get_buffers().to_client.buffer.append(message);
     _ft_ircd->toggle(client, EVFILT_READ);
 }
 
 void
-    IRCD::m_to_channel(const std::string& str)
+    IRCD::m_to_channel(const std::string& message)
 {
     Channel::t_citer_member iter = _channel->get_members().begin();
     Channel::t_citer_member end  = _channel->get_members().end();
-
+    if (_channel->get_operator() && _channel->get_operator() != _client)
+        m_to_client(*_channel->get_operator(), message);
     for (; iter != end; ++iter)
-        if (iter->first != _client)
-            m_to_client(*iter->first, str);
+        if (*iter != _client)
+            m_to_client(**iter, message);
 }
 
 void
-    IRCD::m_to_channels(const std::string& str)
+    IRCD::m_to_channels(const std::string& message)
 {
     Client::t_citer   iter = _client->get_channels().begin();
     Client::t_citer   end  = _client->get_channels().end();
@@ -102,10 +103,10 @@ void
         Channel::t_citer_member users = _channel->get_members().begin();
         Channel::t_citer_member u_end = _channel->get_members().end();
         for (; users != u_end; ++users)
-            if (!check.count(users->first) && users->first != _client)
+            if (!check.count(*users) && *users != _client)
             {
-                check.insert(users->first);
-                IRCD::m_to_client(*users->first, str);
+                check.insert(*users);
+                IRCD::m_to_client(**users, message);
             }
     }
 }

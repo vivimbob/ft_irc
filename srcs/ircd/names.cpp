@@ -5,13 +5,15 @@
 e_result
     IRCD::m_names()
 {
-    _channel                     = _map.channel[*_target];
-    _buffer                      = "= " + _channel->get_name() + " :";
+
+    _channel              = _map.channel[*_target];
+    _buffer               = "= " + _channel->get_name() + " :";
+    if (_channel->get_operator())
+        _buffer.append("@" + _channel->get_operator()->get_names().nick + " ");
     Channel::t_citer_member iter = _channel->get_members().begin();
     Channel::t_citer_member end  = _channel->get_members().end();
     for (; iter != end; ++iter)
-        _buffer.append(_channel->get_prefix(iter->first)
-                       + iter->first->get_names().nick + " ");
+        _buffer.append((*iter)->get_names().nick + " ");
     m_to_client(rpl_namereply(_buffer));
     m_to_client(rpl_endofnames(_channel->get_name()));
     _buffer.clear();

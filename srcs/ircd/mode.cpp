@@ -117,7 +117,7 @@ void
         else if (_request->parameter.size() == 1)
             m_to_client(rpl_channel_mode_is(*_target, _channel->get_status()));
         else if (m_mode(THREE) == ERROR)
-            return;
+            ;
         else if (!_channel->is_signed() || parse_flag(_request->parameter[1]))
             m_to_client(rpl_channel_mode_is(_channel->get_name(),
                                             _channel->get_status()));
