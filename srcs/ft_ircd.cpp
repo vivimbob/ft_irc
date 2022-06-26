@@ -144,12 +144,8 @@ void
         }
         if (!_bot.get_buffers().to_client.buffer.empty())
         {
-            _bot.receive();
-            if (!_bot.get_buffers().buffer.empty())
-            {
-                _client = &_bot;
-                FT_IRCD::m_receive();
-            }
+            log::print() << _bot.get_buffers().to_client.buffer << log::endl;
+            _bot.get_buffers().to_client.buffer.clear();
         }
     }
 }
