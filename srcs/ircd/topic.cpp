@@ -1,7 +1,5 @@
 #include "../../includes/ircd.hpp"
 
-/* ircd class topic function begin */
-
 e_result
     IRCD::m_topic()
 {
@@ -40,5 +38,3 @@ void
         m_to_channel(cmd_topic_reply());
     }
 }
-
-/* ircd class topic function end */

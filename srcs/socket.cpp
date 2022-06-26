@@ -4,7 +4,15 @@
 #include <sys/event.h>
 #include <unistd.h>
 
-/* socket class socket process functions begin */
+Socket::~Socket()
+{
+}
+
+void
+    Socket::m_disconnect()
+{
+    close(_fd);
+}
 
 void
     Socket::m_create()
@@ -53,17 +61,6 @@ void
     fcntl(_socket.fd, F_SETFL, O_NONBLOCK);
 }
 
-int
-    Socket::accept()
-{
-    if ((_fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len)) == -1)
-        log::print() << "accept failed errno: " << errno << ":"
-                     << strerror(errno) << log::endl;
-    else
-        fcntl(_fd, F_SETFL, O_NONBLOCK);
-    return _fd;
-}
-
 ssize_t
     Socket::receive(const struct kevent& event)
 {
@@ -71,7 +68,7 @@ ssize_t
     _result = recv(_fd, _buffer, event.data, 0);
 
     if (_result == 0)
-        Socket::m_close();
+        m_disconnect();
     return _result;
 }
 
@@ -86,16 +83,21 @@ ssize_t
                      event.data < _remain ? event.data : _remain, 0));
 }
 
-void
-    Socket::m_close()
+int
+    Socket::accept()
 {
-    ::close(_fd);
+    if ((_fd = ::accept(_socket.fd, (sockaddr*)(&_addr), &_socket.len)) == -1)
+        log::print() << "accept failed errno: " << errno << ":"
+                     << strerror(errno) << log::endl;
+    else
+        fcntl(_fd, F_SETFL, O_NONBLOCK);
+    return _fd;
 }
 
 void
-    Socket::close(int fd)
+    Socket::disconnect(int fd)
 {
-    ::close(fd);
+    close(fd);
 }
 
 void
@@ -106,18 +108,8 @@ void
     m_listen();
 }
 
-/* socket class socket process functions end */
-
-/* socket class constructor and destructor begin */
-
 Socket::Socket()
 {
     _socket.len = sizeof(_socket.addr);
     _socket.fd  = -1;
 }
-
-Socket::~Socket()
-{
-}
-
-/* socket class constructor and destructor end */

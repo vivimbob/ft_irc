@@ -78,6 +78,22 @@ Client*
     return _operator;
 }
 
+bool
+    Channel::is_signed()
+{
+    if (_reserved.sign.state)
+        return true;
+    return false;
+}
+
+bool
+    Channel::is_reserved()
+{
+    if (_reserved.flags.state)
+        return true;
+    return false;
+}
+
 /* channel class getter end */
 
 /* channel class setter begin */
@@ -207,22 +223,6 @@ bool
     Channel::is_invited(Client* client)
 {
     return _invitees.count(client);
-}
-
-bool
-    Channel::is_signed()
-{
-    if (_reserved.sign.state)
-        return true;
-    return false;
-}
-
-bool
-    Channel::is_reserved()
-{
-    if (_reserved.flags.state)
-        return true;
-    return false;
 }
 
 /* channel class is_function end */
