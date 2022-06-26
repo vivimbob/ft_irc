@@ -8,7 +8,9 @@ Channel::Channel(const std::string& name, Client* client)
     : _name(name),
       _operator(client)
 {
-    _status.state = 0;
+    _status.state         = 0;
+    _reserved.sign.state  = 0;
+    _reserved.flags.state = 0;
     _operator->joined(this);
     log::print() << "new channel: " << name << log::endl;
 }

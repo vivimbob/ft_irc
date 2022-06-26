@@ -67,7 +67,7 @@ enum e_type
 enum e_bot
 {
     HELP,
-    DATETIME,
+    TIME,
     COIN,
     NONE
 };

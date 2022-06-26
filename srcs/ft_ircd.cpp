@@ -92,22 +92,29 @@ void
 }
 
 void
+    FT_IRCD::m_received()
+{
+    Client::t_buffers& buffers = _client->get_buffers();
+    buffers.buffer.append(Socket::_buffer, Socket::_result);
+    while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
+           != (int)std::string::npos)
+    {
+        buffers.requests.queue.push(Client::s_request(
+            buffers.buffer.substr(0, buffers.offset), UNKNOWN));
+        buffers.buffer.erase(0, buffers.offset + 2);
+    }
+    if (buffers.requests.queue.size())
+        m_requests_handler();
+}
+
+void
     FT_IRCD::m_receive()
 {
     if (0 < Socket::receive(_events[Event::_index]))
     {
-        Client::t_buffers& buffers = _client->get_buffers();
-        buffers.buffer.append(Socket::_buffer, Socket::_result);
-        while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
-               != (int)std::string::npos)
-        {
-            buffers.requests.queue.push(Client::s_request(
-                buffers.buffer.substr(0, buffers.offset), UNKNOWN));
-            buffers.buffer.erase(0, buffers.offset + 2);
-        }
-        if (buffers.requests.queue.size())
-            m_requests_handler();
-        if (buffers.to_client.buffer.size())
+        FT_IRCD::m_received();
+        if (_client && _client->get_buffers().to_client.buffer.size())
+            // if (buffers.to_client.buffer.size())
             Event::toggle(EVFILT_READ);
     }
     else if (Socket::_result == 0)
@@ -142,14 +149,13 @@ void
             else if (_events[Event::_index].filter == EVFILT_WRITE)
                 FT_IRCD::m_send();
         }
-        if (!_bot.get_buffers().to_client.buffer.empty())
+        if (!_bot.get_buffers().to_client.buffer.empty() && _bot.is_received())
         {
-            _bot.receive();
-            if (!_bot.get_buffers().buffer.empty())
-            {
-                _client = &_bot;
-                FT_IRCD::m_receive();
-            }
+            IRC::_client = &_bot;
+            FT_IRCD::m_received();
+            //  log::print() << _bot.get_buffers().to_client.buffer <<
+            //  log::endl;
+            //_bot.get_buffers().to_client.buffer.clear();
         }
     }
 }
