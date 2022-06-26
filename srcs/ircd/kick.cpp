@@ -1,7 +1,5 @@
 #include "../../includes/ircd.hpp"
 
-/* ircd class kick function begin */
-
 e_result
     IRCD::m_kick(e_phase phase)
 {
@@ -72,5 +70,3 @@ void
             ++nicks;
     }
 }
-
-/* ircd class kick function end */

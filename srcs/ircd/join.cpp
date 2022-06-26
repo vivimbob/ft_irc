@@ -1,7 +1,5 @@
 #include "../../includes/ircd.hpp"
 
-/* ircd class join function begin */
-
 e_result
     IRCD::m_join(e_phase phase, Channel* channel)
 {
@@ -67,5 +65,3 @@ void
         m_names();
     }
 }
-
-/* ircd class join function end */

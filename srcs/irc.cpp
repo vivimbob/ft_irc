@@ -1,10 +1,11 @@
 #include "../includes/client.hpp"
 #include "../includes/ircd.hpp"
 
-/* irc class constructor and destructor begin */
+/* message class constructor begin */
 
 IRC::~IRC()
 {
+
 }
 
 IRC::IRC() : endl("\r\n")
@@ -26,9 +27,9 @@ IRC::IRC() : endl("\r\n")
     _command_to_type.insert(std::make_pair("NOTICE", NOTICE));
 }
 
-/* irc class constructor and destructor end */
+/* message class constructor end */
 
-/* irc class reply functions begin */
+/* message class reply function begin */
 
 std::string
     IRC::reply_servername_prefix(const std::string& numeric_reply)
@@ -78,7 +79,7 @@ std::string
     IRC::err_too_many_targets(const std::string& target)
 {
     return reply_servername_prefix("407") + " " + target
-           + " :Duplicate recipients. No irc delivered" + IRC::endl;
+           + " :Duplicate recipients. No message delivered" + IRC::endl;
 }
 
 std::string
@@ -358,4 +359,4 @@ std::string
            + _request->parameter[0] + " :" + _request->parameter[1] + IRC::endl;
 }
 
-/* irc class reply functions end */
+/* message class reply function end */

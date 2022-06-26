@@ -62,14 +62,6 @@ const std::set<Channel*>&
     return _channels;
 }
 
-std::string
-    Client::get_nickmask()
-{
-    return ((_names.nick.empty() ? "*" : _names.nick) + "!"
-            + (_names.user.empty() ? "*" : _names.user) + "@"
-            + (_names.host.empty() ? "*" : _names.host));
-}
-
 /* client class getter end */
 
 /* client class setter begin */
@@ -132,6 +124,14 @@ bool
 /* client class is_function end */
 
 /* client class other function begin */
+
+std::string
+    Client::get_nickmask()
+{
+    return ((_names.nick.empty() ? "*" : _names.nick) + "!"
+            + (_names.user.empty() ? "*" : _names.user) + "@"
+            + (_names.host.empty() ? "*" : _names.host));
+}
 
 void
     Client::joined(Channel* channel)

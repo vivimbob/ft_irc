@@ -1,7 +1,5 @@
 #include "../../includes/ircd.hpp"
 
-/* ircd class nick function begin */
-
 e_result
     IRCD::m_nick()
 {
@@ -37,5 +35,3 @@ void
     log::print() << "fd " << _client->get_fd()
                  << " client nick: " << _client->get_names().nick << log::endl;
 }
-
-/* ircd class nick function end */

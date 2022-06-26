@@ -2,14 +2,12 @@
 #include "../includes/irc.hpp"
 #include <sstream>
 
-/* ircd class utility functions begin */
-
-std::vector<const std::string>
+IRCD::t_cstr_vector
     IRCD::split(const std::string& params, char delimiter)
 {
-    std::vector<const std::string> splited;
-    std::istringstream             iss(params);
-    std::string                    element;
+    IRCD::t_cstr_vector splited;
+    std::istringstream  iss(params);
+    std::string         element;
 
     while (std::getline(iss, element, delimiter))
         splited.push_back(element);
@@ -17,11 +15,11 @@ std::vector<const std::string>
 }
 
 e_type
-    IRCD::get_type(const std::string& command)
+	IRCD::get_type(const std::string& command)
 {
-    if (_command_to_type.count(command))
-        return _command_to_type[command];
-    return UNKNOWN;
+	if (_command_to_type.count(command))
+		return _command_to_type[command];
+	return UNKNOWN;
 }
 
 static inline bool
@@ -29,6 +27,7 @@ static inline bool
 {
     return std::memchr(SPECIALCHAR, c, 9);
 }
+
 
 e_result
     IRCD::m_is_valid(e_type type)
@@ -60,10 +59,6 @@ e_result
     }
     return OK;
 }
-
-/* ircd class utility functions end */
-
-/* ircd class to_functions begin */
 
 e_result
     IRCD::m_to_client(std::string message)
@@ -111,9 +106,11 @@ void
     }
 }
 
-/* ircd class to_functions end */
-
-/* ircd class parse functions begin */
+void
+    IRCD::m_disconnect(const std::string& message)
+{
+    _ft_ircd->m_disconnect(message);
+}
 
 void
     IRCD::parse_parameter(std::vector<std::string>& parameter)
@@ -164,16 +161,6 @@ void
     }
 }
 
-/* ircd class parse functions end */
-
-/* ircd class mainly functions begin */
-
-void
-    IRCD::m_disconnect(const std::string& message)
-{
-    _ft_ircd->m_disconnect(message);
-}
-
 void
     IRCD::registration()
 
@@ -188,10 +175,6 @@ void
 {
     _map.client[NAME_BOT] = &_bot;
 }
-
-/* ircd class mainly functions end */
-
-/* ircd class constructor and destructor begin */
 
 IRCD::~IRCD()
 {
@@ -219,5 +202,3 @@ IRCD::IRCD()
     m_mode_initialize();
     m_bot_initialize();
 }
-
-/* ircd class sconstructor and destructor end */
