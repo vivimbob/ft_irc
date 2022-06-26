@@ -21,7 +21,7 @@ class Socket
     void m_bind(int port);
     void m_listen();
     void m_accept();
-    void m_disconnect();
+    void m_close();
     Socket(const Socket&);
     Socket& operator=(const Socket&);
 
@@ -38,7 +38,7 @@ class Socket
     ssize_t receive(const struct kevent& event);
     ssize_t send(const struct kevent& event);
     int     accept();
-    void    disconnect(int fd);
+    void    close(int fd);
     void    initialize(int port);
 };
 

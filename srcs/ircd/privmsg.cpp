@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class privmsg function begin */
+
 e_result
     IRCD::m_privmsg(e_phase phase)
 {
@@ -43,3 +45,5 @@ void
             m_to_client(err_no_such_nick(*_target));
     }
 }
+
+/* ircd class privmsg function end */

@@ -8,8 +8,6 @@
 #include "resources.hpp"
 #include "socket.hpp"
 
-class Bot;
-
 class FT_IRCD : public Socket, public Event, public IRCD
 {
   public:
@@ -23,11 +21,11 @@ class FT_IRCD : public Socket, public Event, public IRCD
 
     void m_accept();
     void m_receive();
+    void m_received();
     void m_requests_handler();
     void m_disconnected(std::string reason = "");
     void m_disconnect(std::string reason = "");
     void m_send();
-    void m_create_bot();
 
   public:
     FT_IRCD(int port, const char* const password);

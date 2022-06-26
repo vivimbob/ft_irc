@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class quit function begin */
+
 void
     IRCD::quit()
 {
@@ -8,3 +10,5 @@ void
         message += " :" + _request->parameter[0];
     m_disconnect(message);
 }
+
+/* ircd class quit function end */

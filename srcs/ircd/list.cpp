@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class list function begin */
+
 e_result
     IRCD::m_list()
 {
@@ -31,3 +33,5 @@ void
     }
     m_to_client(rpl_listend());
 }
+
+/* ircd class list function end */

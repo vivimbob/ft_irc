@@ -1,8 +1,11 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class names function begin */
+
 e_result
     IRCD::m_names()
 {
+
     _channel              = _map.channel[*_target];
     _buffer               = "= " + _channel->get_name() + " :";
     if (_channel->get_operator())
@@ -51,3 +54,5 @@ void
         }
     }
 }
+
+/* ircd class names function end */
