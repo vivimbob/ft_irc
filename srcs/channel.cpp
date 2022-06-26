@@ -8,7 +8,9 @@ Channel::Channel(const std::string& name, Client* client)
     : _name(name),
       _operator(client)
 {
-    _status.state = 0;
+    _status.state         = 0;
+    _reserved.sign.state  = 0;
+    _reserved.flags.state = 0;
     _operator->joined(this);
     log::print() << "new channel: " << name << log::endl;
 }
@@ -83,17 +85,13 @@ Client*
 bool
     Channel::is_signed()
 {
-    if (_reserved.sign.state)
-        return true;
-    return false;
+    return _reserved.sign.state;
 }
 
 bool
     Channel::is_reserved()
 {
-    if (_reserved.flags.state)
-        return true;
-    return false;
+    return _reserved.flags.state;
 }
 
 /* channel class getter end */
