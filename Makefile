@@ -10,8 +10,8 @@ srcs		= ft_ircd.cpp\
 			  socket.cpp\
 			  irc.cpp\
 			  ircd.cpp\
-			  ircd/bot.cpp\
 			  ircd/invite.cpp\
+			  ircd/ircd_bot.cpp\
 			  ircd/join.cpp\
 			  ircd/kick.cpp\
 			  ircd/list.cpp\
