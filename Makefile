@@ -1,43 +1,51 @@
 NAME    	= ircserv
 CC      	= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
-LIBFLAGS	= -L lib -l logger
-LIBRARY		= lib/liblogger.a
-# CXXFLAGS  = -std=c++98
+RM			= rm -rf
 
-srcs		= main.cpp\
+srcs		= ft_ircd.cpp\
 			  channel.cpp\
 			  client.cpp\
-			  message.cpp\
-			  server.cpp\
-			  utils.cpp\
-			  sendbuffer.cpp\
-			  membership.cpp
-
-lib		= logger.cpp
+			  event.cpp\
+			  socket.cpp\
+			  irc.cpp\
+			  log.cpp\
+			  ircd.cpp\
+			  ircd/invite.cpp\
+			  ircd/ircd_bot.cpp\
+			  ircd/join.cpp\
+			  ircd/kick.cpp\
+			  ircd/list.cpp\
+			  ircd/mode.cpp\
+			  ircd/names.cpp\
+			  ircd/nick.cpp\
+			  ircd/notice.cpp\
+			  ircd/part.cpp\
+			  ircd/pass.cpp\
+			  ircd/privmsg.cpp\
+			  ircd/quit.cpp\
+			  ircd/topic.cpp\
+			  ircd/user.cpp
 
 SRCS    	= $(srcs:%=srcs/%)
 
 OBJS		= $(SRCS:srcs/%.cpp=objs/%.o)
 
-all     	: $(LIBRARY) $(NAME) 
+all     	: $(NAME)
 
 objs/%.o   	: srcs/%.cpp
 	@mkdir -p $(dir ./objs/$*)
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
 $(NAME) 	: $(OBJS)
-	$(CC) $(CXXFLAGS) $(LIBFLAGS) $(OBJS) -o $(NAME)
-
-$(LIBRARY)	: lib/logger.cpp
-	$(CC) $(CXXFLAGS) -c lib/logger.cpp -o lib/logger.o
-	ar -r $(LIBRARY) lib/logger.o
-	
+	$(CC) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
 clean   	:
-	rm -rf ./objs ./lib/logger.o
+	$(RM) ./objs
 
 fclean    	: clean
-	rm -rf $(NAME) $(LIBRARY)
+	$(RM) $(NAME)
 
 re			: fclean all
+
+.PHONY		: all clean fclean re
