@@ -3,8 +3,8 @@
 e_result
     IRCD::m_names()
 {
-    _channel              = _map.channel[*_target];
-    _buffer               = "= " + _channel->get_name() + " :";
+    _channel = _map.channel[*_target];
+    _buffer  = "= " + _channel->get_name() + " :";
     if (_channel->get_operator())
         _buffer.append("@" + _channel->get_operator()->get_names().nick + " ");
     Channel::t_citer_member iter = _channel->get_members().begin();

@@ -9,9 +9,9 @@ Socket::~Socket()
 }
 
 void
-    Socket::m_disconnect()
+    Socket::m_close()
 {
-    close(_fd);
+    ::close(_fd);
 }
 
 void
@@ -68,7 +68,7 @@ ssize_t
     _result = recv(_fd, _buffer, event.data, 0);
 
     if (_result == 0)
-        m_disconnect();
+        m_close();
     return _result;
 }
 
@@ -95,9 +95,9 @@ int
 }
 
 void
-    Socket::disconnect(int fd)
+    Socket::close(int fd)
 {
-    close(fd);
+    ::close(fd);
 }
 
 void

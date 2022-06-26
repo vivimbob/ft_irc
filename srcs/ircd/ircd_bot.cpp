@@ -71,13 +71,13 @@ e_bot
 void
     IRCD::Bot::m_parse_command(std::string& command)
 {
-	(void)command;
-    //for (_offset = 0; (command[_offset] != ' ' && command[_offset] != '\0');
-    //     ++_offset)
-    //    if ((unsigned)command[_offset] - 'a' < 26)
-    //        command[_offset] ^= 0b100000;
+    (void)command;
+    // for (_offset = 0; (command[_offset] != ' ' && command[_offset] != '\0');
+    //      ++_offset)
+    //     if ((unsigned)command[_offset] - 'a' < 26)
+    //         command[_offset] ^= 0b100000;
     //_buffer = command.substr(_offset);
-    //command.erase(_offset);
+    // command.erase(_offset);
 }
 
 void

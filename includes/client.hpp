@@ -81,6 +81,7 @@ class Client
     t_buffers&                get_buffers();
     const std::set<Channel*>& get_channels() const;
     bool                      get_status(e_type);
+    std::string               get_nickmask();
 
     void set_nickname(const std::string&);
     void set_username(const std::string&);
@@ -89,8 +90,6 @@ class Client
 
     bool is_registered() const;
     bool is_joined(Channel*);
-
-    std::string get_nickmask();
 
     void joined(Channel*);
     void parted(Channel*);

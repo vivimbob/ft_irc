@@ -8,10 +8,10 @@ class Client;
 class Channel
 {
   public:
-    typedef std::string                   t_str_info;
-    typedef std::vector<Client*>             t_vector_member;
-    typedef std::set<Client*>             t_set_invitee;
-    typedef t_vector_member::const_iterator  t_citer_member;
+    typedef std::string                     t_str_info;
+    typedef std::vector<Client*>            t_vector_member;
+    typedef std::set<Client*>               t_set_invitee;
+    typedef t_vector_member::const_iterator t_citer_member;
 
     typedef union
     {
@@ -41,38 +41,38 @@ class Channel
     } t_reserved;
 
   private:
-    std::string   _name;
-    std::string   _topic;
-    Client*       _operator;
-    t_vector_member  _members;
-    t_status      _status;
-    t_reserved    _reserved;
-    t_set_invitee _invitees;
+    std::string     _name;
+    std::string     _topic;
+    Client*         _operator;
+    t_vector_member _members;
+    t_status        _status;
+    t_reserved      _reserved;
+    t_set_invitee   _invitees;
 
     Channel();
     Channel(const Channel&);
-    Channel& operator=(const Channel&);
-    bool     m_set_status(const bool&, unsigned char&);
+    Channel&                      operator=(const Channel&);
+    bool                          m_set_status(const bool&, unsigned char&);
     const Channel::t_citer_member find(Client*);
 
   public:
     Channel(const std::string& name, Client* client);
     ~Channel();
 
-    const std::string& get_name() const;
-    const std::string& get_topic() const;
+    const std::string&     get_name() const;
+    const std::string&     get_topic() const;
     const t_vector_member& get_members();
-    bool               get_status(e_type);
-    Client*            get_operator();
+    bool                   get_status(e_type);
+    Client*                get_operator();
+    std::string            get_status();
 
-    std::string get_status();
-    void        set_name(const std::string&);
-    void        set_topic(const std::string&);
-    void        set_status(e_type, bool);
-    void        set_status(std::string&);
-    void        reserve_clear();
-    void        reserve_sign(const char);
-    void        reserve_flags(const char);
+    void set_name(const std::string&);
+    void set_topic(const std::string&);
+    void set_status(e_type, bool);
+    void set_status(std::string&);
+    void reserve_clear();
+    void reserve_sign(const char);
+    void reserve_flags(const char);
 
     bool is_empty();
     bool is_full();

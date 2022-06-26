@@ -4,7 +4,9 @@
 
 /* channel class constructor and destructor begin */
 
-Channel::Channel(const std::string& name, Client* client) : _name(name), _operator(client)
+Channel::Channel(const std::string& name, Client* client)
+    : _name(name),
+      _operator(client)
 {
     _status.state = 0;
     _operator->joined(this);
@@ -23,7 +25,7 @@ const Channel::t_citer_member
     Channel::find(Client* client)
 {
     t_citer_member iter = _members.begin();
-    t_citer_member end = _members.end();
+    t_citer_member end  = _members.end();
     while (iter != end && *iter != client)
         ++iter;
     return iter;
@@ -204,7 +206,8 @@ bool
 bool
     Channel::is_full()
 {
-    return (_members.size() + (_operator == nullptr ? 0 : 1) >= CHANNEL_USER_MAX);
+    return (_members.size() + (_operator == nullptr ? 0 : 1)
+            >= CHANNEL_USER_MAX);
 }
 
 bool

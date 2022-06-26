@@ -9,9 +9,10 @@ srcs		= ft_ircd.cpp\
 			  event.cpp\
 			  socket.cpp\
 			  irc.cpp\
+			  log.cpp\
 			  ircd.cpp\
-			  ircd/bot.cpp\
 			  ircd/invite.cpp\
+			  ircd/ircd_bot.cpp\
 			  ircd/join.cpp\
 			  ircd/kick.cpp\
 			  ircd/list.cpp\
@@ -24,8 +25,7 @@ srcs		= ft_ircd.cpp\
 			  ircd/privmsg.cpp\
 			  ircd/quit.cpp\
 			  ircd/topic.cpp\
-			  ircd/user.cpp\
-			  log.cpp
+			  ircd/user.cpp
 
 SRCS    	= $(srcs:%=srcs/%)
 

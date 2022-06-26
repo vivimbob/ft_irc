@@ -10,8 +10,6 @@ class Client;
 
 class Event
 {
-    friend class bot;
-
   private:
     Event(const Event&);
     Event& operator=(const Event&);

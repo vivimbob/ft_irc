@@ -32,7 +32,7 @@ void
 void
     FT_IRCD::m_disconnect(std::string reason)
 {
-    Socket::disconnect(_client->get_fd());
+    Socket::close(_client->get_fd());
     m_disconnected(reason);
 }
 
@@ -52,7 +52,7 @@ void
             IRC::_to_client->offset = 0;
         }
     }
-	else
+    else
         Event::toggle(EVFILT_WRITE);
 }
 
@@ -143,14 +143,14 @@ void
                 FT_IRCD::m_send();
         }
         if (!_bot.get_buffers().to_client.buffer.empty())
-		{
+        {
             _bot.receive();
-			if (!_bot.get_buffers().buffer.empty())
-			{
-				_client = &_bot;
-				FT_IRCD::m_receive();
-			}
-		}
+            if (!_bot.get_buffers().buffer.empty())
+            {
+                _client = &_bot;
+                FT_IRCD::m_receive();
+            }
+        }
     }
 }
 
@@ -164,7 +164,7 @@ FT_IRCD::FT_IRCD(int port, const char* const password)
     Event::initialize(_socket.fd);
     IRC::_password = password;
     IRC::_ft_ircd  = this;
-	signal(SIGPIPE, SIG_IGN);
+    signal(SIGPIPE, SIG_IGN);
 }
 
 int

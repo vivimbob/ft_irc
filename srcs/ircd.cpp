@@ -15,11 +15,11 @@ IRCD::t_cstr_vector
 }
 
 e_type
-	IRCD::get_type(const std::string& command)
+    IRCD::get_type(const std::string& command)
 {
-	if (_command_to_type.count(command))
-		return _command_to_type[command];
-	return UNKNOWN;
+    if (_command_to_type.count(command))
+        return _command_to_type[command];
+    return UNKNOWN;
 }
 
 static inline bool
@@ -27,7 +27,6 @@ static inline bool
 {
     return std::memchr(SPECIALCHAR, c, 9);
 }
-
 
 e_result
     IRCD::m_is_valid(e_type type)

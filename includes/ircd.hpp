@@ -33,7 +33,7 @@ class IRCD : public IRC
         t_vector_str   _parameter;
         e_bot          _type;
         std::string    _endl;
-		void  m_send(const std::string&);
+        void           m_send(const std::string&);
 
         void m_help();
         void m_datetime();
