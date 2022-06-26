@@ -1,8 +1,8 @@
 #include "../../includes/ircd.hpp"
-#include <utility>
-#include <vector>
 #include <algorithm>
 #include <cctype>
+#include <utility>
+#include <vector>
 
 /* ircd::bot class constructor and destructor begin */
 
@@ -14,11 +14,11 @@ IRCD::Bot::Bot() : _endl("\r\n")
     _names.server      = NAME_SERVER;
 
     _commands.push_back(&Bot::m_help);
-    _commands.push_back(&Bot::m_datetime);
+    _commands.push_back(&Bot::m_time);
     _commands.push_back(&Bot::m_game_coin);
 
     _command_to_type.insert(std::make_pair(":/help\r\n", HELP));
-    _command_to_type.insert(std::make_pair(":/time\r\n", DATETIME));
+    _command_to_type.insert(std::make_pair(":/time\r\n", TIME));
     _command_to_type.insert(std::make_pair(":/coin\r\n", COIN));
 }
 
@@ -56,7 +56,7 @@ void
 }
 
 void
-    IRCD::Bot::m_datetime(const std::string& prefix)
+    IRCD::Bot::m_time(const std::string& prefix)
 {
     time_t m_raw_time;
     char   buffer[50];
@@ -85,11 +85,13 @@ void
     IRCD::Bot::m_parse_command(std::string& command)
 {
     std::vector<const std::string> params = IRCD::split(command, ' ');
-	std::string buffer(params[1].size(), '\0');
-	std::transform(params[1].begin(), params[1].end(), buffer.begin(), &toupper);
+    std::string                    buffer(params[1].size(), '\0');
+    std::transform(params[1].begin(), params[1].end(), buffer.begin(),
+                   &toupper);
     if ((buffer == "PRIVMSG")
-		&& (_type = IRCD::Bot::m_get_type(params[3])) < NONE)
+        && (_type = IRCD::Bot::m_get_type(params[3])) < NONE)
         (this->*IRCD::Bot::_commands[_type])(params[0]);
+    _buffers.to_client.buffer.clear();
 }
 
 /* ircd::bot class parse function end */
@@ -102,11 +104,11 @@ void
     _buffers.buffer.append(message);
 }
 
-void
-    IRCD::Bot::receive()
+bool
+    IRCD::Bot::is_received()
 {
     m_parse_command(_buffers.to_client.buffer);
-    _buffers.to_client.buffer.clear();
+    return !_buffers.buffer.empty();
 }
 
 /* ircd::bot class receive and send function end */

@@ -36,7 +36,7 @@ class IRCD : public IRC
         void           m_send(const std::string&);
 
         void m_help(const std::string&);
-        void m_datetime(const std::string&);
+        void m_time(const std::string&);
         void m_game_coin(const std::string&);
 
         e_bot m_get_type(const std::string&);
@@ -47,7 +47,7 @@ class IRCD : public IRC
       public:
         Bot();
         ~Bot();
-        void receive();
+        bool is_received();
     };
     const std::string*   _target;
     const std::string*   _target_sub;
