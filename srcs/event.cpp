@@ -1,5 +1,19 @@
 #include "../includes/event.hpp"
 
+/* event class constructor and destructor begin */
+
+Event::Event()
+{
+}
+
+Event::~Event()
+{
+}
+
+/* event class constructor and destructor end */
+
+/* event class kqueue setting functions begin */
+
 void
     Event::m_set(int     identity,
                  short   filter,
@@ -67,10 +81,4 @@ void
     m_set(socket_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 }
 
-Event::Event()
-{
-}
-
-Event::~Event()
-{
-}
+/* event class kqueue setting functions end */

@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class part function begin */
+
 e_result
     IRCD::m_part(e_phase phase)
 {
@@ -43,3 +45,5 @@ void
                      << log::endl;
     }
 }
+
+/* ircd class part function end */

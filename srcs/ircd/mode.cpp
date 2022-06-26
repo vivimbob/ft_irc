@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class mode sub function begin */
+
 void
     IRCD::m_mode_sign(const char c)
 {
@@ -45,6 +47,23 @@ e_result
         return m_to_client(cmd_mode_reply(_channel->get_name(), result));
     return OK;
 }
+
+void
+    IRCD::m_mode_initialize()
+{
+    for (int i = 0; i < 127; ++i)
+        _modes[i] = &IRCD::m_mode_invalid;
+    _modes[(int)'+'] = &IRCD::m_mode_sign;
+    _modes[(int)'-'] = &IRCD::m_mode_sign;
+    _modes[(int)'i'] = &IRCD::m_mode_valid;
+    _modes[(int)'n'] = &IRCD::m_mode_valid;
+    _modes[(int)'t'] = &IRCD::m_mode_valid;
+    std::memset((void*)_ascii, 0, sizeof(_ascii));
+}
+
+/* ircd class mode sub function end */
+
+/* ircd class mode function begin */
 
 e_result
     IRCD::m_mode(e_phase phase)
@@ -112,15 +131,4 @@ void
     }
 }
 
-void
-    IRCD::m_mode_initialize()
-{
-    for (int i = 0; i < 127; ++i)
-        _modes[i] = &IRCD::m_mode_invalid;
-    _modes[(int)'+'] = &IRCD::m_mode_sign;
-    _modes[(int)'-'] = &IRCD::m_mode_sign;
-    _modes[(int)'i'] = &IRCD::m_mode_valid;
-    _modes[(int)'n'] = &IRCD::m_mode_valid;
-    _modes[(int)'t'] = &IRCD::m_mode_valid;
-    std::memset((void*)_ascii, 0, sizeof(_ascii));
-}
+/* ircd class mode function end */

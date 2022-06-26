@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class names function begin */
+
 e_result
     IRCD::m_names()
 {
@@ -50,3 +52,5 @@ void
         }
     }
 }
+
+/* ircd class names function end */

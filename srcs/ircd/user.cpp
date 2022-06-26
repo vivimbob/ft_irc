@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class user function begin */
+
 e_result
     IRCD::m_user()
 {
@@ -18,3 +20,5 @@ void
     _client->set_username(_request->parameter[0]);
     _client->set_realname(_request->parameter[3]);
 }
+
+/* ircd class user function end */

@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class invite function begin */
+
 e_result
     IRCD::m_invite()
 {
@@ -31,3 +33,5 @@ void
     m_to_client(*_fixed, cmd_invite_reply(_request->parameter[0],
                                           _request->parameter[1]));
 }
+
+/* ircd class invite function end */

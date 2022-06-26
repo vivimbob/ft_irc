@@ -1,5 +1,7 @@
 #include "../../includes/ircd.hpp"
 
+/* ircd class pass function begin */
+
 e_result
     IRCD::m_pass()
 {
@@ -19,3 +21,5 @@ void
         return;
     _client->set_status(PASS);
 }
+
+/* ircd class pass function end */

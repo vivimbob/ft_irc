@@ -2,6 +2,8 @@
 #include "../includes/irc.hpp"
 #include <sstream>
 
+/* ircd class utility functions begin */
+
 std::vector<const std::string>
     IRCD::split(const std::string& params, char delimiter)
 {
@@ -59,6 +61,10 @@ e_result
     return OK;
 }
 
+/* ircd class utility functions end */
+
+/* ircd class to_functions begin */
+
 e_result
     IRCD::m_to_client(std::string str)
 {
@@ -104,11 +110,9 @@ void
     }
 }
 
-void
-    IRCD::m_disconnect(const std::string& message)
-{
-    _ft_ircd->m_disconnect(message);
-}
+/* ircd class to_functions end */
+
+/* ircd class parse functions begin */
 
 void
     IRCD::parse_parameter(std::vector<std::string>& parameter)
@@ -159,6 +163,16 @@ void
     }
 }
 
+/* ircd class parse functions end */
+
+/* ircd class mainly functions begin */
+
+void
+    IRCD::m_disconnect(const std::string& message)
+{
+    _ft_ircd->m_disconnect(message);
+}
+
 void
     IRCD::registration()
 
@@ -173,6 +187,10 @@ void
 {
     _map.client[NAME_BOT] = &_bot;
 }
+
+/* ircd class mainly functions end */
+
+/* ircd class constructor and destructor begin */
 
 IRCD::~IRCD()
 {
@@ -200,3 +218,5 @@ IRCD::IRCD()
     m_mode_initialize();
     m_bot_initialize();
 }
+
+/* ircd class sconstructor and destructor end */

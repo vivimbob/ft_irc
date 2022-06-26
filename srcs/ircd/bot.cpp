@@ -2,6 +2,8 @@
 #include <utility>
 #include <vector>
 
+/* ircd::bot class constructor and destructor begin */
+
 IRCD::Bot::Bot()
 {
     _endl              = "\r\n";
@@ -23,17 +25,27 @@ IRCD::Bot::~Bot()
 {
 }
 
+/* ircd::bot class constructor and destructor end */
+
+/* ircd::bot class getter begin */
+
 std::string
     IRCD::Bot::m_get_client_nick(const std::string& prefix)
 {
     return (prefix.substr(1, prefix.find_first_of('!') - 1));
 }
 
-void
-    IRCD::Bot::m_send(const std::string& message)
+e_bot
+    IRCD::Bot::m_get_type(const std::string& command)
 {
-    _buffers.buffer.append(message);
+    if (_command_to_type.count(command))
+        return _command_to_type[command];
+    return NONE;
 }
+
+/* ircd::bot class getter end */
+
+/* ircd::bot class command functions begin */
 
 void
     IRCD::Bot::m_help(const std::string& prefix)
@@ -64,15 +76,9 @@ void
            + IRCD::Bot::_endl);
 }
 
-e_bot
-    IRCD::Bot::m_get_type(const std::string& command)
-{
-    if (_command_to_type.count(command))
-        return _command_to_type[command];
-    return NONE;
-}
+/* ircd::bot class command functions end */
 
-// :test!a@localhost PRIVMSG bot :/help
+/* ircd::bot class parse function begin */
 
 void
     IRCD::Bot::m_parse_command(std::string& command)
@@ -82,9 +88,21 @@ void
         (this->*IRCD::Bot::_commands[_type])(params[0]);
 }
 
+/* ircd::bot class parse function end */
+
+/* ircd::bot class receive and send function begin */
+
+void
+    IRCD::Bot::m_send(const std::string& message)
+{
+    _buffers.buffer.append(message);
+}
+
 void
     IRCD::Bot::receive()
 {
     m_parse_command(_buffers.to_client.buffer);
     _buffers.to_client.buffer.clear();
 }
+
+/* ircd::bot class receive and send function end */

@@ -1,5 +1,7 @@
 #include "../includes/log.hpp"
 
+/* log namespace functions begin */
+
 void
     log::timestamp()
 {
@@ -23,3 +25,5 @@ std::ostream&
     os.flush();
     return os;
 }
+
+/* log namespace functions end */

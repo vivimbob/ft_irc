@@ -1,5 +1,7 @@
 #include "../includes/ft_ircd.hpp"
 
+/* ft_ircd class mainly member functions begin */
+
 void
     FT_IRCD::m_disconnected(std::string reason)
 {
@@ -34,26 +36,6 @@ void
 {
     Socket::disconnect(_client->get_fd());
     m_disconnected(reason);
-}
-
-void
-    FT_IRCD::m_send()
-{
-    IRC::_to_client = &_client->get_buffers().to_client;
-    if (IRC::_to_client->buffer.empty())
-        return;
-    if (0 <= Socket::send(_events[Event::_index]))
-    {
-        IRC::_to_client->offset += Socket::_result;
-        if (IRC::_to_client->buffer.size() <= (unsigned)IRC::_to_client->offset)
-        {
-            Event::toggle(EVFILT_WRITE);
-            IRC::_to_client->buffer.clear();
-            IRC::_to_client->offset = 0;
-        }
-    }
-    else
-        Event::toggle(EVFILT_WRITE);
 }
 
 void
@@ -115,6 +97,26 @@ void
 }
 
 void
+    FT_IRCD::m_send()
+{
+    IRC::_to_client = &_client->get_buffers().to_client;
+    if (IRC::_to_client->buffer.empty())
+        return;
+    if (0 <= Socket::send(_events[Event::_index]))
+    {
+        IRC::_to_client->offset += Socket::_result;
+        if (IRC::_to_client->buffer.size() <= (unsigned)IRC::_to_client->offset)
+        {
+            Event::toggle(EVFILT_WRITE);
+            IRC::_to_client->buffer.clear();
+            IRC::_to_client->offset = 0;
+        }
+    }
+    else
+        Event::toggle(EVFILT_WRITE);
+}
+
+void
     FT_IRCD::m_accept()
 {
     if (Socket::accept() == -1)
@@ -166,6 +168,10 @@ void
     }
 }
 
+/* ft_ircd class mainly member functions end */
+
+/* ft_ircd class constructor and destructor begin */
+
 FT_IRCD::~FT_IRCD()
 {
 }
@@ -178,6 +184,10 @@ FT_IRCD::FT_IRCD(int port, const char* const password)
     IRC::_ft_ircd  = this;
     signal(SIGPIPE, SIG_IGN);
 }
+
+/* ft_ircd class constructor and destructor end */
+
+/* ft_ircd main function begin */
 
 int
     main(int argc, char** argv)
@@ -196,3 +206,5 @@ int
     }
     FT_IRCD(port, argv[2]).run();
 }
+
+/* ft_ircd main function end */
