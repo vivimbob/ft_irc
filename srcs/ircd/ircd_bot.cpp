@@ -1,4 +1,5 @@
 #include "../../includes/ircd.hpp"
+#include "../../includes/log.hpp"
 #include <algorithm>
 #include <cctype>
 #include <utility>
@@ -58,13 +59,11 @@ void
 void
     IRCD::Bot::m_time(const std::string& prefix)
 {
-    time_t m_raw_time;
-    char   buffer[50];
-    time(&m_raw_time);
-    if (std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
-                      std::localtime(&m_raw_time)))
+    std::time(&log::time::raw);
+    if (std::strftime(log::time::buffer, BUFFER_SIZE, "%Y-%m-%d %H:%M:%S",
+                      std::localtime(&log::time::raw)))
         m_send("NOTICE " + m_get_client_nick(prefix)
-               + " :The current datetime is " + std::string(buffer)
+               + " :The current datetime is " + std::string(log::time::buffer)
                + IRCD::Bot::_endl);
 }
 
