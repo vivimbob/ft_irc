@@ -6,9 +6,8 @@
 
 /* ircd::bot class constructor and destructor begin */
 
-IRCD::Bot::Bot()
+IRCD::Bot::Bot() : _endl("\r\n")
 {
-    _endl              = "\r\n";
     _status.registered = REGISTERED;
     _names.nick        = NAME_BOT;
     _names.host        = NAME_HOST;
