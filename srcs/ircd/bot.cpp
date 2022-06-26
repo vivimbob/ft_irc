@@ -1,6 +1,8 @@
 #include "../../includes/ircd.hpp"
 #include <utility>
 #include <vector>
+#include <algorithm>
+#include <cctype>
 
 /* ircd::bot class constructor and destructor begin */
 
@@ -84,7 +86,10 @@ void
     IRCD::Bot::m_parse_command(std::string& command)
 {
     std::vector<const std::string> params = IRCD::split(command, ' ');
-    if ((_type = IRCD::Bot::m_get_type(params[3])) < NONE)
+	std::string buffer(params[1].size(), '\0');
+	std::transform(params[1].begin(), params[1].end(), buffer.begin(), &toupper);
+    if ((buffer == "PRIVMSG")
+		&& (_type = IRCD::Bot::m_get_type(params[3])) < NONE)
         (this->*IRCD::Bot::_commands[_type])(params[0]);
 }
 
