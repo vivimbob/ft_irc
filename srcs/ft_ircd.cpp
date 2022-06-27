@@ -97,7 +97,7 @@ void
     Client::t_buffers& buffers = _client->get_buffers();
     if (IRC::_client != &_bot)
         buffers.buffer.append(Socket::_buffer, Socket::_result);
-    while ((buffers.offset = buffers.buffer.find_first_of("\r\n", 0))
+    while ((buffers.offset = buffers.buffer.find("\r\n", 0))
            != (int)std::string::npos)
     {
         buffers.requests.queue.push(Client::s_request(
