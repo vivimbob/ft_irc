@@ -95,7 +95,8 @@ void
     FT_IRCD::m_received()
 {
     Client::t_buffers& buffers = _client->get_buffers();
-    buffers.buffer.append(Socket::_buffer, Socket::_result);
+    if (IRC::_client != &_bot)
+        buffers.buffer.append(Socket::_buffer, Socket::_result);
     while ((buffers.offset = buffers.buffer.find("\r\n", 0))
            != (int)std::string::npos)
     {
