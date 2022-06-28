@@ -196,6 +196,8 @@ IRCD::IRCD()
     _commands.push_back(&IRCD::mode);
     _commands.push_back(&IRCD::privmsg);
     _commands.push_back(&IRCD::notice);
+    _commands.push_back(&IRCD::ping);
+    _commands.push_back(&IRCD::pong);
     _commands.push_back(&IRCD::unknown);
     _commands.push_back(&IRCD::unregistered);
     m_mode_initialize();

@@ -24,6 +24,8 @@ IRC::IRC() : endl("\r\n")
     _command_to_type.insert(std::make_pair("MODE", MODE));
     _command_to_type.insert(std::make_pair("PRIVMSG", PRIVMSG));
     _command_to_type.insert(std::make_pair("NOTICE", NOTICE));
+    _command_to_type.insert(std::make_pair("PING", PING));
+    _command_to_type.insert(std::make_pair("PONG", PONG));
 }
 
 /* message class constructor end */
@@ -356,6 +358,13 @@ std::string
 {
     return reply_nickmask_prefix(_request->command) + " "
            + _request->parameter[0] + " :" + _request->parameter[1] + IRC::endl;
+}
+
+std::string
+    IRC::cmd_pong_reply()
+{
+    return "PONG " + _client->get_names().nick + (_request->parameter.size()
+        ? " " + _request->parameter[0] : "");
 }
 
 /* message class reply function end */
