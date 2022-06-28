@@ -1,6 +1,7 @@
 #include "../includes/socket.hpp"
 #include "../includes/client.hpp"
 #include <fcntl.h>
+#include <netdb.h>
 #include <sys/event.h>
 #include <unistd.h>
 
