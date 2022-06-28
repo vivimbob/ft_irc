@@ -26,8 +26,7 @@ srcs		= ft_ircd.cpp\
 			  ircd/quit.cpp\
 			  ircd/topic.cpp\
 			  ircd/user.cpp\
-			  ircd/ping.cpp\
-			  ircd/pong.cpp
+			  ircd/ping.cpp
 
 SRCS    	= $(srcs:%=srcs/%)
 
