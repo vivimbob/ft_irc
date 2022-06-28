@@ -363,8 +363,7 @@ std::string
 std::string
     IRC::cmd_pong_reply()
 {
-    return "PONG " + _client->get_names().nick + (_request->parameter.size()
-        ? " " + _request->parameter[0] : "");
+    return std::string("PONG ") + NAME_SERVER + IRC::endl; 
 }
 
 /* message class reply function end */
