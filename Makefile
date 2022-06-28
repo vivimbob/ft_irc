@@ -1,5 +1,5 @@
 NAME    	= ircserv
-CC      	= c++
+CXX      	= c++
 CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 RM			= rm -rf
 
@@ -36,10 +36,10 @@ all     	: $(NAME)
 
 objs/%.o   	: srcs/%.cpp
 	@mkdir -p $(dir ./objs/$*)
-	$(CC) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(NAME) 	: $(OBJS)
-	$(CC) $(CXXFLAGS) $(OBJS) -o $(NAME)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
 clean   	:
 	$(RM) ./objs
