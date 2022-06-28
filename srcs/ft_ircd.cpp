@@ -115,7 +115,6 @@ void
     {
         FT_IRCD::m_received();
         if (_client && _client->get_buffers().to_client.buffer.size())
-            // if (buffers.to_client.buffer.size())
             Event::toggle(EVFILT_READ);
     }
     else if (Socket::_result == 0)
@@ -154,9 +153,6 @@ void
         {
             IRC::_client = &_bot;
             FT_IRCD::m_received();
-            //  log::print() << _bot.get_buffers().to_client.buffer <<
-            //  log::endl;
-            //_bot.get_buffers().to_client.buffer.clear();
         }
     }
 }
