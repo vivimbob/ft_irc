@@ -57,6 +57,8 @@ enum e_type
     MODE,
     PRIVMSG,
     NOTICE,
+	PING,
+	PONG,
     UNKNOWN,
     UNREGISTERED,
     CHANNEL_NAME,

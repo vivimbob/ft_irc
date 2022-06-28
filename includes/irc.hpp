@@ -79,6 +79,7 @@ class IRC
     std::string cmd_join_reply(const std::string&);
     std::string cmd_mode_reply(const std::string&, const std::string&);
     std::string cmd_topic_reply();
+    std::string cmd_pong_reply();
 
   protected:
     FT_IRCD*             _ft_ircd;
