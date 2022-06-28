@@ -85,17 +85,13 @@ Client*
 bool
     Channel::is_signed()
 {
-    if (_reserved.sign.state)
-        return true;
-    return false;
+    return _reserved.sign.state;
 }
 
 bool
     Channel::is_reserved()
 {
-    if (_reserved.flags.state)
-        return true;
-    return false;
+    return _reserved.flags.state;
 }
 
 /* channel class getter end */
