@@ -19,3 +19,9 @@ jobs:
       
     - name: clean
       run: make fclean
+      
+    - name: clone
+      run: git clone git@github.com:minjakim/ft_irc_tester.git
+    
+    - name: test
+      run: cd ft_irc_tester && ./dev.sh
