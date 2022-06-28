@@ -175,14 +175,18 @@ int
 {
     int port;
 
-    if ((argc != 3) || (PORT_MAX < (unsigned)(port = atoi(argv[1]))))
+    if ((argc != 3) || (9 < (unsigned)(argv[1][0] - '0'))
+        || (PORT_MAX < (unsigned)(port = atoi(argv[1])))
+        || (9 < strlen(argv[2])))
     {
         if (argc != 3)
-            log::print() << "usage: " << argv[0] << " <port> <password>"
-                         << log::endl;
+            std::cerr << "usage: " << argv[0] << " <port> <password>"
+                      << std::endl;
+        else if (9 < strlen(argv[2]))
+            std::cerr << "<password> is too long" << std::endl;
         else
-            log::print() << argc << "is out of port range (0 ~ 65535)"
-                         << log::endl;
+            std::cerr << argv[1] << " is out of port range (0 ~ 65535)"
+                      << std::endl;
         return FAILURE;
     }
     FT_IRCD(port, argv[2]).run();
