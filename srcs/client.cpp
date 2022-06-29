@@ -7,7 +7,7 @@
 Client::Client(sockaddr_in addr, int fd) : _addr(addr), _fd(fd)
 {
     _buffers.requests.from    = this;
-    _names.host               = NAME_HOST;
+    _names.host               = inet_ntoa(_addr.sin_addr);
     _names.server             = NAME_SERVER;
     _status.registered        = 0;
     _buffers.offset           = 0;

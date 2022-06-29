@@ -64,9 +64,9 @@ class Client
     sockaddr_in        _addr;
     int                _fd;
     std::set<Channel*> _channels;
-    t_status           _status;
 
   protected:
+    t_status  _status;
     t_names   _names;
     t_buffers _buffers;
 

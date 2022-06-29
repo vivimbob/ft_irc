@@ -57,6 +57,8 @@ enum e_type
     MODE,
     PRIVMSG,
     NOTICE,
+	PING,
+	PONG,
     UNKNOWN,
     UNREGISTERED,
     CHANNEL_NAME,
@@ -67,7 +69,7 @@ enum e_type
 enum e_bot
 {
     HELP,
-    DATETIME,
+    TIME,
     COIN,
     NONE
 };

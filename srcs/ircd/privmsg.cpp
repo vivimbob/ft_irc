@@ -15,8 +15,7 @@ e_result
         if (!_map.channel.count(*_target))
             return m_to_client(err_no_such_channel(*_target));
         _channel = _map.channel[*_target];
-        if (_channel->get_status(NOMSG) && !_channel->is_joined(_client)
-            && _request->type == PRIVMSG)
+        if (_channel->get_status(NOMSG) && !_channel->is_joined(_client))
             return m_to_client(
                 err_cannot_send_to_channel(_channel->get_name(), 'n'));
     }

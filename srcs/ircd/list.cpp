@@ -3,8 +3,10 @@
 e_result
     IRCD::m_list()
 {
+	int member_number = _channel->get_members().size()
+		+ _channel->get_operator() == nullptr ? 0 : 1;
     m_to_client(rpl_list(_channel->get_name(),
-                         std::to_string(_channel->get_members().size()),
+                         std::to_string(member_number),
                          _channel->get_topic()));
     return OK;
 }
